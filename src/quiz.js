@@ -2,7 +2,7 @@
  * Provide a list of all quizzes that are owned by the currently logged in user.
  * @param {integer} authUserId - Admin user ID.
  * @returns {array object} - List of quizzes.
-*/
+**/
 function adminQuizList(authUserId) {
   return {
     quizzes: [
@@ -36,6 +36,19 @@ function adminQuizList(authUserId) {
     timeLastEdited: 1683125871,
     description: 'This is my quiz',  
   }
+}
+
+/**
+  * Update name of relevant quiz.
+  * @param {number} authUserId 
+  * @param {number} quizId 
+  * @param {string} name 
+  * @returns {{}}
+**/
+function adminQuizNameUpdate(authUserId, quizId, name) {
+	return {
+  
+	}
 }
 
 /** 
