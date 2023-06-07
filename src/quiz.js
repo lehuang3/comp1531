@@ -19,7 +19,7 @@ function adminQuizList(authUserId) {
   * @param {number} authUserId
   * @param {number} quizId
   * @returns {
-*   {
+  *   {
   *     quizId: number, 
   *     name: string, 
   *     timeCreated: number, 
