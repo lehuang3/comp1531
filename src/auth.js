@@ -5,7 +5,7 @@
   * 
   * ...
   * 
-  * @returns {object} user 
+  * @returns {user: userId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,} 
   * 
 */
 
