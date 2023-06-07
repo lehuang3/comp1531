@@ -14,6 +14,23 @@ function adminQuizList(authUserId) {
 	}
 }
 
+
+/**
+* Given basic details about a new quiz, create one for the logged in user.
+* @param {integer} authUserId - Admin user ID.
+* @param {integer} name - Name of quiz.
+* @param {string} authUserId - Description of quiz.
+* @returns {object} - Quiz ID.
+*/
+
+function adminQuizCreate(authUserId, name, description) {
+	return {
+		quizId: 2,
+	}
+}
+	
+
+/*
 /** 
   * Get all of the relevant information about the current quiz.
   * @param {number} authUserId
@@ -61,6 +78,7 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   * 
   * @returns {empty}
 **/
+
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   return {
 
