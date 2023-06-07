@@ -19,7 +19,7 @@ function adminUserDetails(authUserId) {
       numSuccessfulLogins: 3,
       numFailedPasswordsSinceLastLogin: 1,
     }
-  };
+  }
 }
 
 
