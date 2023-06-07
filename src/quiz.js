@@ -38,7 +38,7 @@ function adminQuizList(authUserId) {
   }
 }
 
-/*
+/** 
   * Update the description of the relevant quiz.
   * 
   * @param {number} authUserId - User's identification number
@@ -47,7 +47,7 @@ function adminQuizList(authUserId) {
   * ...
   * 
   * @returns {empty}
-*/
+**/
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   return {
 
