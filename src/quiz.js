@@ -85,3 +85,15 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   }
 }
 
+/**
+ * Given user ID and Quiz ID it deletes it.
+ * @param {integer} authUserId - Admin user ID.
+ * @param {integer} quizId - Quiz ID.
+ * @returns {object} - Empty object.
+ */
+
+function adminQuizRemove(authUserId, quizId) {
+  return {
+      
+  }
+}
