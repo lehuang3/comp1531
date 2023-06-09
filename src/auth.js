@@ -8,6 +8,16 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
   }
 }
 
+
+/**
+ * Return integer to indicate if user successfully logs in
+ * @returns {{authUserId: number}} object
+ */
+function adminAuthLogin(email, password) {
+	return {
+		authUserId: 1,
+	}
+}
 /**
   * Given an admin user's authUserId, return details about the user
   * 
