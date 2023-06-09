@@ -1,8 +1,10 @@
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
- * @param {integer} authUserId - Admin user ID.
- * @returns {array object} - List of quizzes.
-**/
+ * 
+ * @param {integer} authUserId - Admin user ID
+ * 
+ * @returns {array object} - List of quizzes
+*/
 function adminQuizList(authUserId) {
   return {
     quizzes: [
@@ -16,25 +18,27 @@ function adminQuizList(authUserId) {
 
 
 /**
-* Given basic details about a new quiz, create one for the logged in user.
-* @param {integer} authUserId - Admin user ID.
-* @param {integer} name - Name of quiz.
-* @param {string} authUserId - Description of quiz.
-* @returns {object} - Quiz ID.
+ * Given basic details about a new quiz, create one for the logged in user.
+ * 
+ * @param {integer} authUserId - Admin user ID
+ * @param {integer} name - Name of quiz
+ * @param {string} authUserId - Description of quiz
+ * 
+ * @returns {quizID: number} - Quiz's identification number
 */
-
 function adminQuizCreate(authUserId, name, description) {
 	return {
 		quizId: 2,
 	}
 }
-	
 
-/*
-/** 
+
+/**
   * Get all of the relevant information about the current quiz.
-  * @param {number} authUserId
-  * @param {number} quizId
+  *
+  * @param {number} authUserId - Admin user ID
+  * @param {number} quizId - Quiz's identification number
+  * 
   * @returns {
   *   {
   *     quizId: number, 
@@ -44,7 +48,7 @@ function adminQuizCreate(authUserId, name, description) {
   *     description: string
   *   }
   * }
-**/
+*/
  function adminQuizInfo(authUserId, quizId) {
   return {
     quizId: 1,
@@ -55,43 +59,47 @@ function adminQuizCreate(authUserId, name, description) {
   }
 }
 
+
 /**
   * Update name of relevant quiz.
-  * @param {number} authUserId 
-  * @param {number} quizId 
-  * @param {string} name 
-  * @returns {{}}
-**/
+  * 
+  * @param {number} authUserId - Admin user ID
+  * @param {number} quizId - Quiz's identification number
+  * @param {string} name - Name of quiz
+  * 
+  * @returns {{}} - Empty object.
+*/
 function adminQuizNameUpdate(authUserId, quizId, name) {
 	return {
   
-	}
+  }
 }
+
 
 /** 
   * Update the description of the relevant quiz.
   * 
-  * @param {number} authUserId - User's identification number
+  * @param {number} authUserId - Admin user ID
   * @param {number} quizId - Quiz's identification number
   * @param {string} description - Quiz's description
-  * ...
   * 
-  * @returns {empty}
-**/
-
+  * @returns {{}} - Empty object.
+*/
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   return {
 
   }
 }
 
+
 /**
  * Given user ID and Quiz ID it deletes it.
- * @param {integer} authUserId - Admin user ID.
- * @param {integer} quizId - Quiz ID.
- * @returns {object} - Empty object.
- */
-
+ * 
+ * @param {integer} authUserId - Admin user ID
+ * @param {integer} quizId - Quiz's identification number
+ * 
+ * @returns {{}} - Empty object
+*/
 function adminQuizRemove(authUserId, quizId) {
   return {
       
