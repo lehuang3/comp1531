@@ -34,6 +34,21 @@ function adminQuizCreate(authUserId, name, description) {
 
 
 /**
+ * Given user ID and Quiz ID it deletes it.
+ * 
+ * @param {integer} authUserId - Admin user ID
+ * @param {integer} quizId - Quiz's identification number
+ * 
+ * @returns {{}} - Empty object
+*/
+function adminQuizRemove(authUserId, quizId) {
+  return {
+      
+  }
+}
+
+
+/**
   * Get all of the relevant information about the current quiz.
   *
   * @param {number} authUserId - Admin user ID
@@ -88,20 +103,5 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   return {
 
-  }
-}
-
-
-/**
- * Given user ID and Quiz ID it deletes it.
- * 
- * @param {integer} authUserId - Admin user ID
- * @param {integer} quizId - Quiz's identification number
- * 
- * @returns {{}} - Empty object
-*/
-function adminQuizRemove(authUserId, quizId) {
-  return {
-      
   }
 }
