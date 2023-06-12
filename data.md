@@ -2,7 +2,8 @@
 let data = {
     
   // User Data
-  user: {
+  users: [
+    {
     UserId: 1,
     nameFirst: 'joe',
     nameLast: 'devon',
@@ -10,7 +11,8 @@ let data = {
     password: "test123",
     numSuccessfulLogins: 3,
     numFailedPasswordsSinceLastLogin: 1,
-  },
+    }
+  ],
     
 
   //Quiz Data
