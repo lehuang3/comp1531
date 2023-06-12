@@ -1,0 +1,17 @@
+{
+    "scripts": {
+        "test": "jest --testMatch '**/?(*.)+(test).js'",
+    },
+    "dependencies": {
+        "rewire": "^6.0.0",
+        "validator": "^13.7.0"
+    },
+    "devDependencies": {
+        "jest": "^28.1.0",
+    },
+    "nyc": {
+        "exclude": [
+            "echo.*"
+        ]
+    }
+}
