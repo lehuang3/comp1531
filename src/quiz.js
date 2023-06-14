@@ -46,13 +46,13 @@ export function adminQuizCreate(authUserId, name, description) {
 	} else {
     let quizId = data.quizzes.length;
 
-    let timestamp = Math.floor(Date.now() / 1000);
+    let time = Math.floor(Date.now() / 1000);
 
     let newQuiz = {
       quizId: quizId,
       name: name,
-      timeCreated: timestamp,
-      timeLastEdited: timestamp,
+      timeCreated: time,
+      timeLastEdited: time,
       description: description
     };
 
