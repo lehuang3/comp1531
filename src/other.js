@@ -28,3 +28,19 @@ function isValidUser(authUserId) {
 	}
 	return false;
 }
+/**
+ * 
+ * @param {number} authUserId 
+ * @param {number} quizId 
+ * 
+ * @returns {boolean} - true or false
+*/
+function quizValidOwner(authUserId, quizId) {
+	data = getData();
+	for (let user of data) {
+		if (user.UsersId === authUserId && user.userQuizs.includes(quizId)) {
+			return true;
+		}
+	}
+	return false;
+}
