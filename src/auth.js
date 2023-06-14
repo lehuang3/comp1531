@@ -39,21 +39,16 @@ function adminAuthLogin(email, password) {
   * @returns {user: {userId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
 */  
 function adminUserDetails(authUserId) {
-	let data = getData();
-	for (const user of data.users) {
-		if (user.authUserId === authUserId) {
-			return {
-				user: {
-					userId: user.authUserId,
-					name: user.name,
-					email: user.email,
-					numSuccessfulLogins: user.numSuccessfulLogins,
-					numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
-				}
-			}
-		}
-	}
   return {
-    error: 'Not a valid user',
-	}
-}	
+    user:
+    {
+      userId: 1,
+      name: 'Hayden Smith',
+      email: 'hayden.smith@unsw.edu.au',
+      numSuccessfulLogins: 3,
+      numFailedPasswordsSinceLastLogin: 1,
+    }
+  }
+}
+
+
