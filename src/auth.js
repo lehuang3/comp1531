@@ -1,3 +1,4 @@
+import { getData, setData } from './dataStore.js';
 /**
  * Return integer to indicate if user registration was successful
  * 
@@ -49,3 +50,5 @@ function adminUserDetails(authUserId) {
     }
   }
 }
+
+
