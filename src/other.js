@@ -29,6 +29,8 @@ function isValidUser(authUserId) {
 	return false;
 }
 /**
+ * Given the authUserId and quizId of, find if the user has access to the quiz, returns true if they 
+ * and false if they can not
  * 
  * @param {number} authUserId 
  * @param {number} quizId 
