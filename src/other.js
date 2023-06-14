@@ -20,7 +20,7 @@ function clear() {
  * @returns {boolean} - true or false
 */
 function isValidUser(authUserId) {
-	let data = getData();
+	const data = getData();
 	for (const user of data.users) {
 		if (user.authUserId === authUserId) {
 			return true;
@@ -38,8 +38,8 @@ function isValidUser(authUserId) {
  * @returns {boolean} - true or false
 */
 function quizValidOwner(authUserId, quizId) {
-	data = getData();
-	for (let user of data.users) {
+	const data = getData();
+	for (const user of data.users) {
 		if (user.UsersId === authUserId && user.userQuizs.includes(quizId)) {
 			return true;
 		}
