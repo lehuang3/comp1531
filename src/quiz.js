@@ -1,3 +1,6 @@
+import {getData, setData} from './dataStore.js';
+import {clear, isValidUser} from './other.js';
+
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  * 
@@ -26,10 +29,39 @@ function adminQuizList(authUserId) {
  * 
  * @returns {quizID: number} - Quiz's identification number
 */
-function adminQuizCreate(authUserId, name, description) {
-	return {
-		quizId: 2,
-	}
+export function adminQuizCreate(authUserId, name, description) {
+
+	let data = getData();
+
+  if(isValidUser(authUserId) === false) {
+		return {error: 'User id not valid'}
+	} else if(nameQuizIsValid === false){
+		return {error: 'Quiz name is not valid'}
+	} else if(nameLengthIsValid === false){
+		return {error: 'Quiz name length is not valid'}
+	} else if(nameTaken === true){
+		return {error: 'Quiz name is taken'}
+	} else if(quizDescriptionIsValid === false) {
+		return {error: 'Quiz description is not valid'}
+	} else {
+    let quizId = data.quizzes.length;
+
+    let time = Math.floor(Date.now() / 1000);
+
+    let newQuiz = {
+      quizId: quizId,
+      name: name,
+      timeCreated: time,
+      timeLastEdited: time,
+      description: description
+    };
+
+    data.quizzes.push(newQuiz);
+    
+    return {quizId: quizId};
+  }
+
+  
 }
 
 

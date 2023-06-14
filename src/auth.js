@@ -54,5 +54,7 @@ function adminUserDetails(authUserId) {
 	}
   return {
     error: 'Not a valid user',
-	}
-}	
+  }
+}
+
+
