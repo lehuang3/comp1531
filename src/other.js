@@ -79,3 +79,4 @@ function isDescriptionLong(description) {
 	}
 	return false;
 }
+
