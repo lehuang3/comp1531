@@ -47,3 +47,22 @@ function quizValidOwner(authUserId, quizId) {
 	}
 	return false;
 }
+
+/**
+ * Given a quizId check if it exists within the datastore, returning true if it exists
+ * and false if it does not
+ * 
+ * @param {number} quizId 
+ * 
+ * @returns {boolean} - true or false 
+ */
+
+function quizValidCheck(quizId) {
+	const data = getData();
+	for (const quiz of data.quizzes) {
+		if (quiz.quizId === quizId) {
+			return true;
+		}
+	}
+	return false;
+}
