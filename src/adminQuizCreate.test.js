@@ -32,7 +32,7 @@ test('name in use', () => {
   expect(adminQuizCreate(0, 'quiz1',"descruiption")).toStrictEqual({ error: expect.any(String) });
 });
 
-test('Invalide User ID', () => {
+test('Invalid User ID', () => {
   adminAuthRegister("Sina.hafezimasoomi@gmail.com", "Sina12356789", "Sina", "Hafezi");
   expect(adminQuizCreate(2, 'Sina-quiz',"descruiption")).toStrictEqual({ error: expect.any(String) });
 
