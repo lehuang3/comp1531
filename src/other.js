@@ -37,7 +37,7 @@ function isValidUser(authUserId) {
 */
 function quizValidOwner(authUserId, quizId) {
 	data = getData();
-	for (let user of data) {
+	for (let user of data.users) {
 		if (user.UsersId === authUserId && user.userQuizs.includes(quizId)) {
 			return true;
 		}
