@@ -1,5 +1,5 @@
 import {getData, setData} from './dataStore.js';
-import {clear, isValidUser} from './other.js';
+import {clear, isValidUser, quizValidCheck, quizValidOwner} from './other.js';
 
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -133,6 +133,32 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   * @returns {{}} - Empty object.
 */
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
+	let data = getData();
+	
+	if (!isValidUser(authUserId)) {
+		return {
+			error: 'Not a valid user',
+		}
+	}
+	if (!quizValidCheck(quizId)) {
+		return {
+			error: 'Not a valid quiz',
+		}
+	}
+	if (!quizValidOwner(authUserId, quizId)) {
+		return {
+			error: 'This quiz is owned by another user',
+		}
+	}
+	
+	for (const quiz of data.quizzes) {
+		if (quiz.quizId === quizId) {
+			quiz.description = description;
+		}
+	}
+	
+	setData(data);
+	
   return {
 
   }
