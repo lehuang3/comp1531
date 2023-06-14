@@ -1,3 +1,4 @@
+import { getData, setData } from './dataStore.js';
 /**
  * Return integer to indicate if user registration was successful
  * 
@@ -38,14 +39,21 @@ function adminAuthLogin(email, password) {
   * @returns {user: {userId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
 */  
 function adminUserDetails(authUserId) {
+	let data = getData();
+	for (const user of data.users) {
+		if (user.authUserId === authUserId) {
+			return {
+				user: {
+					userId: user.authUserId,
+					name: user.name,
+					email: user.email,
+					numSuccessfulLogins: user.numSuccessfulLogins,
+					numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
+				}
+			}
+		}
+	}
   return {
-    user:
-    {
-      userId: 1,
-      name: 'Hayden Smith',
-      email: 'hayden.smith@unsw.edu.au',
-      numSuccessfulLogins: 3,
-      numFailedPasswordsSinceLastLogin: 1,
-    }
-  }
-}
+    error: 'Not a valid user',
+	}
+}	
