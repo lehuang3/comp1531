@@ -56,7 +56,6 @@ function quizValidOwner(authUserId, quizId) {
  * 
  * @returns {boolean} - true or false 
  */
-
 function quizValidCheck(quizId) {
 	const data = getData();
 	for (const quiz of data.quizzes) {
