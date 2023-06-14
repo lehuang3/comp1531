@@ -1,5 +1,5 @@
 import { adminQuizCreate } from './quiz.js';
-
+import { adminAuthRegister } from './auth.js';
 
 // Runs before each test
 beforeEach(() => {
