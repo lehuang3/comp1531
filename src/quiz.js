@@ -74,8 +74,26 @@ export function adminQuizCreate(authUserId, name, description) {
  * @returns {{}} - Empty object
 */
 function adminQuizRemove(authUserId, quizId) {
-  return {
-      
+  if(isValidUser(authUserId) === false){
+    return {error: 'User id not valid'} 
+  }else if(quizValidCheck(quizId) === false){
+    return {error: 'quiz id not valid'}
+  } else {
+    let data = getData();
+
+    for (let i = 0; i < data.quizzes.length; i++) {
+      if(data.quizzes[i].quizId === quizId) {
+        data.quizzes.splice(quizIndex, 1);
+      }
+    }
+
+    for (let user of data.users) {
+      let quizIndex = user.userQuizs.indexOf(quizIdToRemove);
+      if (user.userId === authUserId) {
+        user.userQuizs.splice(user.userQuizs.indexOf(quizId), 1);
+      }
+    }
+
   }
 }
 
