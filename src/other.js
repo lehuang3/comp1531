@@ -1,4 +1,5 @@
 import { getData, setData} from './dataStore.js';
+
 /**
  * Does not return anything, resets the state of the application
  * 
