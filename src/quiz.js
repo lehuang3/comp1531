@@ -9,14 +9,41 @@ import {clear, isValidUser} from './other.js';
  * @returns {array object} - List of quizzes
 */
 function adminQuizList(authUserId) {
-  return {
-    quizzes: [
-      {
-        quizId: 1,
-        name: 'My Quiz',
+  if(isValidUser(authUserId) === false) {
+
+    return {error: 'User id not valid'};
+
+  } else {
+
+    let data = getData();
+
+    let userQuizs = [];
+    let quizzList = [];
+
+    for(let user of data.users) {
+      if(user.UserId === authUserId){
+        userQuizs = user.userQuizs;
       }
-    ]
-	}
+    }
+
+    for(let quiz of data.quizzes) {
+
+      if(userQuizs.includes(quiz.quizId)){
+
+        let currentUserQuiz = {
+            quizId: quiz.quizId,
+            name: quiz.name,
+        };
+
+        quizzList.push(currentUserQuiz);
+
+      }
+
+    }
+
+    return {quizzes: quizzList};
+
+  }
 }
 
 
