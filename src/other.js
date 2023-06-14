@@ -65,3 +65,17 @@ function quizValidCheck(quizId) {
 	}
 	return false;
 }
+
+/**
+ * Given description, returns true or false depending on whether it is over 100 characters
+ * long
+ * @param {string} - description
+ * 
+ * @returns {boolean} - true or false
+*/
+function isDescriptionLong(description) {
+	if (description.length > 100) {
+		return true;
+	}
+	return false;
+}
