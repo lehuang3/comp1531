@@ -68,7 +68,7 @@ export function adminQuizCreate(authUserId, name, description) {
 		return {error: 'Quiz name length is not valid'}
 	} else if(nameTaken === true){
 		return {error: 'Quiz name is taken'}
-	} else if(quizDescriptionIsValid === false) {
+	} else if(isDescriptionLong(description) === true) {
 		return {error: 'Quiz description is not valid'}
 	} else {
     let quizId = data.quizzes.length;
