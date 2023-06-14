@@ -1,4 +1,5 @@
 import { getData, setData} from './dataStore.js';
+
 /**
  * Does not return anything, resets the state of the application
  * 
@@ -20,7 +21,7 @@ function clear() {
  * @returns {boolean} - true or false
 */
 function isValidUser(authUserId) {
-	let data = getData();
+	const data = getData();
 	for (const user of data.users) {
 		if (user.authUserId === authUserId) {
 			return true;
@@ -29,6 +30,8 @@ function isValidUser(authUserId) {
 	return false;
 }
 /**
+ * Given the authUserId and quizId of, find if the user has access to the quiz, returns true if they 
+ * and false if they can not
  * 
  * @param {number} authUserId 
  * @param {number} quizId 
@@ -36,8 +39,8 @@ function isValidUser(authUserId) {
  * @returns {boolean} - true or false
 */
 function quizValidOwner(authUserId, quizId) {
-	data = getData();
-	for (let user of data) {
+	const data = getData();
+	for (const user of data.users) {
 		if (user.UsersId === authUserId && user.userQuizs.includes(quizId)) {
 			return true;
 		}
