@@ -1,4 +1,5 @@
 import { getData, setData } from './dataStore.js';
+import { isValidUser } from './other.js';
 /**
  * Return integer to indicate if user registration was successful
  * 
@@ -40,9 +41,8 @@ function adminAuthLogin(email, password) {
 */  
 function adminUserDetails(authUserId) {
 	let data = getData();
-	for (const user of data.users) {
-		if (user.authUserId === authUserId) {
-			return {
+	if (isValidUser(authUserId)) {
+		return {
 				user: {
 					userId: user.authUserId,
 					name: user.name,
@@ -51,7 +51,6 @@ function adminUserDetails(authUserId) {
 					numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
 				}
 			}
-		}
 	}
   return {
     error: 'Not a valid user',
