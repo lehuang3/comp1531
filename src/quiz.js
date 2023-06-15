@@ -83,7 +83,7 @@ function adminQuizRemove(authUserId, quizId) {
 
     for (let i = 0; i < data.quizzes.length; i++) {
       if(data.quizzes[i].quizId === quizId) {
-        data.quizzes.splice(quizIndex, 1);
+        data.quizzes.splice(i, 1);
       }
     }
 
