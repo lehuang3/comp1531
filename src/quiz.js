@@ -105,3 +105,5 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
 
   }
 }
+
+export { adminQuizInfo }
