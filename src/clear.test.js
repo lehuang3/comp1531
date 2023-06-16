@@ -1,11 +1,13 @@
+import { adminAuthRegister, adminAuthLogin } from './auth.js'
 import { clear } from './other.js'
-import { adminAuthLogin } from './auth.js'
 
-
-// Test if the clear function is clearing the data values i.e. if we call adminAuthLogin then clear, the user object in datastore should be cleared
+// Test if the clear function is clearing the data values i.e. if we call adminAuthLogin then clear, we should be able to login again as a different user.
 
 test('Test successful for clear', () => {
-    let result = adminAuthLogin('joe.devon@gmail.com', 'Test123!');
-    expect(result).toBe('1');
-    clear();
-  });
+	adminAuthRegister('santaclaus@gmail.com', 'S@nta23!', 'Santa', 'Claus');
+	adminAuthRegister('patel@gmail.com', 'Abcd123!', 'Pranav', 'Patel');
+	adminAuthLogin('patel@gmail.com', 'Abcd123!');
+	clear();
+	let result = adminAuthLogin('santaclaus@gmail.com', 'S@nta23!');
+	expect(result).toBe(users.UserID);
+});
