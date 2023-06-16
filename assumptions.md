@@ -1,0 +1,2 @@
+1. Assuming nameFirst or nameLast strings may contain only hyphens/aphostrophes/spaces and it is still valid.
+2. Assuming passwords with no captial letters or symbols are valid passwords as long as there is one letter and one number in the password.
