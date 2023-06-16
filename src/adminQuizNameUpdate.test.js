@@ -1,5 +1,16 @@
 import { adminQuizNameUpdate, adminQuizCreate } from './quiz.js'
 import { adminAuthLogin, adminAuthRegister } from './auth.js'
+import { clear } from './other.js'
+
+beforeEach(() => {
+  clear();
+  // adminAuthRegister('123@email.com', '123', 'david', 'test');
+  // let user = adminAuthLogin('123@email.com', '123')
+  // let quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1');
+  // let user2 = adminAuthRegister('1234@email.com', '123', 'jack', 'test');
+  // adminAuthLogin('123@email.com', '123')
+  // let quiz2 = adminQuizCreate(user2.authUserId, 'quiz', 'quiz1');
+});
 
 test ('simple test pass', () => {
   adminAuthRegister('123@email.com', '123', 'david', 'test');
