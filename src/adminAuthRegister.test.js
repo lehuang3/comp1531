@@ -1,12 +1,19 @@
 import { adminAuthRegister } from './auth.js'
 import { clear } from './other.js'
 
+// Test if the adminAuthRegister function is returning errors correctly and passing when it should.
+
 beforeEach(() => {
 	clear();
 });
 
-test('Simple Test Pass', () => {
+test('Simple test pass', () => {
 	let user = adminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel');
+	expect(user).toStrictEqual(users.UserID);
+});
+
+test('Name assumption pass', () => {
+	let user = adminAuthRegister('patel@gmail.com', 'Abcd123%', '       ', '-------');
 	expect(user).toStrictEqual(users.UserID);
 });
 
