@@ -106,4 +106,4 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   }
 }
 
-export { adminQuizInfo }
+export { adminQuizInfo, adminQuizCreate }
