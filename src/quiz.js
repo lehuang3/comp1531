@@ -1,3 +1,5 @@
+import { getData, setData } from './dataStore.js'
+
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  * 
@@ -85,6 +87,38 @@ function adminQuizRemove(authUserId, quizId) {
   * @returns {{}} - Empty object.
 */
 function adminQuizNameUpdate(authUserId, quizId, name) {
+  let data = getData();
+  if (name.length > 30 || name.length < 3) {
+    return {
+      error: 'Quiz name must be greater or equal to 2 chartacters and less than or equal to 30.'
+    }
+  }
+  if (!/^[a-zA-Z0-9]+$/.test(name)) {
+    return {
+      error: 'Quiz name cannot have spaces and special characters.'
+    }
+  }
+
+  for (const user in data.users) {
+    if (user.authUserId == authUserId) {
+      if (user.userQuizs.includes(quizId)) {
+        for (const quiz in data.quizzes) {
+          if (quiz.quizId == quizId && (!quiz.name.includes(name))) {
+            quiz.name = name;
+            return {
+
+            }
+          }
+        }
+      }
+      return {
+        error: 'Quiz does not exist.'
+      }
+    }
+    return {
+      error: 'You do not have access to this quiz.'
+    }
+  }
 	return {
   
   }
