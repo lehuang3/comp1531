@@ -28,3 +28,35 @@ function isValidUser(authUserId) {
 	}
 	return false;
 }
+
+/**
+ * Given a string and the minimum and maximum length to be valid, return a true or false based on the string's validity
+ * @param {string} string - string length to check
+ * @param {number} min - minimum length for string
+ * @param {number} max - maximum length for string
+ * 
+ * @returns {boolean} - true or false
+*/
+function checkStringLengthBetween(string, min, max) {
+	if ((string.length >= min) && (string.length <= max)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * Given a string, UserID and quizID, return true or false depending on if the user already has a quiz of the same name
+ * @param {string} string - string name to check
+ * @param {number} UserID - User's ID to check for quiz of same name
+ * 
+ * @returns {boolean} - true or false
+*/
+function checkQuizNameUsed(string, UserID) {
+    for (const quiz of UserID.quizzes) {
+        if ((quiz == users.quizzes.quizID) && (string == users.quizzes.name)) {
+            return true
+        }
+    }
+    return false;
+}
