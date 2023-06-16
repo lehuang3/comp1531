@@ -13,7 +13,7 @@ test ('userId not valid', () => {
   adminAuthLogin();
   adminQuizCreate();
   
-  expect(adminQuizNameUpdate()).toStrictEqual()
+  expect(adminQuizNameUpdate()).toStrictEqual({ error: ''})
 }) 
 
 test ('quizId not valid', () => {
@@ -21,7 +21,7 @@ test ('quizId not valid', () => {
   adminAuthLogin();
   adminQuizCreate();
   
-  expect(adminQuizNameUpdate()).toStrictEqual()
+  expect(adminQuizNameUpdate()).toStrictEqual({ error: 'Quiz does not exist.'})
 }) 
 
 test ('quiz name not valid', () => {
@@ -29,7 +29,7 @@ test ('quiz name not valid', () => {
   adminAuthLogin();
   adminQuizCreate();
   
-  expect(adminQuizNameUpdate()).toStrictEqual()
+  expect(adminQuizNameUpdate()).toStrictEqual({ error: 'Quiz name cannot have spaces and special characers.'})
 }) 
 
 test ('quiz name too short', () => {
@@ -37,7 +37,7 @@ test ('quiz name too short', () => {
   adminAuthLogin();
   adminQuizCreate();
   
-  expect(adminQuizNameUpdate()).toStrictEqual()
+  expect(adminQuizNameUpdate()).toStrictEqual({ error: 'Quiz name must be greater or equal to 2 chartacters and less than or equal to 30.'})
 }) 
 
 test ('quiz name too long', () => {
@@ -45,7 +45,7 @@ test ('quiz name too long', () => {
   adminAuthLogin();
   adminQuizCreate();
   
-  expect(adminQuizNameUpdate()).toStrictEqual()
+  expect(adminQuizNameUpdate()).toStrictEqual({ error: 'Quiz name must be greater or equal to 2 chartacters and less than or equal to 30.'})
 }) 
 
 test ('quiz name already used', () => {
@@ -53,5 +53,5 @@ test ('quiz name already used', () => {
   adminAuthLogin();
   adminQuizCreate();
   
-  expect(adminQuizNameUpdate()).toStrictEqual()
+  expect(adminQuizNameUpdate()).toStrictEqual({ error: 'Quiz name already exists.'})
 }) 
