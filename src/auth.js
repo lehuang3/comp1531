@@ -25,8 +25,34 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
  * @returns {{authUserId: number}} - User's identification
 */
 function adminAuthLogin(email, password) {
-	return {
-		authUserId: 1,
+	let store = getData();
+	// check if email is valid
+	let counter = 0;
+	let iD = 0;
+	for (const address in store.email) {
+		if (address != email) {
+			counter++;
+		} else {
+			iD = store.email.indexOf(email) + 1;
+		}
+	}
+
+	if (counter == store.length) {
+		return {
+			error: 'error: email address is does not exist'
+		};
+	}
+	
+	let user = store.users.iD
+
+	if (password == user.password) {
+		return {
+			authUserId: iD
+		};
+	} else {
+		return {
+			error: 'error: password incorrect'
+		};
 	}
 }
 
