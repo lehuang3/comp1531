@@ -7,7 +7,10 @@ import { getData, setData} from './dataStore.js';
  * @returns {{}} - Empty object
 */
 function clear() {
-	return {
+    let store = getData();
+    store = {};
+    setData(store);
+    return {
 		
 	}
 }
