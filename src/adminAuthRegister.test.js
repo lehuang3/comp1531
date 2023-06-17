@@ -1,4 +1,5 @@
 import { adminAuthRegister } from './auth.js'
+import { getData } from './dataStore.js';
 import { clear } from './other.js'
 
 // Test if the adminAuthRegister function is returning errors correctly and passing when it should.
@@ -8,13 +9,15 @@ beforeEach(() => {
 });
 
 test('Simple test pass', () => {
-	let user = adminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel');
-	expect(user).toStrictEqual(users.UserID);
+	let store = getData();
+    let user = adminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel');
+	expect(user).toStrictEqual(store.UserID);
 });
 
 test('Name assumption pass', () => {
-	let user = adminAuthRegister('patel@gmail.com', 'Abcd123%', '       ', '-------');
-	expect(user).toStrictEqual(users.UserID);
+	let store = getData();
+    let user = adminAuthRegister('patel@gmail.com', 'Abcd123%', '       ', '-------');
+	expect(user).toStrictEqual(store.UserID);
 });
 
 test('Email is used by another user', () => {
