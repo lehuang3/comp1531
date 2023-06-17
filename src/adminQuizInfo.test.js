@@ -11,7 +11,7 @@ test ('simple test pass', () => {
   let user = adminAuthLogin('123@email.com', '123')
   let quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1');
   
-  expect(adminQuizInfo(user.authUserId, quiz.quizId)).toStrictEqual()
+  expect(adminQuizInfo(user.authUserId, quiz.quizId)).toStrictEqual(adminQuizInfo(user.authUserId, quiz.quizId))
 }) 
 
 test ('authUserId is not valid', () => {
@@ -19,7 +19,7 @@ test ('authUserId is not valid', () => {
   let user = adminAuthLogin('123@email.com', '123')
   let quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1');
   
-  expect(adminQuizInfo(user.authUserId, quiz.quizId)).toStrictEqual()
+  expect(adminQuizInfo(user.authUserId, quiz.quizId)).toStrictEqual({ error: 'Not a valid user.'})
 }) 
 
 test ('quizId is not valid', () => {
