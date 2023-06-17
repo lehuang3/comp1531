@@ -1,5 +1,5 @@
 import {getData, setData} from './dataStore.js';
-import {clear, isValidUser, quizValidCheck, quizValidOwner} from './other.js';
+import {clear, isValidUser, quizValidCheck, quizValidOwner, isDescriptionLong} from './other.js';
 
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -148,6 +148,12 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
 	if (!quizValidOwner(authUserId, quizId)) {
 		return {
 			error: 'This quiz is owned by another user',
+		}
+	}
+	
+	if (isDescriptionLong(description)) {
+		return {
+			error: 'Description is too long',
 		}
 	}
 	
