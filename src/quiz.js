@@ -1,3 +1,5 @@
+import { getData, setData } from './dataStore.js'
+
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  * 
@@ -65,14 +67,29 @@ function adminQuizRemove(authUserId, quizId) {
   * }
 */
  function adminQuizInfo(authUserId, quizId) {
-  return {
-    quizId: 1,
-    name: 'My Quiz',
-    timeCreated:  1683125870,
-    timeLastEdited: 1683125871,
-    description: 'This is my quiz',  
+  const data = getData();
+  
+  for (const user in data.users) {
+    if (user.UserId != authUserId) {
+      return { 
+        error: 'Not a valid user.'
+      }
+    } else if (user.UserId == authUserId) {
+        if (!(user.userQuizs.includes(quizId))) {
+          return { 
+            error: 'You do not have access to this quiz.'
+          }
+        } else if (user.userQuizs.includes(quizId)) {
+          for (const quiz in data.quizzes) {
+            if (quiz.quizId == quizId) {
+              return quiz
+            }
+          }
+        }
+    }
   }
-}
+ }
+
 
 
 /**
