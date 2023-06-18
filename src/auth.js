@@ -113,8 +113,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
 	// return successful (setdata)
 	store.users.push = new user(email, password, nameFirst, nameLast)
 
-	const iD = store.users.UserId.pop();
-  store.users.UserId.push(iD);
+	const iD = store.users[store.users.length -1].UserID
 
 	setData(store);
 	return {
