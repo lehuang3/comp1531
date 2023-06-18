@@ -99,33 +99,65 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
     }
   }
 
-  for (const user of data.users) {
-    if (!(user.UserId == authUserId)) {
-      return {
-        error: 'You do not have access to this quiz.'
-      }
-    } else if (user.authUserId == authUserId) {
-      if (user.userQuizs.includes(quizId)) {
-        for (const quiz of data.quizzes) {
-          if (quiz.quizId == quizId && (!quiz.name.includes(name))) {
-            quiz.name = name;
-            return {
 
+  for (const user of data.users) {
+    if (user.userId == authUserId) {
+      if (user.userQuizs.includes(quizId)) {
+        for (const quiz in data.quizzes) {
+          if (quiz.name == name) {
+            if (user.userQuizs.includes(quiz)) {
+              return {
+                error: 'Quiz name already exists.'
+              }
+            } else {
+              for (const quiz in data.quizzes) {
+                if (quiz.quizId == quizId) {
+                  quiz.name = name;
+                  return {
+
+                  }
+                }
+              }
+            }
+            return {
+              error: 'Quiz does not exist.'
             }
           }
         }
       }
-      return {
-        error: 'Quiz does not exist.'
-      }
-    }
-    return {
-      error: 'You do not have access to this quiz.'
     }
   }
-	return {
+  return {
+    error: 'You do not have access to this quiz.'
+  }
+
+  // for (const user of data.users) {
+  //   if (!(user.UserId == authUserId)) {
+  //     return {
+  //       error: 'You do not have access to this quiz.'
+  //     }
+  //   } else if (user.authUserId == authUserId) {
+  //     if (user.userQuizs.includes(quizId)) {
+  //       for (const quiz of data.quizzes) {
+  //         if (quiz.quizId == quizId && (!quiz.name.includes(name))) {
+  //           quiz.name = name;
+  //           return {
+
+  //           }
+  //         }
+  //       }
+  //     }
+  //     return {
+  //       error: 'Quiz does not exist.'
+  //     }
+  //   }
+  //   return {
+  //     error: 'You do not have access to this quiz.'
+  //   }
+  // }
+	// return {
   
-  }
+  // }
 }
 
 
