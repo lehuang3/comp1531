@@ -1,5 +1,5 @@
 import { getData, setData } from './dataStore.js';
-import { validator } from 'validator';
+//import isEmail from 'validator/lib/isEmail';
 
 function checkValidString(string) {
 	for (const char of string) {
@@ -39,14 +39,14 @@ function checkValidPassword(string) {
 
 function user(email, password, nameFirst, nameLast) {
     let store = getData();
-    this.UserID = store.users.length;
+    this.authUserIdID = store.users.length;
     this.email = email;
     this.password = password;
     this.nameFirst = nameFirst;
     this.nameLast = nameLast;
     this.numSuccessfulLogins = 1;
     this.numFailedPasswordsSinceLastLogin = 0;
-    this.userQuizs = [];
+    this.userQuizzes = [];
 }
 
 /**
@@ -69,12 +69,13 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
 			};
 		}
 	}
-
-	if (!validator.isEmail(email)) {
+    /*
+	if (!isEmail(email)) {
 		return {
 			error: 'error: email is not valid'
 		};
 	}
+    */
 	// check valid first name
 	if ((nameFirst.length < 2) || (nameFirst > 20)) {
 		return {
@@ -113,7 +114,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
 	// return successful (setdata)
 	store.users.push = new user(email, password, nameFirst, nameLast)
 
-	const iD = store.users[store.users.length -1].UserID
+	const iD = store.users[store.users.length -1].authUserId
 
 	setData(store);
 	return {
@@ -144,10 +145,12 @@ function adminAuthLogin(email, password) {
 	let user = store.users[iD];
 
 	if (password == user.password) {
+		user.numSuccessfulLogins++;
 		return {
 			authUserId: user.iD
 		};
 	} else {
+		user.numFailedPasswordsSinceLastLogin++;
 		return {
 			error: 'error: password incorrect'
 		};
@@ -160,13 +163,13 @@ function adminAuthLogin(email, password) {
 	* 
 	* @param {number} authUserId - User's identification 
 	* 
-	* @returns {user: {userId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
+	* @returns {user: {authUserId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
 */
 function adminUserDetails(authUserId) {
 	return {
 		user:
 		{
-			userId: 1,
+			authUserId: 1,
 			name: 'Hayden Smith',
 			email: 'hayden.smith@unsw.edu.au',
 			numSuccessfulLogins: 3,
