@@ -19,14 +19,14 @@ let data = {
   // User Data
   users: [
     {
-    UserId: 1,
+    authUserId: 1,
     nameFirst: 'joe',
     nameLast: 'devon',
     email: 'joe.devon@gmail.com',
     password: "test123",
     numSuccessfulLogins: 3,
     numFailedPasswordsSinceLastLogin: 1,
-    userQuizs:[1]
+    userQuizzes:[1]
     }
   ],
     
