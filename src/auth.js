@@ -39,19 +39,24 @@ function adminAuthLogin(email, password) {
   * 
   * @returns {user: {userId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
 */  
-function adminUserDetails(authUserId) {
+export function adminUserDetails(authUserId) {
 	let data = getData();
-	if (isValidUser(authUserId)) {
-		return {
-				user: {
-					userId: user.authUserId,
-					name: user.name,
-					email: user.email,
-					numSuccessfulLogins: user.numSuccessfulLogins,
-					numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
+		// loop through users array
+		for (const user of data.users) {
+			if (user.authUserId === authUserId) {
+				// return details of corresponding user
+				return {
+					user: {
+						userId: user.authUserId,
+						name: user.name,
+						email: user.email,
+						numSuccessfulLogins: user.numSuccessfulLogins,
+						numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
+					}
 				}
 			}
-	}
+		}
+	// error if no corresponding user found
   return {
     error: 'Not a valid user',
   }
