@@ -37,6 +37,18 @@ function checkValidPassword(string) {
 	}
 }
 
+function user(email, password, nameFirst, nameLast) {
+    let store = getData();
+    this.UserID = store.users.length;
+    this.email = email;
+    this.password = password;
+    this.nameFirst = nameFirst;
+    this.nameLast = nameLast;
+    this.numSuccessfulLogins = 1;
+    this.numFailedPasswordsSinceLastLogin = 0;
+    this.userQuizs = [];
+}
+
 /**
  * Return integer to indicate if user registration was successful
  * 
@@ -99,20 +111,14 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
 		};
 	}
 	// return successful (setdata)
-	emailAddress = store.email;
-	password = store.password;
-	firstName = store.nameFirst;
-	lastName = store.nameLast;
-	iD = store.authUserId;
+	store.users.push = new user(email, password, nameFirst, nameLast)
 
-	emailAddress.push(email);
-	password.push(password);
-	firstName.push(nameFirst);
-	lastName.push(nameLast);
-	iD.push(store.length + 1);
+	const iD = store.users.UserId.pop();
+    store.users.UserId.push(iD);
+
 	setData(store);
 	return {
-		authUserId: store.length,
+		authUserId: iD,
 	}
 }
 
