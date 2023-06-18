@@ -99,10 +99,14 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
     }
   }
 
-  for (const user in data.users) {
-    if (user.authUserId == authUserId) {
+  for (const user of data.users) {
+    if (!(user.UserId == authUserId)) {
+      return {
+        error: 'You do not have access to this quiz.'
+      }
+    } else if (user.authUserId == authUserId) {
       if (user.userQuizs.includes(quizId)) {
-        for (const quiz in data.quizzes) {
+        for (const quiz of data.quizzes) {
           if (quiz.quizId == quizId && (!quiz.name.includes(name))) {
             quiz.name = name;
             return {
