@@ -10,13 +10,13 @@ describe('Testing clear is resetting database', () => {
     
     test('Clear database test 1', () => {
         let result = adminAuthRegister('santaclaus@gmail.com', 'S@nta23!', 'Santa', 'Claus');
-        expect(result).toEqual(expect.any(Number));
+        expect(result).toEqual({authUserId: expect.any(Number)});
     });
     
     test('Clear database test 2', () => {
         adminAuthRegister('patel@gmail.com', 'Abcd123!', 'Pranav', 'Patel');
         let result = adminAuthLogin('santaclaus@gmail.com', 'S@nta23!');
-        expect(result).toStrictEqual({error: 'email is invalid'});
+        expect(result).toStrictEqual({error: 'error: email address is does not exist'});
     });
 });
 

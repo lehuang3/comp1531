@@ -9,7 +9,15 @@ import { getData, setData } from './dataStore.js';
 */
 function clear() {
     let store = getData();
-    store = {};
+    store = {
+    
+        // User Data
+        users: [],
+          
+        //Quiz Data
+        quizzes: []
+          
+    };
     setData(store);
     return {
 		

@@ -10,18 +10,19 @@ describe('adminAuthRegister tests', () => {
 	describe('Testing valid registrations', () => {
 		test('Simple test pass', () => {
 			let user = adminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel');
-			expect(user).toStrictEqual(expect.any(Number));
+			expect(user).toStrictEqual({authUserId: expect.any(Number)});
 		});
 
 		test('Name assumption pass', () => {
 			let user = adminAuthRegister('patel@gmail.com', 'Abcd123%', '       ', '-------');
-			expect(user).toStrictEqual(expect.any(Number));
+			expect(user).toStrictEqual({authUserId: expect.any(Number)});
 		});
 	});
 
 	describe('Testing invalid emails', () => {
 		test('Email is used by another user', () => {
 			let user = adminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel');
+            expect(user).toStrictEqual({authUserId: expect.any(Number)});
 			let invalidUser = adminAuthRegister('patel@gmail.com', 'Vdhr347@', 'Santa', 'Claus');
 			expect(invalidUser).toStrictEqual({ error: 'error: email is already used for another account' });
 		});
@@ -52,7 +53,7 @@ describe('adminAuthRegister tests', () => {
 
 		test('Last name has invalid length', () => {
 			let invalidUser = adminAuthRegister('patel@gmail.com', 'Vdhr347@', 'Santa', 'Clausandhislittlehelperfriends');
-			expect(invalidUser).toStrictEqual({ error: 'error: last name has an invlaid length' });
+			expect(invalidUser).toStrictEqual({ error: 'error: last name has an invalid length' });
 		});
 	});
 
@@ -63,7 +64,7 @@ describe('adminAuthRegister tests', () => {
 		});
 
 		test('Weak password test', () => {
-			let invalidUser = adminAuthRegister('patel@gmail.com', 'vdhr@!&hds', '$@nta', 'Claus');
+			let invalidUser = adminAuthRegister('patel@gmail.com', 'vdhr@!&hds', 'Santa', 'Claus');
 			expect(invalidUser).toStrictEqual({ error: 'error: password is too weak' });
 		});
 	});

@@ -11,7 +11,7 @@ describe('tests for adminAuthLogin', () => {
 	describe('adminAuthLogin success tests', () => {
 		test('Simple test pass', () => {
 			let userLogin = adminAuthLogin('patel@gmail.com', 'Abcd123%');
-			expect(userLogin).toStrictEqual(expect.any(Number));
+			expect(userLogin).toStrictEqual({ authUserId: expect.any(Number)});
 		});
 	});
 

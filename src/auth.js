@@ -1,5 +1,5 @@
 import { getData, setData } from './dataStore.js';
-//import isEmail from 'validator/lib/isEmail';
+import validator from 'validator';
 
 function checkValidString(string) {
 	for (const char of string) {
@@ -39,7 +39,7 @@ function checkValidPassword(string) {
 
 function user(email, password, nameFirst, nameLast) {
     let store = getData();
-    this.authUserIdID = store.users.length;
+    this.authUserId = store.users.length;
     this.email = email;
     this.password = password;
     this.nameFirst = nameFirst;
@@ -62,22 +62,22 @@ function user(email, password, nameFirst, nameLast) {
 function adminAuthRegister(email, password, nameFirst, nameLast) {
 	let store = getData();
 	// check valid email
-	for (const user of store.users) {
-		if (user.email === email) {
+    
+    for (const user of store.users) {
+		if (user.email == email) {
 			return {
 				error: 'error: email is already used for another account'
 			};
 		}
 	}
-    /*
-	if (!isEmail(email)) {
+    
+	if (!validator.isEmail(email)) {
 		return {
 			error: 'error: email is not valid'
 		};
 	}
-    */
 	// check valid first name
-	if ((nameFirst.length < 2) || (nameFirst > 20)) {
+	if ((nameFirst.length < 2) || (nameFirst.length > 20)) {
 		return {
 			error: 'error: first name has an invalid length'
 		};
@@ -89,7 +89,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
 		};
 	}
 	// check valid last name
-	if ((nameLast.length < 2) || (nameLast > 20)) {
+	if ((nameLast.length < 2) || (nameLast.length > 20)) {
 		return {
 			error: 'error: last name has an invalid length'
 		};
@@ -97,7 +97,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
 
 	if (!checkValidString(nameLast)) {
 		return {
-			error: 'error: name name contains invalid characters'
+			error: 'error: last name contains invalid characters'
 		};
 	}
 	// check valid password
@@ -112,9 +112,9 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
 		};
 	}
 	// return successful (setdata)
-	store.users.push = new user(email, password, nameFirst, nameLast)
+    const iD = store.users.length + 1;
 
-	const iD = store.users[store.users.length -1].authUserId
+    store.users.push(new user(email, password, nameFirst, nameLast));
 
 	setData(store);
 	return {
@@ -147,7 +147,7 @@ function adminAuthLogin(email, password) {
 	if (password == user.password) {
 		user.numSuccessfulLogins++;
 		return {
-			authUserId: user.iD
+			authUserId: user.authUserId
 		};
 	} else {
 		user.numFailedPasswordsSinceLastLogin++;

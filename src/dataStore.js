@@ -1,5 +1,5 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
-/*
+
 let data = {
     
   // User Data
@@ -9,11 +9,11 @@ let data = {
   quizzes: []
 	
 }
-*/
+
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
 
 
-
+/*
 let data = {
     
   // User Data
@@ -45,7 +45,7 @@ let data = {
 }
 
 
-
+*/
 
 
 /*
