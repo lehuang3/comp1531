@@ -98,19 +98,17 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
       error: 'Quiz name cannot have spaces and special characters.'
     }
   }
-
-
   for (const user of data.users) {
     if (user.userId == authUserId) {
       if (user.userQuizs.includes(quizId)) {
-        for (const quiz in data.quizzes) {
+        for (const quiz of data.quizzes) {
           if (quiz.name == name) {
             if (user.userQuizs.includes(quiz)) {
               return {
                 error: 'Quiz name already exists.'
               }
             } else {
-              for (const quiz in data.quizzes) {
+              for (const quiz of data.quizzes) {
                 if (quiz.quizId == quizId) {
                   quiz.name = name;
                   return {
