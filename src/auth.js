@@ -62,8 +62,8 @@ function user(email, password, nameFirst, nameLast) {
 function adminAuthRegister(email, password, nameFirst, nameLast) {
 	let store = getData();
 	// check valid email
-	for (const address of store.email) {
-		if (email == address) {
+	for (const user of store.users) {
+		if (user.email === email) {
 			return {
 				error: 'error: email is already used for another account'
 			};
@@ -114,7 +114,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
 	store.users.push = new user(email, password, nameFirst, nameLast)
 
 	const iD = store.users.UserId.pop();
-    store.users.UserId.push(iD);
+  store.users.UserId.push(iD);
 
 	setData(store);
 	return {
