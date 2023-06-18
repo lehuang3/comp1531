@@ -132,31 +132,38 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   * 
   * @returns {{}} - Empty object.
 */
-function adminQuizDescriptionUpdate(authUserId, quizId, description) {
+export function adminQuizDescriptionUpdate(authUserId, quizId, description) {
 	let data = getData();
-	
+
+	// check authUserId
 	if (!isValidUser(authUserId)) {
 		return {
 			error: 'Not a valid user',
 		}
 	}
+
+  // check quizId
 	if (!quizValidCheck(quizId)) {
 		return {
 			error: 'Not a valid quiz',
 		}
 	}
+
+  // check ownership of quiz
 	if (!quizValidOwner(authUserId, quizId)) {
 		return {
 			error: 'This quiz is owned by another user',
 		}
 	}
 	
+  // check description's length
 	if (isDescriptionLong(description)) {
 		return {
 			error: 'Description is too long',
 		}
 	}
 	
+  // change description
 	for (const quiz of data.quizzes) {
 		if (quiz.quizId === quizId) {
 			quiz.description = description;
