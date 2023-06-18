@@ -101,9 +101,9 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   for (const user of data.users) {
     if (user.userId == authUserId) {
       if (user.userQuizs.includes(quizId)) {
-        for (const quiz of data.quizzes) {
-          if (quiz.name == name) {
-            if (user.userQuizs.includes(quiz)) {
+        for (const exisitingQuiz of data.quizzes) {
+          if (exisitingQuiz.name == name) {
+            if (user.userQuizs.includes(exisitingQuiz)) {
               return {
                 error: 'Quiz name already exists.'
               }
