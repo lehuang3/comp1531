@@ -102,20 +102,20 @@ function adminQuizRemove(authUserId, quizId) {
           if (quiz.quizId == quizId) {
             return quiz;
           } 
-          return {
-            error: 'Quiz does not exist.'
-          }
         }
-
+        return {
+          error: 'Quiz does not exist.'
+        }
+      }
+      return {
+        error: 'You do not have access to this quiz.'
       }
     }
-    return {
-      error: 'You do not have access to this quiz.'
-    } 
+ 
   }
   return {
-    error: 'Not a valid user.'
-  }
+      error: 'Not a valid user.'
+    }
  }
 
 
