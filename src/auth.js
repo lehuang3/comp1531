@@ -27,27 +27,19 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
 function adminAuthLogin(email, password) {
 	let store = getData();
 	// check if email is valid
-	let counter = 0;
-	let iD = 0;
-	for (const address in store.email) {
-		if (address != email) {
-			counter++;
-		} else {
-			iD = store.email.indexOf(email) + 1;
-		}
-	}
+	let iD = store.users.findIndex(x => x.email === email);
 
-	if (counter == store.length) {
+	if (iD == -1) {
 		return {
 			error: 'error: email address is does not exist'
 		};
 	}
 	
-	let user = store.users.iD
+	let user = store.users[iD];
 
 	if (password == user.password) {
 		return {
-			authUserId: iD
+			authUserId: user.iD
 		};
 	} else {
 		return {
