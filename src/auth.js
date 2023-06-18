@@ -131,8 +131,26 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
  * @returns {{authUserId: number}} - User's identification
 */
 function adminAuthLogin(email, password) {
-	return {
-		authUserId: 1,
+	let store = getData();
+	// check if email is valid
+	let iD = store.users.findIndex(x => x.email === email);
+
+	if (iD == -1) {
+		return {
+			error: 'error: email address is does not exist'
+		};
+	}
+	
+	let user = store.users[iD];
+
+	if (password == user.password) {
+		return {
+			authUserId: user.iD
+		};
+	} else {
+		return {
+			error: 'error: password incorrect'
+		};
 	}
 }
 
