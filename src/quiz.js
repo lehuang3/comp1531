@@ -66,30 +66,57 @@ function adminQuizRemove(authUserId, quizId) {
   *   }
   * }
 */
+//  function adminQuizInfo(authUserId, quizId) {
+//   const data = getData();
+  
+//   for (const user of data.users) {
+//     if (user.UserId != authUserId) {
+//       return { 
+//         error: 'Not a valid user.'
+//       }
+//     } else if (user.UserId == authUserId) {
+//         if (!(user.userQuizs.includes(quizId))) {
+//           return { 
+//             error: 'You do not have access to this quiz.'
+//           }
+//         } else if (user.userQuizs.includes(quizId)) {
+//           for (const quiz of data.quizzes) {
+//             if (quiz.quizId == quizId) {
+//               return quiz
+//             }
+//           }
+//         }
+//     }
+//   }
+//  }
+
+
+
  function adminQuizInfo(authUserId, quizId) {
   const data = getData();
   
-  for (const user in data.users) {
-    if (user.UserId != authUserId) {
-      return { 
-        error: 'Not a valid user.'
-      }
-    } else if (user.UserId == authUserId) {
-        if (!(user.userQuizs.includes(quizId))) {
-          return { 
-            error: 'You do not have access to this quiz.'
-          }
-        } else if (user.userQuizs.includes(quizId)) {
-          for (const quiz in data.quizzes) {
-            if (quiz.quizId == quizId) {
-              return quiz
-            }
+  for (const user of data.users) {
+    if (user.UserId == authUserId) {
+      if (user.userQuizs.includes(quizId)) {
+        for (const quiz of data.quizzes) {
+          if (quiz.quizId == quizId) {
+            return quiz;
+          } 
+          return {
+            error: 'Quiz does not exist.'
           }
         }
+
+      }
     }
+    return {
+      error: 'You do not have access to this quiz.'
+    } 
+  }
+  return {
+    error: 'Not a valid user.'
   }
  }
-
 
 
 /**
