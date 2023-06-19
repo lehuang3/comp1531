@@ -91,4 +91,51 @@ function isDescriptionLong(description) {
 	return false;
 }
 
-export { clear }
+
+function nameQuizIsValid(name) {
+
+	let namePattern = /^[a-zA-Z0-9]+$/;
+
+	if (namePattern.test(name)) {
+		return true;
+	}
+	return false;
+}
+
+function nameLengthIsValid(name) {
+	if (name.length < 3 || name.length > 30) {
+	  return false;
+	} else {
+	  return true;
+	}
+}
+
+function nameTaken(authUserId, name) {
+
+	let data = getData();
+
+	let userQuizzes = []
+
+	for (let user of data.users) {
+		if (user.authUserId === authUserId) {
+		  userQuizzes = user.userQuizzes
+		}
+	}
+
+	for (let i = 0; i < userQuizzes.length; i++) {
+		let quizId = userQuizzes[i];
+
+		for (let j = 0; j < data.quizzes.length; j++) {
+		  if (data.quizzes[j].quizId === quizId && data.quizzes[j].name === name) {
+				return true;
+		  }
+		}
+	
+	}
+
+	return false;
+}
+
+
+
+export { clear, isValidUser, nameQuizIsValid, nameLengthIsValid, nameTaken,isDescriptionLong }
