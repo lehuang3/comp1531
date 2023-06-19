@@ -54,8 +54,8 @@ test ('quiz name too long or short', () => {
   let user = adminAuthLogin('123@email.com', '123dfsjkfsA')
   let quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1');
   
-  expect(adminQuizNameUpdate(user.authUserId, quiz.quizId, 'q1')).toStrictEqual({ error: 'Quiz name must be greater or equal to 2 chartacters and less than or equal to 30.'})
-  expect(adminQuizNameUpdate(user.authUserId, quiz.quizId, 'qdhjfasjkhfjasjhfkasghjdhfjasbgasdg')).toStrictEqual({ error: 'Quiz name must be greater or equal to 2 chartacters and less than or equal to 30.'})
+  expect(adminQuizNameUpdate(user.authUserId, quiz.quizId, 'q1')).toStrictEqual({ error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.'})
+  expect(adminQuizNameUpdate(user.authUserId, quiz.quizId, 'qdhjfasjkhfjasjhfkasghjdhfjasbgasdg')).toStrictEqual({ error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.'})
 }) 
 
 
@@ -63,7 +63,7 @@ test ('quiz name already used', () => {
   adminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test');
   let user = adminAuthLogin('123@email.com', '123dfsjkfsA')
   let quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1');
-  adminQuizCreate(user.authUserId, 'quiz', 'quiz2');
+  adminQuizCreate(user.authUserId, 'quiz2', 'quiz2');
   
   expect(adminQuizNameUpdate(user.authUserId, quiz.quizId, 'quiz2')).toStrictEqual({ error: 'Quiz name already exists.'})
 }) 

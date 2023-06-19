@@ -133,7 +133,7 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   let data = getData();
   if (name.length > 30 || name.length < 3) {
     return {
-      error: 'Quiz name must be greater or equal to 2 chartacters and less than or equal to 30.'
+      error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.'
     }
   }
   if (!/^[a-zA-Z0-9]+$/.test(name)) {
@@ -141,18 +141,36 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
       error: 'Quiz name cannot have spaces and special characters.'
     }
   }
+  let quizExist = false;
+  for (const existingQuizId of data.quizzes) {
+    if (existingQuizId.quizId == quizId) {
+      quizExist = true;
+    }
+  }
+  if (!quizExist) {
+    return {
+      error: 'Quiz does not exist.'
+    };
+  }
+  let nameExist = false;  
+  for (const doesUserOwn of data.users) {
+    if (doesUserOwn.authUserId == authUserId) {
+      let quizzesOwned = doesUserOwn.userQuizzes;
+      for (const existingQuizName of data.quizzes) {
+        if (existingQuizName.name == name && quizzesOwned.includes(existingQuizName.quizId)) {
+          nameExist = true;
+        }
+      }
+    }
+  }
+  if (nameExist) {
+    return {
+      error: 'Quiz name already exists.'
+    };
+  }
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
       if (user.userQuizzes.includes(quizId)) {
-        for (const exisitingQuiz of data.quizzes) {
-          if (exisitingQuiz.name == name && user.userQuizzes.includes(exisitingQuiz.quizId)) {
-            //if (user.userQuizzes.includes(exisitingQuiz.quizId)) {
-              return {
-                error: 'Quiz name already exists.'
-              };
-            //} 
-          }
-        }
         for (const quiz of data.quizzes) {
           if (quiz.quizId === quizId) {
             quiz.name = name;
@@ -161,9 +179,7 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
             };
           }
         }
-        return {
-          error: 'Quiz does not exist.'
-        };
+
       }
     }
   }
