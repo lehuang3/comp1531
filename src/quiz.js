@@ -111,30 +111,28 @@ function adminQuizRemove(authUserId, quizId) {
 */
 function adminQuizInfo(authUserId, quizId) {
   const data = getData();
-  
-  for (const user of data.users) {
-    if (user.authUserId == authUserId) {
-      if (user.userQuizzes.includes(quizId)) {
-        for (const quiz of data.quizzes) {
-          if (quiz.quizId == quizId) {
-            return quiz;
-          } 
-        }
-        return {
-          error: 'Quiz does not exist.'
+  for (const existingQuiz of data.quizzes) {
+    if (existingQuiz.quizId === quizId) {
+      for (const user of data.users) {
+        if (user.authUserId == authUserId) {
+          if (user.userQuizzes.includes(quizId)) {
+            return existingQuiz;
+          } else {  
+            return {
+              error: 'You do not have access to this quiz.'
+            }
+          }
         }
       }
       return {
-        error: 'You do not have access to this quiz.'
+        error: 'Not a valid user.'
       }
     }
- 
   }
   return {
-      error: 'Not a valid user.'
-    }
+    error: 'Quiz does not exist.'
+  };
  }
-
 
 /**
   * Update name of relevant quiz.

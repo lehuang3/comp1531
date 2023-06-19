@@ -19,7 +19,7 @@ test ('authUserId is not valid', () => {
   let user = adminAuthLogin('123@email.com', '123adjakjfhgaA')
   let quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1');
   
-  expect(adminQuizInfo((user.authUserId)+1, quiz.quizId)).toStrictEqual({ error: 'Not a valid user.'})
+  expect(adminQuizInfo(-1, quiz.quizId)).toStrictEqual({ error: 'Not a valid user.'})
 }) 
 
 test ('quizId is not valid', () => {
@@ -27,7 +27,7 @@ test ('quizId is not valid', () => {
   let user = adminAuthLogin('123@email.com', '123adjakjfhgaA')
   let quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1');
   
-  expect(adminQuizInfo(user.authUserId, (quiz.quizId)+1)).toStrictEqual({ error: 'Quiz does not exist.'})
+  expect(adminQuizInfo(user.authUserId, -1)).toStrictEqual({ error: 'Quiz does not exist.'})
 }) 
 
 test ('no permission to use quiz', () => {
