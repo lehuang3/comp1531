@@ -1,4 +1,7 @@
-import { getData, setData } from './dataStore.js'
+import {getData, setData} from './dataStore.js';
+import {adminAuthRegister} from './auth.js';
+import {clear, isValidUser, nameQuizIsValid, nameLengthIsValid, nameTaken, isDescriptionLong} from './other.js';
+
 
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -29,12 +32,52 @@ function adminQuizList(authUserId) {
  * @returns {quizID: number} - Quiz's identification number
 */
 function adminQuizCreate(authUserId, name, description) {
-	return {
-		quizId: 2,
-	}
+
+	let data = getData();
+
+  if(isValidUser(authUserId) === false) {
+		return {error: 'User id not valid'}
+	} else if(nameQuizIsValid(name) === false){
+		return {error: 'Quiz name is not valid'}
+	} else if(nameLengthIsValid(name) === false){
+		return {error: 'Quiz name length is not valid'}
+	} else if(nameTaken(authUserId,name) === true){
+		return {error: 'Quiz name is taken'}
+	} else if(isDescriptionLong(description) === true) {
+		return {error: 'Quiz description is not valid'}
+	} else {
+    let quizId = data.quizzes.length;
+
+    let time = Math.floor(Date.now() / 1000);
+
+    let newQuiz = {
+      quizId: quizId,
+      name: name,
+      timeCreated: time,
+      timeLastEdited: time,
+      description: description
+    };
+
+    data.quizzes.push(newQuiz);
+
+    for (let user of data.users) {
+      if (user.authUserId === authUserId) {
+        user.userQuizzes.push(quizId);
+        break;
+      }
+    }
+    
+    return {quizId: quizId};
+  }
+
+  
 }
-
-
+/*
+adminAuthRegister("Sina.hafezimasoomi@gmail.com", "Sina12356789", "Sina", "Hafezi");
+adminQuizCreate(0, 'quiz1',"descruiption");
+console.log(adminQuizCreate(0, 'quiz1',"descruiption"));
+console.log(getData())
+*/
 /**
  * Given user ID and Quiz ID it deletes it.
  * 
@@ -128,34 +171,6 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   return {
     error: 'You do not have access to this quiz.'
   }
-
-  // for (const user of data.users) {
-  //   if (!(user.UserId == authUserId)) {
-  //     return {
-  //       error: 'You do not have access to this quiz.'
-  //     }
-  //   } else if (user.authUserId == authUserId) {
-  //     if (user.userQuizs.includes(quizId)) {
-  //       for (const quiz of data.quizzes) {
-  //         if (quiz.quizId == quizId && (!quiz.name.includes(name))) {
-  //           quiz.name = name;
-  //           return {
-
-  //           }
-  //         }
-  //       }
-  //     }
-  //     return {
-  //       error: 'Quiz does not exist.'
-  //     }
-  //   }
-  //   return {
-  //     error: 'You do not have access to this quiz.'
-  //   }
-  // }
-	// return {
-  
-  // }
 }
 
 
