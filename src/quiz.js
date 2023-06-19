@@ -142,35 +142,34 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
     }
   }
   for (const user of data.users) {
-    if (user.userId == authUserId) {
-      if (user.userQuizs.includes(quizId)) {
+    if (user.authUserId === authUserId) {
+      if (user.userQuizzes.includes(quizId)) {
         for (const exisitingQuiz of data.quizzes) {
-          if (exisitingQuiz.name == name) {
-            if (user.userQuizs.includes(exisitingQuiz)) {
+          if (exisitingQuiz.name == name && user.userQuizzes.includes(exisitingQuiz.quizId)) {
+            //if (user.userQuizzes.includes(exisitingQuiz.quizId)) {
               return {
                 error: 'Quiz name already exists.'
-              }
-            } else {
-              for (const quiz of data.quizzes) {
-                if (quiz.quizId == quizId) {
-                  quiz.name = name;
-                  return {
-
-                  }
-                }
-              }
-            }
-            return {
-              error: 'Quiz does not exist.'
-            }
+              };
+            //} 
           }
         }
+        for (const quiz of data.quizzes) {
+          if (quiz.quizId === quizId) {
+            quiz.name = name;
+            return {
+
+            };
+          }
+        }
+        return {
+          error: 'Quiz does not exist.'
+        };
       }
     }
   }
   return {
     error: 'You do not have access to this quiz.'
-  }
+  };
 }
 
 

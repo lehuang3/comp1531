@@ -37,7 +37,7 @@ test ('quizId not valid', () => {
   adminAuthLogin('123@email.com', '123dfsjkfsA')
   let quiz2 = adminQuizCreate(user2.authUserId, 'quiz', 'quiz1');
 
-  expect(adminQuizNameUpdate(user2.authUserId, quiz2.quizId, 'quiz2')).toStrictEqual({ error: 'Quiz does not exist.'})
+  expect(adminQuizNameUpdate(user2.authUserId, (quiz2.quizId)+1, 'quiz2')).toStrictEqual({ error: 'Quiz does not exist.'})
 }) 
 
 test ('quiz name not valid', () => {
