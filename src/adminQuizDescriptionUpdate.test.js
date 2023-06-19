@@ -12,8 +12,7 @@ beforeEach(() => {
 });
 
 test('Check for length of description', () => {
-  expect(adminQuizDescriptionUpdate(user1.authUserId, quiz1.quizId, '012345678901234567890123456789012345678901234567890123456789012
-345678901234567890123456789012345678901234567890123456789')).toStrictEqual({
+  expect(adminQuizDescriptionUpdate(user1.authUserId, quiz1.quizId, '012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789')).toStrictEqual({
     error: 'Description is too long',
   });
 });
@@ -42,7 +41,7 @@ describe('Check for valid quiz', () => {
   	expect(adminQuizDescriptionUpdate(user1.authUserId, quiz1.quizId, 'this quiz now has description')).toStrictEqual({});
 	});
 	
-	test('Check for valid quiz - empty description, () => {
+	test('Check for valid quiz - empty description', () => {
   	expect(adminQuizDescriptionUpdate(user1.authUserId, quiz1.quizId, '')).toStrictEqual({});
 	});
 
