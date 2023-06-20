@@ -52,9 +52,11 @@ function isValidUser(authUserId) {
 function quizValidOwner(authUserId, quizId) {
 	const data = getData();
 	for (const user of data.users) {
-		if (user.authUserId === authUserId && user.userQuizzes.includes(quizId)) {
-			return true;
-		}
+			if (user.authUserId === authUserId) {
+					if (user.userQuizzes.includes(quizId)) {
+							return true;
+					}
+			}
 	}
 	return false;
 }
