@@ -1,5 +1,6 @@
 import {getData, setData} from './dataStore.js';
-import {clear, isValidUser} from './other.js';
+import {adminAuthRegister} from './auth.js';
+import {clear, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong} from './other.js';
 
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -29,19 +30,19 @@ function adminQuizList(authUserId) {
  * 
  * @returns {quizID: number} - Quiz's identification number
 */
-export function adminQuizCreate(authUserId, name, description) {
+function adminQuizCreate(authUserId, name, description) {
 
 	let data = getData();
 
   if(isValidUser(authUserId) === false) {
 		return {error: 'User id not valid'}
-	} else if(nameQuizIsValid === false){
+	} else if(nameQuizIsValid(name) === false){
 		return {error: 'Quiz name is not valid'}
-	} else if(nameLengthIsValid === false){
+	} else if(nameLengthIsValid(name) === false){
 		return {error: 'Quiz name length is not valid'}
-	} else if(nameTaken === true){
+	} else if(nameTaken(authUserId,name) === true){
 		return {error: 'Quiz name is taken'}
-	} else if(quizDescriptionIsValid === false) {
+	} else if(isDescriptionLong(description) === true) {
 		return {error: 'Quiz description is not valid'}
 	} else {
     let quizId = data.quizzes.length;
@@ -57,14 +58,25 @@ export function adminQuizCreate(authUserId, name, description) {
     };
 
     data.quizzes.push(newQuiz);
+
+    for (let user of data.users) {
+      if (user.authUserId === authUserId) {
+        user.userQuizzes.push(quizId);
+        break;
+      }
+    }
     
     return {quizId: quizId};
   }
 
   
 }
-
-
+/*
+adminAuthRegister("Sina.hafezimasoomi@gmail.com", "Sina12356789", "Sina", "Hafezi");
+adminQuizCreate(0, 'quiz1',"descruiption");
+console.log(adminQuizCreate(0, 'quiz1',"descruiption"));
+console.log(getData())
+*/
 /**
  * Given user ID and Quiz ID it deletes it.
  * 
@@ -96,16 +108,27 @@ function adminQuizRemove(authUserId, quizId) {
   *   }
   * }
 */
- function adminQuizInfo(authUserId, quizId) {
-  return {
-    quizId: 1,
-    name: 'My Quiz',
-    timeCreated:  1683125870,
-    timeLastEdited: 1683125871,
-    description: 'This is my quiz',  
+function adminQuizInfo(authUserId, quizId) {
+  const data = getData();
+  if (!quizValidCheck(quizId)) {
+    return {
+      error: 'Quiz does not exist.'
+    };
+  } else if (!isValidUser(authUserId)) {
+    return {
+      error: 'Not a valid user.'
+    }
+  } else if (!quizValidOwner(authUserId, quizId)) {
+    return {
+      error: 'You do not have access to this quiz.'
+    }
+  }
+  for (const quiz of data.quizzes) {
+    if (quiz.quizId === quizId) {
+      return quiz;
+    }
   }
 }
-
 
 /**
   * Update name of relevant quiz.
@@ -117,11 +140,37 @@ function adminQuizRemove(authUserId, quizId) {
   * @returns {{}} - Empty object.
 */
 function adminQuizNameUpdate(authUserId, quizId, name) {
-	return {
-  
+  let data = getData();
+  if (!nameLengthIsValid(name)) {
+    return {
+      error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.'
+    }
+  } else if (!nameQuizIsValid(name)) {
+    return {
+      error: 'Quiz name cannot have spaces and special characters.'
+    }
+  } else if (nameTaken(authUserId, name)) {
+    return {
+      error: 'Quiz name already exists.'
+    } 
+  } else if (!quizValidCheck(quizId)) {
+    return {
+      error: 'Quiz does not exist.'
+    }
+  } else if (!quizValidOwner(authUserId, quizId)) {
+    return {
+      error: 'You do not have access to this quiz.'
+    }
   }
-}
+  for (const quiz of data.quizzes) {
+    if (quiz.quizId === quizId) {
+      quiz.name = name;
+      return {
 
+      };
+    }
+  }
+}  
 
 /** 
   * Update the description of the relevant quiz.
@@ -132,8 +181,49 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   * 
   * @returns {{}} - Empty object.
 */
-function adminQuizDescriptionUpdate(authUserId, quizId, description) {
+export function adminQuizDescriptionUpdate(authUserId, quizId, description) {
+	let data = getData();
+
+	// check authUserId
+	if (!isValidUser(authUserId)) {
+		return {
+			error: 'Not a valid user',
+		}
+	}
+
+  // check quizId
+	if (!quizValidCheck(quizId)) {
+		return {
+			error: 'Not a valid quiz',
+		}
+	}
+
+  // check ownership of quiz
+	if (!quizValidOwner(authUserId, quizId)) {
+		return {
+			error: 'This quiz is owned by another user',
+		}
+	}
+	
+  // check description's length
+	if (isDescriptionLong(description)) {
+		return {
+			error: 'Description is too long',
+		}
+	}
+	
+  // change description
+	for (const quiz of data.quizzes) {
+		if (quiz.quizId === quizId) {
+			quiz.description = description;
+		}
+	}
+	
+	setData(data);
+	
   return {
 
   }
 }
+
+export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate }

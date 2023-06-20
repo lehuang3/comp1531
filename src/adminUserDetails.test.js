@@ -11,7 +11,7 @@ beforeEach(() => {
 test('Check for invalid auth', () => {
   expect(adminUserDetails(user1.authUserId + 1)).toStrictEqual({
     error: 'Not a valid user',
-  })
+  }) 
 });
 
 test('Check for valid auth', () => {
