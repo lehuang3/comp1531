@@ -62,15 +62,15 @@ function user(email, password, nameFirst, nameLast) {
 function adminAuthRegister(email, password, nameFirst, nameLast) {
 	let store = getData();
 	// check valid email
-    
-    for (const user of store.users) {
+
+	for (const user of store.users) {
 		if (user.email == email) {
 			return {
 				error: 'error: email is already used for another account'
 			};
 		}
 	}
-    
+
 	if (!validator.isEmail(email)) {
 		return {
 			error: 'error: email is not valid'
@@ -112,9 +112,9 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
 		};
 	}
 	// return successful (setdata)
-    const iD = store.users.length;
+	const iD = store.users.length;
 
-    store.users.push(new user(email, password, nameFirst, nameLast));
+	store.users.push(new user(email, password, nameFirst, nameLast));
 
 	setData(store);
 	return {
@@ -141,7 +141,7 @@ function adminAuthLogin(email, password) {
 			error: 'error: email address is does not exist'
 		};
 	}
-	
+
 	let user = store.users[iD];
 
 	if (password == user.password) {
@@ -168,6 +168,7 @@ function adminAuthLogin(email, password) {
   * @returns {user: {userId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
 */  
 function adminUserDetails(authUserId) {
+
 	let data = getData();
 		// loop through users array
 		for (const user of data.users) {

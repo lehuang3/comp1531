@@ -2,6 +2,7 @@ import {getData, setData} from './dataStore.js';
 import {adminAuthRegister} from './auth.js';
 import {clear, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong} from './other.js';
 
+
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  * 
@@ -57,7 +58,6 @@ function adminQuizList(authUserId) {
  * @returns {quizID: number} - Quiz's identification number
 */
 function adminQuizCreate(authUserId, name, description) {
-
 	let data = getData();
 
   if(isValidUser(authUserId) === false) {
@@ -105,8 +105,31 @@ function adminQuizCreate(authUserId, name, description) {
  * @returns {{}} - Empty object
 */
 function adminQuizRemove(authUserId, quizId) {
-  return {
-      
+  if(isValidUser(authUserId) === false){
+    return {error: 'User id not valid'} 
+  }else if(quizValidCheck(quizId) === false){
+    return {error: 'quiz id not valid'}
+  }else if(quizValidOwner(authUserId,quizId) === false){
+    return {error: 'Not owner of quiz'}
+  }
+  else {
+
+    let data = getData();
+    
+    for (let index = 0; index < data.quizzes.length; index++) {
+      if(data.quizzes[index].quizId === quizId) {
+        data.quizzes.splice(index, 1);
+      }
+    }
+
+    for (let user of data.users) {
+      if (user.authUserId === authUserId) {
+        user.userQuizzes.splice(user.userQuizzes.indexOf(quizId), 1);
+      }
+    }
+
+    return{};
+
   }
 }
 
@@ -245,4 +268,5 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   }
 }
 
-export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate , adminQuizDescriptionUpdate, adminQuizList}
+export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate , adminQuizDescriptionUpdate, adminQuizList,adminQuizRemove}
+
