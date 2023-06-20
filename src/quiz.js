@@ -1,6 +1,6 @@
 import {getData, setData} from './dataStore.js';
 import {adminAuthRegister} from './auth.js';
-import {clear, isValidUser, nameQuizIsValid, nameLengthIsValid, nameTaken, isDescriptionLong} from './other.js';
+import {clear, isValidUser, nameQuizIsValid, nameLengthIsValid, nameTaken, isDescriptionLong, quizValidCheck, quizValidOwner } from './other.js';
 
 
 /**
@@ -111,28 +111,27 @@ function adminQuizRemove(authUserId, quizId) {
 */
 function adminQuizInfo(authUserId, quizId) {
   const data = getData();
-  for (const existingQuiz of data.quizzes) {
-    if (existingQuiz.quizId === quizId) {
-      for (const user of data.users) {
-        if (user.authUserId == authUserId) {
-          if (user.userQuizzes.includes(quizId)) {
-            return existingQuiz;
-          } else {  
-            return {
-              error: 'You do not have access to this quiz.'
-            }
-          }
-        }
-      }
-      return {
-        error: 'Not a valid user.'
+  if (!quizValidCheck(quizId)) {
+    return {
+      error: 'Quiz does not exist.'
+    };
+  } else if (!isValidUser(authUserId)) {
+    return {
+      error: 'Not a valid user.'
+    }
+  } else if (quizValidOwner) {
+    return {
+      error: 'You do not have access to this quiz.'
+    }
+  }
+  for (const user of data.users) {
+    if (user.authUserId == authUserId) {
+      if (user.userQuizzes.includes(quizId)) {
+        return existingQuiz;
       }
     }
   }
-  return {
-    error: 'Quiz does not exist.'
-  };
- }
+}
 
 /**
   * Update name of relevant quiz.
