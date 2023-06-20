@@ -10,16 +10,42 @@ import {clear, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nam
  * @returns {array object} - List of quizzes
 */
 function adminQuizList(authUserId) {
-  return {
-    quizzes: [
-      {
-        quizId: 1,
-        name: 'My Quiz',
-      }
-    ]
-	}
-}
+  if(isValidUser(authUserId) === false) {
 
+    return {error: 'User id not valid'};
+
+  } else {
+
+    let data = getData();
+
+    let userQuizs = [];
+    let quizzList = [];
+
+    for(let user of data.users) {
+      if(user.authUserId === authUserId){
+        userQuizs = user.userQuizzes;
+      }
+    }
+
+    for(let quiz of data.quizzes) {
+
+      if(userQuizs.includes(quiz.quizId)){
+
+        let currentUserQuiz = {
+            quizId: quiz.quizId,
+            name: quiz.name,
+        };
+
+        quizzList.push(currentUserQuiz);
+
+      }
+
+    }
+
+    return {quizzes: quizzList};
+
+  }
+}
 
 /**
  * Given basic details about a new quiz, create one for the logged in user.
@@ -62,21 +88,14 @@ function adminQuizCreate(authUserId, name, description) {
     for (let user of data.users) {
       if (user.authUserId === authUserId) {
         user.userQuizzes.push(quizId);
-        break;
+        
       }
     }
     
     return {quizId: quizId};
   }
-
-  
 }
-/*
-adminAuthRegister("Sina.hafezimasoomi@gmail.com", "Sina12356789", "Sina", "Hafezi");
-adminQuizCreate(0, 'quiz1',"descruiption");
-console.log(adminQuizCreate(0, 'quiz1',"descruiption"));
-console.log(getData())
-*/
+
 /**
  * Given user ID and Quiz ID it deletes it.
  * 
@@ -181,7 +200,7 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   * 
   * @returns {{}} - Empty object.
 */
-export function adminQuizDescriptionUpdate(authUserId, quizId, description) {
+function adminQuizDescriptionUpdate(authUserId, quizId, description) {
 	let data = getData();
 
 	// check authUserId
@@ -226,4 +245,4 @@ export function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   }
 }
 
-export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate }
+export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate , adminQuizDescriptionUpdate, adminQuizList}
