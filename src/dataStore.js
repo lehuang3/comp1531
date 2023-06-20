@@ -1,21 +1,20 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
 
 let data = {
-    
+
   // User Data
   users: [],
-    
-  //Quiz Data
+
+  // Quiz Data
   quizzes: []
-	
+
 }
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
 
-
 /*
 let data = {
-    
+
   // User Data
   users: [
     {
@@ -29,7 +28,6 @@ let data = {
     userQuizzes:[1]
     }
   ],
-    
 
   //Quiz Data
   quizzes: [
@@ -41,12 +39,10 @@ let data = {
       description: 'This is my quiz',
     }
   ]
-	
+
 }
 
-
 */
-
 
 /*
 Example usage
@@ -63,13 +59,13 @@ Example usage
 */
 
 // Use get() to access the data
-function getData() {
-  return data;
+function getData () {
+  return data
 }
 
 // Use set(newData) to pass in the entire data object, with modifications made
-function setData(newData) {
-  data = newData;
+function setData (newData) {
+  data = newData
 }
 
-export { getData, setData };
+export { getData, setData }
