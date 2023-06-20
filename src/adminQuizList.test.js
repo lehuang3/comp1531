@@ -1,4 +1,4 @@
-import { adminQuizCreate } from './quiz.js';
+import { adminQuizCreate, adminQuizList } from './quiz.js';
 import { adminAuthRegister } from './auth.js';
 import { clear } from './other.js';
 // Runs before each test
@@ -16,15 +16,15 @@ test('Valid entry', () => {
 	adminAuthRegister("Sina.hafezimasoomi@gmail.com", "Sina12356789", "Sina", "Hafezi");
   adminQuizCreate(0, 'Sina',"descruiption");
 	adminQuizCreate(0, 'Sina1',"descruiption");
-  expect(adminQuizList(1)).toStrictEqual({ 
+  expect(adminQuizList(0)).toStrictEqual({ 
 		quizzes: [
 			{
-				quizId: expect.any(String),
-				name: expect.any(Number),
+				quizId: expect.any(Number),
+				name: expect.any(String),
 			},
 			{
-				quizId: expect.any(String),
-				name: expect.any(Number),
+				quizId: expect.any(Number),
+				name: expect.any(String),
 			}
   	]
 	});

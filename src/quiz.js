@@ -22,8 +22,8 @@ function adminQuizList(authUserId) {
     let quizzList = [];
 
     for(let user of data.users) {
-      if(user.UserId === authUserId){
-        userQuizs = user.userQuizs;
+      if(user.authUserId === authUserId){
+        userQuizs = user.userQuizzes;
       }
     }
 
@@ -46,8 +46,10 @@ function adminQuizList(authUserId) {
 
   }
 }
-
-
+//adminAuthRegister("Sina.hafezimasoomi@gmail.com", "Sina12356789", "Sina", "Hafezi");
+ //// adminQuizCreate(0, 'Sina',"descruiption");
+	//adminQuizCreate(0, 'Sina1',"descruiption");
+//console.log(adminQuizList(0));
 /**
  * Given basic details about a new quiz, create one for the logged in user.
  * 
@@ -57,7 +59,7 @@ function adminQuizList(authUserId) {
  * 
  * @returns {quizID: number} - Quiz's identification number
 */
-export function adminQuizCreate(authUserId, name, description) {
+function adminQuizCreate(authUserId, name, description) {
 
 	let data = getData();
 
@@ -95,8 +97,6 @@ export function adminQuizCreate(authUserId, name, description) {
     
     return {quizId: quizId};
   }
-
-  
 }
 /*
 adminAuthRegister("Sina.hafezimasoomi@gmail.com", "Sina12356789", "Sina", "Hafezi");
@@ -176,3 +176,5 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
 
   }
 }
+
+export {adminQuizCreate, adminQuizList};
