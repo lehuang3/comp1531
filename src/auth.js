@@ -1,4 +1,5 @@
 import { getData, setData } from './dataStore.js';
+import { isValidUser } from './other.js';
 import validator from 'validator';
 
 function checkValidString(string) {
@@ -42,8 +43,7 @@ function user(email, password, nameFirst, nameLast) {
     this.authUserId = store.users.length;
     this.email = email;
     this.password = password;
-    this.nameFirst = nameFirst;
-    this.nameLast = nameLast;
+    this.name = nameFirst + ' ' + nameLast;
     this.numSuccessfulLogins = 1;
     this.numFailedPasswordsSinceLastLogin = 0;
     this.userQuizzes = [];
@@ -145,6 +145,7 @@ function adminAuthLogin(email, password) {
 	let user = store.users[iD];
 
 	if (password == user.password) {
+		user.numFailedPasswordsSinceLastLogin = 0;
 		user.numSuccessfulLogins++;
 		return {
 			authUserId: user.authUserId
@@ -159,23 +160,34 @@ function adminAuthLogin(email, password) {
 
 
 /**
-	* Given an admin user's authUserId, return details about the user
-	* 
-	* @param {number} authUserId - User's identification 
-	* 
-	* @returns {user: {authUserId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
-*/
+<<<<<<< HEAD
+  * Given an admin user's authUserId, return details about the user
+  * 
+  * @param {number} authUserId - User's identification 
+  * 
+  * @returns {user: {userId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
+*/  
 function adminUserDetails(authUserId) {
-	return {
-		user:
-		{
-			authUserId: 1,
-			name: 'Hayden Smith',
-			email: 'hayden.smith@unsw.edu.au',
-			numSuccessfulLogins: 3,
-			numFailedPasswordsSinceLastLogin: 1,
+	let data = getData();
+		// loop through users array
+		for (const user of data.users) {
+			if (user.authUserId === authUserId) {
+				// return details of corresponding user
+				return {
+					user: {
+						userId: user.authUserId,
+						name: user.name,
+						email: user.email,
+						numSuccessfulLogins: user.numSuccessfulLogins,
+						numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
+					}
+				}
+			}
 		}
-	}
+	// error if no corresponding user found
+  return {
+    error: 'Not a valid user',
+  }
 }
 
-export { adminAuthRegister, adminAuthLogin };
+export { adminAuthLogin, adminAuthRegister, adminUserDetails }
