@@ -138,4 +138,4 @@ function nameTaken(authUserId, name) {
 
 
 
-export { clear, isValidUser, nameQuizIsValid, nameLengthIsValid, nameTaken,isDescriptionLong, quizValidCheck }
+export { clear, isValidUser, nameQuizIsValid, nameLengthIsValid, nameTaken,isDescriptionLong, quizValidCheck, quizValidOwner }

@@ -1,6 +1,6 @@
 import {getData, setData} from './dataStore.js';
 import {adminAuthRegister} from './auth.js';
-import {clear, isValidUser, nameQuizIsValid, nameLengthIsValid, nameTaken, isDescriptionLong, quizValidCheck} from './other.js';
+import {clear, isValidUser, nameQuizIsValid, nameLengthIsValid, nameTaken, isDescriptionLong, quizValidCheck, quizValidOwner} from './other.js';
 
 
 /**
@@ -138,16 +138,16 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   } else if (!nameQuizIsValid(name)) {
     return {
       error: 'Quiz name cannot have spaces and special characters.'
-    } 
-  } else if (!quizValidCheck(quizId)) {
-    return {
-      error: 'Quiz does not exist.'
     }
   } else if (nameTaken(authUserId, name)) {
     return {
       error: 'Quiz name already exists.'
     } 
-  } else if (!isValidUser(authUserId)) {
+  } else if (!quizValidCheck(quizId)) {
+    return {
+      error: 'Quiz does not exist.'
+    }
+  } else if (!quizValidOwner(authUserId, quizId)) {
     return {
       error: 'You do not have access to this quiz.'
     }
@@ -160,7 +160,7 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
       };
     }
   }
-} 
+}  
 
 /** 
   * Update the description of the relevant quiz.
