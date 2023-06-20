@@ -1,6 +1,6 @@
 import { adminQuizCreate } from './quiz.js';
 import { adminAuthRegister } from './auth.js';
-
+import { clear } from './other.js';
 // Runs before each test
 beforeEach(() => {
   clear();
@@ -18,17 +18,17 @@ test('name < 3', () => {
 
 test('name > 30', () => {
 	adminAuthRegister("Sina.hafezimasoomi@gmail.com", "Sina12356789", "Sina", "Hafezi");
-  expect(adminQuizCreate(0, 'WhisperingMoonlitMysteries123',"descruiption")).toStrictEqual({ error: expect.any(String) });
+  expect(adminQuizCreate(0, 'WhisperingMoonlitMysteries1235649',"descruiption")).toStrictEqual({ error: expect.any(String) });
 });
 
 test('name only has !', () => {
-	adminAuthRegister("Sina.hafezimasoomi@gmail.com", "Sina12356789", "Sina", "Hafezi");
+adminAuthRegister("Sina.hafezimasoomi@gmail.com", "Sina12356789", "Sina", "Hafezi");
   expect(adminQuizCreate(0, '!',"descruiption")).toStrictEqual({ error: expect.any(String) });
 });
 
 test('name in use', () => {
 	adminAuthRegister("Sina.hafezimasoomi@gmail.com", "Sina12356789", "Sina", "Hafezi");
-	adminQuizCreate(0, 'quiz1',"descruiption")
+  adminQuizCreate(0, 'quiz1',"descruiption");
   expect(adminQuizCreate(0, 'quiz1',"descruiption")).toStrictEqual({ error: expect.any(String) });
 });
 
