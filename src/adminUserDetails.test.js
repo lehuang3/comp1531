@@ -79,7 +79,6 @@ describe('Check for successful and failed logins due to incorrect password', () 
 	
 });
 
-
 describe('Check for successful and failed logins due to incorrect email', () => {
 	test('Successful followed by failed login', () => {
 		adminAuthLogin('Minh@gmail.com', '1234abcd');
