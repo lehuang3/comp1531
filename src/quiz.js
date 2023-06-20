@@ -2,7 +2,6 @@ import {getData, setData} from './dataStore.js';
 import {adminAuthRegister} from './auth.js';
 import {clear, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong} from './other.js';
 
-
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  * 
@@ -109,16 +108,27 @@ function adminQuizRemove(authUserId, quizId) {
   *   }
   * }
 */
- function adminQuizInfo(authUserId, quizId) {
-  return {
-    quizId: 1,
-    name: 'My Quiz',
-    timeCreated:  1683125870,
-    timeLastEdited: 1683125871,
-    description: 'This is my quiz',  
+function adminQuizInfo(authUserId, quizId) {
+  const data = getData();
+  if (!quizValidCheck(quizId)) {
+    return {
+      error: 'Quiz does not exist.'
+    };
+  } else if (!isValidUser(authUserId)) {
+    return {
+      error: 'Not a valid user.'
+    }
+  } else if (!quizValidOwner(authUserId, quizId)) {
+    return {
+      error: 'You do not have access to this quiz.'
+    }
+  }
+  for (const quiz of data.quizzes) {
+    if (quiz.quizId === quizId) {
+      return quiz;
+    }
   }
 }
-
 
 /**
   * Update name of relevant quiz.
@@ -216,4 +226,4 @@ export function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   }
 }
 
-export { adminQuizNameUpdate, adminQuizCreate }
+export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate }

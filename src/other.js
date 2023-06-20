@@ -52,14 +52,14 @@ function isValidUser(authUserId) {
 function quizValidOwner(authUserId, quizId) {
 	const data = getData();
 	for (const user of data.users) {
-		if (user.authUserId === authUserId) {
-			if (user.userQuizzes.includes(quizId)) {
-				return true;
-			}
+		if (user.authUserId === authUserId && user.userQuizzes.includes(quizId)) {
+			return true;
 		}
 	}
 	return false;
 }
+
+
 
 /**
  * Given a quizId check if it exists within the datastore, returning true if it exists
@@ -139,4 +139,5 @@ function nameTaken(authUserId, name) {
 }
 
 export { clear, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken,isDescriptionLong, quizValidOwner }
+
 
