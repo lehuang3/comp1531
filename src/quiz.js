@@ -1,5 +1,6 @@
 import {getData, setData} from './dataStore.js';
-import {clear, isValidUser} from './other.js';
+import {adminAuthRegister} from './auth.js';
+import {clear, isValidUser, nameQuizIsValid, nameLengthIsValid, nameTaken, isDescriptionLong} from './other.js';
 
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -35,13 +36,13 @@ export function adminQuizCreate(authUserId, name, description) {
 
   if(isValidUser(authUserId) === false) {
 		return {error: 'User id not valid'}
-	} else if(nameQuizIsValid === false){
+	} else if(nameQuizIsValid(name) === false){
 		return {error: 'Quiz name is not valid'}
-	} else if(nameLengthIsValid === false){
+	} else if(nameLengthIsValid(name) === false){
 		return {error: 'Quiz name length is not valid'}
-	} else if(nameTaken === true){
+	} else if(nameTaken(authUserId,name) === true){
 		return {error: 'Quiz name is taken'}
-	} else if(quizDescriptionIsValid === false) {
+	} else if(isDescriptionLong(description) === true) {
 		return {error: 'Quiz description is not valid'}
 	} else {
     let quizId = data.quizzes.length;
@@ -57,14 +58,25 @@ export function adminQuizCreate(authUserId, name, description) {
     };
 
     data.quizzes.push(newQuiz);
+
+    for (let user of data.users) {
+      if (user.authUserId === authUserId) {
+        user.userQuizzes.push(quizId);
+        break;
+      }
+    }
     
     return {quizId: quizId};
   }
 
   
 }
-
-
+/*
+adminAuthRegister("Sina.hafezimasoomi@gmail.com", "Sina12356789", "Sina", "Hafezi");
+adminQuizCreate(0, 'quiz1',"descruiption");
+console.log(adminQuizCreate(0, 'quiz1',"descruiption"));
+console.log(getData())
+*/
 /**
  * Given user ID and Quiz ID it deletes it.
  * 
