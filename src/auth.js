@@ -166,16 +166,16 @@ function adminAuthLogin(email, password) {
 	* @returns {user: {authUserId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
 */
 function adminUserDetails(authUserId) {
-	return {
-		user:
-		{
-			authUserId: 1,
-			name: 'Hayden Smith',
-			email: 'hayden.smith@unsw.edu.au',
-			numSuccessfulLogins: 3,
-			numFailedPasswordsSinceLastLogin: 1,
-		}
-	}
+  return {
+    user:
+    {
+      userId: 1,
+      name: 'Hayden Smith',
+      email: 'hayden.smith@unsw.edu.au',
+      numSuccessfulLogins: 3,
+      numFailedPasswordsSinceLastLogin: 1,
+    }
+  }
 }
 
-export { adminAuthRegister, adminAuthLogin };
+export { adminAuthLogin, adminAuthRegister }
