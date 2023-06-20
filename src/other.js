@@ -52,7 +52,7 @@ function isValidUser(authUserId) {
 function quizValidOwner(authUserId, quizId) {
 	const data = getData();
 	for (const user of data.users) {
-		if (user.UsersId === authUserId && user.userQuizs.includes(quizId)) {
+		if (user.authUserId === authUserId && user.userQuizzes.includes(quizId)) {
 			return true;
 		}
 	}
@@ -138,4 +138,4 @@ function nameTaken(authUserId, name) {
 
 
 
-export { clear, isValidUser, nameQuizIsValid, nameLengthIsValid, nameTaken,isDescriptionLong }
+export { clear, isValidUser, nameQuizIsValid, nameLengthIsValid, nameTaken,isDescriptionLong, quizValidCheck }

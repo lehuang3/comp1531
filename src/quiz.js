@@ -1,6 +1,6 @@
 import {getData, setData} from './dataStore.js';
 import {adminAuthRegister} from './auth.js';
-import {clear, isValidUser, nameQuizIsValid, nameLengthIsValid, nameTaken, isDescriptionLong} from './other.js';
+import {clear, isValidUser, nameQuizIsValid, nameLengthIsValid, nameTaken, isDescriptionLong, quizValidCheck} from './other.js';
 
 
 /**
@@ -131,63 +131,36 @@ function adminQuizRemove(authUserId, quizId) {
 */
 function adminQuizNameUpdate(authUserId, quizId, name) {
   let data = getData();
-  if (name.length > 30 || name.length < 3) {
+  if (!nameLengthIsValid(name)) {
     return {
       error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.'
     }
-  }
-  if (!/^[a-zA-Z0-9]+$/.test(name)) {
+  } else if (!nameQuizIsValid(name)) {
     return {
       error: 'Quiz name cannot have spaces and special characters.'
-    }
-  }
-  let quizExist = false;
-  for (const existingQuizId of data.quizzes) {
-    if (existingQuizId.quizId == quizId) {
-      quizExist = true;
-    }
-  }
-  if (!quizExist) {
+    } 
+  } else if (!quizValidCheck(quizId)) {
     return {
       error: 'Quiz does not exist.'
-    };
-  }
-  let nameExist = false;  
-  for (const doesUserOwn of data.users) {
-    if (doesUserOwn.authUserId == authUserId) {
-      let quizzesOwned = doesUserOwn.userQuizzes;
-      for (const existingQuizName of data.quizzes) {
-        if (existingQuizName.name == name && quizzesOwned.includes(existingQuizName.quizId)) {
-          nameExist = true;
-        }
-      }
     }
-  }
-  if (nameExist) {
+  } else if (nameTaken(authUserId, name)) {
     return {
       error: 'Quiz name already exists.'
-    };
-  }
-  for (const user of data.users) {
-    if (user.authUserId === authUserId) {
-      if (user.userQuizzes.includes(quizId)) {
-        for (const quiz of data.quizzes) {
-          if (quiz.quizId === quizId) {
-            quiz.name = name;
-            return {
-
-            };
-          }
-        }
-
-      }
+    } 
+  } else if (!isValidUser(authUserId)) {
+    return {
+      error: 'You do not have access to this quiz.'
     }
   }
-  return {
-    error: 'You do not have access to this quiz.'
-  };
-}
+  for (const quiz of data.quizzes) {
+    if (quiz.quizId === quizId) {
+      quiz.name = name;
+      return {
 
+      };
+    }
+  }
+} 
 
 /** 
   * Update the description of the relevant quiz.
