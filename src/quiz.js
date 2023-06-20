@@ -1,7 +1,6 @@
 import {getData, setData} from './dataStore.js';
 import {adminAuthRegister} from './auth.js';
-import {clear, isValidUser, nameQuizIsValid, nameLengthIsValid, nameTaken, isDescriptionLong, quizValidCheck, quizValidOwner } from './other.js';
-
+import {clear, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong} from './other.js';
 
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -141,11 +140,37 @@ function adminQuizInfo(authUserId, quizId) {
   * @returns {{}} - Empty object.
 */
 function adminQuizNameUpdate(authUserId, quizId, name) {
-	return {
-  
+  let data = getData();
+  if (!nameLengthIsValid(name)) {
+    return {
+      error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.'
+    }
+  } else if (!nameQuizIsValid(name)) {
+    return {
+      error: 'Quiz name cannot have spaces and special characters.'
+    }
+  } else if (nameTaken(authUserId, name)) {
+    return {
+      error: 'Quiz name already exists.'
+    } 
+  } else if (!quizValidCheck(quizId)) {
+    return {
+      error: 'Quiz does not exist.'
+    }
+  } else if (!quizValidOwner(authUserId, quizId)) {
+    return {
+      error: 'You do not have access to this quiz.'
+    }
   }
-}
+  for (const quiz of data.quizzes) {
+    if (quiz.quizId === quizId) {
+      quiz.name = name;
+      return {
 
+      };
+    }
+  }
+}  
 
 /** 
   * Update the description of the relevant quiz.
@@ -156,10 +181,49 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   * 
   * @returns {{}} - Empty object.
 */
-function adminQuizDescriptionUpdate(authUserId, quizId, description) {
+export function adminQuizDescriptionUpdate(authUserId, quizId, description) {
+	let data = getData();
+
+	// check authUserId
+	if (!isValidUser(authUserId)) {
+		return {
+			error: 'Not a valid user',
+		}
+	}
+
+  // check quizId
+	if (!quizValidCheck(quizId)) {
+		return {
+			error: 'Not a valid quiz',
+		}
+	}
+
+  // check ownership of quiz
+	if (!quizValidOwner(authUserId, quizId)) {
+		return {
+			error: 'This quiz is owned by another user',
+		}
+	}
+	
+  // check description's length
+	if (isDescriptionLong(description)) {
+		return {
+			error: 'Description is too long',
+		}
+	}
+	
+  // change description
+	for (const quiz of data.quizzes) {
+		if (quiz.quizId === quizId) {
+			quiz.description = description;
+		}
+	}
+	
+	setData(data);
+	
   return {
 
   }
 }
-export { adminQuizInfo, adminQuizCreate }
 
+export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate }
