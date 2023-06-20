@@ -46,10 +46,7 @@ function adminQuizList(authUserId) {
 
   }
 }
-//adminAuthRegister("Sina.hafezimasoomi@gmail.com", "Sina12356789", "Sina", "Hafezi");
- //// adminQuizCreate(0, 'Sina',"descruiption");
-	//adminQuizCreate(0, 'Sina1',"descruiption");
-//console.log(adminQuizList(0));
+
 /**
  * Given basic details about a new quiz, create one for the logged in user.
  * 
@@ -98,12 +95,7 @@ function adminQuizCreate(authUserId, name, description) {
     return {quizId: quizId};
   }
 }
-/*
-adminAuthRegister("Sina.hafezimasoomi@gmail.com", "Sina12356789", "Sina", "Hafezi");
-adminQuizCreate(0, 'quiz1',"descruiption");
-console.log(adminQuizCreate(0, 'quiz1',"descruiption"));
-console.log(getData())
-*/
+
 /**
  * Given user ID and Quiz ID it deletes it.
  * 
@@ -208,7 +200,7 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   * 
   * @returns {{}} - Empty object.
 */
-export function adminQuizDescriptionUpdate(authUserId, quizId, description) {
+function adminQuizDescriptionUpdate(authUserId, quizId, description) {
 	let data = getData();
 
 	// check authUserId
@@ -253,4 +245,4 @@ export function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   }
 }
 
-export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate }
+export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate , adminQuizDescriptionUpdate, adminQuizList}
