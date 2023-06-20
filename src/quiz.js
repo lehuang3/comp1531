@@ -1,5 +1,6 @@
 import {getData, setData} from './dataStore.js';
-import {clear, isValidUser} from './other.js';
+import {adminAuthRegister} from './auth.js';
+import {clear, isValidUser, nameQuizIsValid, nameLengthIsValid, nameTaken, isDescriptionLong,quizValidCheck} from './other.js';
 
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -9,14 +10,42 @@ import {clear, isValidUser} from './other.js';
  * @returns {array object} - List of quizzes
 */
 function adminQuizList(authUserId) {
-  return {
-    quizzes: [
-      {
-        quizId: 1,
-        name: 'My Quiz',
+  if(isValidUser(authUserId) === false) {
+
+    return {error: 'User id not valid'};
+
+  } else {
+
+    let data = getData();
+
+    let userQuizs = [];
+    let quizzList = [];
+
+    for(let user of data.users) {
+      if(user.authUserId === authUserId){
+        userQuizs = user.userQuizzes;
       }
-    ]
-	}
+    }
+
+    for(let quiz of data.quizzes) {
+
+      if(userQuizs.includes(quiz.quizId)){
+
+        let currentUserQuiz = {
+            quizId: quiz.quizId,
+            name: quiz.name,
+        };
+
+        quizzList.push(currentUserQuiz);
+
+      }
+
+    }
+
+    return {quizzes: quizzList};
+
+  }
+
 }
 
 
@@ -29,19 +58,18 @@ function adminQuizList(authUserId) {
  * 
  * @returns {quizID: number} - Quiz's identification number
 */
-export function adminQuizCreate(authUserId, name, description) {
-
+function adminQuizCreate(authUserId, name, description) {
 	let data = getData();
 
   if(isValidUser(authUserId) === false) {
 		return {error: 'User id not valid'}
-	} else if(nameQuizIsValid === false){
+	} else if(nameQuizIsValid(name) === false){
 		return {error: 'Quiz name is not valid'}
-	} else if(nameLengthIsValid === false){
+	} else if(nameLengthIsValid(name) === false){
 		return {error: 'Quiz name length is not valid'}
-	} else if(nameTaken === true){
+	} else if(nameTaken(authUserId,name) === true){
 		return {error: 'Quiz name is taken'}
-	} else if(quizDescriptionIsValid === false) {
+	} else if(isDescriptionLong(description) === true) {
 		return {error: 'Quiz description is not valid'}
 	} else {
     let quizId = data.quizzes.length;
@@ -57,12 +85,21 @@ export function adminQuizCreate(authUserId, name, description) {
     };
 
     data.quizzes.push(newQuiz);
+
+    for (let user of data.users) {
+      if (user.authUserId === authUserId) {
+        user.userQuizzes.push(quizId);
+        break;
+      }
+    }
     
     return {quizId: quizId};
   }
 
+
   
 }
+
 
 
 /**
@@ -79,20 +116,22 @@ function adminQuizRemove(authUserId, quizId) {
   }else if(quizValidCheck(quizId) === false){
     return {error: 'quiz id not valid'}
   } else {
-    let data = getData();
 
-    for (let i = 0; i < data.quizzes.length; i++) {
-      if(data.quizzes[i].quizId === quizId) {
-        data.quizzes.splice(i, 1);
+    let data = getData();
+    
+    for (let index = 0; index < data.quizzes.length; index++) {
+      if(data.quizzes[index].quizId === quizId) {
+        data.quizzes.splice(index, 1);
       }
     }
 
     for (let user of data.users) {
-      let quizIndex = user.userQuizs.indexOf(quizIdToRemove);
-      if (user.userId === authUserId) {
-        user.userQuizs.splice(user.userQuizs.indexOf(quizId), 1);
+      if (user.authUserId === authUserId) {
+        user.userQuizzes.splice(user.userQuizzes.indexOf(quizId), 1);
       }
     }
+
+    return{};
 
   }
 }
@@ -155,3 +194,5 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
 
   }
 }
+
+export {adminQuizCreate, adminQuizList,adminQuizRemove};
