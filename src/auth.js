@@ -112,7 +112,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
 		};
 	}
 	// return successful (setdata)
-    const iD = store.users.length + 1;
+    const iD = store.users.length;
 
     store.users.push(new user(email, password, nameFirst, nameLast));
 

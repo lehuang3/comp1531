@@ -119,16 +119,14 @@ function adminQuizInfo(authUserId, quizId) {
     return {
       error: 'Not a valid user.'
     }
-  } else if (quizValidOwner) {
+  } else if (!quizValidOwner(authUserId, quizId)) {
     return {
       error: 'You do not have access to this quiz.'
     }
   }
-  for (const user of data.users) {
-    if (user.authUserId == authUserId) {
-      if (user.userQuizzes.includes(quizId)) {
-        return existingQuiz;
-      }
+  for (const quiz of data.quizzes) {
+    if (quiz.quizId === quizId) {
+      return quiz;
     }
   }
 }
