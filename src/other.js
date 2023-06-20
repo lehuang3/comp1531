@@ -59,6 +59,8 @@ function quizValidOwner(authUserId, quizId) {
 	return false;
 }
 
+
+
 /**
  * Given a quizId check if it exists within the datastore, returning true if it exists
  * and false if it does not
@@ -136,6 +138,6 @@ function nameTaken(authUserId, name) {
 	return false;
 }
 
+export { clear, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken,isDescriptionLong, quizValidOwner }
 
 
-export { clear, isValidUser, nameQuizIsValid, nameLengthIsValid, nameTaken,isDescriptionLong,quizValidCheck, quizValidOwner}
