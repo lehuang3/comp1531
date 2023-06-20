@@ -1,6 +1,6 @@
 import {getData, setData} from './dataStore.js';
 import {adminAuthRegister} from './auth.js';
-import {clear, isValidUser, nameQuizIsValid, nameLengthIsValid, nameTaken, isDescriptionLong,quizValidCheck} from './other.js';
+import {clear, isValidUser, nameQuizIsValid, nameLengthIsValid, nameTaken, isDescriptionLong, quizValidCheck, quizValidOwner} from './other.js';
 
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -115,7 +115,10 @@ function adminQuizRemove(authUserId, quizId) {
     return {error: 'User id not valid'} 
   }else if(quizValidCheck(quizId) === false){
     return {error: 'quiz id not valid'}
-  } else {
+  }else if(quizValidOwner(authUserId,quizId) === false){
+    return {error: 'Not owner of quiz'}
+  }
+  else {
 
     let data = getData();
     

@@ -15,8 +15,17 @@ test('Invalide User ID', () => {
 
 test('Invalide quiz ID', () => {
   adminAuthRegister("Sina.hafezimasoomi@gmail.com", "Sina12356789", "Sina", "Hafezi");
+  adminAuthRegister("hayden.hafezimasoomi@gmail.com", "hayden", "hayden", "Hafezi");
   adminQuizCreate(0, 'Sina',"descruiption");
-  expect(adminQuizRemove(0,1)).toStrictEqual({ error: expect.any(String) });
+  adminQuizCreate(1, 'hayden',"descruiption");
+  expect(adminQuizRemove(1,0)).toStrictEqual({ error: expect.any(String) });
+});
+
+
+test('Invalide User ID', () => {
+  adminAuthRegister("Sina.hafezimasoomi@gmail.com", "Sina12356789", "Sina", "Hafezi");
+  adminQuizCreate(0, 'Sina',"descruiption");
+  expect(adminQuizRemove(1,0)).toStrictEqual({ error: expect.any(String) });
 });
 
 test('Valid entry', () => {
