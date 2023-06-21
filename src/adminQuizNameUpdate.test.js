@@ -99,10 +99,10 @@ describe ('Quiz name is not valid', () => {
     expect(adminQuizNameUpdate(user.authUserId, quiz.quizId, 'quiz#')).toStrictEqual({ error: 'Quiz name cannot have special characters.'})
   })
   test ('User 2 quiz name not valid', () => {
-    expect(adminQuizNameUpdate(user2.authUserId, quiz2.quizId, '@#$!ad12 131')).toStrictEqual({ error: 'Quiz name cannot have special characters.'})
+    expect(adminQuizNameUpdate(user2.authUserId, quiz2.quizId, 'ad12_131')).toStrictEqual({ error: 'Quiz name cannot have special characters.'})
   })
   test ('User 3 quiz name not valid', () => {
-    expect(adminQuizNameUpdate(user3.authUserId, quiz3.quizId, 'Quiz@')).toStrictEqual({ error: 'Quiz name cannot have special characters.'})
+    expect(adminQuizNameUpdate(user3.authUserId, quiz3.quizId, 'Quiz-')).toStrictEqual({ error: 'Quiz name cannot have special characters.'})
   })
 })
 
