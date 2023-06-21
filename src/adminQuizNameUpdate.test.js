@@ -26,6 +26,12 @@ describe('Passing cases', () => {
   test('User 2 changes quiz name to valid quiz name 2', () => {
     expect(adminQuizNameUpdate(user2.authUserId, quiz2.quizId, 'hello')).toStrictEqual({ })
   })
+  test('User 3 changes quiz name to valid quiz name 1', () => {
+    expect(adminQuizNameUpdate(user3.authUserId, quiz3.quizId, 'quiz with spaces')).toStrictEqual({ })
+  })
+  test('User 3 changes quiz name to valid quiz name 2', () => {
+    expect(adminQuizNameUpdate(user3.authUserId, quiz3.quizId, 'QuIz wiTh SpaceS')).toStrictEqual({ })
+  })
 })
 
 describe('authUserId is not valid', () => {
@@ -77,26 +83,26 @@ describe('quizId is not valid', () => {
   })
 })
 
-describe('Quiz name is not valid', () => {
-  clear()
-  adminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test')
-  const user = adminAuthLogin('123@email.com', '123dfsjkfsA')
-  const quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1')
-  adminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test')
-  const user2 = adminAuthLogin('1234@email.com', '123dfsjkfsA')
-  const quiz2 = adminQuizCreate(user2.authUserId, 'quiz', 'quiz1')
-  adminAuthRegister('12345@email.com', '123dfsjkfsA', 'maple', 'syrup')
-  const user3 = adminAuthLogin('12345@email.com', '123dfsjkfsA')
-  const quiz3 = adminQuizCreate(user3.authUserId, 'quiz', 'quiz1')
+describe ('Quiz name is not valid', () => {
+  clear();
+  adminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test');
+  let user = adminAuthLogin('123@email.com', '123dfsjkfsA')
+  let quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1');
+  adminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test');
+  let user2 = adminAuthLogin('1234@email.com', '123dfsjkfsA')
+  let quiz2 = adminQuizCreate(user2.authUserId, 'quiz', 'quiz1');
+  adminAuthRegister('12345@email.com', '123dfsjkfsA', 'maple', 'syrup');
+  let user3 = adminAuthLogin('12345@email.com', '123dfsjkfsA')
+  let quiz3 = adminQuizCreate(user3.authUserId, 'quiz', 'quiz1');
 
-  test('User 1 quiz name not valid', () => {
-    expect(adminQuizNameUpdate(user.authUserId, quiz.quizId, 'quiz#')).toStrictEqual({ error: 'Quiz name cannot have spaces and special characters.' })
+  test ('User 1 quiz name not valid', () => {
+    expect(adminQuizNameUpdate(user.authUserId, quiz.quizId, 'quiz#')).toStrictEqual({ error: 'Quiz name cannot have special characters.'})
   })
-  test('User 2 quiz name not valid', () => {
-    expect(adminQuizNameUpdate(user2.authUserId, quiz2.quizId, 'quiz 1')).toStrictEqual({ error: 'Quiz name cannot have spaces and special characters.' })
+  test ('User 2 quiz name not valid', () => {
+    expect(adminQuizNameUpdate(user2.authUserId, quiz2.quizId, 'ad12_131')).toStrictEqual({ error: 'Quiz name cannot have special characters.'})
   })
-  test('User 3 quiz name not valid', () => {
-    expect(adminQuizNameUpdate(user3.authUserId, quiz3.quizId, 'Quiz@')).toStrictEqual({ error: 'Quiz name cannot have spaces and special characters.' })
+  test ('User 3 quiz name not valid', () => {
+    expect(adminQuizNameUpdate(user3.authUserId, quiz3.quizId, 'Quiz-')).toStrictEqual({ error: 'Quiz name cannot have special characters.'})
   })
 })
 

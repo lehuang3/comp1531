@@ -174,7 +174,7 @@ function adminQuizNameUpdate (authUserId, quizId, name) {
     }
   } else if (!nameQuizIsValid(name)) {
     return {
-      error: 'Quiz name cannot have spaces and special characters.'
+      error: 'Quiz name cannot have special characters.'
     }
   } else if (nameTaken(authUserId, name)) {
     return {
@@ -191,7 +191,8 @@ function adminQuizNameUpdate (authUserId, quizId, name) {
   }
   for (const quiz of data.quizzes) {
     if (quiz.quizId === quizId) {
-      quiz.name = name
+      quiz.name = name;
+      setData(data);
       return {
 
       }
