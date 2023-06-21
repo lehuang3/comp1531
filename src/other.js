@@ -92,7 +92,7 @@ function isDescriptionLong (description) {
 }
 
 function nameQuizIsValid (name) {
-  const namePattern = /^[a-z\d\-_\s]+$/i;
+  const namePattern = /^(?!^\s+$)[a-zA-Z0-9\s]+$/;
 
   if (namePattern.test(name)) {
     return true

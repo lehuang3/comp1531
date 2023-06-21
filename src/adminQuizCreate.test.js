@@ -26,6 +26,11 @@ test('name only has !', () => {
   expect(adminQuizCreate(0, '!', 'descruiption')).toStrictEqual({ error: expect.any(String) })
 })
 
+test('name only has space', () => {
+  adminAuthRegister('Sina.hafezimasoomi@gmail.com', 'Sina12356789', 'Sina', 'Hafezi')
+  expect(adminQuizCreate(0, ' ', 'descruiption')).toStrictEqual({ error: expect.any(String) })
+})
+
 test('name with space', () => {
   adminAuthRegister('Sina.hafezimasoomi@gmail.com', 'Sina12356789', 'Sina', 'Hafezi')
   expect(adminQuizCreate(0, 'Hellow World', 'descruiption')).toStrictEqual({ quizId: expect.any(Number) })
