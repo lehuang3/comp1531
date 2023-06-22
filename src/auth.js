@@ -157,7 +157,6 @@ function adminAuthLogin (email, password) {
 }
 
 /**
-<<<<<<< HEAD
   * Given an admin user's authUserId, return details about the user
   *
   * @param {number} authUserId - User's identification
