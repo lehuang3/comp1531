@@ -20,15 +20,10 @@ describe('adminAuthRegister tests', () => {
   })
 
   describe('Testing invalid emails', () => {
-    test.each([
-        ['patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel'],
-        ['patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel'],
-        ['patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel'],
-        ['patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel'],
-    ])('Email is used by another user, testing (%s, %s, %s, %s)', (email, password, nameFirst, nameLast) => {
-      const user = adminAuthRegister(email, password, nameFirst, nameLast)
+    test('Email is used by another user', () => {
+      const user = adminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel')
       expect(user).toStrictEqual({ authUserId: expect.any(Number) })
-      const invalidUser = adminAuthRegister(email, password, nameFirst, nameLast)
+      const invalidUser = adminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel')
       expect(invalidUser).toStrictEqual({ error: 'error: email is already used for another account' })
     })
 
@@ -97,8 +92,13 @@ describe('adminAuthRegister tests', () => {
       expect(invalidUser).toStrictEqual({ error: 'error: password is too short' })
     })
 
-    test('Weak password test', () => {
-      const invalidUser = adminAuthRegister('patel@gmail.com', 'vdhr@!&hds', 'Santa', 'Claus')
+    test.each([
+        ['Ldasjhirebs'],
+        ['swe@yrjdjdjkWw'],
+        ['8347983749823649'],
+        ['vdhr@!&hds'],
+    ])('Weak password test, testing: %s', (password) => {
+      const invalidUser = adminAuthRegister('patel@gmail.com', password, 'Santa', 'Claus')
       expect(invalidUser).toStrictEqual({ error: 'error: password is too weak' })
     })
   })
