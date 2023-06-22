@@ -16,15 +16,25 @@ describe('tests for adminAuthLogin', () => {
   })
 
   describe('adminAuthLogin invalid email', () => {
-    test('Email invalid', () => {
-      const userLogin = adminAuthLogin('patel2@gmail.com', 'Abcd123%')
+    test.each([
+        ['santa@claus.com', 'abcd123%'],
+        ['21l2@312ail.com', 'SUs'],
+        ['pat23@132123ail.com', 'Abcd123%'],
+        ['patel@1@ail.com', 'Password'],
+    ])('Email invalid', (email, password) => {
+      const userLogin = adminAuthLogin(email, password)
       expect(userLogin).toStrictEqual({ error: 'error: email address is does not exist' })
     })
   })
 
   describe('adminAuthLogin invalid password', () => {
-    test('Password incorrect', () => {
-      const userLogin = adminAuthLogin('patel@gmail.com', 'abcd123%')
+    test.each([
+        ['patel@gmail.com', 'abcd123%'],
+        ['patel@gmail.com', 'notherightpass'],
+        ['patel@gmail.com', '34792834792'],
+        ['patel@gmail.com', '          '],
+    ])('Password incorrect for (%s, %s)', (email, password) => {
+      const userLogin = adminAuthLogin(email, password)
       expect(userLogin).toStrictEqual({ error: 'error: password incorrect' })
     })
   })
