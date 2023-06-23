@@ -91,6 +91,13 @@ function isDescriptionLong (description) {
   return false
 }
 
+/**
+ * Given a quiz name, check if the quiz name contains valid characters
+ * 
+ * @param {string} name name of the quiz
+ * 
+ * @returns {boolean} - true or false
+*/
 function nameQuizIsValid (name) {
   const namePattern = /^[a-z\d\s]+$/i;
 
@@ -100,6 +107,13 @@ function nameQuizIsValid (name) {
   return false
 }
 
+/**
+ * Given a name of a quiz, check if the quiz name is of valid length
+ * 
+ * @param {string} name name of the quiz
+ *  
+ * @returns {boolean} - true or false 
+*/
 function nameLengthIsValid (name) {
   if (name.length < 3 || name.length > 30) {
     return false
@@ -108,6 +122,14 @@ function nameLengthIsValid (name) {
   }
 }
 
+/**
+ * Given a name to a quiz, check if the user already has a quiz with the same name
+ * 
+ * @param {number} authUserId 
+ * @param {string} name 
+ * 
+ * @returns {boolean} - true or false
+ */
 function nameTaken (authUserId, name) {
   const data = getData()
 

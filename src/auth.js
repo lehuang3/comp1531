@@ -1,6 +1,13 @@
 import { getData, setData } from './dataStore.js'
 import validator from 'validator'
 
+/**
+ * Given a string, check if the string is valid
+ * 
+ * @param {string} string string to be checked
+ * 
+ * @returns {boolean} true or false 
+*/
 function checkValidString (string) {
   for (const char of string) {
     const integer = char.charCodeAt()
@@ -17,6 +24,13 @@ function checkValidString (string) {
   return true
 }
 
+/**
+ * Given a string check if the string is a valid password string
+ * 
+ * @param {string} string input password string
+ * 
+ * @returns {boolean} - true or false
+*/
 function checkValidPassword (string) {
   let intCounter = 0
   let charCounter = 0
@@ -37,6 +51,14 @@ function checkValidPassword (string) {
   }
 }
 
+/**
+ * Given user information populate a user object with the imformation in the datastore
+ * 
+ * @param {string} email - User's email address
+ * @param {string} password - User's password
+ * @param {string} nameFirst - User's first name
+ * @param {string} nameLast - User's last name
+*/
 function User (email, password, nameFirst, nameLast) {
   const store = getData()
   this.authUserId = store.users.length
@@ -157,7 +179,6 @@ function adminAuthLogin (email, password) {
 }
 
 /**
-<<<<<<< HEAD
   * Given an admin user's authUserId, return details about the user
   *
   * @param {number} authUserId - User's identification
