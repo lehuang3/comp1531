@@ -61,16 +61,24 @@ function adminQuizCreate (authUserId, name, description) {
   } else if (isDescriptionLong(description) === true) {
     return { error: 'Quiz description is not valid' }
   } else {
-    const quizId = data.quizzes.length
+
+    let quizLength = data.quizzes.length;
+    let quizId = 0;
+
+    if(quizLength === 0){
+      quizId = 0;
+    } else {
+      quizId = data.quizzes[quizLength - 1].quizId + 1;
+    }
 
     const time = Math.floor(Date.now() / 1000)
 
     const newQuiz = {
-      quizId,
-      name,
+      quizId: quizId,
+      name: name,
       timeCreated: time,
       timeLastEdited: time,
-      description
+      description: description
     }
 
     data.quizzes.push(newQuiz)
@@ -80,7 +88,7 @@ function adminQuizCreate (authUserId, name, description) {
         user.userQuizzes.push(quizId)
       }
     }
-
+    setData(data);
     return { quizId }
   }
 }
@@ -114,7 +122,8 @@ function adminQuizRemove (authUserId, quizId) {
         user.userQuizzes.splice(user.userQuizzes.indexOf(quizId), 1)
       }
     }
-
+    
+    setData(data);
     return {}
   }
 }
