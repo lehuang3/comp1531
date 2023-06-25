@@ -1,5 +1,4 @@
 import { getData, setData } from './dataStore.js'
-import { adminAuthRegister } from './auth.js'
 import { isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong } from './other.js'
 
 /**
