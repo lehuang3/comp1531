@@ -1,6 +1,28 @@
 import { getData, setData } from './dataStore.js'
 import validator from 'validator'
 
+interface AdminAuthRegisterReturn {
+  authUserId: number;
+}
+
+interface AdminAuthLoginReturn {
+  authUserId: number;
+}
+
+interface AdminUserDetailsReturn {
+  user: {
+    userId: number,
+    name: string,
+    email: string,
+    numSuccessfulLogins: number,
+    numFailedPasswordsSinceLastLogin: number
+  }
+}
+
+interface ErrorObject {
+  error: string;
+}
+
 /**
  * Given a string, check if the string is valid
  * 
@@ -8,7 +30,7 @@ import validator from 'validator'
  * 
  * @returns {boolean} true or false 
 */
-function checkValidString (string) {
+function checkValidString (string: string): boolean {
   for (const char of string) {
     const integer = char.charCodeAt()
     if ((integer > 64) && (integer < 91)) {
@@ -31,7 +53,7 @@ function checkValidString (string) {
  * 
  * @returns {boolean} - true or false
 */
-function checkValidPassword (string) {
+function checkValidPassword (string:string): boolean {
   let intCounter = 0
   let charCounter = 0
   for (const char of string) {
@@ -59,7 +81,7 @@ function checkValidPassword (string) {
  * @param {string} nameFirst - User's first name
  * @param {string} nameLast - User's last name
 */
-function User (email, password, nameFirst, nameLast) {
+function User (email: string, password: string, nameFirst: string, nameLast: string) {
   const store = getData()
   this.authUserId = store.users.length
   this.email = email
@@ -80,7 +102,7 @@ function User (email, password, nameFirst, nameLast) {
  *
  * @returns {{authUserId: number}} - User's identification
 */
-function adminAuthRegister (email, password, nameFirst, nameLast) {
+function adminAuthRegister (email: string, password: string, nameFirst: string, nameLast: string): AdminAuthRegisterReturn | ErrorObject {
   const store = getData()
   // check valid email
 
@@ -151,7 +173,7 @@ function adminAuthRegister (email, password, nameFirst, nameLast) {
  *
  * @returns {{authUserId: number}} - User's identification
 */
-function adminAuthLogin (email, password) {
+function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn | ErrorObject {
   const store = getData()
   // check if email is valid
   const iD = store.users.findIndex(x => x.email === email)
@@ -185,7 +207,7 @@ function adminAuthLogin (email, password) {
   *
   * @returns {user: {userId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
 */
-function adminUserDetails (authUserId) {
+function adminUserDetails (authUserId: number): AdminUserDetailsReturn | ErrorObject  {
   const data = getData()
   // loop through users array
   for (const user of data.users) {

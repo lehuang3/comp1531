@@ -37,6 +37,17 @@ app.get('/echo', (req: Request, res: Response) => {
   return res.json(ret);
 });
 
+app.get('/v1/admin/user/details', (req: Request, res: Response) => {
+  const authUserId = req.body;
+
+  const response = adminUserDetails(authUserId);
+
+  if ('error' in response) {
+  return res.status(401).json(response);
+  }
+  res.json(response);
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
