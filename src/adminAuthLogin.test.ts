@@ -1,16 +1,16 @@
 import { adminAuthRegister, adminAuthLogin } from './auth.js'
-import { clear } from './other.js'
+import { requestClear, requestAdminAuthRegister, requestAdminAuthLogin } from './other'
 
 // Tests to make sure that adminAuthLogin is working correctly when it should and returning errors when it should
 describe('tests for adminAuthLogin', () => {
   beforeEach(() => {
-    clear()
-    adminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel')
+    requestClear()
+    requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel')
   })
 
   describe('adminAuthLogin success tests', () => {
     test('Simple test pass', () => {
-      const userLogin = adminAuthLogin('patel@gmail.com', 'Abcd123%')
+      const userLogin = requestAdminAuthLogin('patel@gmail.com', 'Abcd123%')
       expect(userLogin).toStrictEqual({ authUserId: expect.any(Number) })
     })
   })
@@ -22,7 +22,7 @@ describe('tests for adminAuthLogin', () => {
         ['pat23@132123ail.com', 'Abcd123%'],
         ['patel@1@ail.com', 'Password'],
     ])('Email invalid', (email, password) => {
-      const userLogin = adminAuthLogin(email, password)
+      const userLogin = requestAdminAuthLogin(email, password)
       expect(userLogin).toStrictEqual({ error: 'error: email address is does not exist' })
     })
   })
@@ -34,7 +34,7 @@ describe('tests for adminAuthLogin', () => {
         ['patel@gmail.com', '34792834792'],
         ['patel@gmail.com', '          '],
     ])('Password incorrect for (%s, %s)', (email, password) => {
-      const userLogin = adminAuthLogin(email, password)
+      const userLogin = requestAdminAuthLogin(email, password)
       expect(userLogin).toStrictEqual({ error: 'error: password incorrect' })
     })
   })

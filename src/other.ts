@@ -253,6 +253,29 @@ function requestAdminAuthRegister(email: string, password: string, nameFirst: st
   return JSON.parse(res.body.toString());
 }
 
+/**
+ * Send a 'delete' request to the corresponding server route to reset the
+ * application state, returning the response in the form of a javascript object
+ * @param {{}} - No parameters
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminAuthLogin(email: string, password: string) {
+  const res = request(
+    'POST',
+    SERVER_URL + '/v1/admin/auth/login',
+    {
+      // Note that for PUT/POST requests, you should
+      // use the key 'json' instead of the query string 'qs'
+      json: {
+        email,
+        password,
+      }
+    }
+  );
+  //console.log(JSON.parse(res.body.toString()));
+  return JSON.parse(res.body.toString());
+}
 
 export { clear, save, read, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
-quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister };
+quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin };
