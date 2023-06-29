@@ -1,7 +1,9 @@
-import { getData, setData } from './dataStore.js'
-import validator from 'validator'
+import { getData, setData } from './dataStore'
+import { Data } from './dataStore';
+import validator from 'validator';
+import fs from 'fs';
 
-interface AdminAuthRegisterReturn {
+export interface AdminAuthRegisterReturn {
   authUserId: number;
 }
 
@@ -19,8 +21,17 @@ interface AdminUserDetailsReturn {
   }
 }
 
-interface ErrorObject {
+export interface ErrorObject {
   error: string;
+}
+
+const save = (data: Data) => {
+  fs.writeFileSync('./dataStore.json', JSON.stringify(data));
+}
+
+const read = () => {
+  const dataJson = fs.readFileSync('./dataStore.json');
+  return JSON.parse(String(dataJson));
 }
 
 /**
@@ -32,7 +43,7 @@ interface ErrorObject {
 */
 function checkValidString (string: string): boolean {
   for (const char of string) {
-    const integer = char.charCodeAt()
+    const integer = char.charCodeAt(0)
     if ((integer > 64) && (integer < 91)) {
       continue
     } else if ((integer > 96) && (integer < 123)) {
@@ -57,7 +68,7 @@ function checkValidPassword (string:string): boolean {
   let intCounter = 0
   let charCounter = 0
   for (const char of string) {
-    const integer = char.charCodeAt()
+    const integer = char.charCodeAt(0)
     if ((integer > 64) && (integer < 91)) {
       charCounter++
     } else if ((integer > 96) && (integer < 123)) {
@@ -155,11 +166,11 @@ function adminAuthRegister (email: string, password: string, nameFirst: string, 
     }
   }
   // return successful (setdata)
-  const iD = store.users.length
+  const iD = store.users.length;
 
-  store.users.push(new User(email, password, nameFirst, nameLast))
-
+  store.users.push(new (User as any)(email, password, nameFirst, nameLast));
   setData(store)
+  save(store)
   return {
     authUserId: iD
   }
@@ -187,17 +198,20 @@ function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn 
   const user = store.users[iD]
 
   if (password === user.password) {
-    user.numFailedPasswordsSinceLastLogin = 0
-    user.numSuccessfulLogins++
+    user.numFailedPasswordsSinceLastLogin = 0;
+    user.numSuccessfulLogins++;
+    save(store);
     return {
       authUserId: user.authUserId
     }
   } else {
-    user.numFailedPasswordsSinceLastLogin++
+    user.numFailedPasswordsSinceLastLogin++;
+    save(store);
     return {
       error: 'error: password incorrect'
     }
   }
+  
 }
 
 /**
@@ -208,7 +222,7 @@ function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn 
   * @returns {user: {userId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
 */
 function adminUserDetails (authUserId: number): AdminUserDetailsReturn | ErrorObject  {
-  const data = getData()
+  const data = read();
   // loop through users array
   for (const user of data.users) {
     if (user.authUserId === authUserId) {

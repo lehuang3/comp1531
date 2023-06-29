@@ -1,4 +1,4 @@
-import { getData, setData } from './dataStore.js'
+import { getData, setData } from './dataStore'
 
 /**
  * Does not return anything, resets the state of the application
@@ -31,7 +31,7 @@ function clear () {
  *
  * @returns {boolean} - true or false
 */
-function isValidUser (authUserId) {
+function isValidUser (authUserId: number): boolean {
   const data = getData()
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
@@ -49,7 +49,7 @@ function isValidUser (authUserId) {
  *
  * @returns {boolean} - true or false
 */
-function quizValidOwner (authUserId, quizId) {
+function quizValidOwner (authUserId: number, quizId: number): boolean {
   const data = getData()
   for (const user of data.users) {
     if (user.authUserId === authUserId && user.userQuizzes.includes(quizId)) {
@@ -67,7 +67,7 @@ function quizValidOwner (authUserId, quizId) {
  *
  * @returns {boolean} - true or false
  */
-function quizValidCheck (quizId) {
+function quizValidCheck (quizId: number): boolean {
   const data = getData()
   for (const quiz of data.quizzes) {
     if (quiz.quizId === quizId) {
@@ -84,7 +84,7 @@ function quizValidCheck (quizId) {
  *
  * @returns {boolean} - true or false
 */
-function isDescriptionLong (description) {
+function isDescriptionLong (description: string): boolean {
   if (description.length > 100) {
     return true
   }
@@ -98,7 +98,7 @@ function isDescriptionLong (description) {
  * 
  * @returns {boolean} - true or false
 */
-function nameQuizIsValid (name) {
+function nameQuizIsValid (name: string): boolean {
   const namePattern = /^[a-z\d\s]+$/i;
 
   if (namePattern.test(name)) {
@@ -114,7 +114,7 @@ function nameQuizIsValid (name) {
  *  
  * @returns {boolean} - true or false 
 */
-function nameLengthIsValid (name) {
+function nameLengthIsValid (name: string): boolean {
   if (name.length < 3 || name.length > 30) {
     return false
   } else {
@@ -130,10 +130,10 @@ function nameLengthIsValid (name) {
  * 
  * @returns {boolean} - true or false
  */
-function nameTaken (authUserId, name) {
+function nameTaken (authUserId: number, name: string): boolean {
   const data = getData()
 
-  let userQuizzes = []
+  let userQuizzes: number[] = []
 
   for (const user of data.users) {
     if (user.authUserId === authUserId) {

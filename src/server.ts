@@ -6,7 +6,7 @@ import cors from 'cors';
 import YAML from 'yaml';
 import sui from 'swagger-ui-express';
 import fs from 'fs';
-
+import { adminUserDetails } from './auth';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -22,7 +22,6 @@ app.use('/docs', sui.serve, sui.setup(YAML.parse(file), { swaggerOptions: { docE
 
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
-
 // ====================================================================
 //  ================= WORK IS DONE BELOW THIS LINE ===================
 // ====================================================================
@@ -38,10 +37,8 @@ app.get('/echo', (req: Request, res: Response) => {
 });
 
 app.get('/v1/admin/user/details', (req: Request, res: Response) => {
-  const authUserId = req.body;
-
+  const authUserId = parseInt(req.query.authUserId);
   const response = adminUserDetails(authUserId);
-
   if ('error' in response) {
   return res.status(401).json(response);
   }

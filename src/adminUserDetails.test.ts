@@ -1,8 +1,8 @@
 import request from 'sync-request';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
-import {adminAuthRegister, adminAuthLogin } from './auth'
-import { clear } from './other'
+import {adminAuthRegister, adminAuthLogin, adminUserDetails } from './auth';
+import { clear } from './other';
 
 function requestGetAdminUserDetails(authUserId: number) {
   const res = request(
@@ -16,26 +16,33 @@ function requestGetAdminUserDetails(authUserId: number) {
       }
     }
   );
+  //console.log(JSON.parse(res.body.toString()));
   return JSON.parse(res.body.toString());
 }
 
-let user1:any;
-
+let user1;
+let userId: number;
 beforeEach(() => {
   clear();
-  const user1 = adminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le');
+  user1 = adminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le');
+  // authUserId will always be in user1 as adminAuthRegister always succeeds
+  // but we need this if statement to bypass typescript
+  if ('authUserId' in user1) {
+    userId = user1.authUserId;
+  }
+  
 })
 
 test('Check for invalid auth', () => {
-  expect(requestGetAdminUserDetails(user1.authUserId + 1)).toStrictEqual({
+  expect(requestGetAdminUserDetails(userId + 1)).toStrictEqual({
     error: 'Not a valid user'
   })
 })
 
 test('Check for valid auth', () => {
-  expect(requestGetAdminUserDetails(user1.authUserId)).toStrictEqual({
+  expect(requestGetAdminUserDetails(userId)).toStrictEqual({
     user: {
-      userId: user1.authUserId,
+      userId: userId,
       name: 'Minh Le',
       email: 'Minh@gmail.com',
       numSuccessfulLogins: 1,
@@ -47,9 +54,9 @@ test('Check for valid auth', () => {
 describe('Check for successful and failed logins due to incorrect password', () => {
   test('Successful followed by failed login', () => {
     adminAuthLogin('Minh@gmail.com', '1234abcd')
-    expect(requestGetAdminUserDetails(user1.authUserId)).toStrictEqual({
+    expect(requestGetAdminUserDetails(userId)).toStrictEqual({
       user: {
-        userId: user1.authUserId,
+        userId: userId,
         name: 'Minh Le',
         email: 'Minh@gmail.com',
         numSuccessfulLogins: 2,
@@ -58,9 +65,9 @@ describe('Check for successful and failed logins due to incorrect password', () 
     })
 
     adminAuthLogin('Minh@gmail.com', '12345abcd')
-    expect(requestGetAdminUserDetails(user1.authUserId)).toStrictEqual({
+    expect(requestGetAdminUserDetails(userId)).toStrictEqual({
       user: {
-        userId: user1.authUserId,
+        userId: userId,
         name: 'Minh Le',
         email: 'Minh@gmail.com',
         numSuccessfulLogins: 2,
@@ -71,9 +78,9 @@ describe('Check for successful and failed logins due to incorrect password', () 
 
   test('Failed followed by successful login', () => {
     adminAuthLogin('Minh@gmail.com', '12345abcd')
-    expect(requestGetAdminUserDetails(user1.authUserId)).toStrictEqual({
+    expect(requestGetAdminUserDetails(userId)).toStrictEqual({
       user: {
-        userId: user1.authUserId,
+        userId: userId,
         name: 'Minh Le',
         email: 'Minh@gmail.com',
         numSuccessfulLogins: 1,
@@ -82,9 +89,9 @@ describe('Check for successful and failed logins due to incorrect password', () 
     })
 
     adminAuthLogin('Minh@gmail.com', '1234abcd')
-    expect(requestGetAdminUserDetails(user1.authUserId)).toStrictEqual({
+    expect(requestGetAdminUserDetails(userId)).toStrictEqual({
       user: {
-        userId: user1.authUserId,
+        userId: userId,
         name: 'Minh Le',
         email: 'Minh@gmail.com',
         numSuccessfulLogins: 2,
@@ -97,9 +104,9 @@ describe('Check for successful and failed logins due to incorrect password', () 
 describe('Check for successful and failed logins due to incorrect email', () => {
   test('Successful followed by failed login', () => {
     adminAuthLogin('Minh@gmail.com', '1234abcd')
-    expect(requestGetAdminUserDetails(user1.authUserId)).toStrictEqual({
+    expect(requestGetAdminUserDetails(userId)).toStrictEqual({
       user: {
-        userId: user1.authUserId,
+        userId: userId,
         name: 'Minh Le',
         email: 'Minh@gmail.com',
         numSuccessfulLogins: 2,
@@ -108,9 +115,9 @@ describe('Check for successful and failed logins due to incorrect email', () => 
     })
 
     adminAuthLogin('Minh@gmaill.com', '1234abcd')
-    expect(requestGetAdminUserDetails(user1.authUserId)).toStrictEqual({
+    expect(requestGetAdminUserDetails(userId)).toStrictEqual({
       user: {
-        userId: user1.authUserId,
+        userId: userId,
         name: 'Minh Le',
         email: 'Minh@gmail.com',
         numSuccessfulLogins: 2,
@@ -121,9 +128,9 @@ describe('Check for successful and failed logins due to incorrect email', () => 
 
   test('Failed followed by successful login', () => {
     adminAuthLogin('Minh@gmaill.com', '1234abcd')
-    expect(requestGetAdminUserDetails(user1.authUserId)).toStrictEqual({
+    expect(requestGetAdminUserDetails(userId)).toStrictEqual({
       user: {
-        userId: user1.authUserId,
+        userId: userId,
         name: 'Minh Le',
         email: 'Minh@gmail.com',
         numSuccessfulLogins: 1,
@@ -132,9 +139,9 @@ describe('Check for successful and failed logins due to incorrect email', () => 
     })
 
     adminAuthLogin('Minh@gmail.com', '1234abcd')
-    expect(requestGetAdminUserDetails(user1.authUserId)).toStrictEqual({
+    expect(requestGetAdminUserDetails(userId)).toStrictEqual({
       user: {
-        userId: user1.authUserId,
+        userId: userId,
         name: 'Minh Le',
         email: 'Minh@gmail.com',
         numSuccessfulLogins: 2,

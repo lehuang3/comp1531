@@ -1,6 +1,28 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
+export interface Data {
+  users: User[];
+  quizzes: Quiz[]
+}
 
-let data = {
+interface Quiz {
+  quizId: number;
+  name: string;
+  timeCreated: number;
+  timeLastEdited: number;
+  description: string
+}
+
+interface User {
+  authUserId: number;
+  name: string
+  email: string;
+  password: string;
+  numSuccessfulLogins: number;
+  numFailedPasswordsSinceLastLogin: number;
+  userQuizzes: number[]
+}
+
+let data: Data = {
 
   // User Data
   users: [],
@@ -59,12 +81,12 @@ Example usage
 */
 
 // Use get() to access the data
-function getData () {
+function getData (): Data {
   return data
 }
 
 // Use set(newData) to pass in the entire data object, with modifications made
-function setData (newData) {
+function setData (newData: Data) {
   data = newData
 }
 
