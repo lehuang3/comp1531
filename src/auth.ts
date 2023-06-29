@@ -23,14 +23,14 @@ interface AdminUserDetailsReturn {
 
 export interface ErrorObject {
   error: string;
-}
+} 
 
 const save = (data: Data) => {
-  fs.writeFileSync('./dataStore.json', JSON.stringify(data));
+  fs.writeFileSync('./src/dataStore.json', JSON.stringify(data));
 }
 
 const read = () => {
-  const dataJson = fs.readFileSync('./dataStore.json');
+  const dataJson = fs.readFileSync('./src/dataStore.json');
   return JSON.parse(String(dataJson));
 }
 
