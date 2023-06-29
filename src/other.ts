@@ -1,5 +1,55 @@
 import fs from 'fs';
 import { Data } from './dataStore';
+import request from 'sync-request';
+import { port, url } from './config.json';
+const SERVER_URL = `${url}:${port}`;
+
+/**
+ * Send a 'delete' request to the corresponding server route to reset the
+ * application state, returning the response in the form of a javascript object
+ * @param {{}} - No parameters
+ *
+ * @returns {{object}} - response in javascript
+*/
+ function requestClear() {
+  const res = request(
+    'DELETE',
+    SERVER_URL + '/v1/clear',
+    {
+      // Note that for PUT/POST requests, you should
+      // use the key 'json' instead of the query string 'qs'
+      qs: {
+        
+      }
+    }
+  );
+  //console.log(JSON.parse(res.body.toString()));
+  return JSON.parse(res.body.toString());
+}
+
+/**
+ * Send a 'get' request to the corresponding server route for user details, 
+ * returning the response in the form of a javascript object
+ * @param {{}} - No parameters
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestGetAdminUserDetails(authUserId: number) {
+  const res = request(
+    'GET',
+    SERVER_URL + '/v1/admin/user/details',
+    {
+      // Note that for PUT/POST requests, you should
+      // use the key 'json' instead of the query string 'qs'
+      qs: {
+        authUserId
+      }
+    }
+  );
+  //console.log(JSON.parse(res.body.toString()));
+  return JSON.parse(res.body.toString());
+}
+
 /**
  * Does not return anything, resets the state of the application
  *
@@ -177,4 +227,32 @@ function nameTaken (authUserId: number, name: string): boolean {
   return false
 }
 
-export { clear, save, read, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, quizValidOwner }
+/**
+ * Send a 'delete' request to the corresponding server route to reset the
+ * application state, returning the response in the form of a javascript object
+ * @param {{}} - No parameters
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminAuthRegister(email: string, password: string, nameFirst: string, nameLast: string) {
+  const res = request(
+    'POST',
+    SERVER_URL + '/v1/admin/auth/register',
+    {
+      // Note that for PUT/POST requests, you should
+      // use the key 'json' instead of the query string 'qs'
+      json: {
+        email,
+        password,
+        nameFirst,
+        nameLast,
+      }
+    }
+  );
+  //console.log(JSON.parse(res.body.toString()));
+  return JSON.parse(res.body.toString());
+}
+
+
+export { clear, save, read, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
+quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister };
