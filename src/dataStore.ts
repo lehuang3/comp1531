@@ -1,7 +1,13 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
 export interface Data {
   users: User[];
-  quizzes: Quiz[]
+  quizzes: Quiz[];
+  tokens: Token[];
+}
+
+interface Token {
+  userId: number;
+  sessionId: number;
 }
 
 interface Quiz {
@@ -28,8 +34,9 @@ let data: Data = {
   users: [],
 
   // Quiz Data
-  quizzes: []
+  quizzes: [],
 
+  tokens: []
 }
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1

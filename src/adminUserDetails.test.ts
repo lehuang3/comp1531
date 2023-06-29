@@ -1,8 +1,23 @@
 import request from 'sync-request';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
-import {adminAuthRegister, adminAuthLogin, adminUserDetails } from './auth';
-import { clear } from './other';
+import {adminAuthRegister, adminAuthLogin } from './auth';
+
+function requestClear() {
+  const res = request(
+    'DELETE',
+    SERVER_URL + '/v1/clear',
+    {
+      // Note that for PUT/POST requests, you should
+      // use the key 'json' instead of the query string 'qs'
+      qs: {
+        
+      }
+    }
+  );
+  //console.log(JSON.parse(res.body.toString()));
+  return JSON.parse(res.body.toString());
+}
 
 function requestGetAdminUserDetails(authUserId: number) {
   const res = request(
@@ -23,7 +38,7 @@ function requestGetAdminUserDetails(authUserId: number) {
 let user1;
 let userId: number;
 beforeEach(() => {
-  clear();
+  requestClear();
   user1 = adminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le');
   // authUserId will always be in user1 as adminAuthRegister always succeeds
   // but we need this if statement to bypass typescript

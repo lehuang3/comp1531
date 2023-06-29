@@ -1,5 +1,5 @@
-import { getData, setData } from './dataStore'
-
+import fs from 'fs';
+import { Data } from './dataStore';
 /**
  * Does not return anything, resets the state of the application
  *
@@ -8,20 +8,43 @@ import { getData, setData } from './dataStore'
  * @returns {{}} - Empty object
 */
 function clear () {
-  let store = getData()
+  let store = read()
   store = {
 
     // User Data
     users: [],
 
     // Quiz Data
-    quizzes: []
+    quizzes: [],
 
+    tokens: [],
   }
-  setData(store)
+  save(store)
   return {
 
   }
+}
+/**
+ * Write the new data object to dataStore.json
+ * 
+ * @param {Data} - data to write 
+ *
+ * @returns {void} 
+*/
+const save = (data: Data) => {
+  fs.writeFileSync('./src/dataStore.json', JSON.stringify(data));
+}
+
+/**
+ * Return the data object stored in dataStore.json
+ * 
+ * @param {void} 
+ *
+ * @returns {void}
+*/
+const read = () => {
+  const dataJson = fs.readFileSync('./src/dataStore.json');
+  return JSON.parse(String(dataJson));
 }
 
 /**
@@ -32,7 +55,7 @@ function clear () {
  * @returns {boolean} - true or false
 */
 function isValidUser (authUserId: number): boolean {
-  const data = getData()
+  const data = read();
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
       return true
@@ -50,7 +73,7 @@ function isValidUser (authUserId: number): boolean {
  * @returns {boolean} - true or false
 */
 function quizValidOwner (authUserId: number, quizId: number): boolean {
-  const data = getData()
+  const data = read()
   for (const user of data.users) {
     if (user.authUserId === authUserId && user.userQuizzes.includes(quizId)) {
       return true
@@ -68,7 +91,7 @@ function quizValidOwner (authUserId: number, quizId: number): boolean {
  * @returns {boolean} - true or false
  */
 function quizValidCheck (quizId: number): boolean {
-  const data = getData()
+  const data = read()
   for (const quiz of data.quizzes) {
     if (quiz.quizId === quizId) {
       return true
@@ -131,7 +154,7 @@ function nameLengthIsValid (name: string): boolean {
  * @returns {boolean} - true or false
  */
 function nameTaken (authUserId: number, name: string): boolean {
-  const data = getData()
+  const data = read()
 
   let userQuizzes: number[] = []
 
@@ -154,4 +177,4 @@ function nameTaken (authUserId: number, name: string): boolean {
   return false
 }
 
-export { clear, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, quizValidOwner }
+export { clear, save, read, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, quizValidOwner }

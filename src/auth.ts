@@ -1,8 +1,6 @@
-import { getData, setData } from './dataStore'
 import { Data } from './dataStore';
 import validator from 'validator';
-import fs from 'fs';
-
+import {read, save } from './other'
 export interface AdminAuthRegisterReturn {
   authUserId: number;
 }
@@ -24,15 +22,6 @@ interface AdminUserDetailsReturn {
 export interface ErrorObject {
   error: string;
 } 
-
-const save = (data: Data) => {
-  fs.writeFileSync('./src/dataStore.json', JSON.stringify(data));
-}
-
-const read = () => {
-  const dataJson = fs.readFileSync('./src/dataStore.json');
-  return JSON.parse(String(dataJson));
-}
 
 /**
  * Given a string, check if the string is valid
@@ -93,14 +82,14 @@ function checkValidPassword (string:string): boolean {
  * @param {string} nameLast - User's last name
 */
 function User (email: string, password: string, nameFirst: string, nameLast: string) {
-  const store = getData()
-  this.authUserId = store.users.length
-  this.email = email
-  this.password = password
-  this.name = nameFirst + ' ' + nameLast
-  this.numSuccessfulLogins = 1
-  this.numFailedPasswordsSinceLastLogin = 0
-  this.userQuizzes = []
+  const store = read();
+  this.authUserId = store.users.length;
+  this.email = email;
+  this.password = password;
+  this.name = nameFirst + ' ' + nameLast;
+  this.numSuccessfulLogins = 1;
+  this.numFailedPasswordsSinceLastLogin = 0;
+  this.userQuizzes = [];
 }
 
 /**
@@ -114,7 +103,9 @@ function User (email: string, password: string, nameFirst: string, nameLast: str
  * @returns {{authUserId: number}} - User's identification
 */
 function adminAuthRegister (email: string, password: string, nameFirst: string, nameLast: string): AdminAuthRegisterReturn | ErrorObject {
-  const store = getData()
+  const store: Data = read();
+ 
+  
   // check valid email
 
   for (const user of store.users) {
@@ -165,12 +156,11 @@ function adminAuthRegister (email: string, password: string, nameFirst: string, 
       error: 'error: password is too weak'
     }
   }
-  // return successful (setdata)
+  // return successful (save)
   const iD = store.users.length;
 
   store.users.push(new (User as any)(email, password, nameFirst, nameLast));
-  setData(store)
-  save(store)
+  save(store);
   return {
     authUserId: iD
   }
@@ -185,7 +175,7 @@ function adminAuthRegister (email: string, password: string, nameFirst: string, 
  * @returns {{authUserId: number}} - User's identification
 */
 function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn | ErrorObject {
-  const store = getData()
+  const store: Data = read();
   // check if email is valid
   const iD = store.users.findIndex(x => x.email === email)
 
@@ -222,7 +212,7 @@ function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn 
   * @returns {user: {userId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
 */
 function adminUserDetails (authUserId: number): AdminUserDetailsReturn | ErrorObject  {
-  const data = read();
+  const data: Data = read();
   // loop through users array
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
