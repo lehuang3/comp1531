@@ -1,5 +1,4 @@
-import { getData, setData } from './dataStore.js'
-import { isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong } from './other.js'
+import { save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong } from './other'
 
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -8,11 +7,11 @@ import { isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengt
  *
  * @returns {array object} - List of quizzes
 */
-function adminQuizList (authUserId) {
+function adminQuizList (authUserId: number) {
   if (isValidUser(authUserId) === false) {
     return { error: 'User id not valid' }
   } else {
-    const data = getData()
+    const data = read();
 
     let userQuizs = []
     const quizzList = []
@@ -47,8 +46,8 @@ function adminQuizList (authUserId) {
  *
  * @returns {quizID: number} - Quiz's identification number
 */
-function adminQuizCreate (authUserId, name, description) {
-  const data = getData()
+function adminQuizCreate (authUserId: number, name: string, description: string) {
+  const data = read();
 
   if (isValidUser(authUserId) === false) {
     return { error: 'User id not valid' }
@@ -88,7 +87,7 @@ function adminQuizCreate (authUserId, name, description) {
         user.userQuizzes.push(quizId)
       }
     }
-    setData(data);
+    save(data);
     return { quizId }
   }
 }
@@ -101,7 +100,7 @@ function adminQuizCreate (authUserId, name, description) {
  *
  * @returns {{}} - Empty object
 */
-function adminQuizRemove (authUserId, quizId) {
+function adminQuizRemove (authUserId: number, quizId: number) {
   if (isValidUser(authUserId) === false) {
     return { error: 'User id not valid' }
   } else if (quizValidCheck(quizId) === false) {
@@ -109,7 +108,7 @@ function adminQuizRemove (authUserId, quizId) {
   } else if (quizValidOwner(authUserId, quizId) === false) {
     return { error: 'Not owner of quiz' }
   } else {
-    const data = getData()
+    const data = read();
 
     for (let index = 0; index < data.quizzes.length; index++) {
       if (data.quizzes[index].quizId === quizId) {
@@ -123,7 +122,7 @@ function adminQuizRemove (authUserId, quizId) {
       }
     }
     
-    setData(data);
+    save(data);
     return {}
   }
 }
@@ -144,8 +143,8 @@ function adminQuizRemove (authUserId, quizId) {
   *   }
   * }
 */
-function adminQuizInfo (authUserId, quizId) {
-  const data = getData()
+function adminQuizInfo (authUserId: number, quizId: number) {
+  const data = read();
   if (!quizValidCheck(quizId)) {
     return {
       error: 'Quiz does not exist.'
@@ -175,8 +174,8 @@ function adminQuizInfo (authUserId, quizId) {
   *
   * @returns {{}} - Empty object.
 */
-function adminQuizNameUpdate (authUserId, quizId, name) {
-  const data = getData()
+function adminQuizNameUpdate (authUserId: number, quizId: number, name: string) {
+  const data = read();
   if (!nameLengthIsValid(name)) {
     return {
       error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.'
@@ -201,7 +200,7 @@ function adminQuizNameUpdate (authUserId, quizId, name) {
   for (const quiz of data.quizzes) {
     if (quiz.quizId === quizId) {
       quiz.name = name;
-      setData(data);
+      save(data);
       return {
 
       }
@@ -218,8 +217,8 @@ function adminQuizNameUpdate (authUserId, quizId, name) {
   *
   * @returns {{}} - Empty object.
 */
-function adminQuizDescriptionUpdate (authUserId, quizId, description) {
-  const data = getData()
+function adminQuizDescriptionUpdate (authUserId: number, quizId: number, description: string) {
+  const data = read();
 
   // check authUserId
   if (!isValidUser(authUserId)) {
@@ -252,11 +251,11 @@ function adminQuizDescriptionUpdate (authUserId, quizId, description) {
   // change description
   for (const quiz of data.quizzes) {
     if (quiz.quizId === quizId) {
-      quiz.description = description
+      quiz.description = description;
     }
   }
 
-  setData(data)
+  save(data);
 
   return {
 

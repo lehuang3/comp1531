@@ -8,6 +8,7 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import { adminAuthRegister, adminUserDetails, adminAuthLogin } from './auth';
 import { clear } from './other';
+import { adminQuizDescriptionUpdate } from './quiz';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -69,6 +70,15 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   res.json(response);
 });
 
+app.put('/v1/admin/quiz/:quizId/description', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const { authUserId, description } = req.body;
+  const response = adminQuizDescriptionUpdate(authUserId, quizId, description);
+  if ('error' in response) {
+  return res.status(400).json(response);
+  }
+  res.json(response);
+});
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
