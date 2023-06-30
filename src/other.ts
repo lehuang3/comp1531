@@ -1,8 +1,12 @@
 import fs from 'fs';
-import { Data } from './dataStore';
+import { Data, Token } from './dataStore';
 import request from 'sync-request';
 import { port, url } from './config.json';
 const SERVER_URL = `${url}:${port}`;
+
+export interface TokenParameter {
+  token: string;
+}
 
 /**
  * Send a 'delete' request to the corresponding server route to reset the
@@ -34,7 +38,7 @@ const SERVER_URL = `${url}:${port}`;
  *
  * @returns {{object}} - response in javascript
 */
-function requestGetAdminUserDetails(authUserId: number) {
+function requestGetAdminUserDetails(token: TokenParameter) {
   const res = request(
     'GET',
     SERVER_URL + '/v1/admin/user/details',
@@ -42,7 +46,7 @@ function requestGetAdminUserDetails(authUserId: number) {
       // Note that for PUT/POST requests, you should
       // use the key 'json' instead of the query string 'qs'
       qs: {
-        authUserId
+        token: token.token
       }
     }
   );

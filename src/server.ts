@@ -8,6 +8,7 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import { adminAuthRegister, adminUserDetails, adminAuthLogin } from './auth';
 import { clear } from './other';
+import { Token } from './dataStore'
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -38,8 +39,8 @@ app.get('/echo', (req: Request, res: Response) => {
 });
 
 app.get('/v1/admin/user/details', (req: Request, res: Response) => {
-  const authUserId = parseInt(req.query.authUserId as string);
-  const response = adminUserDetails(authUserId);
+  const token = req.query.token as string;
+  const response = adminUserDetails(token);
   if ('error' in response) {
   return res.status(401).json(response);
   }

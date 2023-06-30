@@ -10,8 +10,10 @@ describe('tests for adminAuthLogin', () => {
 
   describe('adminAuthLogin success tests', () => {
     test('Simple test pass', () => {
-      const userLogin = requestAdminAuthLogin('patel@gmail.com', 'Abcd123%')
-      expect(userLogin).toStrictEqual({ authUserId: expect.any(Number) })
+      const token = requestAdminAuthLogin('patel@gmail.com', 'Abcd123%')
+      expect(token).toStrictEqual({
+        token: expect.any(String),
+      })
     })
   })
 
@@ -38,4 +40,15 @@ describe('tests for adminAuthLogin', () => {
       expect(userLogin).toStrictEqual({ error: 'error: password incorrect' })
     })
   })
+})
+
+test('1 user, 2 sessions', () => {
+  const token1 = requestAdminAuthLogin('patel@gmail.com', 'Abcd123%');
+  expect(token1).toStrictEqual({
+    token: expect.any(String),
+  })
+  const token2 = requestAdminAuthLogin('patel@gmail.com', 'Abcd123%')
+  expect(token2).toStrictEqual({
+    token: (parseInt(token1.token) + 1).toString(),
+  })    
 })

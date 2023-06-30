@@ -9,7 +9,9 @@ describe('Testing clear is resetting database', () => {
 
   test('Clear database test 1', () => {
     const result = requestAdminAuthRegister('santaclaus@gmail.com', 'S@nta23!', 'Santa', 'Claus')
-    expect(result).toEqual({ authUserId: expect.any(Number) })
+    expect(result).toEqual({
+      token: expect.any(String),
+    })
   })
 
   test('Clear database test 2', () => {

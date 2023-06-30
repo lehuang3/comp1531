@@ -1,12 +1,13 @@
 import { Data } from './dataStore';
 import validator from 'validator';
-import {read, save } from './other'
+import {read, save } from './other';
+import { Token } from './dataStore';
 export interface AdminAuthRegisterReturn {
-  authUserId: number;
+  token: string
 }
 
 interface AdminAuthLoginReturn {
-  authUserId: number;
+  token: string
 }
 
 interface AdminUserDetailsReturn {
@@ -22,6 +23,8 @@ interface AdminUserDetailsReturn {
 export interface ErrorObject {
   error: string;
 } 
+
+let counterSession: number = 0;
 
 /**
  * Given a string, check if the string is valid
@@ -158,11 +161,19 @@ function adminAuthRegister (email: string, password: string, nameFirst: string, 
   }
   // return successful (save)
   const iD = store.users.length;
-
+  if (store.users.length === 0) {
+    counterSession = 0;
+  }
   store.users.push(new (User as any)(email, password, nameFirst, nameLast));
+  store.tokens.push({
+    authUserId: iD,
+    sessionId: counterSession,
+  });
+  //console.log(store.tokens);
+  counterSession++;
   save(store);
   return {
-    authUserId: iD
+    token: (counterSession - 1).toString(),
   }
 }
 
@@ -177,7 +188,7 @@ function adminAuthRegister (email: string, password: string, nameFirst: string, 
 function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn | ErrorObject {
   const store: Data = read();
   // check if email is valid
-  const iD = store.users.findIndex(x => x.email === email)
+  const iD = store.users.findIndex(x => x.email === email);
 
   if (iD === -1) {
     return {
@@ -190,11 +201,18 @@ function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn 
   if (password === user.password) {
     user.numFailedPasswordsSinceLastLogin = 0;
     user.numSuccessfulLogins++;
+    // add new token to tokens array
+    store.tokens.push({
+      authUserId: iD,
+      sessionId: counterSession,
+    });
     save(store);
+    counterSession++;
     return {
-      authUserId: user.authUserId
-    }
-  } else {
+      token: (counterSession - 1).toString(),
+    }  
+    // failed login attempt
+  } else {                
     user.numFailedPasswordsSinceLastLogin++;
     save(store);
     return {
@@ -211,8 +229,14 @@ function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn 
   *
   * @returns {user: {userId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
 */
-function adminUserDetails (authUserId: number): AdminUserDetailsReturn | ErrorObject  {
+function adminUserDetails (tokenString: string): AdminUserDetailsReturn | ErrorObject  {
   const data: Data = read();
+  const matchingToken = data.tokens.find((token) => token.sessionId === parseInt(tokenString));
+  // assign authUserId the default value of -1, which is impossible to obtain through registeration
+  let authUserId = -1;
+  if (matchingToken != undefined) {
+    authUserId = matchingToken.authUserId;
+  }
   // loop through users array
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
