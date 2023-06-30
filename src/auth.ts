@@ -1,5 +1,27 @@
-import { getData, setData } from './dataStore.js'
-import validator from 'validator'
+import { Data } from './dataStore';
+import validator from 'validator';
+import {read, save } from './other'
+export interface AdminAuthRegisterReturn {
+  authUserId: number;
+}
+
+interface AdminAuthLoginReturn {
+  authUserId: number;
+}
+
+interface AdminUserDetailsReturn {
+  user: {
+    userId: number,
+    name: string,
+    email: string,
+    numSuccessfulLogins: number,
+    numFailedPasswordsSinceLastLogin: number
+  }
+}
+
+export interface ErrorObject {
+  error: string;
+} 
 
 /**
  * Given a string, check if the string is valid
@@ -8,9 +30,9 @@ import validator from 'validator'
  * 
  * @returns {boolean} true or false 
 */
-function checkValidString (string) {
+function checkValidString (string: string): boolean {
   for (const char of string) {
-    const integer = char.charCodeAt()
+    const integer = char.charCodeAt(0)
     if ((integer > 64) && (integer < 91)) {
       continue
     } else if ((integer > 96) && (integer < 123)) {
@@ -31,11 +53,11 @@ function checkValidString (string) {
  * 
  * @returns {boolean} - true or false
 */
-function checkValidPassword (string) {
+function checkValidPassword (string:string): boolean {
   let intCounter = 0
   let charCounter = 0
   for (const char of string) {
-    const integer = char.charCodeAt()
+    const integer = char.charCodeAt(0)
     if ((integer > 64) && (integer < 91)) {
       charCounter++
     } else if ((integer > 96) && (integer < 123)) {
@@ -59,15 +81,15 @@ function checkValidPassword (string) {
  * @param {string} nameFirst - User's first name
  * @param {string} nameLast - User's last name
 */
-function User (email, password, nameFirst, nameLast) {
-  const store = getData()
-  this.authUserId = store.users.length
-  this.email = email
-  this.password = password
-  this.name = nameFirst + ' ' + nameLast
-  this.numSuccessfulLogins = 1
-  this.numFailedPasswordsSinceLastLogin = 0
-  this.userQuizzes = []
+function User (email: string, password: string, nameFirst: string, nameLast: string) {
+  const store = read();
+  this.authUserId = store.users.length;
+  this.email = email;
+  this.password = password;
+  this.name = nameFirst + ' ' + nameLast;
+  this.numSuccessfulLogins = 1;
+  this.numFailedPasswordsSinceLastLogin = 0;
+  this.userQuizzes = [];
 }
 
 /**
@@ -80,8 +102,10 @@ function User (email, password, nameFirst, nameLast) {
  *
  * @returns {{authUserId: number}} - User's identification
 */
-function adminAuthRegister (email, password, nameFirst, nameLast) {
-  const store = getData()
+function adminAuthRegister (email: string, password: string, nameFirst: string, nameLast: string): AdminAuthRegisterReturn | ErrorObject {
+  const store: Data = read();
+ 
+  
   // check valid email
 
   for (const user of store.users) {
@@ -132,12 +156,11 @@ function adminAuthRegister (email, password, nameFirst, nameLast) {
       error: 'error: password is too weak'
     }
   }
-  // return successful (setdata)
-  const iD = store.users.length
+  // return successful (save)
+  const iD = store.users.length;
 
-  store.users.push(new User(email, password, nameFirst, nameLast))
-
-  setData(store)
+  store.users.push(new (User as any)(email, password, nameFirst, nameLast));
+  save(store);
   return {
     authUserId: iD
   }
@@ -151,8 +174,8 @@ function adminAuthRegister (email, password, nameFirst, nameLast) {
  *
  * @returns {{authUserId: number}} - User's identification
 */
-function adminAuthLogin (email, password) {
-  const store = getData()
+function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn | ErrorObject {
+  const store: Data = read();
   // check if email is valid
   const iD = store.users.findIndex(x => x.email === email)
 
@@ -165,17 +188,20 @@ function adminAuthLogin (email, password) {
   const user = store.users[iD]
 
   if (password === user.password) {
-    user.numFailedPasswordsSinceLastLogin = 0
-    user.numSuccessfulLogins++
+    user.numFailedPasswordsSinceLastLogin = 0;
+    user.numSuccessfulLogins++;
+    save(store);
     return {
       authUserId: user.authUserId
     }
   } else {
-    user.numFailedPasswordsSinceLastLogin++
+    user.numFailedPasswordsSinceLastLogin++;
+    save(store);
     return {
       error: 'error: password incorrect'
     }
   }
+  
 }
 
 /**
@@ -185,8 +211,8 @@ function adminAuthLogin (email, password) {
   *
   * @returns {user: {userId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
 */
-function adminUserDetails (authUserId) {
-  const data = getData()
+function adminUserDetails (authUserId: number): AdminUserDetailsReturn | ErrorObject  {
+  const data: Data = read();
   // loop through users array
   for (const user of data.users) {
     if (user.authUserId === authUserId) {

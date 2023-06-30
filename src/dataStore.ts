@@ -1,13 +1,42 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
+export interface Data {
+  users: User[];
+  quizzes: Quiz[];
+  tokens: Token[];
+}
 
-let data = {
+interface Token {
+  userId: number;
+  sessionId: number;
+}
+
+interface Quiz {
+  quizId: number;
+  name: string;
+  timeCreated: number;
+  timeLastEdited: number;
+  description: string
+}
+
+interface User {
+  authUserId: number;
+  name: string
+  email: string;
+  password: string;
+  numSuccessfulLogins: number;
+  numFailedPasswordsSinceLastLogin: number;
+  userQuizzes: number[]
+}
+
+let data: Data = {
 
   // User Data
   users: [],
 
   // Quiz Data
-  quizzes: []
+  quizzes: [],
 
+  tokens: []
 }
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
@@ -59,12 +88,12 @@ Example usage
 */
 
 // Use get() to access the data
-function getData () {
+function getData (): Data {
   return data
 }
 
 // Use set(newData) to pass in the entire data object, with modifications made
-function setData (newData) {
+function setData (newData: Data) {
   data = newData
 }
 
