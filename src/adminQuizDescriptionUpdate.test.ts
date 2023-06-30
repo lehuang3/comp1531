@@ -5,11 +5,11 @@ import { read, save } from './other';
 import { Data } from './dataStore';
 let token1: AdminAuthRegisterReturn;
 let quiz1: any;
-const data: Data = read();
 let authUserId: number;
 beforeEach(() => {
   requestClear()
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le');
+  const data: Data = read();
   authUserId = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token1.token)).authUserId;
   quiz1 = adminQuizCreate(authUserId, 'quiz', '')
 })
