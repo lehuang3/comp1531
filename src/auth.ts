@@ -233,10 +233,14 @@ function adminUserDetails (tokenString: string): AdminUserDetailsReturn | ErrorO
   const data: Data = read();
   const matchingToken = data.tokens.find((token) => token.sessionId === parseInt(tokenString));
   // assign authUserId the default value of -1, which is impossible to obtain through registeration
-  let authUserId = -1;
-  if (matchingToken != undefined) {
-    authUserId = matchingToken.authUserId;
+  let authUserId;
+  if (matchingToken === undefined) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session'
+    }
   }
+  authUserId = matchingToken.authUserId;
   // loop through users array
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
@@ -252,10 +256,7 @@ function adminUserDetails (tokenString: string): AdminUserDetailsReturn | ErrorO
       }
     }
   }
-  // error if no corresponding user found
-  return {
-    error: 'Not a valid user'
-  }
+  
 }
 
 export { adminAuthLogin, adminAuthRegister, adminUserDetails }
