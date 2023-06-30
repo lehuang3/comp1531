@@ -1,6 +1,6 @@
 import { adminAuthLogin } from './auth';
-import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, TokenParameter } from './other';
-import { Token } from './dataStore';
+import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister } from './other';
+import { TokenParameter } from './interfaces';
 let token1: TokenParameter;
 beforeEach(() => {
   requestClear();
@@ -9,12 +9,22 @@ beforeEach(() => {
   // but we need this if statement to bypass typescript
 })
 
-test('Check for invalid auth', () => {
+test('Check for invalid token structure', () => {
+  const token2 = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le')
+  const response = requestGetAdminUserDetails(token2);
+  expect(response).toStrictEqual({
+    error: 'Invalid token structure',
+  });
+})
+
+
+test('Check for invalid session', () => {
   const token2 = {
     token: (parseInt(token1.token) + 1).toString(),
   }
-  expect(requestGetAdminUserDetails(token2)).toStrictEqual({
-    error: 'Not a valid user'
+  const response = requestGetAdminUserDetails(token2);
+  expect(response).toStrictEqual({
+    error: 'Not a valid session'
   })
 })
 

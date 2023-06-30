@@ -2,11 +2,10 @@ import fs from 'fs';
 import { Data, Token } from './dataStore';
 import request from 'sync-request';
 import { port, url } from './config.json';
+import { ErrorObject, TokenParameter } from './interfaces';
 const SERVER_URL = `${url}:${port}`;
 
-export interface TokenParameter {
-  token: string;
-}
+
 
 /**
  * Send a 'delete' request to the corresponding server route to reset the
@@ -38,7 +37,7 @@ export interface TokenParameter {
  *
  * @returns {{object}} - response in javascript
 */
-function requestGetAdminUserDetails(token: TokenParameter) {
+function requestGetAdminUserDetails(token: ErrorObject | TokenParameter) {
   const res = request(
     'GET',
     SERVER_URL + '/v1/admin/user/details',
@@ -46,7 +45,7 @@ function requestGetAdminUserDetails(token: TokenParameter) {
       // Note that for PUT/POST requests, you should
       // use the key 'json' instead of the query string 'qs'
       qs: {
-        token: token.token
+        token,
       }
     }
   );
@@ -281,5 +280,29 @@ function requestAdminAuthLogin(email: string, password: string) {
   return JSON.parse(res.body.toString());
 }
 
+/**
+ * Send a 'delete' request to the corresponding server route to reset the
+ * application state, returning the response in the form of a javascript object
+ * @param {{}} - No parameters
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminQuizDescriptionUpdate(token: ErrorObject | TokenParameter, quizId: number, description: string) {
+  const res = request(
+    'PUT',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/description`,
+    {
+      // Note that for PUT/POST requests, you should
+      // use the key 'json' instead of the query string 'qs'
+      json: {
+        token,
+        description
+      }
+    }
+  );
+  //console.log(JSON.parse(res.body.toString()));
+  return JSON.parse(res.body.toString());
+}
+
 export { clear, save, read, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
-quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin };
+quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate };

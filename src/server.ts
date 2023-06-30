@@ -7,8 +7,9 @@ import YAML from 'yaml';
 import sui from 'swagger-ui-express';
 import fs from 'fs';
 import { adminAuthRegister, adminUserDetails, adminAuthLogin } from './auth';
+import { adminQuizDescriptionUpdate } from './quiz';
 import { clear } from './other';
-import { Token } from './dataStore'
+
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -39,10 +40,14 @@ app.get('/echo', (req: Request, res: Response) => {
 });
 
 app.get('/v1/admin/user/details', (req: Request, res: Response) => {
-  const token = req.query.token as string;
+  const token = req.query.token;
   const response = adminUserDetails(token);
   if ('error' in response) {
-  return res.status(401).json(response);
+    if (response.error === 'Invalid token structure') {
+      return res.status(401).json(response);
+    } else if (response.error === 'Not a valid session') {
+      return res.status(403).json(response);
+    }
   }
   res.json(response);
 });
@@ -70,6 +75,21 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   res.json(response);
 });
 
+app.put('/v1/admin/quiz/:quizId/description', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const { token, description } = req.body;
+  const response = adminQuizDescriptionUpdate(token, quizId, description);
+  if ('error' in response) {
+    if (response.error === 'Invalid token structure') {
+      return res.status(401).json(response);
+    } else if (response.error === 'Not a valid session') {
+      return res.status(403).json(response);
+    } else {
+      return res.status(400).json(response);
+    }
+  }
+  res.json(response);
+});
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

@@ -1,29 +1,7 @@
 import { Data } from './dataStore';
 import validator from 'validator';
-import {read, save } from './other';
-import { Token } from './dataStore';
-export interface AdminAuthRegisterReturn {
-  token: string
-}
-
-interface AdminAuthLoginReturn {
-  token: string
-}
-
-interface AdminUserDetailsReturn {
-  user: {
-    userId: number,
-    name: string,
-    email: string,
-    numSuccessfulLogins: number,
-    numFailedPasswordsSinceLastLogin: number
-  }
-}
-
-export interface ErrorObject {
-  error: string;
-} 
-
+import { read, save } from './other';
+import { AdminAuthLoginReturn, AdminAuthRegisterReturn, AdminUserDetailsReturn, ErrorObject, TokenParameter } from './interfaces';
 let counterSession: number = 0;
 
 /**
@@ -229,18 +207,22 @@ function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn 
   *
   * @returns {user: {userId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
 */
-function adminUserDetails (tokenString: string): AdminUserDetailsReturn | ErrorObject  {
+function adminUserDetails (token: ErrorObject | TokenParameter): AdminUserDetailsReturn | ErrorObject  {
   const data: Data = read();
-  const matchingToken = data.tokens.find((token) => token.sessionId === parseInt(tokenString));
-  // assign authUserId the default value of -1, which is impossible to obtain through registeration
-  let authUserId;
+  if (!('token' in token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  
+  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
   if (matchingToken === undefined) {
     // error if no corresponding token found
     return {
-      error: 'Not a valid session'
+      error: 'Not a valid session',
     }
   }
-  authUserId = matchingToken.authUserId;
+  const authUserId = matchingToken.authUserId;
   // loop through users array
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
