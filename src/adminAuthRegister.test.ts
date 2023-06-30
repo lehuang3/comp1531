@@ -8,20 +8,26 @@ describe('adminAuthRegister tests', () => {
 
   describe('Testing valid registrations', () => {
     test('Simple test pass', () => {
-      const user = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel')
-      expect(user).toStrictEqual({ authUserId: expect.any(Number) })
+      const token = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel')
+      expect(token).toStrictEqual({
+        token: expect.any(String),
+      })
     })
 
     test('Name assumption pass', () => {
-      const user = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', '       ', '-------')
-      expect(user).toStrictEqual({ authUserId: expect.any(Number) })
+      const token = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', '       ', '-------')
+      expect(token).toStrictEqual({
+        token: expect.any(String),
+      })
     })
   })
 
   describe('Testing invalid emails', () => {
     test('Email is used by another user', () => {
-      const user = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel')
-      expect(user).toStrictEqual({ authUserId: expect.any(Number) })
+      const token = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel')
+      expect(token).toStrictEqual({
+        token: expect.any(String),
+      })
       const invalidUser = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel')
       expect(invalidUser).toStrictEqual({ error: 'error: email is already used for another account' })
     })

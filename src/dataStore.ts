@@ -5,8 +5,8 @@ export interface Data {
   tokens: Token[];
 }
 
-interface Token {
-  userId: number;
+export interface Token {
+  authUserId: number;
   sessionId: number;
 }
 

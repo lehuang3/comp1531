@@ -1,27 +1,8 @@
 import { Data } from './dataStore';
 import validator from 'validator';
-import {read, save } from './other'
-export interface AdminAuthRegisterReturn {
-  authUserId: number;
-}
-
-interface AdminAuthLoginReturn {
-  authUserId: number;
-}
-
-interface AdminUserDetailsReturn {
-  user: {
-    userId: number,
-    name: string,
-    email: string,
-    numSuccessfulLogins: number,
-    numFailedPasswordsSinceLastLogin: number
-  }
-}
-
-export interface ErrorObject {
-  error: string;
-} 
+import { read, save } from './other';
+import { AdminAuthLoginReturn, AdminAuthRegisterReturn, AdminUserDetailsReturn, ErrorObject, TokenParameter } from './interfaces';
+let counterSession: number = 0;
 
 /**
  * Given a string, check if the string is valid
@@ -158,11 +139,19 @@ function adminAuthRegister (email: string, password: string, nameFirst: string, 
   }
   // return successful (save)
   const iD = store.users.length;
-
+  if (store.users.length === 0) {
+    counterSession = 0;
+  }
   store.users.push(new (User as any)(email, password, nameFirst, nameLast));
+  store.tokens.push({
+    authUserId: iD,
+    sessionId: counterSession,
+  });
+  //console.log(store.tokens);
+  counterSession++;
   save(store);
   return {
-    authUserId: iD
+    token: (counterSession - 1).toString(),
   }
 }
 
@@ -177,7 +166,7 @@ function adminAuthRegister (email: string, password: string, nameFirst: string, 
 function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn | ErrorObject {
   const store: Data = read();
   // check if email is valid
-  const iD = store.users.findIndex(x => x.email === email)
+  const iD = store.users.findIndex(x => x.email === email);
 
   if (iD === -1) {
     return {
@@ -190,11 +179,18 @@ function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn 
   if (password === user.password) {
     user.numFailedPasswordsSinceLastLogin = 0;
     user.numSuccessfulLogins++;
+    // add new token to tokens array
+    store.tokens.push({
+      authUserId: iD,
+      sessionId: counterSession,
+    });
     save(store);
+    counterSession++;
     return {
-      authUserId: user.authUserId
-    }
-  } else {
+      token: (counterSession - 1).toString(),
+    }  
+    // failed login attempt
+  } else {                
     user.numFailedPasswordsSinceLastLogin++;
     save(store);
     return {
@@ -211,8 +207,22 @@ function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn 
   *
   * @returns {user: {userId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
 */
-function adminUserDetails (authUserId: number): AdminUserDetailsReturn | ErrorObject  {
+function adminUserDetails (token: ErrorObject | TokenParameter): AdminUserDetailsReturn | ErrorObject  {
   const data: Data = read();
+  if (!('token' in token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  
+  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
+  if (matchingToken === undefined) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+  const authUserId = matchingToken.authUserId;
   // loop through users array
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
@@ -228,10 +238,7 @@ function adminUserDetails (authUserId: number): AdminUserDetailsReturn | ErrorOb
       }
     }
   }
-  // error if no corresponding user found
-  return {
-    error: 'Not a valid user'
-  }
+  
 }
 
 export { adminAuthLogin, adminAuthRegister, adminUserDetails }

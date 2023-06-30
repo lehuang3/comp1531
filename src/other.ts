@@ -1,8 +1,11 @@
 import fs from 'fs';
-import { Data } from './dataStore';
+import { Data, Token } from './dataStore';
 import request from 'sync-request';
 import { port, url } from './config.json';
+import { ErrorObject, TokenParameter } from './interfaces';
 const SERVER_URL = `${url}:${port}`;
+
+
 
 /**
  * Send a 'delete' request to the corresponding server route to reset the
@@ -34,7 +37,7 @@ const SERVER_URL = `${url}:${port}`;
  *
  * @returns {{object}} - response in javascript
 */
-function requestGetAdminUserDetails(authUserId: number) {
+function requestGetAdminUserDetails(token: ErrorObject | TokenParameter) {
   const res = request(
     'GET',
     SERVER_URL + '/v1/admin/user/details',
@@ -42,7 +45,7 @@ function requestGetAdminUserDetails(authUserId: number) {
       // Note that for PUT/POST requests, you should
       // use the key 'json' instead of the query string 'qs'
       qs: {
-        authUserId
+        token,
       }
     }
   );
@@ -284,7 +287,7 @@ function requestAdminAuthLogin(email: string, password: string) {
  *
  * @returns {{object}} - response in javascript
 */
-function requestAdminQuizDescriptionUpdate(authUserId: number, quizId: number, description: string) {
+function requestAdminQuizDescriptionUpdate(token: ErrorObject | TokenParameter, quizId: number, description: string) {
   const res = request(
     'PUT',
     SERVER_URL + `/v1/admin/quiz/${quizId}/description`,
@@ -292,7 +295,7 @@ function requestAdminQuizDescriptionUpdate(authUserId: number, quizId: number, d
       // Note that for PUT/POST requests, you should
       // use the key 'json' instead of the query string 'qs'
       json: {
-        authUserId,
+        token,
         description
       }
     }
