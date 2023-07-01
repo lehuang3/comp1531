@@ -319,5 +319,21 @@ function requestAdminQuizDescriptionUpdate(token: ErrorObject | TokenParameter, 
   } 
 }
 
+/**
+ * Sends a 'put' request to the corresponding server route to
+ * update the user details.
+ * @param {{token}} - token/sessionId
+ *
+ * @returns {{}} - none
+*/
+function requestAdminAuthDetailsUpdate(token: ErrorObject | TokenParameter, email: string, nameFirst: string, nameLast: string) {
+    //
+    return {
+        body: '0',
+        status: 0
+    }
+}
+
 export { clear, save, read, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
-quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate };
+quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
+requestAdminAuthDetailsUpdate };
