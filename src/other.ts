@@ -27,7 +27,10 @@ const SERVER_URL = `${url}:${port}`;
     }
   );
   //console.log(JSON.parse(res.body.toString()));
-  return JSON.parse(res.body.toString());
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  } 
 }
 
 /**
@@ -50,7 +53,10 @@ function requestGetAdminUserDetails(token: ErrorObject | TokenParameter) {
     }
   );
   //console.log(JSON.parse(res.body.toString()));
-  return JSON.parse(res.body.toString());
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  } 
 }
 
 /**
@@ -253,7 +259,10 @@ function requestAdminAuthRegister(email: string, password: string, nameFirst: st
     }
   );
   //console.log(JSON.parse(res.body.toString()));
-  return JSON.parse(res.body.toString());
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  } 
 }
 
 /**
@@ -277,7 +286,10 @@ function requestAdminAuthLogin(email: string, password: string) {
     }
   );
   //console.log(JSON.parse(res.body.toString()));
-  return JSON.parse(res.body.toString());
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  } 
 }
 
 /**
@@ -301,7 +313,10 @@ function requestAdminQuizDescriptionUpdate(token: ErrorObject | TokenParameter, 
     }
   );
   //console.log(JSON.parse(res.body.toString()));
-  return JSON.parse(res.body.toString());
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  } 
 }
 
 export { clear, save, read, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 

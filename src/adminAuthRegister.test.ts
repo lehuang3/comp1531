@@ -8,28 +8,31 @@ describe('adminAuthRegister tests', () => {
 
   describe('Testing valid registrations', () => {
     test('Simple test pass', () => {
-      const token = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel')
-      expect(token).toStrictEqual({
+      const response = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel');
+      expect(response.body).toStrictEqual({
         token: expect.any(String),
-      })
+      });
+      expect(response.status).toStrictEqual(200);
     })
 
     test('Name assumption pass', () => {
-      const token = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', '       ', '-------')
-      expect(token).toStrictEqual({
+      const response = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', '       ', '-------')
+      expect(response.body).toStrictEqual({
         token: expect.any(String),
-      })
+      });
+      expect(response.status).toStrictEqual(200);
     })
   })
 
   describe('Testing invalid emails', () => {
     test('Email is used by another user', () => {
-      const token = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel')
-      expect(token).toStrictEqual({
+      const response = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel')
+      expect(response.body).toStrictEqual({
         token: expect.any(String),
       })
       const invalidUser = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel')
-      expect(invalidUser).toStrictEqual({ error: 'error: email is already used for another account' })
+      expect(invalidUser.body).toStrictEqual({ error: 'error: email is already used for another account' });
+      expect(invalidUser.status).toStrictEqual(400);
     })
 
     test.each([
@@ -38,8 +41,9 @@ describe('adminAuthRegister tests', () => {
         ['sussybaka@amongus'],
         ['randomtester.net.au'],
     ])('Email is not valid, testing: %s', (email) => {
-      const invalidUser = requestAdminAuthRegister(email, 'Vdhr347@', 'Santa', 'Claus')
-      expect(invalidUser).toStrictEqual({ error: 'error: email is not valid' })
+      const invalidUser = requestAdminAuthRegister(email, 'Vdhr347@', 'Santa', 'Claus');
+      expect(invalidUser.body).toStrictEqual({ error: 'error: email is not valid' });
+      expect(invalidUser.status).toStrictEqual(400);
     })
   })
 
@@ -50,8 +54,9 @@ describe('adminAuthRegister tests', () => {
         ['sussybaka@amongus'],
         ['Pksd&^2.'],
     ])('First name contains invalid characters, testing: %s', (nameFirst) => {
-      const invalidUser = requestAdminAuthRegister('patel@gmail.com', 'Vdhr347@', nameFirst, 'Claus')
-      expect(invalidUser).toStrictEqual({ error: 'error: first name contains invalid characters' })
+      const invalidUser = requestAdminAuthRegister('patel@gmail.com', 'Vdhr347@', nameFirst, 'Claus');
+      expect(invalidUser.body).toStrictEqual({ error: 'error: first name contains invalid characters' });
+      expect(invalidUser.status).toStrictEqual(400);
     })
 
     test.each([
@@ -61,7 +66,8 @@ describe('adminAuthRegister tests', () => {
         ['P'],
     ])('First name has invalid length, testing: %s', (nameFirst) => {
       const invalidUser = requestAdminAuthRegister('patel@gmail.com', 'Vdhr347@', nameFirst, 'Claus')
-      expect(invalidUser).toStrictEqual({ error: 'error: first name has an invalid length' })
+      expect(invalidUser.body).toStrictEqual({ error: 'error: first name has an invalid length' });
+      expect(invalidUser.status).toStrictEqual(400);
     })
   })
 
@@ -73,7 +79,8 @@ describe('adminAuthRegister tests', () => {
         ['Pksd&^2.'],
     ])('Last name contains invalid characters', (nameLast) => {
       const invalidUser = requestAdminAuthRegister('patel@gmail.com', 'Vdhr347@', 'Santa', nameLast)
-      expect(invalidUser).toStrictEqual({ error: 'error: last name contains invalid characters' })
+      expect(invalidUser.body).toStrictEqual({ error: 'error: last name contains invalid characters' });
+      expect(invalidUser.status).toStrictEqual(400);
     })
 
     test.each([
@@ -82,8 +89,9 @@ describe('adminAuthRegister tests', () => {
         ['sussybakaamongusuuuuu'],
         ['P'],
     ])('Last name has invalid length, testing: %s', (nameLast) => {
-      const invalidUser = requestAdminAuthRegister('patel@gmail.com', 'Vdhr347@', 'Santa', nameLast)
-      expect(invalidUser).toStrictEqual({ error: 'error: last name has an invalid length' })
+      const invalidUser = requestAdminAuthRegister('patel@gmail.com', 'Vdhr347@', 'Santa', nameLast);
+      expect(invalidUser.body).toStrictEqual({ error: 'error: last name has an invalid length' });
+      expect(invalidUser.status).toStrictEqual(400);
     })
   })
 
@@ -94,7 +102,8 @@ describe('adminAuthRegister tests', () => {
         ['Pu@19'],
     ])('Short password test, testing: %s ', (password) => {
       const invalidUser = requestAdminAuthRegister('patel@gmail.com', password, 'Santa', 'Claus')
-      expect(invalidUser).toStrictEqual({ error: 'error: password is too short' })
+      expect(invalidUser.body).toStrictEqual({ error: 'error: password is too short' });
+      expect(invalidUser.status).toStrictEqual(400);
     })
 
     test.each([
@@ -104,7 +113,8 @@ describe('adminAuthRegister tests', () => {
         ['vdhr@!&hds'],
     ])('Weak password test, testing: %s', (password) => {
       const invalidUser = requestAdminAuthRegister('patel@gmail.com', password, 'Santa', 'Claus')
-      expect(invalidUser).toStrictEqual({ error: 'error: password is too weak' })
+      expect(invalidUser.body).toStrictEqual({ error: 'error: password is too weak' });
+      expect(invalidUser.status).toStrictEqual(400);
     })
   })
 })

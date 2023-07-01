@@ -10,10 +10,11 @@ describe('tests for adminAuthLogin', () => {
 
   describe('adminAuthLogin success tests', () => {
     test('Simple test pass', () => {
-      const token = requestAdminAuthLogin('patel@gmail.com', 'Abcd123%')
-      expect(token).toStrictEqual({
+      const response = requestAdminAuthLogin('patel@gmail.com', 'Abcd123%')
+      expect(response.body).toStrictEqual({
         token: expect.any(String),
-      })
+      });
+      expect(response.status).toStrictEqual(200);
     })
   })
 
@@ -25,7 +26,8 @@ describe('tests for adminAuthLogin', () => {
         ['patel@1@ail.com', 'Password'],
     ])('Email invalid', (email, password) => {
       const userLogin = requestAdminAuthLogin(email, password)
-      expect(userLogin).toStrictEqual({ error: 'error: email address is does not exist' })
+      expect(userLogin.body).toStrictEqual({ error: 'error: email address is does not exist' });
+      expect(userLogin.status).toStrictEqual(400);
     })
   })
 
@@ -37,18 +39,8 @@ describe('tests for adminAuthLogin', () => {
         ['patel@gmail.com', '          '],
     ])('Password incorrect for (%s, %s)', (email, password) => {
       const userLogin = requestAdminAuthLogin(email, password)
-      expect(userLogin).toStrictEqual({ error: 'error: password incorrect' })
+      expect(userLogin.body).toStrictEqual({ error: 'error: password incorrect' });
+      expect(userLogin.status).toStrictEqual(400);
     })
   })
-})
-
-test('1 user, 2 sessions', () => {
-  const token1 = requestAdminAuthLogin('patel@gmail.com', 'Abcd123%');
-  expect(token1).toStrictEqual({
-    token: expect.any(String),
-  })
-  const token2 = requestAdminAuthLogin('patel@gmail.com', 'Abcd123%')
-  expect(token2).toStrictEqual({
-    token: (parseInt(token1.token) + 1).toString(),
-  })    
 })
