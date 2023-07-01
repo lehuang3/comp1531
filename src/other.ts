@@ -319,5 +319,21 @@ function requestAdminQuizDescriptionUpdate(token: ErrorObject | TokenParameter, 
   } 
 }
 
+/**
+ * Sends a 'put' request to the corresponding server route to
+ * log the user out of the session.
+ * @param {{token}} - token/sessionId
+ *
+ * @returns {{}} - none
+*/
+function requestAdminAuthLogout(token: ErrorObject | TokenParameter) {
+    //
+    return {
+        body: '0',
+        status: 0
+    }
+}
+
 export { clear, save, read, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
-quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate };
+quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
+requestAdminAuthLogout };
