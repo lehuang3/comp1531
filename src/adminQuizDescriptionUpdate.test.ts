@@ -2,7 +2,7 @@ import { AdminAuthRegisterReturn } from './interfaces';
 import { adminQuizCreate } from './quiz'
 import { requestClear, requestAdminAuthRegister, requestAdminQuizDescriptionUpdate } from './other'
 import { read, save } from './other';
-import { Data } from './dataStore';
+import { Data } from './interfaces';
 import { response } from 'express';
 let token1: AdminAuthRegisterReturn;
 let quiz1: any;

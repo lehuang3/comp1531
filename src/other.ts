@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { Data, Token } from './dataStore';
+import { Data, Token } from './interfaces';
 import request from 'sync-request';
 import { port, url } from './config.json';
 import { ErrorObject, TokenParameter } from './interfaces';

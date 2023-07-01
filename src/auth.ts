@@ -1,4 +1,4 @@
-import { Data } from './dataStore';
+import { Data } from './interfaces';
 import validator from 'validator';
 import { read, save } from './other';
 import { AdminAuthLoginReturn, AdminAuthRegisterReturn, AdminUserDetailsReturn, ErrorObject, TokenParameter } from './interfaces';
