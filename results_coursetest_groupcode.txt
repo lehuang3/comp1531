@@ -1,0 +1,55 @@
+npm verb cli /import/kamen/3/cs1531/.nvm/versions/node/v18.16.0/bin/node /import/kamen/3/cs1531/.nvm/versions/node/v18.16.0/bin/npm
+npm info using npm@9.5.1
+npm info using node@v18.16.0
+npm verb title npm run test course_tests/
+npm verb argv "run" "test" "--loglevel" "verbose" "course_tests/"
+npm verb logfile logs-max:10 dir:/import/kamen/3/cs1531/.npm/_logs/2023-06-24T16_00_13_190Z-
+npm verb logfile /import/kamen/3/cs1531/.npm/_logs/2023-06-24T16_00_13_190Z-debug-0.log
+
+> test
+> jest course_tests/
+
+npm http fetch GET 200 https://registry.npmjs.org/npm 40ms (cache hit)
+PASS course_tests/tests/quiz_tests/quizList.test.js
+PASS course_tests/tests/quiz_tests/quizRemove.test.js
+PASS course_tests/tests/auth_tests/userDetails.test.js
+PASS course_tests/tests/auth_tests/authRegister.test.js
+PASS course_tests/tests/quiz_tests/quizCreate.test.js
+PASS course_tests/tests/quiz_tests/quizDescriptionUpdate.test.js
+PASS course_tests/tests/quiz_tests/quizNameUpdate.test.js
+PASS course_tests/tests/auth_tests/authLogin.test.js
+PASS course_tests/tests/other_tests/clear.test.js
+FAIL course_tests/tests/quiz_tests/quizInfo.test.js
+  ● Test successful quiz read after edit is different to creation time
+
+    expect(received).not.toEqual(expected) // deep equality
+
+    Expected: not 1687622416
+
+      33 |     adminQuizDescriptionUpdate(userId, quizId, 'new description');
+      34 |     const quizState1 = adminQuizInfo(userId, quizId);
+    > 35 |     expect(quizState1.timeLastEdited).not.toEqual(quizState1.timeCreated);
+         |                                           ^
+      36 |     expect(quizState1.timeLastEdited).toBeGreaterThan(quizState1.timeCreated);
+      37 |   }, 1500);
+      38 |   jest.runAllTimers();
+
+      at toEqual (course_tests/tests/quiz_tests/quizInfo.test.js:35:43)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:744:24)
+      at Object.next (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1432:17)
+      at Object.runAll (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1491:23)
+      at FakeTimers.runAllTimers (node_modules/@jest/fake-timers/build/modernFakeTimers.js:50:19)
+      at Object.runAllTimers (course_tests/tests/quiz_tests/quizInfo.test.js:38:8)
+
+Test Suites: 1 failed, 9 passed, 10 total
+Tests:       1 failed, 53 passed, 54 total
+Snapshots:   0 total
+Time:        2.781 s, estimated 3 s
+Ran all test suites matching /course_tests\//i.
+npm notice 
+npm notice New minor version of npm available! 9.5.1 -> 9.7.2
+npm notice Changelog: <https://github.com/npm/cli/releases/tag/v9.7.2>
+npm notice Run `npm install -g npm@9.7.2` to update!
+npm notice 
+npm verb exit 1
+npm verb code 1

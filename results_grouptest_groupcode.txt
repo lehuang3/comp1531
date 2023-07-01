@@ -1,0 +1,36 @@
+npm verb cli /import/kamen/3/cs1531/.nvm/versions/node/v18.16.0/bin/node /import/kamen/3/cs1531/.nvm/versions/node/v18.16.0/bin/npm
+npm info using npm@9.5.1
+npm info using node@v18.16.0
+npm verb title npm run test
+npm verb argv "run" "test" "--loglevel" "verbose"
+npm verb logfile logs-max:10 dir:/import/kamen/3/cs1531/.npm/_logs/2023-06-24T16_00_07_489Z-
+npm verb logfile /import/kamen/3/cs1531/.npm/_logs/2023-06-24T16_00_07_489Z-debug-0.log
+
+> test
+> jest
+
+npm http fetch GET 200 https://registry.npmjs.org/npm 41ms (cache hit)
+PASS src/adminQuizInfo.test.js
+PASS src/adminQuizCreate.test.js
+PASS src/adminUserDetails.test.js
+PASS src/adminQuizRemove.test.js
+PASS src/adminQuizDescriptionUpdate.test.js
+PASS src/adminAuthRegister.test.js
+PASS src/adminQuizNameUpdate.test.js
+PASS src/echo.test.js
+PASS src/clear.test.js
+PASS src/adminAuthLogin.test.js
+PASS src/adminQuizList.test.js
+
+Test Suites: 11 passed, 11 total
+Tests:       105 passed, 105 total
+Snapshots:   0 total
+Time:        3.363 s, estimated 4 s
+Ran all test suites.
+npm notice 
+npm notice New minor version of npm available! 9.5.1 -> 9.7.2
+npm notice Changelog: <https://github.com/npm/cli/releases/tag/v9.7.2>
+npm notice Run `npm install -g npm@9.7.2` to update!
+npm notice 
+npm verb exit 0
+npm info ok 
