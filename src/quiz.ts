@@ -1,6 +1,6 @@
 import { ErrorObject, TokenParameter } from './interfaces';
 import { save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong } from './other'
-import { Data } from './dataStore';
+import { Data } from './interfaces';
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *

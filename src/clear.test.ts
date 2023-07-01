@@ -9,7 +9,7 @@ describe('Testing clear is resetting database', () => {
 
   test('Clear database test 1', () => {
     const result = requestAdminAuthRegister('santaclaus@gmail.com', 'S@nta23!', 'Santa', 'Claus')
-    expect(result).toEqual({
+    expect(result.body).toEqual({
       token: expect.any(String),
     })
   })
@@ -17,12 +17,12 @@ describe('Testing clear is resetting database', () => {
   test('Clear database test 2', () => {
     requestAdminAuthRegister('patel@gmail.com', 'Abcd123!', 'Pranav', 'Patel')
     const result = requestAdminAuthLogin('santaclaus@gmail.com', 'S@nta23!')
-    expect(result).toStrictEqual({ error: 'error: email address is does not exist' })
+    expect(result.body).toStrictEqual({ error: 'error: email address is does not exist' })
   })
 })
 
 describe('Testing clear return value', () => {
   test('Clear return value test', () => {
-    expect(requestClear()).toStrictEqual({})
+    expect(requestClear().body).toStrictEqual({})
   })
 })

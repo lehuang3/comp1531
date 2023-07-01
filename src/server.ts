@@ -9,6 +9,7 @@ import fs from 'fs';
 import { adminAuthRegister, adminUserDetails, adminAuthLogin } from './auth';
 import { adminQuizDescriptionUpdate } from './quiz';
 import { clear } from './other';
+import { ErrorObject, TokenParameter } from './interfaces';
 
 // Set up web app
 const app = express();
@@ -40,8 +41,8 @@ app.get('/echo', (req: Request, res: Response) => {
 });
 
 app.get('/v1/admin/user/details', (req: Request, res: Response) => {
-  const token = req.query.token;
-  const response = adminUserDetails(token);
+  const token = req.query.token.toString();
+  const response = adminUserDetails(JSON.parse(token));
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
       return res.status(401).json(response);

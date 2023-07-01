@@ -1,32 +1,5 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
-export interface Data {
-  users: User[];
-  quizzes: Quiz[];
-  tokens: Token[];
-}
-
-export interface Token {
-  authUserId: number;
-  sessionId: number;
-}
-
-interface Quiz {
-  quizId: number;
-  name: string;
-  timeCreated: number;
-  timeLastEdited: number;
-  description: string
-}
-
-interface User {
-  authUserId: number;
-  name: string
-  email: string;
-  password: string;
-  numSuccessfulLogins: number;
-  numFailedPasswordsSinceLastLogin: number;
-  userQuizzes: number[]
-}
+import { Data, Token, Quiz, User } from './interfaces';
 
 let data: Data = {
 
