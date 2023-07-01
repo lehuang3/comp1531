@@ -1,6 +1,30 @@
 import { adminQuizNameUpdate, adminQuizCreate } from './quiz.js'
 import { adminAuthLogin, adminAuthRegister } from './auth.js'
-import { requestClear, requestAdminAuthRegister } from './other';
+import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister } from './other';
+
+const postRequest = (url: string, data: any) => {
+  const res = request(
+    'POST',
+    url,
+    {
+      json: data,
+    }
+  );
+  const bodyObj = JSON.parse(String(res.getBody()))
+  return bodyObj;
+}
+
+const getRequest = () => {
+  const res = request(
+    'GET',
+    url,
+    {
+      qs: data,
+    }
+  );
+  const bodyObj = JSON.parse(String(res.getBody()))
+  return bodyObj;
+}
 
 describe('adminQuizNameUpdate tests', () => {
   beforeEach(() => {
@@ -8,14 +32,11 @@ describe('adminQuizNameUpdate tests', () => {
   })
 
   describe('Passing cases', () => {
-    adminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test')
-    const user = adminAuthLogin('123@email.com', '123dfsjkfsA')
+    const token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test');
     const quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1')
-    adminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test')
-    const user2 = adminAuthLogin('1234@email.com', '123dfsjkfsA')
+    const token2 = requestAdminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test');
     const quiz2 = adminQuizCreate(user2.authUserId, 'quiz', 'quiz1')
-    adminAuthRegister('12345@email.com', '123dfsjkfsA', 'maple', 'syrup')
-    const user3 = adminAuthLogin('12345@email.com', '123dfsjkfsA')
+    const token3 = requestAdminAuthRegister('12345@email.com', '123dfsjkfsA', 'maple', 'syrup');
     const quiz3 = adminQuizCreate(user3.authUserId, 'quiz', 'quiz1')
   
     test('User 1 changes quiz name to valid quiz name 1', () => {
@@ -39,14 +60,12 @@ describe('adminQuizNameUpdate tests', () => {
   })
   
   describe('authUserId is not valid', () => {
-    adminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test')
-    const user = adminAuthLogin('123@email.com', '123dfsjkfsA')
+    const token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test');
     const quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1')
-    adminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test')
-    const user2 = adminAuthLogin('1234@email.com', '123dfsjkfsA')
+    const token2 = requestAdminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test');
     const quiz2 = adminQuizCreate(user2.authUserId, 'quiz', 'quiz1')
-    adminAuthRegister('12345@email.com', '123dfsjkfsA', 'maple', 'syrup')
-    const user3 = adminAuthLogin('12345@email.com', '123dfsjkfsA')
+
+    const token3 = requestAdminAuthRegister('12345@email.com', '123dfsjkfsA', 'maple', 'syrup');
     const quiz3 = adminQuizCreate(user3.authUserId, 'quiz', 'quiz1')
   
     test('User 1 tries to change user 2 quiz name', () => {
@@ -64,14 +83,11 @@ describe('adminQuizNameUpdate tests', () => {
   })
   
   describe('quizId is not valid', () => {
-    adminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test')
-    const user = adminAuthLogin('123@email.com', '123dfsjkfsA')
+    const token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test');
     const quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1')
-    adminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test')
-    const user2 = adminAuthLogin('1234@email.com', '123dfsjkfsA')
+    const token2 = requestAdminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test');
     const quiz2 = adminQuizCreate(user2.authUserId, 'quiz', 'quiz1')
-    adminAuthRegister('12345@email.com', '123dfsjkfsA', 'maple', 'syrup')
-    const user3 = adminAuthLogin('12345@email.com', '123dfsjkfsA')
+    const token3 = requestAdminAuthRegister('12345@email.com', '123dfsjkfsA', 'maple', 'syrup');
     const quiz3 = adminQuizCreate(user3.authUserId, 'quiz', 'quiz1')
   
     test('User 1 negative quizId not valid', () => {
@@ -86,14 +102,14 @@ describe('adminQuizNameUpdate tests', () => {
   })
   
   describe ('Quiz name is not valid', () => {
-    adminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test');
-    let user = adminAuthLogin('123@email.com', '123dfsjkfsA')
+
+    const token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test');
     let quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1');
-    adminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test');
-    let user2 = adminAuthLogin('1234@email.com', '123dfsjkfsA')
+
+    const token2 = requestAdminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test');
     let quiz2 = adminQuizCreate(user2.authUserId, 'quiz', 'quiz1');
-    adminAuthRegister('12345@email.com', '123dfsjkfsA', 'maple', 'syrup');
-    let user3 = adminAuthLogin('12345@email.com', '123dfsjkfsA')
+
+    const token3 = requestAdminAuthRegister('12345@email.com', '123dfsjkfsA', 'maple', 'syrup');
     let quiz3 = adminQuizCreate(user3.authUserId, 'quiz', 'quiz1');
   
     test ('User 1 quiz name not valid', () => {
@@ -108,14 +124,14 @@ describe('adminQuizNameUpdate tests', () => {
   })
   
   describe('Quiz name too long or short', () => {
-    adminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test')
-    const user = adminAuthLogin('123@email.com', '123dfsjkfsA')
+
+    const token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test');
     const quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1')
-    adminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test')
-    const user2 = adminAuthLogin('1234@email.com', '123dfsjkfsA')
+
+    const token2 = requestAdminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test');
     const quiz2 = adminQuizCreate(user2.authUserId, 'quiz', 'quiz1')
-    adminAuthRegister('12345@email.com', '123dfsjkfsA', 'maple', 'syrup')
-    const user3 = adminAuthLogin('12345@email.com', '123dfsjkfsA')
+
+    const token3 = requestAdminAuthRegister('12345@email.com', '123dfsjkfsA', 'maple', 'syrup');
     const quiz3 = adminQuizCreate(user3.authUserId, 'quiz', 'quiz1')
   
     test('User 1 quiz too short', () => {
@@ -139,14 +155,11 @@ describe('adminQuizNameUpdate tests', () => {
   })
   
   describe('Quiz name already used', () => {
-    adminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test')
-    const user = adminAuthLogin('123@email.com', '123dfsjkfsA')
+    const token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test');
     const quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1')
-    adminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test')
-    const user2 = adminAuthLogin('1234@email.com', '123dfsjkfsA')
+    const token2 = requestAdminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test');
     const quiz2 = adminQuizCreate(user2.authUserId, 'quiz', 'quiz1')
-    adminAuthRegister('12345@email.com', '123dfsjkfsA', 'maple', 'syrup')
-    const user3 = adminAuthLogin('12345@email.com', '123dfsjkfsA')
+    const token3 = requestAdminAuthRegister('12345@email.com', '123dfsjkfsA', 'maple', 'syrup');
     const quiz3 = adminQuizCreate(user3.authUserId, 'quiz', 'quiz1')
   
     adminQuizCreate(user.authUserId, 'newquiz', 'quiz1')
