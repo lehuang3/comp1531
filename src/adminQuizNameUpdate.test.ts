@@ -2,29 +2,29 @@ import { adminQuizNameUpdate, adminQuizCreate } from './quiz.js'
 import { adminAuthLogin, adminAuthRegister } from './auth.js'
 import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister } from './other';
 
-const postRequest = (url: string, data: any) => {
-  const res = request(
-    'POST',
-    url,
-    {
-      json: data,
-    }
-  );
-  const bodyObj = JSON.parse(String(res.getBody()))
-  return bodyObj;
-}
+// const postRequest = (url: string, data: any) => {
+//   const res = request(
+//     'POST',
+//     url,
+//     {
+//       json: data,
+//     }
+//   );
+//   const bodyObj = JSON.parse(String(res.getBody()))
+//   return bodyObj;
+// }
 
-const getRequest = () => {
-  const res = request(
-    'GET',
-    url,
-    {
-      qs: data,
-    }
-  );
-  const bodyObj = JSON.parse(String(res.getBody()))
-  return bodyObj;
-}
+// const getRequest = () => {
+//   const res = request(
+//     'GET',
+//     url,
+//     {
+//       qs: data,
+//     }
+//   );
+//   const bodyObj = JSON.parse(String(res.getBody()))
+//   return bodyObj;
+// }
 
 describe('adminQuizNameUpdate tests', () => {
   beforeEach(() => {
@@ -33,146 +33,150 @@ describe('adminQuizNameUpdate tests', () => {
 
   describe('Passing cases', () => {
     const token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test');
-    const quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1')
+    const quiz1 = requestAdminQuizCreate(token1.body.authUserId, 'quiz', 'quiz1')
     const token2 = requestAdminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test');
-    const quiz2 = adminQuizCreate(user2.authUserId, 'quiz', 'quiz1')
+    const quiz2 = requestAdminQuizCreate(token2.body.authUserId, 'quiz', 'quiz1')
     const token3 = requestAdminAuthRegister('12345@email.com', '123dfsjkfsA', 'maple', 'syrup');
-    const quiz3 = adminQuizCreate(user3.authUserId, 'quiz', 'quiz1')
-  
+    const quiz3 = requestAdminQuizCreate(token3.body.authUserId, 'quiz', 'quiz1')
+    
+    // test.each([
+    //   [token1.body.authUserId, quiz1.body.quizId, 'quiz2'],
+    //   [token1.body.authUserId, quiz1.body.quizId, 'abcdefghijklmnopqrstuvwxyz1234'],
+    //   [token2.body.authUserId, quiz2.body.quizId, 'abc'],
+    //   [token2.body.authUserId, quiz2.body.quizId, 'hello'],
+    //   [token3.body.authUserId, quiz3.body.quizId, 'quiz with spaces'],
+    //   [token3.body.authUserId, quiz3.body.quizId, 'QuIz wiTh SpaceS']
+    // ])(`Test $# of success`, (a, b, c) => {
+    //   expect(requestAdminQuizNameUpdate(token3.body.authUserId, quiz3.body.quizId, 'QuIz wiTh SpaceS').body).toStrictEqual({ })
+    // })
+
     test('User 1 changes quiz name to valid quiz name 1', () => {
-      expect(adminQuizNameUpdate(user.authUserId, quiz.quizId, 'quiz2')).toStrictEqual({ })
+      expect(requestAdminQuizNameUpdate(token1.body.authUserId, quiz1.body.quizId, 'quiz2').body).toStrictEqual({ })
     })
     test('User 1 changes quiz name to valid quiz name 2', () => {
-      expect(adminQuizNameUpdate(user.authUserId, quiz.quizId, 'abcdefghijklmnopqrstuvwxyz1234')).toStrictEqual({ })
+      expect(requestAdminQuizNameUpdate(token1.body.authUserId, quiz1.body.quizId, 'abcdefghijklmnopqrstuvwxyz1234').body).toStrictEqual({ })
     })
     test('User 2 changes quiz name to valid quiz name 1', () => {
-      expect(adminQuizNameUpdate(user2.authUserId, quiz2.quizId, 'abc')).toStrictEqual({ })
+      expect(requestAdminQuizNameUpdate(token2.body.authUserId, quiz2.body.quizId, 'abc').body).toStrictEqual({ })
     })
     test('User 2 changes quiz name to valid quiz name 2', () => {
-      expect(adminQuizNameUpdate(user2.authUserId, quiz2.quizId, 'hello')).toStrictEqual({ })
+      expect(requestAdminQuizNameUpdate(token2.body.authUserId, quiz2.body.quizId, 'hello').body).toStrictEqual({ })
     })
     test('User 3 changes quiz name to valid quiz name 1', () => {
-      expect(adminQuizNameUpdate(user3.authUserId, quiz3.quizId, 'quiz with spaces')).toStrictEqual({ })
+      expect(requestAdminQuizNameUpdate(token3.body.authUserId, quiz3.body.quizId, 'quiz with spaces').body).toStrictEqual({ })
     })
     test('User 3 changes quiz name to valid quiz name 2', () => {
-      expect(adminQuizNameUpdate(user3.authUserId, quiz3.quizId, 'QuIz wiTh SpaceS')).toStrictEqual({ })
+      expect(requestAdminQuizNameUpdate(token3.body.authUserId, quiz3.body.quizId, 'QuIz wiTh SpaceS').body).toStrictEqual({ })
     })
   })
   
   describe('authUserId is not valid', () => {
     const token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test');
-    const quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1')
+    const quiz1 = requestAdminQuizCreate(token1.body.authUserId, 'quiz', 'quiz1')
     const token2 = requestAdminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test');
-    const quiz2 = adminQuizCreate(user2.authUserId, 'quiz', 'quiz1')
-
+    const quiz2 = requestAdminQuizCreate(token2.body.authUserId, 'quiz', 'quiz1')
     const token3 = requestAdminAuthRegister('12345@email.com', '123dfsjkfsA', 'maple', 'syrup');
-    const quiz3 = adminQuizCreate(user3.authUserId, 'quiz', 'quiz1')
+    const quiz3 = requestAdminQuizCreate(token3.body.authUserId, 'quiz', 'quiz1')
   
     test('User 1 tries to change user 2 quiz name', () => {
-      expect(adminQuizNameUpdate(user.authUserId, quiz2.quizId, 'quiz2')).toStrictEqual({ error: 'You do not have access to this quiz.' })
+      expect(requestAdminQuizNameUpdate(token1.body.authUserId, quiz2.body.quizId, 'quiz2').body).toStrictEqual({ error: 'You do not have access to this quiz.' })
     })
     test('User 2 tries to change user 1 quiz name', () => {
-      expect(adminQuizNameUpdate(user2.authUserId, quiz.quizId, 'quiz2')).toStrictEqual({ error: 'You do not have access to this quiz.' })
+      expect(requestAdminQuizNameUpdate(token2.body.authUserId, quiz1.body.quizId, 'quiz2').body).toStrictEqual({ error: 'You do not have access to this quiz.' })
     })
     test('User 2 tries to change user 3 quiz name', () => {
-      expect(adminQuizNameUpdate(user2.authUserId, quiz3.quizId, 'quiz2')).toStrictEqual({ error: 'You do not have access to this quiz.' })
+      expect(requestAdminQuizNameUpdate(token2.body.authUserId, quiz3.body.quizId, 'quiz2').body).toStrictEqual({ error: 'You do not have access to this quiz.' })
     })
     test('User 3 tries to change user 1 quiz name', () => {
-      expect(adminQuizNameUpdate(user3.authUserId, quiz.quizId, 'quiz2')).toStrictEqual({ error: 'You do not have access to this quiz.' })
+      expect(arequestAdminQuizNameUpdate(token3.body.authUserId, quiz1.body.quizId, 'quiz2').body).toStrictEqual({ error: 'You do not have access to this quiz.' })
     })
   })
   
   describe('quizId is not valid', () => {
     const token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test');
-    const quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1')
+    const quiz1 = requestAdminQuizCreate(token1.body.authUserId, 'quiz', 'quiz1')
     const token2 = requestAdminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test');
-    const quiz2 = adminQuizCreate(user2.authUserId, 'quiz', 'quiz1')
+    const quiz2 = requestAdminQuizCreate(token2.body.authUserId, 'quiz', 'quiz1')
     const token3 = requestAdminAuthRegister('12345@email.com', '123dfsjkfsA', 'maple', 'syrup');
-    const quiz3 = adminQuizCreate(user3.authUserId, 'quiz', 'quiz1')
+    const quiz3 = requestAdminQuizCreate(token3.body.authUserId, 'quiz', 'quiz1')
   
     test('User 1 negative quizId not valid', () => {
-      expect(adminQuizNameUpdate(user.authUserId, -1, 'quiz2')).toStrictEqual({ error: 'Quiz does not exist.' })
+      expect(requestAdminQuizNameUpdate(token1.body.authUserId, -1, 'quiz2').body).toStrictEqual({ error: 'Quiz does not exist.' })
     })
     test('User 2 negative quizId not valid', () => {
-      expect(adminQuizNameUpdate(user2.authUserId, -2, 'quiz2')).toStrictEqual({ error: 'Quiz does not exist.' })
+      expect(requestAdminQuizNameUpdate(token2.body.authUserId, -2, 'quiz2').body).toStrictEqual({ error: 'Quiz does not exist.' })
     })
     test('User 3 negative quizId not valid', () => {
-      expect(adminQuizNameUpdate(user3.authUserId, -3, 'quiz2')).toStrictEqual({ error: 'Quiz does not exist.' })
+      expect(requestAdminQuizNameUpdate(token3.body.authUserId, -3, 'quiz2').body).toStrictEqual({ error: 'Quiz does not exist.' })
     })
   })
   
   describe ('Quiz name is not valid', () => {
-
     const token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test');
-    let quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1');
-
+    const quiz1 = requestAdminQuizCreate(token1.body.authUserId, 'quiz', 'quiz1')
     const token2 = requestAdminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test');
-    let quiz2 = adminQuizCreate(user2.authUserId, 'quiz', 'quiz1');
-
+    const quiz2 = requestAdminQuizCreate(token2.body.authUserId, 'quiz', 'quiz1')
     const token3 = requestAdminAuthRegister('12345@email.com', '123dfsjkfsA', 'maple', 'syrup');
-    let quiz3 = adminQuizCreate(user3.authUserId, 'quiz', 'quiz1');
+    const quiz3 = requestAdminQuizCreate(token3.body.authUserId, 'quiz', 'quiz1')
   
     test ('User 1 quiz name not valid', () => {
-      expect(adminQuizNameUpdate(user.authUserId, quiz.quizId, 'quiz#')).toStrictEqual({ error: 'Quiz name cannot have special characters.'})
+      expect(requestAdminQuizNameUpdate(token1.body.authUserId, quiz1.body.quizId, 'quiz#').body).toStrictEqual({ error: 'Quiz name cannot have special characters.'})
     })
     test ('User 2 quiz name not valid', () => {
-      expect(adminQuizNameUpdate(user2.authUserId, quiz2.quizId, 'ad12_131')).toStrictEqual({ error: 'Quiz name cannot have special characters.'})
+      expect(requestAdminQuizNameUpdate(token2.body.authUserId, quiz2.body.quizId, 'ad12_131').body).toStrictEqual({ error: 'Quiz name cannot have special characters.'})
     })
     test ('User 3 quiz name not valid', () => {
-      expect(adminQuizNameUpdate(user3.authUserId, quiz3.quizId, 'Quiz-')).toStrictEqual({ error: 'Quiz name cannot have special characters.'})
+      expect(requestAdminQuizNameUpdate(token3.body.authUserId, quiz3.body.quizId, 'Quiz-').body).toStrictEqual({ error: 'Quiz name cannot have special characters.'})
     })
   })
   
   describe('Quiz name too long or short', () => {
-
     const token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test');
-    const quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1')
-
+    const quiz1 = requestAdminQuizCreate(token1.body.authUserId, 'quiz', 'quiz1')
     const token2 = requestAdminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test');
-    const quiz2 = adminQuizCreate(user2.authUserId, 'quiz', 'quiz1')
-
+    const quiz2 = requestAdminQuizCreate(token2.body.authUserId, 'quiz', 'quiz1')
     const token3 = requestAdminAuthRegister('12345@email.com', '123dfsjkfsA', 'maple', 'syrup');
-    const quiz3 = adminQuizCreate(user3.authUserId, 'quiz', 'quiz1')
+    const quiz3 = requestAdminQuizCreate(token3.body.authUserId, 'quiz', 'quiz1')
   
     test('User 1 quiz too short', () => {
-      expect(adminQuizNameUpdate(user.authUserId, quiz.quizId, 'q1')).toStrictEqual({ error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.' })
+      expect(requestAdminQuizNameUpdate(token1.body.authUserId, quiz1.body.quizId, 'q1').body).toStrictEqual({ error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.' })
     })
     test('User 1 quiz too long', () => {
-      expect(adminQuizNameUpdate(user.authUserId, quiz.quizId, 'fsjhfkjhakhjgkhjajhlahfdoiohasgfhjhasdjkfh1234')).toStrictEqual({ error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.' })
+      expect(requestAdminQuizNameUpdate(token1.body.authUserId, quiz1.body.quizId, 'fsjhfkjhakhjgkhjajhlahfdoiohasgfhjhasdjkfh1234').body).toStrictEqual({ error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.' })
     })
     test('User 2 quiz too short', () => {
-      expect(adminQuizNameUpdate(user2.authUserId, quiz2.quizId, '')).toStrictEqual({ error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.' })
+      expect(requestAdminQuizNameUpdate(token2.body.authUserId, quiz2.body.quizId, '').body).toStrictEqual({ error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.' })
     })
     test('User 2 quiz too long', () => {
-      expect(adminQuizNameUpdate(user2.authUserId, quiz2.quizId, '1231245523414535234115234541352562134265afasf')).toStrictEqual({ error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.' })
+      expect(requestAdminQuizNameUpdate(token2.body.authUserId, quiz2.body.quizId, '1231245523414535234115234541352562134265afasf').body).toStrictEqual({ error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.' })
     })
     test('User 3 quiz too short', () => {
-      expect(adminQuizNameUpdate(user3.authUserId, quiz3.quizId, '1')).toStrictEqual({ error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.' })
+      expect(requestAdminQuizNameUpdate(token3.body.authUserId, quiz3.body.quizId, '1').body).toStrictEqual({ error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.' })
     })
     test('User 2 quiz too long', () => {
-      expect(adminQuizNameUpdate(user3.authUserId, quiz3.quizId, 'dfaslkjhk2j3h45khjfhaksfhjhfk2rjk345hkjkjafjkhhjk52')).toStrictEqual({ error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.' })
+      expect(requestAdminQuizNameUpdate(token3.body.authUserId, quiz3.body.quizId, 'dfaslkjhk2j3h45khjfhaksfhjhfk2rjk345hkjkjafjkhhjk52').body).toStrictEqual({ error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.' })
     })
   })
   
   describe('Quiz name already used', () => {
     const token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test');
-    const quiz = adminQuizCreate(user.authUserId, 'quiz', 'quiz1')
+    const quiz1 = requestAdminQuizCreate(token1.body.authUserId, 'quiz', 'quiz1')
     const token2 = requestAdminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test');
-    const quiz2 = adminQuizCreate(user2.authUserId, 'quiz', 'quiz1')
+    const quiz2 = requestAdminQuizCreate(token2.body.authUserId, 'quiz', 'quiz1')
     const token3 = requestAdminAuthRegister('12345@email.com', '123dfsjkfsA', 'maple', 'syrup');
-    const quiz3 = adminQuizCreate(user3.authUserId, 'quiz', 'quiz1')
+    const quiz3 = requestAdminQuizCreate(token3.body.authUserId, 'quiz', 'quiz1')
   
-    adminQuizCreate(user.authUserId, 'newquiz', 'quiz1')
-    adminQuizCreate(user2.authUserId, 'newquiz1', 'quiz1')
-    adminQuizCreate(user3.authUserId, 'newquiz2', 'quiz1')
+    requestAdminQuizCreate(token1.body.authUserId, 'newquiz', 'quiz1')
+    requestAdminQuizCreate(token2.body.authUserId, 'newquiz1', 'quiz1')
+    requestAdminQuizCreate(token3.body.authUserId, 'newquiz2', 'quiz1')
     test('User 1 quiz name already used', () => {
-      expect(adminQuizNameUpdate(user.authUserId, quiz.quizId, 'newquiz')).toStrictEqual({ error: 'Quiz name already exists.' })
+      expect(requestAdminQuizNameUpdate(token1.body.authUserId, quiz1.body.quizId, 'newquiz').body).toStrictEqual({ error: 'Quiz name already exists.' })
     })
     test('User 2 quiz name already used', () => {
-      expect(adminQuizNameUpdate(user2.authUserId, quiz2.quizId, 'newquiz1')).toStrictEqual({ error: 'Quiz name already exists.' })
+      expect(requestAdminQuizNameUpdate(token2.body.authUserId, quiz2.body.quizId, 'newquiz1').body).toStrictEqual({ error: 'Quiz name already exists.' })
     })
     test('User 3 quiz name already used', () => {
-      expect(adminQuizNameUpdate(user3.authUserId, quiz3.quizId, 'newquiz2')).toStrictEqual({ error: 'Quiz name already exists.' })
+      expect(requestAdminQuizNameUpdate(token3.body.authUserId, quiz3.body.quizId, 'newquiz2').body).toStrictEqual({ error: 'Quiz name already exists.' })
     })
   })
 })
