@@ -1,5 +1,5 @@
 import { adminQuizInfo, adminQuizCreate } from './quiz.js'
-import { clear } from './other.js'
+import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister } from './other';
 import { adminAuthLogin, adminAuthRegister } from './auth.js'
 
 beforeEach(() => {
