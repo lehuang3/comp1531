@@ -8,7 +8,23 @@ import { Data } from './interfaces';
  *
  * @returns {array object} - List of quizzes
 */
-function adminQuizList (authUserId: number) {
+function adminQuizList (token: ErrorObject | TokenParameter) {
+  const data: Data = read();
+  if (!('token' in token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  
+  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
+  if (matchingToken === undefined) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+  const authUserId = matchingToken.authUserId;
+
   if (isValidUser(authUserId) === false) {
     return { error: 'User id not valid' }
   } else {
@@ -149,8 +165,8 @@ function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
     const quizIndex = data.quizzes.findIndex((quiz) => quiz.quizId === quizId);
 
 
-    //const removedQuiz = data.quizzes.splice(quizIndex, 1)[0];
-    //data.trash.push(removedQuiz);
+    const removedQuiz = data.quizzes.splice(quizIndex, 1)[0];
+    data.trash.push(removedQuiz);
 
     for (const user of data.users) {
       if (user.authUserId === authUserId) {
