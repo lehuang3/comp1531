@@ -347,13 +347,13 @@ function requestAdminQuizCreate(token: ErrorObject | TokenParameter, name:string
   } 
 }
 
-function requestAdminQuizInfo(token: ErrorObject | TokenParameter) {
+function requestAdminQuizInfo(token: ErrorObject | TokenParameter, quizId: number) {
   const res = request(
     'GET',
     SERVER_URL + `/v1/admin/quiz/${quizId}`,
     {
       qs: {
-        quizId
+        token
       }
     }
   );
@@ -365,4 +365,4 @@ function requestAdminQuizInfo(token: ErrorObject | TokenParameter) {
 
 export { clear, save, read, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
 quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
-requestAdminQuizCreate};
+requestAdminQuizCreate, requestAdminQuizInfo };

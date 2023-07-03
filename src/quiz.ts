@@ -162,8 +162,24 @@ function adminQuizRemove (authUserId: number, quizId: number) {
   *   }
   * }
 */
-function adminQuizInfo (authUserId: number, quizId: number) {
+function adminQuizInfo (token: ErrorObject | TokenParameter, quizId: number) {
   const data = read();
+  if (!('token' in token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+
+  // check for invalid session
+  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
+  if (matchingToken === undefined) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+  const authUserId = matchingToken.authUserId;
+  
   if (!quizValidCheck(quizId)) {
     return {
       error: 'Quiz does not exist.'
