@@ -319,5 +319,34 @@ function requestAdminQuizDescriptionUpdate(token: ErrorObject | TokenParameter, 
   } 
 }
 
+/**
+ * Send a 'delete' request to the corresponding server route to reset the
+ * application state, returning the response in the form of a javascript object
+ * @param {{}} - No parameters
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminQuizCreate(token: ErrorObject | TokenParameter, name:string, description:string) {
+  const res = request(
+    'POST',
+    SERVER_URL + '/v1/admin/quiz',
+    {
+      // Note that for PUT/POST requests, you should
+      // use the key 'json' instead of the query string 'qs'
+      json: {
+        token,
+        name,
+        description
+      }
+    }
+  );
+  //console.log(JSON.parse(res.body.toString()));
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  } 
+}
+
 export { clear, save, read, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
-quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate };
+quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
+requestAdminQuizCreate};
