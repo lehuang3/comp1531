@@ -115,7 +115,18 @@ app.put('/v1/admin/quiz/:quizId/description', (req: Request, res: Response) => {
 
 app.get('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
-  
+  const token = req.body
+  const response = adminQuizInfo(token, quizId);
+  if ('error' in response) {
+    if (response.error === 'Invalid token structure') {
+      return res.status(401).json(response);
+    } else if (response.error === 'Not a valid session') {
+      return res.status(403).json(response);
+    } else {
+      return res.status(400).json(response);
+    }
+  }
+  res.json(response);
 });
 
 // ====================================================================

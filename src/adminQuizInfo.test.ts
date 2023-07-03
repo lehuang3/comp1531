@@ -1,9 +1,21 @@
-import { requestAdminQuizInfo, requestAdminQuizCreate } from './quiz.js'
-import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister } from './other';
-import { requestAdminAuthRegister } from './auth.js'
+import { adminQuizNameUpdate, adminQuizCreate } from './quiz.js'
+import { adminAuthLogin, adminAuthRegister } from './auth.js'
+import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminQuizNameUpdate, requestAdminQuizCreate} from './other'
+
+let token1: any;
+let quiz1: any;
+let token2: any;
+let quiz2: any;
+let token3: any;
+let quiz3: any;
 
 beforeEach(() => {
-  clear()
+  requestClear()
+  const token = requestAdminAuthRegister('123@email.com', '123adjakjfhgaA', 'david', 'test')
+  const quiz = requestAdminQuizCreate(token.authUserId, 'quizhello', 'quiz1number')
+  const quiz1 = requestAdminQuizCreate(token.authUserId, 'quiz123', 'quizname')
+  const quiz2 = requestAdminQuizCreate(token.authUserId, 'test', 'A simple quiz')
+  
 })
 
 describe('Valid inputs, test pass', () => {

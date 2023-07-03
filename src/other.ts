@@ -347,7 +347,21 @@ function requestAdminQuizCreate(token: ErrorObject | TokenParameter, name:string
   } 
 }
 
-function requestAdminQuizInfo(token: ErrorObject | TokenParameter, )
+function requestAdminQuizInfo(token: ErrorObject | TokenParameter) {
+  const res = request(
+    'GET',
+    SERVER_URL + `/v1/admin/quiz/${quizId}`,
+    {
+      qs: {
+        quizId
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  } 
+}
 
 export { clear, save, read, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
 quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
