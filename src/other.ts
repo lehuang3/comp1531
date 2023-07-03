@@ -60,6 +60,64 @@ function requestGetAdminUserDetails(token: ErrorObject | TokenParameter) {
 }
 
 /**
+ * Given a token, find the corresponding user that created
+ * the token (by starting a session), and return the user's authUserId
+ * if the user exists, and undefined otherwise.
+ * @param {{TokenParameter}} - Token
+ *
+ * @returns {{undefined | number}} - undefined or a user's authUserId
+*/
+function tokenOwner(token: TokenParameter | ErrorObject) {
+  const data: Data = read();
+  if (!isSessionValid(token)) {
+    // error if no corresponding token found
+    return undefined;
+  } else {
+    if ('token' in token) {
+      return data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token)).authUserId;
+    }
+    
+  }
+}
+
+/**
+ * Check if a token passed in has a valid
+ * structure, and return a boolean value accordingly.
+ * @param {{ErrorObject | TokenParameter}} - Token
+ *
+ * @returns {{boolean}} - True or false
+*/
+function isTokenValid(token: ErrorObject | TokenParameter) {
+  const data: Data = read();
+  if (!('token' in token)) {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Given a token, check if there is an existing session
+ * linked to the token, return true if such a session
+ * exists, false otherwise
+ * @param {{ErrorObject | TokenParameter}} - Token
+ *
+ * @returns {{boolean}} - True/false or matching token's 
+ * associated authUserId
+*/
+function isSessionValid(token: TokenParameter | ErrorObject): boolean {
+  const data: Data = read();
+  let matchingToken: Token;
+  if ('token' in token) {
+    matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
+  }
+  if (matchingToken === undefined) {
+    // error if no corresponding token found
+    return false;
+  }
+  return true
+}
+
+/**
  * Does not return anything, resets the state of the application
  *
  * @param {{}} - No parameters
@@ -420,7 +478,7 @@ function requestAdminQuizList(token: ErrorObject | TokenParameter ) {
 }
 
 
-export { clear, save, read, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
+export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
 quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
 requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove,requestAdminQuizList };
 
