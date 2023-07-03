@@ -175,8 +175,14 @@ function adminQuizInfo (authUserId: number, quizId: number) {
   *
   * @returns {{}} - Empty object.
 */
-function adminQuizNameUpdate (authUserId: number, quizId: number, name: string) {
+function adminQuizNameUpdate (token: ErrorObject | TokenParameter, quizId: number, name: string) {
   const data = read();
+  if (!data.tokens.includes(token)) {
+    return {
+      error: 'Not a valid session'
+    }
+  //} else if ()
+  }
   if (!nameLengthIsValid(name)) {
     return {
       error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.'
@@ -185,7 +191,7 @@ function adminQuizNameUpdate (authUserId: number, quizId: number, name: string) 
     return {
       error: 'Quiz name cannot have special characters.'
     }
-  } else if (nameTaken(authUserId, name)) {
+  } else if (nameTaken(token.authUserId, name)) {
     return {
       error: 'Quiz name already exists.'
     }
@@ -193,7 +199,7 @@ function adminQuizNameUpdate (authUserId: number, quizId: number, name: string) 
     return {
       error: 'Quiz does not exist.'
     }
-  } else if (!quizValidOwner(authUserId, quizId)) {
+  } else if (!quizValidOwner(token.authUserId, quizId)) {
     return {
       error: 'You do not have access to this quiz.'
     }
