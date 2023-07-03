@@ -8,7 +8,7 @@ describe('adminAuthRegister tests', () => {
 
   describe('Testing valid registrations', () => {
     test('Simple test pass', () => {
-      const response = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel');
+      const response = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel')
       expect(response.body).toStrictEqual({
         token: expect.any(String),
       });

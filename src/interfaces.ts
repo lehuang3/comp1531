@@ -50,7 +50,10 @@ interface Quiz {
   name: string;
   timeCreated: number;
   timeLastEdited: number;
-  description: string
+  description: string;
+  numQuestions: number;
+  questions: Object[];
+  duration:number;
 }
 
 // type of a user in the users array
