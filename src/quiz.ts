@@ -1,5 +1,6 @@
 import { ErrorObject, Quiz, TokenParameter } from './interfaces';
-import { save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong } from './other'
+import { save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong,
+         tokenOwner, isTokenValid, isSessionValid } from './other';
 import { Data } from './interfaces';
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -272,21 +273,18 @@ function adminQuizNameUpdate (token: ErrorObject | TokenParameter, quizId: numbe
 function adminQuizDescriptionUpdate (token: ErrorObject | TokenParameter, quizId: number, description: string) {
   const data: Data = read();
   // check token structure
-  if (!('token' in token)) {
+  if (!isTokenValid(token)) {
     return {
       error: 'Invalid token structure',
     }
   }
-
-  // check for invalid session
-  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
-  if (matchingToken === undefined) {
+  if (!isSessionValid(token)) {
     // error if no corresponding token found
     return {
       error: 'Not a valid session',
     }
   }
-  const authUserId = matchingToken.authUserId;
+  const authUserId = tokenOwner(token);
   // check quizId
   if (!quizValidCheck(quizId)) {
     return {
