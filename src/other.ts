@@ -347,6 +347,7 @@ function requestAdminQuizCreate(token: ErrorObject | TokenParameter, name:string
   } 
 }
 
+
 function requestAdminQuizNameUpdate(token: ErrorObject | TokenParameter, quizId: number, name:string) {
   const res = request(
     'PUT',

@@ -7,7 +7,7 @@ import YAML from 'yaml';
 import sui from 'swagger-ui-express';
 import fs from 'fs';
 import { adminAuthRegister, adminUserDetails, adminAuthLogin } from './auth';
-import { adminQuizCreate, adminQuizDescriptionUpdate } from './quiz';
+import { adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate } from './quiz';
 import { clear } from './other';
 import { ErrorObject, TokenParameter } from './interfaces';
 
@@ -115,8 +115,7 @@ app.put('/v1/admin/quiz/:quizId/description', (req: Request, res: Response) => {
 
 app.put('/v1/admin/quiz/:quizId/name', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
-  const token = req.body.token;
-  const name = req.body.name;
+  const { token, name } = req.body;
   const response = adminQuizNameUpdate(token.authUserId, quizId, name);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {

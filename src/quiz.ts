@@ -1,4 +1,4 @@
-import { ErrorObject, TokenParameter } from './interfaces';
+import { ErrorObject, Quiz, TokenParameter } from './interfaces';
 import { save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong } from './other'
 import { Data } from './interfaces';
 /**
@@ -47,8 +47,22 @@ function adminQuizList (authUserId: number) {
  *
  * @returns {quizID: number} - Quiz's identification number
 */
-function adminQuizCreate (authUserId: number, name: string, description: string) {
-  const data = read();
+function adminQuizCreate (token: ErrorObject | TokenParameter, name: string, description: string) {
+  const data: Data = read();
+  if (!('token' in token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  
+  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
+  if (matchingToken === undefined) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+  const authUserId = matchingToken.authUserId;
 
   if (isValidUser(authUserId) === false) {
     return { error: 'User id not valid' }
@@ -73,12 +87,16 @@ function adminQuizCreate (authUserId: number, name: string, description: string)
 
     const time = Math.floor(Date.now() / 1000)
 
-    const newQuiz = {
+    const newQuiz: Quiz = {
       quizId: quizId,
       name: name,
       timeCreated: time,
       timeLastEdited: time,
-      description: description
+      description: description,
+      numQuestions:0,
+      questions:[],
+      duration:0
+
     }
 
     data.quizzes.push(newQuiz)
@@ -176,13 +194,23 @@ function adminQuizInfo (authUserId: number, quizId: number) {
   * @returns {{}} - Empty object.
 */
 function adminQuizNameUpdate (token: ErrorObject | TokenParameter, quizId: number, name: string) {
-  const data = read();
-  if (!data.tokens.includes(token)) {
+  const data: Data = read();
+  if (!('token' in token)) {
     return {
-      error: 'Not a valid session'
+      error: 'Invalid token structure',
     }
-  //} else if ()
   }
+  
+  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
+  if (matchingToken === undefined) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+  const authUserId = matchingToken.authUserId;
+
+  
   if (!nameLengthIsValid(name)) {
     return {
       error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.'
@@ -191,7 +219,7 @@ function adminQuizNameUpdate (token: ErrorObject | TokenParameter, quizId: numbe
     return {
       error: 'Quiz name cannot have special characters.'
     }
-  } else if (nameTaken(token.authUserId, name)) {
+  } else if (nameTaken(authUserId, name)) {
     return {
       error: 'Quiz name already exists.'
     }
@@ -199,7 +227,7 @@ function adminQuizNameUpdate (token: ErrorObject | TokenParameter, quizId: numbe
     return {
       error: 'Quiz does not exist.'
     }
-  } else if (!quizValidOwner(token.authUserId, quizId)) {
+  } else if (!quizValidOwner(authUserId, quizId)) {
     return {
       error: 'You do not have access to this quiz.'
     }

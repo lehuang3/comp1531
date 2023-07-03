@@ -1,3 +1,4 @@
+
 import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate } from './other'
 import { TokenParameter } from './interfaces';
 let token1: TokenParameter;
