@@ -11,20 +11,18 @@ import { Data } from './interfaces';
 */
 function adminQuizList (token: ErrorObject | TokenParameter) {
   const data: Data = read();
-  if (!('token' in token)) {
+  if (!isTokenValid(token)) {
     return {
       error: 'Invalid token structure',
     }
   }
-  
-  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
-  if (matchingToken === undefined) {
+  if (!isSessionValid(token)) {
     // error if no corresponding token found
     return {
       error: 'Not a valid session',
     }
   }
-  const authUserId = matchingToken.authUserId;
+  const authUserId = tokenOwner(token);
 
   if (isValidUser(authUserId) === false) {
     return { error: 'User id not valid' }
@@ -66,20 +64,18 @@ function adminQuizList (token: ErrorObject | TokenParameter) {
 */
 function adminQuizCreate (token: ErrorObject | TokenParameter, name: string, description: string) {
   const data: Data = read();
-  if (!('token' in token)) {
+  if (!isTokenValid(token)) {
     return {
       error: 'Invalid token structure',
     }
   }
-  
-  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
-  if (matchingToken === undefined) {
+  if (!isSessionValid(token)) {
     // error if no corresponding token found
     return {
       error: 'Not a valid session',
     }
   }
-  const authUserId = matchingToken.authUserId;
+  const authUserId = tokenOwner(token);
 
   if (isValidUser(authUserId) === false) {
     return { error: 'User id not valid' }
@@ -138,20 +134,18 @@ function adminQuizCreate (token: ErrorObject | TokenParameter, name: string, des
 */
 function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
   const data: Data = read();
-  if (!('token' in token)) {
+  if (!isTokenValid(token)) {
     return {
       error: 'Invalid token structure',
     }
   }
-  
-  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
-  if (matchingToken === undefined) {
+  if (!isSessionValid(token)) {
     // error if no corresponding token found
     return {
       error: 'Not a valid session',
     }
   }
-  const authUserId = matchingToken.authUserId;
+  const authUserId = tokenOwner(token);
 
   if (isValidUser(authUserId) === false) {
     return { error: 'User id not valid' }
