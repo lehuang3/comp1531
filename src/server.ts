@@ -78,7 +78,7 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
 
 app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   const { token,name,description} = req.body;
-  const response = adminQuizCreate(token, name, description);
+  const response = adminQuizCreate(token, name, description)
   if ('error' in response) {
     if (response.error === 'Token is not valid') {
       return res.status(401).json(response);
@@ -117,6 +117,7 @@ app.put('/v1/admin/quiz/:quizId/name', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { token, name } = req.body;
   const response = adminQuizNameUpdate(token.authUserId, quizId, name);
+  console.log(req.body)
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
       return res.status(401).json(response);
