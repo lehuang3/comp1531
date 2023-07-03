@@ -210,8 +210,24 @@ function adminQuizInfo (authUserId: number, quizId: number) {
   *
   * @returns {{}} - Empty object.
 */
-function adminQuizNameUpdate (authUserId: number, quizId: number, name: string) {
-  const data = read();
+function adminQuizNameUpdate (token: ErrorObject | TokenParameter, quizId: number, name: string) {
+  const data: Data = read();
+  if (!('token' in token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  
+  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
+  if (matchingToken === undefined) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+  const authUserId = matchingToken.authUserId;
+
+  
   if (!nameLengthIsValid(name)) {
     return {
       error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.'

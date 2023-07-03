@@ -348,6 +348,33 @@ function requestAdminQuizCreate(token: ErrorObject | TokenParameter, name:string
 }
 
 /**
+ * Sends a request to update the name of the current quiz
+ * 
+ * @param token 
+ * @param quizId 
+ * @param name 
+ * 
+ * @returns 
+*/
+
+function requestAdminQuizNameUpdate(token: ErrorObject | TokenParameter, quizId: number, name:string) {
+  const res = request(
+    'PUT',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/name`,
+    {
+      json: {
+        token,
+        name
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  } 
+}
+
+/**
  * Send a 'delete' request to the corresponding server route to reset the
  * application state, returning the response in the form of a javascript object
  * @param {{}} - No parameters
@@ -366,7 +393,6 @@ function requestadminQuizRemove(token: ErrorObject | TokenParameter, quizId: num
       }
     }
   );
- 
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -376,4 +402,5 @@ function requestadminQuizRemove(token: ErrorObject | TokenParameter, quizId: num
 
 export { clear, save, read, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
 quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
-requestAdminQuizCreate, requestadminQuizRemove};
+requestAdminQuizCreate, requestAdminQuizNameUpdate, requestadminQuizRemove };
+
