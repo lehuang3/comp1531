@@ -1,6 +1,6 @@
 import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestadminQuizRemove } from './other'
 import { TokenParameter } from './interfaces';
-//import { token } from 'morgan';
+import { token } from 'morgan';
 let token1: TokenParameter;
 
 let quiz: any;
@@ -12,22 +12,23 @@ beforeEach(() => {
   
 })
 
-test('Invalide User ID', () => {
-  console.log(quiz.quizId);
-})
+
 
 test('Invalide User ID', () => {
-  let token2 = requestAdminAuthRegister('hayden.hafezimasoomi@gmail.com', 'hayden', 'hayden', 'Hafezi').body;
+  let token2 = requestAdminAuthRegister('hayden.hafezimasoomi@gmail.com', '1234abcd', 'hayden', 'Hafezi').body;
+  
   const response = requestadminQuizRemove(token2, quiz.quizId)
+  
   expect(response.body).toStrictEqual({ error: expect.any(String) })
   expect(response.status).toStrictEqual(400);
 })
-/*
+
 test('Invalide quiz ID', () => {
   const quiz2 = {
-    quizId: (parseInt(quiz.quizId) + 1).toString(),
+    quizId: quiz.quizId + 1,
   }
-  const response = requestadminQuizRemove(token1, quiz.quizId)
+  const response = requestadminQuizRemove(token1, quiz2.quizId)
+
   expect(response.body).toStrictEqual({ error: expect.any(String) })
   expect(response.status).toStrictEqual(400);
 })
@@ -58,4 +59,3 @@ test('Valid entry', () => {
   expect(response.body).toStrictEqual({});
   expect(response.status).toStrictEqual(200);
 })
-*/

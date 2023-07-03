@@ -107,7 +107,7 @@ function adminQuizCreate (token: ErrorObject | TokenParameter, name: string, des
       }
     }
     save(data);
-    return { quizId }
+    return { quizId:quizId }
   }
 }
 
@@ -149,8 +149,8 @@ function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
     const quizIndex = data.quizzes.findIndex((quiz) => quiz.quizId === quizId);
 
 
-    const removedQuiz = data.quizzes.splice(quizIndex, 1)[0];
-    data.trash.push(removedQuiz);
+    //const removedQuiz = data.quizzes.splice(quizIndex, 1)[0];
+    //data.trash.push(removedQuiz);
 
     for (const user of data.users) {
       if (user.authUserId === authUserId) {

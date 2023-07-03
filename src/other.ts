@@ -361,12 +361,12 @@ function requestadminQuizRemove(token: ErrorObject | TokenParameter, quizId: num
     {
       // Note that for PUT/POST requests, you should
       // use the key 'json' instead of the query string 'qs'
-      json: {
+      qs: {
         token,
       }
     }
   );
-  //console.log(JSON.parse(res.body.toString()));
+ 
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
