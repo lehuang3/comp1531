@@ -11,6 +11,7 @@ beforeEach(() => {
 
 test('Check for invalid token structure', () => {
   const token2 = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body;
+  
   const response = requestGetAdminUserDetails(token2);
   expect(response.body).toStrictEqual({
     error: 'Invalid token structure',
@@ -32,6 +33,7 @@ test('Check for invalid session', () => {
 
 test('Check for valid auth', () => {
   const response = requestGetAdminUserDetails(token1);
+ 
   expect(response.body).toStrictEqual({
     user: {
       userId: expect.any(Number),
