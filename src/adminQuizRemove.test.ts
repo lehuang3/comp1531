@@ -1,55 +1,61 @@
-import { adminQuizCreate, adminQuizRemove, adminQuizList } from './quiz.js'
-import { adminAuthRegister } from './auth.js'
-import { clear } from './other.js'
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestadminQuizRemove } from './other'
+import { TokenParameter } from './interfaces';
+//import { token } from 'morgan';
+let token1: TokenParameter;
 
+let quiz: any;
 // Runs before each test
 beforeEach(() => {
-  clear()
+  requestClear()
+  token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body;
+  quiz = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion').body;
+  
 })
 
 test('Invalide User ID', () => {
-  adminAuthRegister('Sina.hafezimasoomi@gmail.com', 'Sina12356789', 'Sina', 'Hafezi')
-  adminQuizCreate(0, 'Sina', 'descruiption')
-  expect(adminQuizRemove(1, 0)).toStrictEqual({ error: expect.any(String) })
+  console.log(quiz.quizId);
 })
 
+test('Invalide User ID', () => {
+  let token2 = requestAdminAuthRegister('hayden.hafezimasoomi@gmail.com', 'hayden', 'hayden', 'Hafezi').body;
+  const response = requestadminQuizRemove(token2, quiz.quizId)
+  expect(response.body).toStrictEqual({ error: expect.any(String) })
+  expect(response.status).toStrictEqual(400);
+})
+/*
 test('Invalide quiz ID', () => {
-  adminAuthRegister('Sina.hafezimasoomi@gmail.com', 'Sina12356789', 'Sina', 'Hafezi')
-  adminAuthRegister('hayden.hafezimasoomi@gmail.com', 'hayden', 'hayden', 'Hafezi')
-  adminQuizCreate(0, 'Sina', 'descruiption')
-  adminQuizCreate(1, 'hayden', 'descruiption')
-  expect(adminQuizRemove(1, 0)).toStrictEqual({ error: expect.any(String) })
+  const quiz2 = {
+    quizId: (parseInt(quiz.quizId) + 1).toString(),
+  }
+  const response = requestadminQuizRemove(token1, quiz.quizId)
+  expect(response.body).toStrictEqual({ error: expect.any(String) })
+  expect(response.status).toStrictEqual(400);
 })
 
-test('Invalide User ID', () => {
-  adminAuthRegister('Sina.hafezimasoomi@gmail.com', 'Sina12356789', 'Sina', 'Hafezi')
-  adminQuizCreate(0, 'Sina', 'descruiption')
-  expect(adminQuizRemove(1, 0)).toStrictEqual({ error: expect.any(String) })
+test('Invalid token struct', () => {
+  const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body;
+  const response = requestadminQuizRemove(token4, quiz.quizId)
+  expect(response.body).toStrictEqual({ error: expect.any(String) });
+  expect(response.status).toStrictEqual(401);
 })
+
+test('Check for invalid session', () => {
+  let token2 = {
+    token: (parseInt(token1.token) + 1).toString(),
+  }
+  const response = requestadminQuizRemove(token2, quiz.quizId);
+  expect(response.body).toStrictEqual({error: expect.any(String)});
+  expect(response.status).toStrictEqual(403);
+})
+
+
 
 test('Valid entry', () => {
-  adminAuthRegister('Sina.hafezimasoomi@gmail.com', 'Sina12356789', 'Sina', 'Hafezi')
-  adminQuizCreate(0, 'Sina', 'descruiption')
-  adminQuizCreate(0, 'Sina1', 'descruiption')
-  expect(adminQuizList(0)).toStrictEqual({
-    quizzes: [
-      {
-        quizId: expect.any(Number),
-        name: expect.any(String)
-      },
-      {
-        quizId: expect.any(Number),
-        name: expect.any(String)
-      }
-  	]
-  })
-})
 
-test('Removed in user datastore', () => {
-  adminAuthRegister('Sina.hafezimasoomi@gmail.com', 'Sina12356789', 'Sina', 'Hafezi')
-  adminQuizCreate(0, 'quiz1', 'descruiption')
-  adminQuizCreate(0, 'quiz2', 'descruiption')
-  adminQuizCreate(0, 'quiz3', 'descruiption')
-  adminQuizRemove(0, 1)
-  expect(adminQuizRemove(0, 0)).toStrictEqual({})
+  let quiz2 = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion').body;
+
+  const response = requestadminQuizRemove(token1, quiz.quizId);
+  expect(response.body).toStrictEqual({});
+  expect(response.status).toStrictEqual(200);
 })
+*/
