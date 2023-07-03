@@ -69,7 +69,7 @@ test('Description > 100', () => {
 })
 
 test('Valid entry', () => {
-  const response = requestAdminQuizCreate(token1, 'quiz1', 'EnigmaticUniverseSparklingWithInfinitePossibilities1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz')
-  expect(response.body).toStrictEqual({ error: expect.any(String)})
+  const response = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion')
+  expect(response.body).toStrictEqual({ quizId: expect.any(Number) })
   expect(response.status).toStrictEqual(200);
 })
