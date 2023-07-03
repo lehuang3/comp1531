@@ -107,7 +107,8 @@ function adminQuizCreate (token: ErrorObject | TokenParameter, name: string, des
       }
     }
     save(data);
-    return { quizId }
+    
+    return { quizId: quizId }
   }
 }
 

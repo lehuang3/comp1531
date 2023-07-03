@@ -116,8 +116,7 @@ app.put('/v1/admin/quiz/:quizId/description', (req: Request, res: Response) => {
 app.put('/v1/admin/quiz/:quizId/name', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { token, name } = req.body;
-  const response = adminQuizNameUpdate(token.authUserId, quizId, name);
-  console.log(req.body)
+  const response = adminQuizNameUpdate(token, quizId, name);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
       return res.status(401).json(response);
@@ -127,7 +126,8 @@ app.put('/v1/admin/quiz/:quizId/name', (req: Request, res: Response) => {
       return res.status(400).json(response);
     } 
   }
-  res.json(reponse);
+
+  res.json(response);
 });
 
 // ====================================================================
