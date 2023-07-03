@@ -107,8 +107,7 @@ function adminQuizCreate (token: ErrorObject | TokenParameter, name: string, des
       }
     }
     save(data);
-    
-    return { quizId: quizId }
+    return { quizId:quizId }
   }
 }
 
@@ -120,7 +119,23 @@ function adminQuizCreate (token: ErrorObject | TokenParameter, name: string, des
  *
  * @returns {{}} - Empty object
 */
-function adminQuizRemove (authUserId: number, quizId: number) {
+function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
+  const data: Data = read();
+  if (!('token' in token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  
+  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
+  if (matchingToken === undefined) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+  const authUserId = matchingToken.authUserId;
+
   if (isValidUser(authUserId) === false) {
     return { error: 'User id not valid' }
   } else if (quizValidCheck(quizId) === false) {
@@ -128,13 +143,14 @@ function adminQuizRemove (authUserId: number, quizId: number) {
   } else if (quizValidOwner(authUserId, quizId) === false) {
     return { error: 'Not owner of quiz' }
   } else {
-    const data = read();
+    
 
-    for (let index = 0; index < data.quizzes.length; index++) {
-      if (data.quizzes[index].quizId === quizId) {
-        data.quizzes.splice(index, 1)
-      }
-    }
+  
+    const quizIndex = data.quizzes.findIndex((quiz) => quiz.quizId === quizId);
+
+
+    //const removedQuiz = data.quizzes.splice(quizIndex, 1)[0];
+    //data.trash.push(removedQuiz);
 
     for (const user of data.users) {
       if (user.authUserId === authUserId) {
