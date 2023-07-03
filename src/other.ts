@@ -347,6 +347,8 @@ function requestAdminQuizCreate(token: ErrorObject | TokenParameter, name:string
   } 
 }
 
+function requestAdminQuizInfo(token: ErrorObject | TokenParameter, )
+
 export { clear, save, read, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
 quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
 requestAdminQuizCreate};
