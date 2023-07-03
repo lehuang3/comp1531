@@ -113,6 +113,11 @@ app.put('/v1/admin/quiz/:quizId/description', (req: Request, res: Response) => {
   res.json(response);
 });
 
+app.get('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
