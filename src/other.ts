@@ -407,6 +407,23 @@ function requestAdminQuizCreate(token: ErrorObject | TokenParameter, name:string
   } 
 }
 
+
+function requestAdminQuizInfo(token: ErrorObject | TokenParameter, quizId: number) {
+  const res = request(
+    'GET',
+    SERVER_URL + `/v1/admin/quiz/${quizId}`,
+    {
+      qs: {
+        token
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  } 
+}
+    
 /**
  * Sends a request to update the name of the current quiz
  * 
@@ -480,5 +497,6 @@ function requestAdminQuizList(token: ErrorObject | TokenParameter ) {
 
 export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
 quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
-requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove,requestAdminQuizList };
+requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizList, requestAdminQuizInfo };
+
 

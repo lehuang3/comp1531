@@ -1,1 +1,1 @@
-{"users":[{"authUserId":0,"email":"Minh@gmail.com","password":"1234abcd","name":"Minh Le","numSuccessfulLogins":1,"numFailedPasswordsSinceLastLogin":0,"userQuizzes":[0]}],"quizzes":[{"quizId":0,"name":"quiz","timeCreated":1688380366,"timeLastEdited":1688380366,"description":"","numQuestions":0,"questions":[],"duration":0}],"tokens":[{"authUserId":0,"sessionId":0}],"trash":[]}
+{"users":[],"quizzes":[],"tokens":[],"trash":[]}
