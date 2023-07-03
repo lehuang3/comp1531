@@ -3,7 +3,6 @@ import { adminQuizCreate } from './quiz'
 import { requestClear, requestAdminAuthRegister, requestAdminQuizDescriptionUpdate } from './other'
 let token1: AdminAuthRegisterReturn;
 let quiz1: any;
-let authUserId: number;
 beforeEach(() => {
   requestClear()
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body;

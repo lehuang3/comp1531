@@ -191,7 +191,7 @@ function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
   * }
 */
 function adminQuizInfo (token: ErrorObject | TokenParameter, quizId: number) {
-  const data = read();
+  const data: Data = read();
   if (!('token' in token)) {
     return {
       error: 'Invalid token structure',
