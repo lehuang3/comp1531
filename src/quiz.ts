@@ -9,7 +9,21 @@ import { Data } from './interfaces';
  *
  * @returns {array object} - List of quizzes
 */
-function adminQuizList (authUserId: number) {
+function adminQuizList (token: ErrorObject | TokenParameter) {
+  const data: Data = read();
+  if (!isTokenValid(token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  if (!isSessionValid(token)) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+  const authUserId = tokenOwner(token);
+
   if (isValidUser(authUserId) === false) {
     return { error: 'User id not valid' }
   } else {
@@ -50,20 +64,18 @@ function adminQuizList (authUserId: number) {
 */
 function adminQuizCreate (token: ErrorObject | TokenParameter, name: string, description: string) {
   const data: Data = read();
-  if (!('token' in token)) {
+  if (!isTokenValid(token)) {
     return {
       error: 'Invalid token structure',
     }
   }
-  
-  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
-  if (matchingToken === undefined) {
+  if (!isSessionValid(token)) {
     // error if no corresponding token found
     return {
       error: 'Not a valid session',
     }
   }
-  const authUserId = matchingToken.authUserId;
+  const authUserId = tokenOwner(token);
 
   if (isValidUser(authUserId) === false) {
     return { error: 'User id not valid' }
@@ -122,20 +134,18 @@ function adminQuizCreate (token: ErrorObject | TokenParameter, name: string, des
 */
 function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
   const data: Data = read();
-  if (!('token' in token)) {
+  if (!isTokenValid(token)) {
     return {
       error: 'Invalid token structure',
     }
   }
-  
-  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
-  if (matchingToken === undefined) {
+  if (!isSessionValid(token)) {
     // error if no corresponding token found
     return {
       error: 'Not a valid session',
     }
   }
-  const authUserId = matchingToken.authUserId;
+  const authUserId = tokenOwner(token);
 
   if (isValidUser(authUserId) === false) {
     return { error: 'User id not valid' }
@@ -150,8 +160,8 @@ function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
     const quizIndex = data.quizzes.findIndex((quiz) => quiz.quizId === quizId);
 
 
-    //const removedQuiz = data.quizzes.splice(quizIndex, 1)[0];
-    //data.trash.push(removedQuiz);
+    const removedQuiz = data.quizzes.splice(quizIndex, 1)[0];
+    data.trash.push(removedQuiz);
 
     for (const user of data.users) {
       if (user.authUserId === authUserId) {

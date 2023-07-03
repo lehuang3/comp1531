@@ -7,7 +7,7 @@ import YAML from 'yaml';
 import sui from 'swagger-ui-express';
 import fs from 'fs';
 import { adminAuthRegister, adminUserDetails, adminAuthLogin } from './auth';
-import { adminQuizCreate, adminQuizDescriptionUpdate, adminQuizRemove, adminQuizNameUpdate } from './quiz';
+import { adminQuizCreate, adminQuizDescriptionUpdate, adminQuizRemove, adminQuizNameUpdate, adminQuizList } from './quiz';
 import { clear } from './other';
 import { ErrorObject, TokenParameter } from './interfaces';
 
@@ -97,6 +97,21 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   }
   res.json(response);
 });
+
+app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
+  const token = req.query.token;
+  const response = adminQuizList(token);
+
+  if ('error' in response) {
+    if (response.error === 'Invalid token structure') {
+      return res.status(401).json(response);
+    } else if (response.error === 'Not a valid session') {
+      return res.status(403).json(response);
+    }
+  }
+  res.json(response);
+});
+
 
 app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);

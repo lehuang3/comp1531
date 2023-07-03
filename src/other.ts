@@ -135,6 +135,8 @@ function clear () {
     quizzes: [],
 
     tokens: [],
+
+    trash:[]
   }
   save(store)
   return {
@@ -439,7 +441,7 @@ function requestAdminQuizNameUpdate(token: ErrorObject | TokenParameter, quizId:
  *
  * @returns {{object}} - response in javascript
 */
-function requestadminQuizRemove(token: ErrorObject | TokenParameter, quizId: number ) {
+function requestAdminQuizRemove(token: ErrorObject | TokenParameter, quizId: number ) {
   const res = request(
     'DELETE',
     SERVER_URL + `/v1/admin/quiz/${quizId}`,
@@ -457,8 +459,26 @@ function requestadminQuizRemove(token: ErrorObject | TokenParameter, quizId: num
   } 
 }
 
+function requestAdminQuizList(token: ErrorObject | TokenParameter ) {
+  const res = request(
+    'GET',
+    SERVER_URL + `/v1/admin/quiz/list`,
+    {
+      // Note that for PUT/POST requests, you should
+      // use the key 'json' instead of the query string 'qs'
+      qs: {
+        token,
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  } 
+}
+
 
 export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
 quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
-requestAdminQuizCreate, requestAdminQuizNameUpdate, requestadminQuizRemove };
+requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove,requestAdminQuizList };
 
