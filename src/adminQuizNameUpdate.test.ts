@@ -1,6 +1,6 @@
 import { adminQuizNameUpdate, adminQuizCreate } from './quiz.js'
 import { adminAuthLogin, adminAuthRegister } from './auth.js'
-import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister } from './other';
+import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminQuizNameUpdate, requestAdminQuizCreate} from './other';
 
 // const postRequest = (url: string, data: any) => {
 //   const res = request(
@@ -88,7 +88,7 @@ describe('adminQuizNameUpdate tests', () => {
       expect(requestAdminQuizNameUpdate(token2.body.authUserId, quiz3.body.quizId, 'quiz2').body).toStrictEqual({ error: 'You do not have access to this quiz.' })
     })
     test('User 3 tries to change user 1 quiz name', () => {
-      expect(arequestAdminQuizNameUpdate(token3.body.authUserId, quiz1.body.quizId, 'quiz2').body).toStrictEqual({ error: 'You do not have access to this quiz.' })
+      expect(requestAdminQuizNameUpdate(token3.body.authUserId, quiz1.body.quizId, 'quiz2').body).toStrictEqual({ error: 'You do not have access to this quiz.' })
     })
   })
   
