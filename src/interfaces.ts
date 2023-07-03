@@ -36,6 +36,7 @@ interface Data {
   users: User[];
   quizzes: Quiz[];
   tokens: Token[];
+  trash:Quiz[];
 }
 
 // type of a token object in the tokens array

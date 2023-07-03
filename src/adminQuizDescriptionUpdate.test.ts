@@ -1,18 +1,13 @@
 import { AdminAuthRegisterReturn } from './interfaces';
 import { adminQuizCreate } from './quiz'
 import { requestClear, requestAdminAuthRegister, requestAdminQuizDescriptionUpdate } from './other'
-import { read, save } from './other';
-import { Data } from './interfaces';
-import { response } from 'express';
 let token1: AdminAuthRegisterReturn;
 let quiz1: any;
 let authUserId: number;
 beforeEach(() => {
   requestClear()
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body;
-  const data: Data = read();
-  authUserId = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token1.token)).authUserId;
-  quiz1 = adminQuizCreate(authUserId, 'quiz', '');
+  quiz1 = adminQuizCreate(token1, 'quiz', '');
 })
 
 test('Check for invalid token structure', () => {
