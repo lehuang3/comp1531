@@ -1,4 +1,3 @@
-
 import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate } from './other'
 import { TokenParameter } from './interfaces';
 let token1: TokenParameter;
@@ -61,6 +60,15 @@ test('Invalid sessions', () => {
   expect(response.body).toStrictEqual({ error: expect.any(String) })
   expect(response.status).toStrictEqual(403);
 })
+
+
+test('Invalid token struct', () => {
+  const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body;
+  const response = requestAdminQuizCreate(token4, 'Hellow world', 'descruiption');
+  expect(response.body).toStrictEqual({ error: expect.any(String) });
+  expect(response.status).toStrictEqual(401);
+})
+
 
 test('Description > 100', () => {
   const response = requestAdminQuizCreate(token1, 'quiz1', 'EnigmaticUniverseSparklingWithInfinitePossibilities1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz')
