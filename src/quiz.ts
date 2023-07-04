@@ -1,5 +1,6 @@
 import { ErrorObject, Quiz, TokenParameter } from './interfaces';
-import { save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong } from './other'
+import { save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong,
+         tokenOwner, isTokenValid, isSessionValid } from './other';
 import { Data } from './interfaces';
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -8,7 +9,21 @@ import { Data } from './interfaces';
  *
  * @returns {array object} - List of quizzes
 */
-function adminQuizList (authUserId: number) {
+function adminQuizList (token: ErrorObject | TokenParameter) {
+  const data: Data = read();
+  if (!isTokenValid(token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  if (!isSessionValid(token)) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+  const authUserId = tokenOwner(token);
+
   if (isValidUser(authUserId) === false) {
     return { error: 'User id not valid' }
   } else {
@@ -49,20 +64,18 @@ function adminQuizList (authUserId: number) {
 */
 function adminQuizCreate (token: ErrorObject | TokenParameter, name: string, description: string) {
   const data: Data = read();
-  if (!('token' in token)) {
+  if (!isTokenValid(token)) {
     return {
       error: 'Invalid token structure',
     }
   }
-  
-  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
-  if (matchingToken === undefined) {
+  if (!isSessionValid(token)) {
     // error if no corresponding token found
     return {
       error: 'Not a valid session',
     }
   }
-  const authUserId = matchingToken.authUserId;
+  const authUserId = tokenOwner(token);
 
   if (isValidUser(authUserId) === false) {
     return { error: 'User id not valid' }
@@ -121,20 +134,18 @@ function adminQuizCreate (token: ErrorObject | TokenParameter, name: string, des
 */
 function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
   const data: Data = read();
-  if (!('token' in token)) {
+  if (!isTokenValid(token)) {
     return {
       error: 'Invalid token structure',
     }
   }
-  
-  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
-  if (matchingToken === undefined) {
+  if (!isSessionValid(token)) {
     // error if no corresponding token found
     return {
       error: 'Not a valid session',
     }
   }
-  const authUserId = matchingToken.authUserId;
+  const authUserId = tokenOwner(token);
 
   if (isValidUser(authUserId) === false) {
     return { error: 'User id not valid' }
@@ -149,8 +160,8 @@ function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
     const quizIndex = data.quizzes.findIndex((quiz) => quiz.quizId === quizId);
 
 
-    //const removedQuiz = data.quizzes.splice(quizIndex, 1)[0];
-    //data.trash.push(removedQuiz);
+    const removedQuiz = data.quizzes.splice(quizIndex, 1)[0];
+    data.trash.push(removedQuiz);
 
     for (const user of data.users) {
       if (user.authUserId === authUserId) {
@@ -179,8 +190,24 @@ function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
   *   }
   * }
 */
-function adminQuizInfo (authUserId: number, quizId: number) {
+function adminQuizInfo (token: ErrorObject | TokenParameter, quizId: number) {
   const data = read();
+  if (!('token' in token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+
+  // check for invalid session
+  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
+  if (matchingToken === undefined) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+  const authUserId = matchingToken.authUserId;
+  
   if (!quizValidCheck(quizId)) {
     return {
       error: 'Quiz does not exist.'
@@ -272,21 +299,18 @@ function adminQuizNameUpdate (token: ErrorObject | TokenParameter, quizId: numbe
 function adminQuizDescriptionUpdate (token: ErrorObject | TokenParameter, quizId: number, description: string) {
   const data: Data = read();
   // check token structure
-  if (!('token' in token)) {
+  if (!isTokenValid(token)) {
     return {
       error: 'Invalid token structure',
     }
   }
-
-  // check for invalid session
-  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
-  if (matchingToken === undefined) {
+  if (!isSessionValid(token)) {
     // error if no corresponding token found
     return {
       error: 'Not a valid session',
     }
   }
-  const authUserId = matchingToken.authUserId;
+  const authUserId = tokenOwner(token);
   // check quizId
   if (!quizValidCheck(quizId)) {
     return {
