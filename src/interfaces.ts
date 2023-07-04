@@ -68,4 +68,18 @@ interface User {
   userQuizzes: number[]
 }
 
-export { AdminAuthLoginReturn, AdminUserDetailsReturn, AdminAuthRegisterReturn, ErrorObject, TokenParameter, Data, Token, User, Quiz}
+interface QuizQuestion {
+  questionBody: {
+    question: string;
+    duration: number;
+    points: number;
+    answers: Answer[];
+  };
+}
+
+interface Answer {
+  answer: string;
+  correct: boolean;
+}
+
+export { AdminAuthLoginReturn, AdminUserDetailsReturn, Answer, AdminAuthRegisterReturn, ErrorObject, TokenParameter, Data, Token, User, Quiz,QuizQuestion}
