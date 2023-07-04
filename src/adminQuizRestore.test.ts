@@ -27,38 +27,60 @@ describe('Passing cases', () => {
   test('Correct params', () => {
     expect(requestAdminQuizRestore(token1.body, quiz1.body.quizId).body).toStrictEqual({ });
   })
+  test('Correct params 2', () => {
+    expect(requestAdminQuizRestore(token2.body, quiz3.body.quizId).body).toStrictEqual({ });
+  })
 })
 
-// describe('QuizId is not valid', () => {
-//   test('negative quizId', () => {
-//     expect(requestAdminQuizRestore(token1.body, -1).body).toStrictEqual({ error: 'Not a valid quiz'})
-//   })
-// })
+describe('QuizId is not valid', () => {
+  test('negative quizId', () => {
+    expect(requestAdminQuizRestore(token1.body, -1).body).toStrictEqual({ error: 'Not a valid quiz'})
+  })
+  test('negative quizId 2', () => {
+    expect(requestAdminQuizRestore(token1.body, -100).body).toStrictEqual({ error: 'Not a valid quiz'})
+  })
+})
 
-// describe('No ownership of quiz', () => {
-//   test('negative quizId', () => {
-//     expect(requestAdminQuizRestore(token1.body, quiz3.body.quizId).body).toStrictEqual({ error: 'You do not have access to this quiz.'})
-//   })
-// })
+describe('No ownership of quiz', () => {
+  test('token1 attempts to restore quiz owned by 2', () => {
+    expect(requestAdminQuizRestore(token1.body, quiz3.body.quizId).body).toStrictEqual({ error: 'You do not have access to this quiz.'})
+  })
+  test('token2 attempts to restore quiz owned by 1', () => {
+    expect(requestAdminQuizRestore(token2.body, quiz1.body.quizId).body).toStrictEqual({ error: 'You do not have access to this quiz.'})
+  })
+})
 
-// describe('Quiz not in trash', () => {
-//   test('quiz 2 not in trash', () => {
-//     expect(requestAdminQuizRestore(token1.body, quiz2.body.quizId).body).toStrictEqual({ error: 'Quiz not in trash.'})
-//   })
-// })
+describe('Quiz not in trash', () => {
+  test('quiz 2 not in trash', () => {
+    expect(requestAdminQuizRestore(token1.body, quiz2.body.quizId).body).toStrictEqual({ error: 'Quiz not in trash.'})
+  })
+  test('quiz 4 not in trash', () => {
+    expect(requestAdminQuizRestore(token2.body, quiz4.body.quizId).body).toStrictEqual({ error: 'Quiz not in trash.'})
+  })
+})
 
-// describe('Invalid token', () => {
-//   test('Invalid token created from invalid email', () => {
-//     const invalidToken1 = requestAdminAuthRegister('', 'happy123', 'tommy', 'bommy');
-//     expect(requestAdminQuizRestore(invalidToken1.body, quiz1.body.quizId).body).toStrictEqual({ error: 'Invalid token structure' })
-//   })
-// })
+describe('Invalid token', () => {
+  test('Invalid token created from invalid email', () => {
+    const invalidToken1 = requestAdminAuthRegister('', 'happy123', 'tommy', 'bommy');
+    expect(requestAdminQuizRestore(invalidToken1.body, quiz1.body.quizId).body).toStrictEqual({ error: 'Invalid token structure' })
+  })
+  test('Invalid token created from invalid password 2', () => {
+    const invalidToken2 = requestAdminAuthRegister('tommybommy@email.com', '', 'tommy', 'bommy');
+    expect(requestAdminQuizRestore(invalidToken2.body, quiz3.body.quizId).body).toStrictEqual({ error: 'Invalid token structure' })
+  })
+})
 
-// describe('Invalid session', () => {
-//   test('Test 1 invalid authUserId', () => {
-//     const tokenInvalid = {
-//       token: '-1'
-//     }
-//     expect(requestAdminQuizRestore(tokenInvalid, quiz1.body.quizId).body).toStrictEqual({ error: 'Not a valid session' })
-//   })
-// })
+describe('Invalid session', () => {
+  test('Test 1 invalid authUserId', () => {
+    const tokenInvalid = {
+      token: '-1'
+    }
+    expect(requestAdminQuizRestore(tokenInvalid, quiz1.body.quizId).body).toStrictEqual({ error: 'Not a valid session' })
+  })
+  test('Test 2 invalid authUserId', () => {
+    const tokenInvalid = {
+      token: '-100'
+    }
+    expect(requestAdminQuizRestore(tokenInvalid, quiz3.body.quizId).body).toStrictEqual({ error: 'Not a valid session' })
+  })
+})

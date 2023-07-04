@@ -95,7 +95,13 @@ function adminQuizCreate (token: ErrorObject | TokenParameter, name: string, des
     if(quizLength === 0){
       quizId = 0;
     } else {
-      quizId = data.quizzes[quizLength - 1].quizId + 1;
+      let max = 0;
+      for (const index of data.quizzes) {
+        if (index.quizId > max) {
+          max = index.quizId
+        }
+      }
+      quizId = max + 1;
     }
 
     const time = Math.floor(Date.now() / 1000)
@@ -163,12 +169,6 @@ function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
 
     const removedQuiz = data.quizzes.splice(quizIndex, 1)[0];
     data.trash.push(removedQuiz);
-
-    for (const user of data.users) {
-      if (user.authUserId === authUserId) {
-        user.userQuizzes.splice(user.userQuizzes.indexOf(quizId), 1)
-      }
-    }
     
     save(data);
     return {}
@@ -378,14 +378,8 @@ function isQuizInTrash(quizId: number): boolean {
   return false;
 }
 
-// read in the quizId and find it find it in data.trash.quizid
-// go to the data.user.userquizzes and check if it includes the quizId
-// remove the quiz from quiz.trash
 function adminQuizRestore(token: ErrorObject | TokenParameter, quizId: number) {
   const data: Data = read();
-  console.log(quizId)
-  console.log(data.trash)
-  console.log(data.users[0]['userQuizzes'])
   if (!isTokenValid(token)) {
     return {
       error: 'Invalid token structure',
@@ -416,6 +410,7 @@ function adminQuizRestore(token: ErrorObject | TokenParameter, quizId: number) {
       error: 'You do not have access to this quiz.'
     }
   }
+
 
   data.quizzes.push(data.trash.filter(quiz => quiz.quizId === quizId))
   const newTrash: Quiz[] = data.trash.filter(quiz => quiz.quizId !== quizId).map(quiz => quiz);
