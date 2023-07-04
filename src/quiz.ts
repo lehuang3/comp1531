@@ -147,6 +147,7 @@ function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
   }
   const authUserId = tokenOwner(token);
 
+
   if (isValidUser(authUserId) === false) {
     return { error: 'User id not valid' }
   } else if (quizValidCheck(quizId) === false) {
@@ -192,22 +193,19 @@ function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
 */
 function adminQuizInfo (token: ErrorObject | TokenParameter, quizId: number) {
   const data = read();
-  if (!('token' in token)) {
+  if (!(isTokenValid(token))) {
     return {
       error: 'Invalid token structure',
     }
   }
 
-  // check for invalid session
-  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
-  if (matchingToken === undefined) {
-    // error if no corresponding token found
+  if (!isSessionValid(token)) {
     return {
       error: 'Not a valid session',
     }
   }
-  const authUserId = matchingToken.authUserId;
-  
+  const authUserId = tokenOwner(token);
+
   if (!quizValidCheck(quizId)) {
     return {
       error: 'Quiz does not exist.'
@@ -239,21 +237,18 @@ function adminQuizInfo (token: ErrorObject | TokenParameter, quizId: number) {
 */
 function adminQuizNameUpdate (token: ErrorObject | TokenParameter, quizId: number, name: string) {
   const data: Data = read();
-  if (!('token' in token)) {
+  if (!(isTokenValid(token))) {
     return {
       error: 'Invalid token structure',
     }
-  }
-  
-  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
-  if (matchingToken === undefined) {
+  }  
+  if (!isSessionValid(token)) {
     // error if no corresponding token found
     return {
       error: 'Not a valid session',
     }
   }
-  const authUserId = matchingToken.authUserId;
-
+  const authUserId = tokenOwner(token);
   
   if (!nameLengthIsValid(name)) {
     return {
