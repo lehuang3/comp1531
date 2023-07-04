@@ -101,7 +101,6 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
 app.put('/v1/admin/quiz/:quizId/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { token, quizQuestion } = req.body;
-  console.log(quizQuestion)
   const response = adminQuizQuestionCreate(token, quizId, quizQuestion);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
