@@ -25,8 +25,10 @@ describe('tests for adminAuthDetailsUpdate', () => {
         ['34672', 'santaclaus@gmail.com', 'Prana^', 'Patel'],
         ['53782', 'clausanta@gmail.com', 'P', 'Rufus'],
         ['12833', 'lain@gmail.com', 'Lain', 'Cyireuyjkfkajsgdkajsgu']
-    ])('Email invalid', (token, email, nameFirst, nameLast) => {
-        const userLogin = requestAdminAuthDetailsUpdate(token, email, nameFirst, nameLast);
+    ])('Email invalid', (email, nameFirst, nameLast) => {
+        requestClear();
+        const res = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel');
+        const userLogin = requestAdminAuthDetailsUpdate(res.body, email, nameFirst, nameLast);
       expect(userLogin.body).toStrictEqual({ error: expect.any(String) });
       expect(userLogin.status).toStrictEqual(400);
     })
