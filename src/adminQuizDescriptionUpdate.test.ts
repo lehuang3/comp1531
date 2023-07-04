@@ -1,13 +1,11 @@
 import { AdminAuthRegisterReturn } from './interfaces';
-import { adminQuizCreate } from './quiz'
-import { requestClear, requestAdminAuthRegister, requestAdminQuizDescriptionUpdate } from './other'
+import { requestClear, requestAdminAuthRegister, requestAdminQuizDescriptionUpdate, requestAdminQuizCreate } from './other'
 let token1: AdminAuthRegisterReturn;
 let quiz1: any;
-let authUserId: number;
 beforeEach(() => {
   requestClear()
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body;
-  quiz1 = adminQuizCreate(token1, 'quiz', '');
+  quiz1 = requestAdminQuizCreate(token1, 'quiz', '').body;
 })
 
 test('Check for invalid token structure', () => {

@@ -494,9 +494,33 @@ function requestAdminQuizList(token: ErrorObject | TokenParameter ) {
   } 
 }
 
+/**
+ * Send a 'get' request to the corresponding server route to, 
+ * view quizzes in the trash
+ * @param {{TokenParameter}} - token
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminQuizTrash(token: ErrorObject | TokenParameter) {
+  const res = request(
+    'GET',
+    SERVER_URL + '/v1/admin/quiz/trash',
+    {
+      // Note that for PUT/POST requests, you should
+      // use the key 'json' instead of the query string 'qs'
+      qs: {
+        token,
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  } 
+}
 
 export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
 quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
-requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizList, requestAdminQuizInfo };
+requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash };
 
 

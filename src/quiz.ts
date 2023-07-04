@@ -191,7 +191,8 @@ function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
   * }
 */
 function adminQuizInfo (token: ErrorObject | TokenParameter, quizId: number) {
-  const data = read();
+  console.log('function called')
+  const data: Data = read();
   if (!('token' in token)) {
     return {
       error: 'Invalid token structure',
@@ -346,4 +347,31 @@ function adminQuizDescriptionUpdate (token: ErrorObject | TokenParameter, quizId
   }
 }
 
-export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove }
+function adminQuizTrash(token: TokenParameter) {
+  const data: Data = read();
+  const quizzes = [];
+  // check token structure
+  if (!isTokenValid(token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  if (!isSessionValid(token)) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+
+  data.trash.map(quiz => {
+    quizzes.push({
+      quizId: quiz.quizId,
+      name: quiz.name,
+    })
+  })
+  return {
+    quizzes,
+  }
+}
+
+export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash }
