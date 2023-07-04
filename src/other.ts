@@ -2,7 +2,7 @@ import fs from 'fs';
 import { Data, Token } from './interfaces';
 import request from 'sync-request';
 import { port, url } from './config.json';
-import { ErrorObject, TokenParameter } from './interfaces';
+import { ErrorObject, TokenParameter, QuizQuestion } from './interfaces';
 const SERVER_URL = `${url}:${port}`;
 
 
@@ -386,6 +386,34 @@ function requestAdminQuizDescriptionUpdate(token: ErrorObject | TokenParameter, 
  *
  * @returns {{object}} - response in javascript
 */
+function requestQuizQuestionCreate(token: ErrorObject | TokenParameter, quizId: number, quizQuestion: object) {
+  const res = request(
+    'PUT',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/question`,
+    {
+      // Note that for PUT/POST requests, you should
+      // use the key 'json' instead of the query string 'qs'
+      json: {
+        token,
+        quizQuestion
+      }
+    }
+  );
+  //console.log(JSON.parse(res.body.toString()));
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  } 
+}
+
+
+/**
+ * Send a 'delete' request to the corresponding server route to reset the
+ * application state, returning the response in the form of a javascript object
+ * @param {{}} - No parameters
+ *
+ * @returns {{object}} - response in javascript
+*/
 function requestAdminQuizCreate(token: ErrorObject | TokenParameter, name:string, description:string) {
   const res = request(
     'POST',
@@ -519,8 +547,109 @@ function requestAdminQuizTrash(token: ErrorObject | TokenParameter) {
   } 
 }
 
+function questionLengthValid(quizQuestion: QuizQuestion) {
+  var question = quizQuestion.questionBody.question;
+
+  if (question.length < 5 || question.length > 50) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+function answerCountValid(quizQuestion: QuizQuestion) {
+  var answers = quizQuestion.questionBody.answers;
+
+  if (answers.length < 2 || answers.length > 6) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+function durationValid(quizQuestion: QuizQuestion) {
+  var duration = quizQuestion.questionBody.duration;
+
+  if (duration > 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function QuizDurationValid(data:any, quizQuestion:QuizQuestion, quizId:number) {
+  let totalDuration = 0;
+
+  const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
+
+  for (const question of quiz.questions) {
+    totalDuration += question.duration;
+  }
+
+  totalDuration += quizQuestion.questionBody.duration;
+
+  if (totalDuration > 180) {
+    return false;
+  }
+
+  return true;
+}
+
+function quizPointsValid(quizQuestion:QuizQuestion) {
+  const points = quizQuestion.questionBody.points;
+
+  if (points < 1 || points > 10) {
+    return false;
+  }
+
+  return true;
+}
+
+function quizAnswerValid(quizQuestion: QuizQuestion) {
+  const answers = quizQuestion.questionBody.answers;
+
+  for (const answer of answers) {
+    const answerLength = answer.answer.length;
+
+    if (answerLength < 1 || answerLength > 30) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function quizAnswerDuplicateValid(quizQuestion:QuizQuestion) {
+  const answers = quizQuestion.questionBody.answers;
+  const answerSet = new Set();
+
+  for (const answer of answers) {
+    if (answerSet.has(answer.answer)) {
+      return false;
+    }
+
+    answerSet.add(answer.answer);
+  }
+
+  return true;
+}
+
+function quizAnswerCorrectValid(quizQuestion:QuizQuestion) {
+  const answers = quizQuestion.questionBody.answers;
+
+  for (const answer of answers) {
+    if (answer.correct) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+
 export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
 quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
-requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash };
+requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestQuizQuestionCreate,
+questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid };
 
 
