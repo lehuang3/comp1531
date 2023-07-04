@@ -114,3 +114,29 @@ describe('Quiz name already used', () => {
     expect(requestAdminQuizNameUpdate(token3.body, quiz3.body.quizId, 'newquiz2').body).toStrictEqual({ error: 'Quiz name already exists.' })
   })
 })
+
+describe('Invalid session', () => {
+  test('Test 1 invalid user', () => {
+    const brokenToken = {
+      token: '-1'
+    }
+    expect(requestAdminQuizNameUpdate(brokenToken, quiz1.body.quzId, 'broken quiz').body).toStrictEqual({ error: 'Not a valid session' })
+  })
+  test('Test 2 invalid user', () =>  {
+    const brokenToken = {
+      token: '-2'
+    }
+    expect(requestAdminQuizNameUpdate(brokenToken, quiz1.body.quzId, 'broken quiz').body).toStrictEqual({ error: 'Not a valid session' })
+  })
+})
+
+describe('Invalid token', () => {
+  test('Invalid token created from invalid email', () => {
+    const invalidToken1 = requestAdminAuthRegister('', 'happy123', 'tommy', 'bommy');
+    expect(requestAdminQuizNameUpdate(invalidToken1.body, quiz1.body.quizId, 'ghsakgjh').body).toStrictEqual({ error: 'Invalid token structure' })
+  })
+  test('Invalid token created from invalid password', () => {
+    const invalidToken2 = requestAdminAuthRegister('tommybommy@email.com', '', 'tommy', 'bommy');
+    expect(requestAdminQuizNameUpdate(invalidToken2.body, quiz1.body.quizId, 'gsjdhfjhaihkf').body).toStrictEqual({ error: 'Invalid token structure' })
+  })
+})

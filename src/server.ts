@@ -7,7 +7,7 @@ import YAML from 'yaml';
 import sui from 'swagger-ui-express';
 import fs from 'fs';
 import { adminAuthRegister, adminUserDetails, adminAuthLogin } from './auth';
-import { adminQuizCreate, adminQuizDescriptionUpdate, adminQuizRemove, adminQuizNameUpdate, adminQuizList, adminQuizInfo, adminQuizTrash, adminQuizRestore} from './quiz';
+import { adminQuizCreate, adminQuizDescriptionUpdate, adminQuizRemove, adminQuizNameUpdate, adminQuizList, adminQuizInfo, adminQuizTrash, adminQuizQuestionCreate, adminQuizRestore } from './quiz';
 import { clear } from './other';
 import { ErrorObject, TokenParameter } from './interfaces';
 
@@ -92,6 +92,23 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
     }else if (response.error === 'Quiz name is taken') {
       return res.status(400).json(response);
     }else if (response.error === 'Quiz description is not valid') {
+      return res.status(400).json(response);
+    }
+  }
+  res.json(response);
+});
+
+app.put('/v1/admin/quiz/:quizId/question', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const { token, quizQuestion } = req.body;
+  console.log(quizQuestion)
+  const response = adminQuizQuestionCreate(token, quizId, quizQuestion);
+  if ('error' in response) {
+    if (response.error === 'Invalid token structure') {
+      return res.status(401).json(response);
+    } else if (response.error === 'Not a valid session') {
+      return res.status(403).json(response);
+    } else {
       return res.status(400).json(response);
     }
   }
