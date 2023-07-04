@@ -147,6 +147,7 @@ function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
   }
   const authUserId = tokenOwner(token);
 
+
   if (isValidUser(authUserId) === false) {
     return { error: 'User id not valid' }
   } else if (quizValidCheck(quizId) === false) {
@@ -191,24 +192,20 @@ function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
   * }
 */
 function adminQuizInfo (token: ErrorObject | TokenParameter, quizId: number) {
-  console.log('function called')
-  const data: Data = read();
-  if (!('token' in token)) {
+  const data = read();
+  if (!(isTokenValid(token))) {
     return {
       error: 'Invalid token structure',
     }
   }
 
-  // check for invalid session
-  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
-  if (matchingToken === undefined) {
-    // error if no corresponding token found
+  if (!isSessionValid(token)) {
     return {
       error: 'Not a valid session',
     }
   }
-  const authUserId = matchingToken.authUserId;
-  
+  const authUserId = tokenOwner(token);
+
   if (!quizValidCheck(quizId)) {
     return {
       error: 'Quiz does not exist.'
@@ -240,21 +237,18 @@ function adminQuizInfo (token: ErrorObject | TokenParameter, quizId: number) {
 */
 function adminQuizNameUpdate (token: ErrorObject | TokenParameter, quizId: number, name: string) {
   const data: Data = read();
-  if (!('token' in token)) {
+  if (!(isTokenValid(token))) {
     return {
       error: 'Invalid token structure',
     }
-  }
-  
-  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
-  if (matchingToken === undefined) {
+  }  
+  if (!isSessionValid(token)) {
     // error if no corresponding token found
     return {
       error: 'Not a valid session',
     }
   }
-  const authUserId = matchingToken.authUserId;
-
+  const authUserId = tokenOwner(token);
   
   if (!nameLengthIsValid(name)) {
     return {
@@ -374,4 +368,63 @@ function adminQuizTrash(token: TokenParameter) {
   }
 }
 
-export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash }
+function isQuizInTrash(quizId: number): boolean {
+  const data: Data = read();
+  for (const quiz of data.trash) {
+    if (quiz.quizId === quizId) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// read in the quizId and find it find it in data.trash.quizid
+// go to the data.user.userquizzes and check if it includes the quizId
+// remove the quiz from quiz.trash
+function adminQuizRestore(token: ErrorObject | TokenParameter, quizId: number) {
+  const data: Data = read();
+  console.log(quizId)
+  console.log(data.trash)
+  console.log(data.users[0]['userQuizzes'])
+  if (!isTokenValid(token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  if (!isSessionValid(token)) {
+    return {
+      error: 'Not a valid session',
+    }
+  }
+
+  const authUserId = tokenOwner(token);
+
+  if (!quizValidCheck(quizId)) {
+    return {
+      error: 'Not a valid quiz'
+    }
+  }
+
+  if (!isQuizInTrash(quizId)) {
+    return { 
+      error: 'Quiz not in trash.'
+    }
+  }
+
+  if (!quizValidOwner(authUserId, quizId)) {
+    return {
+      error: 'You do not have access to this quiz.'
+    }
+  }
+
+  data.quizzes.push(data.trash.filter(quiz => quiz.quizId === quizId))
+  const newTrash: Quiz[] = data.trash.filter(quiz => quiz.quizId !== quizId).map(quiz => quiz);
+  data.trash = newTrash;
+  save(data);
+  return {
+
+  }
+
+}
+
+export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash, adminQuizRestore }

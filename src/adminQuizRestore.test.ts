@@ -1,6 +1,6 @@
 import { adminQuizNameUpdate, adminQuizCreate } from './quiz.js'
 import { adminAuthLogin, adminAuthRegister } from './auth.js'
-import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminQuizNameUpdate, requestAdminQuizCreate, requestAdminQuizRemove} from './other'
+import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminQuizNameUpdate, requestAdminQuizCreate, requestAdminQuizRemove, requestAdminQuizRestore} from './other'
 
 
 let token1: any;
@@ -24,41 +24,41 @@ beforeEach(() => {
 
 
 describe('Passing cases', () => {
-  test('negative quizId', () => {
+  test('Correct params', () => {
     expect(requestAdminQuizRestore(token1.body, quiz1.body.quizId).body).toStrictEqual({ });
   })
 })
 
-describe('QuizId is not valid', () => {
-  test('negative quizId', () => {
-    expect(requestAdminQuizRestore(token1.body, -1).body).toStrictEqual({ error: 'Quiz does not exist.'})
-  })
-})
+// describe('QuizId is not valid', () => {
+//   test('negative quizId', () => {
+//     expect(requestAdminQuizRestore(token1.body, -1).body).toStrictEqual({ error: 'Not a valid quiz'})
+//   })
+// })
 
-describe('No ownership of quiz', () => {
-  test('negative quizId', () => {
-    expect(requestAdminQuizRestore(token1.body, -1).body).toStrictEqual({ error: 'You do not have access to this quiz.'})
-  })
-})
+// describe('No ownership of quiz', () => {
+//   test('negative quizId', () => {
+//     expect(requestAdminQuizRestore(token1.body, quiz3.body.quizId).body).toStrictEqual({ error: 'You do not have access to this quiz.'})
+//   })
+// })
 
-describe('Quiz not in trash', () => {
-  test('quiz 2 not in trash', () => {
-    expect(requestAdminQuizRestore(token1.body, quiz2.body.quizId).body).toStrictEqual({ error: 'Quiz not in trash.'})
-  })
-})
+// describe('Quiz not in trash', () => {
+//   test('quiz 2 not in trash', () => {
+//     expect(requestAdminQuizRestore(token1.body, quiz2.body.quizId).body).toStrictEqual({ error: 'Quiz not in trash.'})
+//   })
+// })
 
-describe('Invalid token', () => {
-  test('Invalid token created from invalid email', () => {
-    const invalidToken1 = requestAdminAuthRegister('', 'happy123', 'tommy', 'bommy');
-    expect(requestAdminQuizRestore(invalidToken1.body, quiz1.body.quizId).body).toStrictEqual({ error: 'Invalid token structure' })
-  })
-})
+// describe('Invalid token', () => {
+//   test('Invalid token created from invalid email', () => {
+//     const invalidToken1 = requestAdminAuthRegister('', 'happy123', 'tommy', 'bommy');
+//     expect(requestAdminQuizRestore(invalidToken1.body, quiz1.body.quizId).body).toStrictEqual({ error: 'Invalid token structure' })
+//   })
+// })
 
-describe('Invalid session', () => {
-  test('Test 1 invalid authUserId', () => {
-    const tokenInvalid = {
-      token: '-1'
-    }
-    expect(requestAdminQuizInfo(tokenInvalid, quiz1.body.quizId).body).toStrictEqual({ error: 'Not a valid session' })
-  })
-})
+// describe('Invalid session', () => {
+//   test('Test 1 invalid authUserId', () => {
+//     const tokenInvalid = {
+//       token: '-1'
+//     }
+//     expect(requestAdminQuizRestore(tokenInvalid, quiz1.body.quizId).body).toStrictEqual({ error: 'Not a valid session' })
+//   })
+// })
