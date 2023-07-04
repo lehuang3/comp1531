@@ -1,6 +1,7 @@
 import { ErrorObject, Quiz, QuizQuestion, TokenParameter } from './interfaces';
 import { save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong,
-         tokenOwner, isTokenValid, isSessionValid,questionLengthValid, answerCountValid, durationValid,QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid,quizAnswerCorrectValid} from './other';
+         tokenOwner, isTokenValid, isSessionValid,questionLengthValid, answerCountValid, durationValid,QuizDurationValid, quizPointsValid, 
+         quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash} from './other';
 import { Data } from './interfaces';
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -95,7 +96,13 @@ function adminQuizCreate (token: ErrorObject | TokenParameter, name: string, des
     if(quizLength === 0){
       quizId = 0;
     } else {
-      quizId = data.quizzes[quizLength - 1].quizId + 1;
+      let max = 0;
+      for (const index of data.quizzes) {
+        if (index.quizId > max) {
+          max = index.quizId
+        }
+      }
+      quizId = max + 1;
     }
 
     const time = Math.floor(Date.now() / 1000)
@@ -163,12 +170,6 @@ function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
 
     const removedQuiz = data.quizzes.splice(quizIndex, 1)[0];
     data.trash.push(removedQuiz);
-
-    for (const user of data.users) {
-      if (user.authUserId === authUserId) {
-        user.userQuizzes.splice(user.userQuizzes.indexOf(quizId), 1)
-      }
-    }
     
     save(data);
     return {}
@@ -369,6 +370,52 @@ function adminQuizTrash(token: TokenParameter) {
 }
 
 
+function adminQuizRestore(token: ErrorObject | TokenParameter, quizId: number) {
+  const data: Data = read();
+  if (!isTokenValid(token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  if (!isSessionValid(token)) {
+    return {
+      error: 'Not a valid session',
+    }
+  }
+
+  const authUserId = tokenOwner(token);
+
+  if (!quizValidCheck(quizId)) {
+    return {
+      error: 'Not a valid quiz'
+    }
+  }
+
+  if (!isQuizInTrash(quizId)) {
+    return { 
+      error: 'Quiz not in trash.'
+    }
+  }
+
+  if (!quizValidOwner(authUserId, quizId)) {
+    return {
+      error: 'You do not have access to this quiz.'
+    }
+  }
+
+
+  data.quizzes.push(data.trash.filter(quiz => quiz.quizId === quizId))
+  const newTrash: Quiz[] = data.trash.filter(quiz => quiz.quizId !== quizId).map(quiz => quiz);
+  data.trash = newTrash;
+  save(data);
+  return {
+
+  }
+
+}
+
+
+
 /**
  * Given basic details about a new quiz, create one for the logged in user.
  *
@@ -443,4 +490,6 @@ function adminQuizQuestionCreate (token: ErrorObject | TokenParameter, quizId:nu
   }
 }
 
-export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash,adminQuizQuestionCreate }
+
+export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash,adminQuizQuestionCreate, adminQuizRestore }
+
