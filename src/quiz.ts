@@ -484,6 +484,8 @@ function adminQuizQuestionCreate (token: ErrorObject | TokenParameter, quizId:nu
 
     quiz.questions.push(newQuestion);
     quiz.timeLastEdited = Math.floor(Date.now() / 1000);
+    quiz.numQuestions++;
+    quiz.duration+=quizQuestion.questionBody.duration;
     save(data)
     return {questionId:newQuestionId}
 
@@ -640,6 +642,7 @@ function adminQuizTransfer(token: TokenParameter, quizId: number, userEmail: str
 */
 function adminQuizQuestionDupicate (quizId:number ,questionId:number ,token: ErrorObject | TokenParameter) {
   const data: Data = read();
+ 
   let users = [...data.users];
   
   // check token structure
@@ -683,7 +686,8 @@ function adminQuizQuestionDupicate (quizId:number ,questionId:number ,token: Err
     };
 
     quiz.questions.push(newQuestion);
-   
+    quiz.duration += question.duration;
+    quiz.numQuestions++;
     save(data)
     return {newQuestionId:newQuestionId}
 
