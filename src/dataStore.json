@@ -1,1 +1,1 @@
-{"users":[],"quizzes":[],"tokens":[],"trash":[]}
+{"users":[{"authUserId":0,"email":"123@email.com","password":"123dfsjkfsA","name":"david test","numSuccessfulLogins":1,"numFailedPasswordsSinceLastLogin":0,"userQuizzes":[0]}],"quizzes":[{"quizId":0,"name":"captials","timeCreated":1688538708,"timeLastEdited":1688538708,"description":"quiz1","numQuestions":0,"questions":[],"duration":0}],"tokens":[{"authUserId":0,"sessionId":0}],"trash":[]}

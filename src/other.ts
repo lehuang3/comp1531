@@ -440,7 +440,6 @@ function requestAdminQuizCreate(token: ErrorObject | TokenParameter, name:string
   } 
 }
 
-
 function requestAdminQuizInfo(token: ErrorObject | TokenParameter, quizId: number) {
   const res = request(
     'GET',
@@ -700,7 +699,7 @@ function requestAdminQuizQuestionDelete(token: ErrorObject | TokenParameter, qui
   } 
 }
 
-function questionValidCheck(data: Data, quizId:number, questionId:number) {
+function questionValidCheck(data:any, quizId:number, questionId:number) {
   const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
 
   for (const question of quiz.questions) {
