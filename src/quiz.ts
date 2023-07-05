@@ -642,7 +642,7 @@ function adminQuizTransfer(token: TokenParameter, quizId: number, userEmail: str
 */
 function adminQuizQuestionDupicate (quizId:number ,questionId:number ,token: ErrorObject | TokenParameter) {
   const data: Data = read();
-  console.log(data.quizzes[0]);
+ 
   let users = [...data.users];
   
   // check token structure
@@ -686,7 +686,7 @@ function adminQuizQuestionDupicate (quizId:number ,questionId:number ,token: Err
     };
 
     quiz.questions.push(newQuestion);
-    quiz.duration += question.question;
+    quiz.duration += question.duration;
     quiz.numQuestions++;
     save(data)
     return {newQuestionId:newQuestionId}
