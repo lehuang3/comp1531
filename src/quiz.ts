@@ -1,6 +1,7 @@
-import { ErrorObject, Quiz, TokenParameter } from './interfaces';
+import { ErrorObject, Quiz, QuizQuestion, TokenParameter } from './interfaces';
 import { save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong,
-         tokenOwner, isTokenValid, isSessionValid } from './other';
+         tokenOwner, isTokenValid, isSessionValid,questionLengthValid, answerCountValid, durationValid,QuizDurationValid, quizPointsValid, 
+         quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash} from './other';
 import { Data } from './interfaces';
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -95,7 +96,13 @@ function adminQuizCreate (token: ErrorObject | TokenParameter, name: string, des
     if(quizLength === 0){
       quizId = 0;
     } else {
-      quizId = data.quizzes[quizLength - 1].quizId + 1;
+      let max = 0;
+      for (const index of data.quizzes) {
+        if (index.quizId > max) {
+          max = index.quizId
+        }
+      }
+      quizId = max + 1;
     }
 
     const time = Math.floor(Date.now() / 1000)
@@ -147,6 +154,7 @@ function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
   }
   const authUserId = tokenOwner(token);
 
+
   if (isValidUser(authUserId) === false) {
     return { error: 'User id not valid' }
   } else if (quizValidCheck(quizId) === false) {
@@ -162,12 +170,6 @@ function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
 
     const removedQuiz = data.quizzes.splice(quizIndex, 1)[0];
     data.trash.push(removedQuiz);
-
-    for (const user of data.users) {
-      if (user.authUserId === authUserId) {
-        user.userQuizzes.splice(user.userQuizzes.indexOf(quizId), 1)
-      }
-    }
     
     save(data);
     return {}
@@ -191,24 +193,20 @@ function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
   * }
 */
 function adminQuizInfo (token: ErrorObject | TokenParameter, quizId: number) {
-  console.log('function called')
-  const data: Data = read();
-  if (!('token' in token)) {
+  const data = read();
+  if (!(isTokenValid(token))) {
     return {
       error: 'Invalid token structure',
     }
   }
 
-  // check for invalid session
-  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
-  if (matchingToken === undefined) {
-    // error if no corresponding token found
+  if (!isSessionValid(token)) {
     return {
       error: 'Not a valid session',
     }
   }
-  const authUserId = matchingToken.authUserId;
-  
+  const authUserId = tokenOwner(token);
+
   if (!quizValidCheck(quizId)) {
     return {
       error: 'Quiz does not exist.'
@@ -240,21 +238,18 @@ function adminQuizInfo (token: ErrorObject | TokenParameter, quizId: number) {
 */
 function adminQuizNameUpdate (token: ErrorObject | TokenParameter, quizId: number, name: string) {
   const data: Data = read();
-  if (!('token' in token)) {
+  if (!(isTokenValid(token))) {
     return {
       error: 'Invalid token structure',
     }
-  }
-  
-  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
-  if (matchingToken === undefined) {
+  }  
+  if (!isSessionValid(token)) {
     // error if no corresponding token found
     return {
       error: 'Not a valid session',
     }
   }
-  const authUserId = matchingToken.authUserId;
-
+  const authUserId = tokenOwner(token);
   
   if (!nameLengthIsValid(name)) {
     return {
@@ -376,6 +371,124 @@ function adminQuizTrash(token: TokenParameter) {
   }
 }
 
+function adminQuizRestore(token: ErrorObject | TokenParameter, quizId: number) {
+  const data: Data = read();
+  if (!isTokenValid(token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  if (!isSessionValid(token)) {
+    return {
+      error: 'Not a valid session',
+    }
+  }
+
+  const authUserId = tokenOwner(token);
+
+  if (!quizValidCheck(quizId)) {
+    return {
+      error: 'Not a valid quiz'
+    }
+  }
+
+  if (!isQuizInTrash(quizId)) {
+    return { 
+      error: 'Quiz not in trash.'
+    }
+  }
+
+  if (!quizValidOwner(authUserId, quizId)) {
+    return {
+      error: 'You do not have access to this quiz.'
+    }
+  }
+
+
+  data.quizzes.push(data.trash.filter(quiz => quiz.quizId === quizId))
+  const newTrash: Quiz[] = data.trash.filter(quiz => quiz.quizId !== quizId).map(quiz => quiz);
+  data.trash = newTrash;
+  save(data);
+  return {
+
+  }
+
+}
+
+/**
+ * Given basic details about a new quiz, create one for the logged in user.
+ *
+ * @param {integer} authUserId - Admin user ID
+ * @param {integer} name - Name of quiz
+ * @param {string} authUserId - Description of quiz
+ *
+ * @returns {quizID: number} - Quiz's identification number
+*/
+function adminQuizQuestionCreate (token: ErrorObject | TokenParameter, quizId:number, quizQuestion: QuizQuestion) {
+  
+  const data: Data = read();
+  // check token structure
+  if (!isTokenValid(token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  if (!isSessionValid(token)) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+  const authUserId = tokenOwner(token);
+
+  if (isValidUser(authUserId) === false) {
+    return { error: 'User id not valid' }
+  } else if (quizValidCheck(quizId) === false) {
+    return { error: 'quiz id not valid' }
+  } else if (quizValidOwner(authUserId, quizId) === false) {
+    return { error: 'Not owner of quiz' }
+  } else if(questionLengthValid(quizQuestion) === false){
+    return { error: 'Question length is not valid' }
+  } else if(answerCountValid(quizQuestion) === false){
+    return { error: 'There must 2 asnwer and no greater than 6' }
+  } else if(durationValid(quizQuestion) === false){
+    return { error: 'Duration must be a positive number' }
+  } else if(QuizDurationValid(data,quizQuestion, quizId) === false){
+    return { error: 'Duration excesseds 3 minutes' }
+  } else if(quizPointsValid(quizQuestion) === false){
+    return { error: 'Points must not be less than 1 or greater than 10' }
+  } else if(quizAnswerValid(quizQuestion) === false){
+    return { error: '1 or more of your asnwer is less than 1 or greater 30 characters' }
+  } else if(quizAnswerValid(quizQuestion) === false){
+    return { error: '1 or more of your asnwer is less than 1 or greater 30 characters' }
+  } else if(quizAnswerDuplicateValid(quizQuestion) === false){
+    return { error: 'There are duplicate answers' }
+  } else if(quizAnswerCorrectValid(quizQuestion) === false){
+    return { error: 'There are no correct asnwers' }
+  }else {
+    const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+
+    let newQuizId = 0;
+    if (quiz.questions.length > 0) {
+      const lastQuestion = quiz.questions[quiz.questions.length - 1];
+      newQuizId = lastQuestion.quizId + 1;
+    }
+
+    const newQuestion = {
+      quizId: newQuizId,
+      question: quizQuestion.questionBody.question,
+      duration: quizQuestion.questionBody.duration,
+      points: quizQuestion.questionBody.points,
+      answers: quizQuestion.questionBody.answers
+    };
+
+    quiz.questions.push(newQuestion);
+
+    return {questionId:newQuizId}
+
+  }
+}
+
 function adminQuizTransfer(token: TokenParameter, quizId: number, userEmail: string) {
   const data: Data = read();
   let users = [...data.users];
@@ -445,4 +558,5 @@ function adminQuizTransfer(token: TokenParameter, quizId: number, userEmail: str
   }
 }
 
-export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash, adminQuizTransfer }
+export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash, adminQuizTransfer, adminQuizRestore,
+adminQuizQuestionCreate }
