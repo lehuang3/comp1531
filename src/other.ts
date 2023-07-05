@@ -3,6 +3,7 @@ import { Data, Token } from './interfaces';
 import request from 'sync-request';
 import { port, url } from './config.json';
 import { ErrorObject, TokenParameter, QuizQuestion } from './interfaces';
+import { Console } from 'console';
 const SERVER_URL = `${url}:${port}`;
 
 
@@ -708,9 +709,43 @@ function isQuizInTrash(quizId: number): boolean {
   return false;
 }
 
+function questionValidCheck(data:any, quizId:number, questionId:number) {
+  const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
+
+  for (const question of quiz.questions) {
+    if (question.questionId === questionId) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function newPositionValidCheck(data:any, quizId:number, newPosition: number) {
+  const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
+
+  if(newPosition < 0 || (newPosition > (quiz.questions.length-1))){
+    return false;
+  }
+
+  return true;
+
+}
+
+function newPositioNotSame(data:any, quizId:number,questionId:number, newPosition: number) {
+  const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
+
+  const originalPosition = quiz.questions.findIndex((question: { questionId: number; }) => question.questionId === questionId);
+
+  if(originalPosition !== newPosition){
+    return true;
+  }
+
+  return false;
+
+}
 
 export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
   requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
   requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid, 
-  quizAnswerCorrectValid, isQuizInTrash,requestAdminQuizQuestionMove };
+  quizAnswerCorrectValid, isQuizInTrash,requestAdminQuizQuestionMove,questionValidCheck, newPositioNotSame,newPositionValidCheck };

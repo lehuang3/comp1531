@@ -94,7 +94,7 @@ test('Invalid token struct', () => {
   const response = requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token4, newPosition)
 
   expect(response.body).toStrictEqual({ error: expect.any(String) })
-  expect(response.status).toStrictEqual(403);
+  expect(response.status).toStrictEqual(401);
 })
 
 test('Check for invalid session', () => {
@@ -105,7 +105,7 @@ test('Check for invalid session', () => {
   const response = requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token2, newPosition)
 
   expect(response.body).toStrictEqual({ error: expect.any(String) })
-  expect(response.status).toStrictEqual(401);
+  expect(response.status).toStrictEqual(403);
 })
 
 test('Invalide User ID ie not owner', () => {
@@ -145,7 +145,7 @@ test('position > n-1', () => {
   
   let newPosition = 3
   const response = requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token1, newPosition)
-
+ 
   expect(response.body).toStrictEqual({ error: expect.any(String) })
   expect(response.status).toStrictEqual(400);
 })
@@ -169,9 +169,7 @@ test('Same Position as before', () => {
 })
 
 test('Valid entry', () => {
-  console.log(quiz.quizId)
-  console.log(questionId3.questionId)
-  console.log(token)
+ 
   let newPosition = 0
   const response = requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token1, newPosition)
 
