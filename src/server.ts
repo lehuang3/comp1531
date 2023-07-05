@@ -299,6 +299,22 @@ app.put('/v1/admin/quiz/:quizId/question/:questionId/duplicate', (req: Request, 
   res.json(response);
 });
 
+app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const questionId = parseInt(req.params.questionId);
+  const { token, quizQuestion } = req.body;
+  const response = adminQuizQuestionDupicate(token, quizId, questionId, quizQuestion);
+  if ('error' in response) {
+    if (response.error === 'Invalid token structure') {
+      return res.status(401).json(response);
+    } else if (response.error === 'Not a valid session') {
+      return res.status(403).json(response);
+    } else {
+      return res.status(400).json(response);
+    }
+  }
+  res.json(response);
+});
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

@@ -825,6 +825,26 @@ function doesQuestionExist(data: Data, questionId: number) {
 }
 
 
+function requestAdminQuizQuestionDelete(token: ErrorObject | TokenParameter, quizId: number, questionId: number, quizQuestion: QuizQuestion) {
+  const res = request(
+    'PUT',
+    SERVER_URL + `/v1/admin/quiz/${quizid}/question/${questionid}`,
+    {
+      // Note that for PUT/POST requests, you should
+      // use the key 'json' instead of the query string 'qs'
+      json: {
+        token,
+        quizQuestion
+      }
+    }
+  );
+  //console.log(JSON.parse(res.body.toString()));
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  } 
+}
+
 export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
   requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
