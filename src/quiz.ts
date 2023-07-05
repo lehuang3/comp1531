@@ -539,7 +539,7 @@ function adminQuizQuestionMove (quizId:number ,questionId:number ,token: ErrorOb
     quiz.questions.splice(originalPosition, 1); 
     quiz.questions.splice(newPosition, 0, questionToMove);
     quiz.timeLastEdited = Math.floor(Date.now() / 1000);
-    console.log( quiz.questions);
+    // console.log( quiz.questions);
     save(data)
     return{};
 
@@ -615,14 +615,14 @@ function adminQuizTransfer(token: TokenParameter, quizId: number, userEmail: str
   // original user, and added to userQuizzes of target user.
   data.users.map(user => {
     if (user.authUserId === authUserId) {
-      console.log(user.userQuizzes)
+      // console.log(user.userQuizzes)
       user.userQuizzes = user.userQuizzes.filter(userQuizId => userQuizId !== quizId)
-      console.log(user.userQuizzes)
+      // console.log(user.userQuizzes)
     }
     if (user.email === userEmail) {
-      console.log(user.userQuizzes)
+      // console.log(user.userQuizzes)
       user.userQuizzes.push(quizId)
-      console.log(user.userQuizzes)
+      // console.log(user.userQuizzes)
     }
   })
   save(data)
@@ -725,6 +725,7 @@ function adminQuizQuestionDelete(token: ErrorObject | TokenParameter, quizId: nu
   }
   // find the quiz in data.quizzes by matching quizId to data.quizzes.quizId, find the quiz question in data.quizzes.quiz.question, splice out the question.
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId)
+  // console.log(quiz)
   // found the quiz which contains the question
   let index: number = 0
   for (const question of quiz.questions) {
