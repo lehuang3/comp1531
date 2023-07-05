@@ -683,7 +683,7 @@ function adminQuizQuestionDupicate (quizId:number ,questionId:number ,token: Err
     };
 
     quiz.questions.push(newQuestion);
-    console.log(quiz.questions);
+   
     save(data)
     return {newQuestionId:newQuestionId}
 
