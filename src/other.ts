@@ -529,7 +529,7 @@ function requestAdminQuizList(token: ErrorObject | TokenParameter ) {
 }
 
 /**
- * Send a 'get' request to the corresponding server route to, 
+ * Send a 'get' request to the corresponding server route to 
  * view quizzes in the trash
  * @param {{TokenParameter}} - token
  *
@@ -547,6 +547,33 @@ function requestAdminQuizTrash(token: ErrorObject | TokenParameter) {
       }
     }
   );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  } 
+}
+
+/**
+ * Send a 'post' request to the corresponding server route to
+ * transfer a quiz from 1 user to another
+ * @param {{TokenParameter}} - token
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminQuizTransfer(token: ErrorObject | TokenParameter, quizId: number, userEmail: string) {
+  const res = request(
+    'POST',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/transfer`,
+    {
+      // Note that for PUT/POST requests, you should
+      // use the key 'json' instead of the query string 'qs'
+      json: {
+        token,
+        userEmail
+      }
+    }
+  );
+  //console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -746,6 +773,6 @@ function newPositioNotSame(data:any, quizId:number,questionId:number, newPositio
 
 export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
-  requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
+  requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
   requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid, 
   quizAnswerCorrectValid, isQuizInTrash,requestAdminQuizQuestionMove,questionValidCheck, newPositioNotSame,newPositionValidCheck };
