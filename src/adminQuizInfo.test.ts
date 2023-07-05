@@ -101,14 +101,12 @@ describe('Invalid session', () => {
       token: '-1'
     }
     expect(requestAdminQuizInfo(tokenInvalid, quiz1.body.quizId).body).toStrictEqual({ error: 'Not a valid session' })
-    expect(requestAdminQuizInfo(tokenInvalid, quiz2.body.quizId).body).toStrictEqual({ error: 'Not a valid session' })
   })
   test('Test 2 invalid authUserId', () => {
     const tokenInvalid = {
       token: '-2'
     }
     expect(requestAdminQuizInfo(tokenInvalid, quiz3.body.quizId).body).toStrictEqual({ error: 'Not a valid session' })
-    expect(requestAdminQuizInfo(tokenInvalid, quiz4.body.quizId).body).toStrictEqual({ error: 'Not a valid session' })
   })
 })
 

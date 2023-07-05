@@ -46,7 +46,7 @@ test('Check for invalid quiz', () => {
   expect(response.status).toStrictEqual(400);
 })
 
-test('Check for invalid quiz', () => {
+test('Check for ownership', () => {
   const token2 = requestAdminAuthRegister('Le@gmail.com', '1234abcd', 'Le', 'Huang').body;
   const response = requestAdminQuizDescriptionUpdate(token2, quiz1.quizId, 'this quiz now has description');
   expect(response.body).toStrictEqual({
