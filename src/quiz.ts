@@ -1,7 +1,7 @@
 import { ErrorObject, Quiz, QuizQuestion, TokenParameter } from './interfaces';
 import { save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong,
          tokenOwner, isTokenValid, isSessionValid,questionLengthValid, answerCountValid, durationValid,QuizDurationValid, quizPointsValid, 
-         quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash} from './other';
+         quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash, questionValidCheck} from './other';
 import { Data } from './interfaces';
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -490,6 +490,54 @@ function adminQuizQuestionCreate (token: ErrorObject | TokenParameter, quizId:nu
   }
 }
 
+function adminQuizQuestionDelete(token: ErrorObject | TokenParameter, quizId: number, questionId: number) {
+  const data: Data = read();
+  // check token structure
+  if (!isTokenValid(token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  if (!isSessionValid(token)) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+  const authUserId = tokenOwner(token);
+  if (!quizValidCheck(quizId)) {
+    return {
+      error: 'Quiz does not exist.'
+    }
+  } else if (!quizValidOwner(authUserId, quizId)) {
+    return {
+      error: 'You do not have access to this quiz.'
+    }
+  } else if (!questionValidCheck(data, quizId, questionId)) {
+    return {
+      error: 'Question does not exist.'
+    }
+  }
+  // find the quiz in data.quizzes by matching quizId to data.quizzes.quizId, find the quiz question in data.quizzes.quiz.question, splice out the question.
+  data.quizzes.find(quiz => quiz.quizId === quizId)
 
-export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash,adminQuizQuestionCreate, adminQuizRestore }
+
+
+
+  save(data);
+  return {
+
+  };
+}
+
+
+// data.quizzes.push(data.trash.filter(quiz => quiz.quizId === quizId))
+// const newTrash: Quiz[] = data.trash.filter(quiz => quiz.quizId !== quizId).map(quiz => quiz);
+// data.trash = newTrash;
+// save(data);
+// return {
+
+// }
+
+export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash,adminQuizQuestionCreate, adminQuizRestore, adminQuizQuestionDelete }
 

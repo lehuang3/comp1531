@@ -14,7 +14,7 @@ const SERVER_URL = `${url}:${port}`;
  *
  * @returns {{object}} - response in javascript
 */
- function requestClear() {
+function requestClear() {
   const res = request(
     'DELETE',
     SERVER_URL + '/v1/clear',
@@ -681,9 +681,40 @@ function isQuizInTrash(quizId: number): boolean {
   return false;
 }
 
+function requestAdminQuizQuestionDelete(token: ErrorObject | TokenParameter, quizId: number, questionId: number) {
+  const res = request(
+    'DELETE',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}`,
+    {
+      // Note that for PUT/POST requests, you should
+      // use the key 'json' instead of the query string 'qs'
+      qs: {
+        token
+      }
+    }
+  );
+  //console.log(JSON.parse(res.body.toString()));
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  } 
+}
+
+function questionValidCheck(data: Data, quizId:number, questionId:number) {
+  const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
+
+  for (const question of quiz.questions) {
+    if (question.questionId === questionId) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
 
 export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
   requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
   requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid, 
-  quizAnswerCorrectValid, isQuizInTrash };
+  quizAnswerCorrectValid, isQuizInTrash, requestAdminQuizQuestionDelete, questionValidCheck };
