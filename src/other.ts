@@ -3,6 +3,7 @@ import { Data, Token } from './interfaces';
 import request from 'sync-request';
 import { port, url } from './config.json';
 import { ErrorObject, TokenParameter, QuizQuestion } from './interfaces';
+import { Console } from 'console';
 const SERVER_URL = `${url}:${port}`;
 
 
@@ -527,7 +528,7 @@ function requestAdminQuizList(token: ErrorObject | TokenParameter ) {
 }
 
 /**
- * Send a 'get' request to the corresponding server route to, 
+ * Send a 'get' request to the corresponding server route to 
  * view quizzes in the trash
  * @param {{TokenParameter}} - token
  *
@@ -551,6 +552,33 @@ function requestAdminQuizTrash(token: ErrorObject | TokenParameter) {
   } 
 }
 
+/**
+ * Send a 'post' request to the corresponding server route to
+ * transfer a quiz from 1 user to another
+ * @param {{TokenParameter}} - token
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminQuizTransfer(token: ErrorObject | TokenParameter, quizId: number, userEmail: string) {
+  const res = request(
+    'POST',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/transfer`,
+    {
+      // Note that for PUT/POST requests, you should
+      // use the key 'json' instead of the query string 'qs'
+      json: {
+        token,
+        userEmail
+      }
+    }
+  );
+  //console.log(JSON.parse(res.body.toString()));
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  } 
+}
+
 function requestAdminQuizRestore(token: ErrorObject | TokenParameter, quizId: number) {
   const res = request(
     'POST',
@@ -564,6 +592,33 @@ function requestAdminQuizRestore(token: ErrorObject | TokenParameter, quizId: nu
     }
   );
   //console.log(JSON.parse(res.body.toString()));
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  } 
+}
+
+/**
+ * Sends a request to update the name of the current quiz
+ * 
+ * @param token 
+ * @param quizId 
+ * @param name 
+ * 
+ * @returns 
+*/
+
+function requestAdminQuizQuestionMove(quizId: number, questionId: number,  token: ErrorObject | TokenParameter, newPosition: number) {
+  const res = request(
+    'PUT',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}/move`,
+    {
+      json: {
+        token,
+        newPosition
+      }
+    }
+  );
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -680,6 +735,7 @@ function isQuizInTrash(quizId: number): boolean {
   return false;
 }
 
+
 function requestAdminQuizQuestionDelete(token: ErrorObject | TokenParameter, quizId: number, questionId: number) {
   const res = request(
     'DELETE',
@@ -699,6 +755,7 @@ function requestAdminQuizQuestionDelete(token: ErrorObject | TokenParameter, qui
   } 
 }
 
+
 function questionValidCheck(data:any, quizId:number, questionId:number) {
   const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
 
@@ -711,9 +768,34 @@ function questionValidCheck(data:any, quizId:number, questionId:number) {
 }
 
 
+function newPositionValidCheck(data:any, quizId:number, newPosition: number) {
+  const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
+
+  if(newPosition < 0 || (newPosition > (quiz.questions.length-1))){
+    return false;
+  }
+
+  return true;
+
+}
+
+function newPositioNotSame(data:any, quizId:number,questionId:number, newPosition: number) {
+  const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
+
+  const originalPosition = quiz.questions.findIndex((question: { questionId: number; }) => question.questionId === questionId);
+
+  if(originalPosition !== newPosition){
+    return true;
+  }
+
+  return false;
+
+}
+
 
 export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
-  requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
+  requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
   requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid, 
-  quizAnswerCorrectValid, isQuizInTrash, requestAdminQuizQuestionDelete, questionValidCheck };
+  quizAnswerCorrectValid, isQuizInTrash, requestAdminQuizQuestionMove, questionValidCheck, newPositioNotSame, newPositionValidCheck, requestAdminQuizQuestionDelete, };
+
