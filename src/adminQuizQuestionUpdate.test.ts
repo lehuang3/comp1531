@@ -1,12 +1,13 @@
 import { adminQuizNameUpdate, adminQuizCreate } from './quiz.js'
 import { adminAuthLogin, adminAuthRegister } from './auth.js'
 import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizInfo, requestAdminQuizQuestionUpdate, requestQuizQuestionCreate } from './other'
+import { QuizQuestion } from './interfaces'
 
 let token1: any;
 let quiz1: any;
 let token1Quiz1Question1Id: any;
 
-let quiz1Question1 = {
+let quiz1Question1: QuizQuestion = {
   questionBody: {
     question: "What is capital of USA?",
     duration: 4,
@@ -29,7 +30,7 @@ let quiz1Question1 = {
   }
 };
 
-let quiz1Question2 = {
+let quiz1Question2: QuizQuestion = {
   questionBody: {
     question: "What is capital of NSW?",
     duration: 5,

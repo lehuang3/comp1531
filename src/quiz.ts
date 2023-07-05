@@ -1,7 +1,7 @@
 import { ErrorObject, Quiz, QuizQuestion, TokenParameter } from './interfaces';
 import { save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong,
          tokenOwner, isTokenValid, isSessionValid,questionLengthValid, answerCountValid,newPositioNotSame,newPositionValidCheck,questionValidCheck, durationValid,QuizDurationValid, quizPointsValid, 
-         quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash, doesQuestionExist} from './other';
+         quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash, /*doesQuestionExist*/} from './other';
 import { Data } from './interfaces';
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -764,10 +764,10 @@ function adminQuizQuestionUpdate(token: ErrorObject | TokenParameter, quizId: nu
     return { 
       error: 'You do not have access to this quiz.' 
     }
-  } else if (!doesQuestionExist(data, questionId)) {
-    return {
-      error: 'This question does not exist.'
-    }
+  // } else if (!doesQuestionExist(data, questionId)) {
+  //   return {
+  //     error: 'This question does not exist.'
+  //   }
   } else if (!questionLengthValid(quizQuestion)) {
     return { 
       error: 'Question must be greater than 4 characters and less than 51 characters.'
@@ -805,14 +805,14 @@ function adminQuizQuestionUpdate(token: ErrorObject | TokenParameter, quizId: nu
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId)
   // console.log(quiz)
   // found the quiz which contains the question
-  for (const question of quiz.questions) {
-    if (question.questionId === questionId) {
-      quiz.questions = quizQuestion;
-      save(data);
-      return {
-      };
-    }
-  }
+  // for (const question of quiz.questions) {
+  //   if (question.questionId === questionId) {
+  //     quiz.questions = quizQuestion;
+  //     save(data);
+  //     return {
+  //     };
+  //   }
+  // }
   return {
     error: 'Something went wrong'
   }
