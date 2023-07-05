@@ -735,7 +735,6 @@ function isQuizInTrash(quizId: number): boolean {
   return false;
 }
 
-
 function requestAdminQuizQuestionDelete(token: ErrorObject | TokenParameter, quizId: number, questionId: number) {
   const res = request(
     'DELETE',
@@ -758,7 +757,6 @@ function requestAdminQuizQuestionDelete(token: ErrorObject | TokenParameter, qui
 
 function questionValidCheck(data:any, quizId:number, questionId:number) {
   const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
-
   for (const question of quiz.questions) {
     if (question.questionId === questionId) {
       return true;

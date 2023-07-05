@@ -633,9 +633,6 @@ function adminQuizTransfer(token: TokenParameter, quizId: number, userEmail: str
 }
 
 
-
-
-
 function adminQuizQuestionDelete(token: ErrorObject | TokenParameter, quizId: number, questionId: number) {
   const data: Data = read();
   // check token structure
@@ -665,15 +662,21 @@ function adminQuizQuestionDelete(token: ErrorObject | TokenParameter, quizId: nu
     }
   }
   // find the quiz in data.quizzes by matching quizId to data.quizzes.quizId, find the quiz question in data.quizzes.quiz.question, splice out the question.
-  data.quizzes.find(quiz => quiz.quizId === quizId)
-
-
-
-
-  save(data);
+  const quiz = data.quizzes.find(quiz => quiz.quizId === quizId)
+  // found the quiz which contains the question
+  let index: number = 0
+  for (const question of quiz.questions) {
+    if (question.questionId === questionId) {
+      quiz.questions.splice(index, 1);
+      save(data);
+      return {
+      };
+    }
+    index ++;
+  }
   return {
-
-  };
+    error: 'Something went wrong'
+  }
 }
 
 
@@ -692,4 +695,4 @@ function adminQuizQuestionDelete(token: ErrorObject | TokenParameter, quizId: nu
 
 
 export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash, adminQuizTransfer, adminQuizRestore,
-adminQuizQuestionCreate,adminQuizQuestionMove }
+adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDelete }
