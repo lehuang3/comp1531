@@ -819,16 +819,19 @@ function newPositioNotSame(data:any, quizId:number,questionId:number, newPositio
 function doesQuestionExist(data: Data, questionId: number) {
   for (const quiz of data.quizzes) {
     for (const question of quiz.questions) {
-      if (question.)
+      if (question.questionBody.questionId === questionId) {
+        return true;
+      }
     }
   }
+  return false;
 }
 
 
-function requestAdminQuizQuestionDelete(token: ErrorObject | TokenParameter, quizId: number, questionId: number, quizQuestion: QuizQuestion) {
+function requestAdminQuizQuestionUpdate(token: ErrorObject | TokenParameter, quizId: number, questionId: number, quizQuestion: QuizQuestion) {
   const res = request(
     'PUT',
-    SERVER_URL + `/v1/admin/quiz/${quizid}/question/${questionid}`,
+    SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}`,
     {
       // Note that for PUT/POST requests, you should
       // use the key 'json' instead of the query string 'qs'
@@ -850,5 +853,5 @@ export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUse
   requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
   requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid, 
   quizAnswerCorrectValid, isQuizInTrash,requestAdminQuizQuestionMove,questionValidCheck, newPositioNotSame,newPositionValidCheck,requestAdminQuizQuestionDuplicate, 
-  requestAdminQuizQuestionDelete };
+  requestAdminQuizQuestionDelete, doesQuestionExist, requestAdminQuizQuestionUpdate };
 
