@@ -490,6 +490,23 @@ function adminQuizQuestionCreate (token: ErrorObject | TokenParameter, quizId:nu
   }
 }
 
+/**
+ * Given basic details about a new quiz, create one for the logged in user.
+ *
+ * @param {integer} authUserId - Admin user ID
+ * @param {integer} name - Name of quiz
+ * @param {string} authUserId - Description of quiz
+ *
+ * @returns {quizID: number} - Quiz's identification number
+*/
+function adminQuizQuestionMove (quizId:number ,questionId:number ,token: ErrorObject | TokenParameter, newPosition:number) {
+  console.log(quizId)
+  console.log(questionId)
+  console.log(token)
+  console.log(newPosition)
+  return {}
+}
 
-export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash,adminQuizQuestionCreate, adminQuizRestore }
+
+export { adminQuizInfo,adminQuizQuestionMove, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash,adminQuizQuestionCreate, adminQuizRestore }
 
