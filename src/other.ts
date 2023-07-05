@@ -625,6 +625,32 @@ function requestAdminQuizQuestionMove(quizId: number, questionId: number,  token
   } 
 }
 
+/**
+ * Sends a request to update the name of the current quiz
+ * 
+ * @param token 
+ * @param quizId 
+ * @param name 
+ * 
+ * @returns 
+*/
+
+function requestAdminQuizQuestionDuplicate(token: ErrorObject | TokenParameter,quizId: number, questionId: number) {
+  const res = request(
+    'PUT',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}/duplicate`,
+    {
+      json: {
+        token,
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  } 
+}
+
 
 function questionLengthValid(quizQuestion: QuizQuestion) {
   var question = quizQuestion.questionBody.question;
@@ -795,5 +821,6 @@ export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUse
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
   requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
   requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid, 
-  quizAnswerCorrectValid, isQuizInTrash, requestAdminQuizQuestionMove, questionValidCheck, newPositioNotSame, newPositionValidCheck, requestAdminQuizQuestionDelete, };
+  quizAnswerCorrectValid, isQuizInTrash,requestAdminQuizQuestionMove,questionValidCheck, newPositioNotSame,newPositionValidCheck,requestAdminQuizQuestionDuplicate, 
+  requestAdminQuizQuestionDelete };
 

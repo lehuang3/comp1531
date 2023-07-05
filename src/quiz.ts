@@ -484,6 +484,8 @@ function adminQuizQuestionCreate (token: ErrorObject | TokenParameter, quizId:nu
 
     quiz.questions.push(newQuestion);
     quiz.timeLastEdited = Math.floor(Date.now() / 1000);
+    quiz.numQuestions++;
+    quiz.duration+=quizQuestion.questionBody.duration;
     save(data)
     return {questionId:newQuestionId}
 
@@ -542,9 +544,6 @@ function adminQuizQuestionMove (quizId:number ,questionId:number ,token: ErrorOb
     return{};
 
   }
-
-
-  
  
 }
 
@@ -632,6 +631,69 @@ function adminQuizTransfer(token: TokenParameter, quizId: number, userEmail: str
   }
 }
 
+/**
+ * Given basic details about a new quiz, create one for the logged in user.
+ *
+ * @param {integer} authUserId - Admin user ID
+ * @param {integer} name - Name of quiz
+ * @param {string} authUserId - Description of quiz
+ *
+ * @returns {quizID: number} - Quiz's identification number
+*/
+function adminQuizQuestionDupicate (quizId:number ,questionId:number ,token: ErrorObject | TokenParameter) {
+  const data: Data = read();
+ 
+  let users = [...data.users];
+  
+  // check token structure
+  if (!isTokenValid(token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  if (!isSessionValid(token)) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+
+  const authUserId = tokenOwner(token);
+  if (isValidUser(authUserId) === false) {
+    return { error: 'User id not valid' }
+  } else if (quizValidCheck(quizId) === false) {
+    return { error: 'quiz id not valid' }
+  } else if (quizValidOwner(authUserId, quizId) === false) {
+    return { error: 'Not owner of quiz' }
+  } else if (questionValidCheck(data, quizId, questionId) === false) {
+    return { error: 'Question not found' }
+  } else {
+
+    const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+    const question = quiz.questions.find(question => question.questionId === questionId);
+    let newQuestionId = 0;
+    if (quiz.questions.length > 0) {
+      const lastQuestion = quiz.questions[quiz.questions.length - 1];
+      newQuestionId = lastQuestion.questionId + 1;
+    }
+
+    const newQuestion = {
+      questionId: newQuestionId,
+      question: question.question,
+      duration: question.duration,
+      points: question.points,
+      answers: question.answers
+    };
+
+    quiz.questions.push(newQuestion);
+    quiz.duration += question.duration;
+    quiz.numQuestions++;
+    save(data)
+    return {newQuestionId:newQuestionId}
+
+  } 
+}
+
 
 function adminQuizQuestionDelete(token: ErrorObject | TokenParameter, quizId: number, questionId: number) {
   const data: Data = read();
@@ -695,4 +757,5 @@ function adminQuizQuestionDelete(token: ErrorObject | TokenParameter, quizId: nu
 
 
 export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash, adminQuizTransfer, adminQuizRestore,
-adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDelete }
+adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDupicate, adminQuizQuestionDelete }
+
