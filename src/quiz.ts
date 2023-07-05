@@ -1,6 +1,6 @@
 import { ErrorObject, Quiz, QuizQuestion, TokenParameter } from './interfaces';
 import { save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong,
-         tokenOwner, isTokenValid, isSessionValid,questionLengthValid, answerCountValid, durationValid,QuizDurationValid, quizPointsValid, 
+         tokenOwner, isTokenValid, isSessionValid,questionLengthValid, answerCountValid,newPositioNotSame,newPositionValidCheck,questionValidCheck, durationValid,QuizDurationValid, quizPointsValid, 
          quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash} from './other';
 import { Data } from './interfaces';
 /**
@@ -467,15 +467,15 @@ function adminQuizQuestionCreate (token: ErrorObject | TokenParameter, quizId:nu
     return { error: 'There are no correct asnwers' }
   }else {
     const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
-
-    let newQuizId = 0;
+    
+    let newQuestionId = 0;
     if (quiz.questions.length > 0) {
       const lastQuestion = quiz.questions[quiz.questions.length - 1];
-      newQuizId = lastQuestion.quizId + 1;
+      newQuestionId = lastQuestion.questionId + 1;
     }
 
     const newQuestion = {
-      quizId: newQuizId,
+      questionId: newQuestionId,
       question: quizQuestion.questionBody.question,
       duration: quizQuestion.questionBody.duration,
       points: quizQuestion.questionBody.points,
@@ -483,10 +483,69 @@ function adminQuizQuestionCreate (token: ErrorObject | TokenParameter, quizId:nu
     };
 
     quiz.questions.push(newQuestion);
-
-    return {questionId:newQuizId}
+    quiz.timeLastEdited = Math.floor(Date.now() / 1000);
+    save(data)
+    return {questionId:newQuestionId}
 
   }
+}
+
+/**
+ * Given basic details about a new quiz, create one for the logged in user.
+ *
+ * @param {integer} authUserId - Admin user ID
+ * @param {integer} name - Name of quiz
+ * @param {string} authUserId - Description of quiz
+ *
+ * @returns {quizID: number} - Quiz's identification number
+*/
+function adminQuizQuestionMove (quizId:number ,questionId:number ,token: ErrorObject | TokenParameter, newPosition:number) {
+  
+  const data: Data = read();
+  // check token structure
+  if (!isTokenValid(token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  if (!isSessionValid(token)) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+  const authUserId = tokenOwner(token);
+
+  if (isValidUser(authUserId) === false) {
+    return { error: 'User id not valid' }
+  } else if (quizValidCheck(quizId) === false) {
+    return { error: 'quiz id not valid' }
+  } else if (quizValidOwner(authUserId, quizId) === false) {
+    return { error: 'Not owner of quiz' }
+  } else if (questionValidCheck(data, quizId, questionId) === false) {
+    return { error: 'Question not found' }
+  } else if (newPositionValidCheck(data, quizId, newPosition) === false) {
+    return { error: 'Invalid new position' }
+  } else if (newPositioNotSame(data, quizId,questionId, newPosition) === false) {
+    return { error: 'New Position cannot be the same as original' }
+  } else {
+
+    const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
+    const originalPosition = quiz.questions.findIndex((question: { questionId: number; }) => question.questionId === questionId);
+    const questionToMove = quiz.questions[originalPosition];
+
+    quiz.questions.splice(originalPosition, 1); 
+    quiz.questions.splice(newPosition, 0, questionToMove);
+    quiz.timeLastEdited = Math.floor(Date.now() / 1000);
+    console.log( quiz.questions);
+    save(data)
+    return{};
+
+  }
+
+
+  
+ 
 }
 
 /**
@@ -550,6 +609,9 @@ function adminQuizTransfer(token: TokenParameter, quizId: number, userEmail: str
     }
   }
 
+
+
+
   // Quiz is not removed from quizzes array, but is rather removed from userQuizzes of the 
   // original user, and added to userQuizzes of target user.
   data.users.map(user => {
@@ -570,5 +632,6 @@ function adminQuizTransfer(token: TokenParameter, quizId: number, userEmail: str
   }
 }
 
+
 export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash, adminQuizTransfer, adminQuizRestore,
-adminQuizQuestionCreate }
+adminQuizQuestionCreate,adminQuizQuestionMove }
