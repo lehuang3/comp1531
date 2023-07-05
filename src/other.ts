@@ -528,7 +528,7 @@ function requestAdminQuizList(token: ErrorObject | TokenParameter ) {
 }
 
 /**
- * Send a 'get' request to the corresponding server route to, 
+ * Send a 'get' request to the corresponding server route to 
  * view quizzes in the trash
  * @param {{TokenParameter}} - token
  *
@@ -553,8 +553,8 @@ function requestAdminQuizTrash(token: ErrorObject | TokenParameter) {
 }
 
 /**
- * Send a 'get' request to the corresponding server route to, 
- * view quizzes in the trash
+ * Send a 'post' request to the corresponding server route to
+ * transfer a quiz from 1 user to another
  * @param {{TokenParameter}} - token
  *
  * @returns {{object}} - response in javascript

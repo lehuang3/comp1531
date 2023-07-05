@@ -489,6 +489,18 @@ function adminQuizQuestionCreate (token: ErrorObject | TokenParameter, quizId:nu
   }
 }
 
+/**
+ * Given token, quizId of a quiz and email of a target user,
+ * transfer the quiz from the user represented by the token
+ * to the targer user
+ *
+ * @param {TokenParameter} token - token that represents original owner of the quiz
+ * @param {number} quizId - quizId of the quiz
+ * @param {string} userEmail - Target user's email
+ *
+ * @returns {} - empty object
+*/
+
 function adminQuizTransfer(token: TokenParameter, quizId: number, userEmail: string) {
   const data: Data = read();
   let users = [...data.users];
