@@ -53,7 +53,7 @@ interface Quiz {
   timeLastEdited: number;
   description: string;
   numQuestions: number;
-  questions: Object[];
+  questions: QuizQuestion[];
   duration:number;
 }
 
