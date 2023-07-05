@@ -816,6 +816,14 @@ function newPositioNotSame(data:any, quizId:number,questionId:number, newPositio
 
 }
 
+function doesQuestionExist(data: Data, questionId: number) {
+  for (const quiz of data.quizzes) {
+    for (const question of quiz.questions) {
+      if (question.)
+    }
+  }
+}
+
 
 export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,

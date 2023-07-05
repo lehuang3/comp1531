@@ -83,7 +83,7 @@ describe('Quiz not owned', () => {
 
 describe('Invalid questionId', () => {
   test('Negative questionId', () => {
-    expect(requestAdminQuizQuestionUpdate(token1.body, quiz1.body.quizId, -1).body).toStrictEqual({})
+    expect(requestAdminQuizQuestionUpdate(token1.body, quiz1.body.quizId, -1).body).toStrictEqual({ error: 'This question does not exist.' })
   })
 });
 
@@ -106,7 +106,7 @@ describe('Question too short/long', () => {
         ]
       }
     };
-    expect(requestAdminQuizQuestionUpdate(token1.body, quiz1.body.quizId, longQuestion).body).toStrictEqual({ error: 'Question must be greater than 4 characters and less than 51 characters' })
+    expect(requestAdminQuizQuestionUpdate(token1.body, quiz1.body.quizId, longQuestion).body).toStrictEqual({ error: 'Question must be greater than 4 characters and less than 51 characters.' })
   })
   test('Question too short', () => {
     let shortQuestion = {
@@ -126,7 +126,7 @@ describe('Question too short/long', () => {
         ]
       }
     };
-    expect(requestAdminQuizQuestionUpdate(token1.body, quiz1.body.quizId, shortQuestion).body).toStrictEqual({ error: 'Question must be greater than 4 characters and less than 51 characters' })
+    expect(requestAdminQuizQuestionUpdate(token1.body, quiz1.body.quizId, shortQuestion).body).toStrictEqual({ error: 'Question must be greater than 4 characters and less than 51 characters.' })
   })
 });
 
@@ -169,7 +169,7 @@ describe('Too many/little answers', () => {
         ]
       }
     };
-    expect(requestAdminQuizQuestionUpdate(token1.body, quiz1.body.quizId, aLotOfAnswers).body).toStrictEqual({ error: 'Must have more than one answer and less than 7 answers' })
+    expect(requestAdminQuizQuestionUpdate(token1.body, quiz1.body.quizId, aLotOfAnswers).body).toStrictEqual({ error: 'Must have more than one answer and less than 7 answers.' })
   })
   test('Too little answers', () => {
     let notEnoughAnswers = {
@@ -185,7 +185,7 @@ describe('Too many/little answers', () => {
         ]
       }
     };
-    expect(requestAdminQuizQuestionUpdate(token1.body, quiz1.body.quizId, notEnoughAnswers).body).toStrictEqual({error: 'Must have more than one answer and less than 7 answers' })
+    expect(requestAdminQuizQuestionUpdate(token1.body, quiz1.body.quizId, notEnoughAnswers).body).toStrictEqual({error: 'Must have more than one answer and less than 7 answers.' })
   })
 });
 
@@ -208,7 +208,7 @@ describe('Invalid timer', () => {
         ]
       }
     };
-    expect(requestAdminQuizQuestionUpdate(token1.body, quiz1.body.quizId, invalidTime1).body).toStrictEqual({ error: 'Time allowed must be a postive number' })
+    expect(requestAdminQuizQuestionUpdate(token1.body, quiz1.body.quizId, invalidTime1).body).toStrictEqual({ error: 'Time allowed must be a postive number.' })
   })
   test('Zero time', () => {
     let invalidTime2 = {
@@ -228,7 +228,7 @@ describe('Invalid timer', () => {
         ]
       }
     };
-    expect(requestAdminQuizQuestionUpdate(token1.body, quiz1.body.quizId, invalidTime2).body).toStrictEqual({ error: 'Time allowed must be a postive number' })
+    expect(requestAdminQuizQuestionUpdate(token1.body, quiz1.body.quizId, invalidTime2).body).toStrictEqual({ error: 'Time allowed must be a postive number.' })
   })
 });
 
@@ -251,7 +251,7 @@ describe('Quiz total duration > 3minutes', () => {
         ]
       }
     };
-    expect(requestAdminQuizQuestionUpdate(token1.body, quiz1.body.quizId, timeTooLong).body).toStrictEqual({ error: 'Quiz duration longer than 3 minutes' })
+    expect(requestAdminQuizQuestionUpdate(token1.body, quiz1.body.quizId, timeTooLong).body).toStrictEqual({ error: 'Quiz duration longer than 3 minutes.' })
   })
 });
 

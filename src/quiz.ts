@@ -459,8 +459,6 @@ function adminQuizQuestionCreate (token: ErrorObject | TokenParameter, quizId:nu
     return { error: 'Points must not be less than 1 or greater than 10' }
   } else if(quizAnswerValid(quizQuestion) === false){
     return { error: '1 or more of your asnwer is less than 1 or greater 30 characters' }
-  } else if(quizAnswerValid(quizQuestion) === false){
-    return { error: '1 or more of your asnwer is less than 1 or greater 30 characters' }
   } else if(quizAnswerDuplicateValid(quizQuestion) === false){
     return { error: 'There are duplicate answers' }
   } else if(quizAnswerCorrectValid(quizQuestion) === false){
@@ -727,7 +725,7 @@ function adminQuizQuestionDelete(token: ErrorObject | TokenParameter, quizId: nu
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId)
   // console.log(quiz)
   // found the quiz which contains the question
-  let index: number = 0
+  let index: number = 0;
   for (const question of quiz.questions) {
     if (question.questionId === questionId) {
       quiz.questions.splice(index, 1);
@@ -742,19 +740,86 @@ function adminQuizQuestionDelete(token: ErrorObject | TokenParameter, quizId: nu
   }
 }
 
+function adminQuizQuestionUpdate(token: ErrorObject | TokenParameter, quizId: number, questionId: number, quizQuestion: quizQuestion) {
+ 
+  const data: Data = read();
+  // check token structure
+  if (!isTokenValid(token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  if (!isSessionValid(token)) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+  const authUserId = tokenOwner(token);
 
-// data.quizzes.push(data.trash.filter(quiz => quiz.quizId === quizId))
-// const newTrash: Quiz[] = data.trash.filter(quiz => quiz.quizId !== quizId).map(quiz => quiz);
-// data.trash = newTrash;
-// save(data);
-// return {
+  if (!quizValidCheck(quizId)) {
+    return { 
+      error: 'Quiz does not exist.' 
+    }
+  } else if (!quizValidOwner(authUserId, quizId)) {
+    return { 
+      error: 'You do not have access to this quiz.' 
+    }
+  } else if () {
+    return {
+      error: 'This question does not exist.'
+    }
 
-// }
-
-
-
-
-
+  } else if (!questionLengthValid(quizQuestion)) {
+    return { 
+      error: 'Question must be greater than 4 characters and less than 51 characters.'
+    }
+  } else if (!answerCountValid(quizQuestion)) {
+    return { 
+      error: 'Must have more than one answer and less than 7 answers.'
+    }
+  } else if (!durationValid(quizQuestion)) {
+    return {  
+      error: 'Time allowed must be a postive number.'  
+    }
+  } else if (!QuizDurationValid(data,quizQuestion, quizId)) {
+    return { 
+      error: 'Quiz duration longer than 3 minutes.'
+    }
+  } else if (!quizPointsValid(quizQuestion)) {
+    return { 
+      error: 'Question must award at least one point and no more than 10 points.' 
+    }
+  } else if (quizAnswerValid(quizQuestion)) {
+    return { 
+      error: 'Answer must be greater than 0 characters and less than 31 characters long.' 
+    }
+  } else if (!quizAnswerDuplicateValid(quizQuestion)) {
+    return { 
+      error: 'Cannot have same answers for one question.' 
+    }
+  } else if (!quizAnswerCorrectValid(quizQuestion)) {
+    return { 
+      error: 'There are no correct answers.' 
+    }
+  }
+  // find the quiz in data.quizzes by matching quizId to data.quizzes.quizId, find the quiz question in data.quizzes.quiz.question, splice out the question.
+  const quiz = data.quizzes.find(quiz => quiz.quizId === quizId)
+  // console.log(quiz)
+  // found the quiz which contains the question
+  for (const question of quiz.questions) {
+    if (question.questionId === questionId) {
+      quiz.questions = quizQuestion;
+      save(data);
+      return {
+      };
+    }
+  }
+  return {
+    error: 'Something went wrong'
+  }
+  
+}
 
 
 export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash, adminQuizTransfer, adminQuizRestore,
