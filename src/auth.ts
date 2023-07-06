@@ -1,7 +1,7 @@
 import { Data } from './interfaces';
 import validator from 'validator';
 import { read, save, isTokenValid, isSessionValid, tokenOwner } from './other';
-import { AdminAuthLoginReturn, AdminAuthRegisterReturn, AdminUserDetailsReturn, ErrorObject, TokenParameter } from './interfaces';
+import { AdminAuthLoginReturn, AdminAuthRegisterReturn, AdminUserDetailsReturn, ErrorObject } from './interfaces';
 let counterSession: number = 0;
 
 /**
@@ -207,7 +207,7 @@ function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn 
   *
   * @returns {user: {userId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
 */
-function adminUserDetails (token: ErrorObject | TokenParameter): AdminUserDetailsReturn | ErrorObject  {
+function adminUserDetails (token: ErrorObject | string): AdminUserDetailsReturn | ErrorObject  {
   const data: Data = read();
   if (!isTokenValid(token)) {
     return {

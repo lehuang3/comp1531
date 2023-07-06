@@ -1,29 +1,27 @@
 import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizRemove, requestAdminQuizList } from './other'
-import { TokenParameter } from './interfaces';
 import { token } from 'morgan';
-let token1: TokenParameter;
+let token1: string;
 
 let quiz: any;
 // Runs before each test
 beforeEach(() => {
   requestClear()
-  token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body;
+  token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
   quiz = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion').body;
   
 })
 
 
 test('Not current sessions', () => {
-  const token2 = {
-    token: (parseInt(token1.token) + 1).toString(),
-  }
+  const token2 = (parseInt(token1) + 1).toString();
+  
   const response = requestAdminQuizList(token2)
   expect(response.body).toStrictEqual({ error: expect.any(String) })
   expect(response.status).toStrictEqual(403);
 })
 
 test('Invalid token struct', () => {
-  const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body;
+  const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
   const response = requestAdminQuizList(token4)
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(401);
@@ -32,7 +30,7 @@ test('Invalid token struct', () => {
 
 test('Valid entry', () => {
   
-  requestAdminQuizCreate(token1, 'quiz2', 'Descritpion').body;
+  requestAdminQuizCreate(token1, 'quiz2', 'Descritpion').body.token;
   const response = requestAdminQuizList(token1)
   expect(response.body).toStrictEqual({
     quizzes: [

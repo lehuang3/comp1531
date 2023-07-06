@@ -1,7 +1,7 @@
 import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizRemove, requestAdminQuizList, requestAdminQuizQuestionMove } from './other'
-import { TokenParameter, QuizQuestion,Answer } from './interfaces';
+import { QuizQuestion,Answer } from './interfaces';
 import { token } from 'morgan';
-let token1: TokenParameter;
+let token1: string;
 
 let quiz: any;
 let quizQuestion: QuizQuestion;
@@ -11,7 +11,7 @@ let questionId3: any;
 // Runs before each test
 beforeEach(() => {
   requestClear()
-  token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body;
+  token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
   quiz = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion').body;
   quizQuestion = {
 		questionBody: {
@@ -89,7 +89,7 @@ beforeEach(() => {
 })
 
 test('Invalid token struct', () => {
-  const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body;
+  const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
 	let newPosition = 0
   const response = requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token4, newPosition)
 
@@ -98,9 +98,8 @@ test('Invalid token struct', () => {
 })
 
 test('Check for invalid session', () => {
-  let token2 = {
-    token: (parseInt(token1.token) + 1).toString(),
-  }
+  let token2 = (parseInt(token1) + 1).toString();
+  
   let newPosition = 0
   const response = requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token2, newPosition)
 
@@ -110,7 +109,7 @@ test('Check for invalid session', () => {
 
 test('Invalide User ID ie not owner', () => {
   
-	let token2 = requestAdminAuthRegister('hayden.hafezimasoomi@gmail.com', '1234abcd', 'hayden', 'Hafezi').body;
+	let token2 = requestAdminAuthRegister('hayden.hafezimasoomi@gmail.com', '1234abcd', 'hayden', 'Hafezi').body.token;
   let newPosition = 0
   const response = requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token2, newPosition)
 

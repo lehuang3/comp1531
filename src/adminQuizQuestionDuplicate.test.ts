@@ -1,7 +1,7 @@
 import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizRemove, requestAdminQuizList, requestAdminQuizQuestionDuplicate,requestAdminQuizQuestionMove } from './other'
-import { TokenParameter, QuizQuestion,Answer } from './interfaces';
+import { QuizQuestion,Answer } from './interfaces';
 import { token } from 'morgan';
-let token1: TokenParameter;
+let token1: string;
 
 let quiz: any;
 let quizQuestion: QuizQuestion;
@@ -9,7 +9,7 @@ let questionId: any
 // Runs before each test
 beforeEach(() => {
   requestClear()
-  token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body;
+  token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
   quiz = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion').body;
   quizQuestion = {
 		questionBody: {
@@ -39,16 +39,15 @@ beforeEach(() => {
 })
 
 test('Invalid token struct', () => {
-	const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body;
+	const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
   const response = requestAdminQuizQuestionDuplicate(token4, quiz.quizId, questionId.questionId)
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(401);
 })
 
 test('Check for invalid session', () => {
-  let token2 = {
-    token: (parseInt(token1.token) + 1).toString(),
-  }
+  let token2 = (parseInt(token1) + 1).toString();
+  
 	const response = requestAdminQuizQuestionDuplicate(token2, quiz.quizId, questionId.questionId)
   expect(response.body).toStrictEqual({error: expect.any(String)});
   expect(response.status).toStrictEqual(403);
@@ -56,7 +55,7 @@ test('Check for invalid session', () => {
 
 test('Invalide User ID ie not owner', () => {
   
-	let token2 = requestAdminAuthRegister('hayden.hafezimasoomi@gmail.com', '1234abcd', 'hayden', 'Hafezi').body;
+	let token2 = requestAdminAuthRegister('hayden.hafezimasoomi@gmail.com', '1234abcd', 'hayden', 'Hafezi').body.token;
   const response = requestAdminQuizQuestionDuplicate(token2, quiz.quizId, questionId.questionId)
 
   expect(response.body).toStrictEqual({ error: expect.any(String) })
