@@ -1,1 +1,1 @@
-{"users":[],"quizzes":[],"tokens":[],"trash":[]}
+{"users":[{"authUserId":0,"email":"email@email.com","password":"Password1","name":"first last","numSuccessfulLogins":1,"numFailedPasswordsSinceLastLogin":0,"userQuizzes":[]}],"quizzes":[],"tokens":[{"authUserId":0,"sessionId":0}],"trash":[]}
