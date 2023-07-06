@@ -404,6 +404,13 @@ describe('Invalid token', () => {
   })
 });
 
+// describe('Time test', () => {
+//   test('Time edited changes with correct param', () => {
+//     (requestAdminQuizQuestionUpdate(token1.body, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, quiz1Question2).body)
+//     wait(1000);
+//   })
+// });
+
 
 
 
