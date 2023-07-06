@@ -2,17 +2,17 @@ import { AdminAuthRegisterReturn } from './interfaces';
 import { requestClear, requestAdminAuthRegister, requestAdminQuizRemove, requestAdminQuizCreate, requestAdminQuizTrash } from './other'
 
 
-let token1: AdminAuthRegisterReturn;
+let token1: string;
 let quiz1: any;
 beforeEach(() => {
   requestClear()
-  token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body;
+  token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
   quiz1 = requestAdminQuizCreate(token1, 'quiz', '').body;
 })
 
 test('Check for invalid token structure', () => {
   //console.log(token1);
-  const token2 = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body;
+  const token2 = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body.token;
   const response = requestAdminQuizTrash(token2);
   expect(response.body).toStrictEqual({
     error: 'Invalid token structure',
@@ -21,9 +21,8 @@ test('Check for invalid token structure', () => {
 });
 
 test('Check for invalid session', () => {
-  const token2 = {
-    token: (parseInt(token1.token) + 1).toString(),
-  }
+  const token2 = (parseInt(token1) + 1).toString();
+  
   
   const response = requestAdminQuizTrash(token2);
   expect(response.body).toStrictEqual({

@@ -2,7 +2,7 @@ import fs from 'fs';
 import { Data, Token } from './interfaces';
 import request from 'sync-request';
 import { port, url } from './config.json';
-import { ErrorObject, TokenParameter, QuizQuestion } from './interfaces';
+import { ErrorObject, QuizQuestion } from './interfaces';
 import { Console } from 'console';
 const SERVER_URL = `${url}:${port}`;
 
@@ -41,7 +41,7 @@ function requestClear() {
  *
  * @returns {{object}} - response in javascript
 */
-function requestGetAdminUserDetails(token: ErrorObject | TokenParameter) {
+function requestGetAdminUserDetails(token: ErrorObject | string) {
   const res = request(
     'GET',
     SERVER_URL + '/v1/admin/user/details',
@@ -64,18 +64,18 @@ function requestGetAdminUserDetails(token: ErrorObject | TokenParameter) {
  * Given a token, find the corresponding user that created
  * the token (by starting a session), and return the user's authUserId
  * if the user exists, and undefined otherwise.
- * @param {{TokenParameter}} - Token
+ * @param {{string | ErrorObject}} - Token
  *
  * @returns {{undefined | number}} - undefined or a user's authUserId
 */
-function tokenOwner(token: TokenParameter | ErrorObject) {
+function tokenOwner(token: string | ErrorObject) {
   const data: Data = read();
   if (!isSessionValid(token)) {
     // error if no corresponding token found
     return undefined;
   } else {
-    if ('token' in token) {
-      return data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token)).authUserId;
+    if (typeof token === 'string') {
+      return data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token)).authUserId;
     }
     
   }
@@ -84,13 +84,12 @@ function tokenOwner(token: TokenParameter | ErrorObject) {
 /**
  * Check if a token passed in has a valid
  * structure, and return a boolean value accordingly.
- * @param {{ErrorObject | TokenParameter}} - Token
+ * @param {{ErrorObject | string}} - Token
  *
  * @returns {{boolean}} - True or false
 */
-function isTokenValid(token: ErrorObject | TokenParameter) {
-  const data: Data = read();
-  if (!('token' in token)) {
+function isTokenValid(token: ErrorObject | string) {
+  if (typeof token !== 'string') {
     return false;
   }
   return true;
@@ -100,16 +99,16 @@ function isTokenValid(token: ErrorObject | TokenParameter) {
  * Given a token, check if there is an existing session
  * linked to the token, return true if such a session
  * exists, false otherwise
- * @param {{ErrorObject | TokenParameter}} - Token
+ * @param {{ErrorObject | string}} - Token
  *
  * @returns {{boolean}} - True/false or matching token's 
  * associated authUserId
 */
-function isSessionValid(token: TokenParameter | ErrorObject): boolean {
+function isSessionValid(token: string | ErrorObject): boolean {
   const data: Data = read();
   let matchingToken: Token;
-  if ('token' in token) {
-    matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
+  if (typeof token === 'string') {
+    matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token));
   }
   if (matchingToken === undefined) {
     // error if no corresponding token found
@@ -365,7 +364,7 @@ function requestAdminAuthLogin(email: string, password: string) {
  *
  * @returns {{object}} - response in javascript
 */
-function requestAdminQuizDescriptionUpdate(token: ErrorObject | TokenParameter, quizId: number, description: string) {
+function requestAdminQuizDescriptionUpdate(token: ErrorObject | string, quizId: number, description: string) {
   const res = request(
     'PUT',
     SERVER_URL + `/v1/admin/quiz/${quizId}/description`,
@@ -392,7 +391,7 @@ function requestAdminQuizDescriptionUpdate(token: ErrorObject | TokenParameter, 
  *
  * @returns {{object}} - response in javascript
 */
-function requestQuizQuestionCreate(token: ErrorObject | TokenParameter, quizId: number, quizQuestion: object) {
+function requestQuizQuestionCreate(token: ErrorObject | string, quizId: number, quizQuestion: object) {
   const res = request(
     'PUT',
     SERVER_URL + `/v1/admin/quiz/${quizId}/question`,
@@ -420,7 +419,7 @@ function requestQuizQuestionCreate(token: ErrorObject | TokenParameter, quizId: 
  *
  * @returns {{object}} - response in javascript
 */
-function requestAdminQuizCreate(token: ErrorObject | TokenParameter, name:string, description:string) {
+function requestAdminQuizCreate(token: ErrorObject | string, name:string, description:string) {
   const res = request(
     'POST',
     SERVER_URL + '/v1/admin/quiz',
@@ -441,7 +440,7 @@ function requestAdminQuizCreate(token: ErrorObject | TokenParameter, name:string
   } 
 }
 
-function requestAdminQuizInfo(token: ErrorObject | TokenParameter, quizId: number) {
+function requestAdminQuizInfo(token: ErrorObject | string, quizId: number) {
   const res = request(
     'GET',
     SERVER_URL + `/v1/admin/quiz/${quizId}`,
@@ -467,7 +466,7 @@ function requestAdminQuizInfo(token: ErrorObject | TokenParameter, quizId: numbe
  * @returns 
 */
 
-function requestAdminQuizNameUpdate(token: ErrorObject | TokenParameter, quizId: number, name:string) {
+function requestAdminQuizNameUpdate(token: ErrorObject | string, quizId: number, name:string) {
   const res = request(
     'PUT',
     SERVER_URL + `/v1/admin/quiz/${quizId}/name`,
@@ -491,7 +490,7 @@ function requestAdminQuizNameUpdate(token: ErrorObject | TokenParameter, quizId:
  *
  * @returns {{object}} - response in javascript
 */
-function requestAdminQuizRemove(token: ErrorObject | TokenParameter, quizId: number ) {
+function requestAdminQuizRemove(token: ErrorObject | string, quizId: number ) {
   const res = request(
     'DELETE',
     SERVER_URL + `/v1/admin/quiz/${quizId}`,
@@ -509,7 +508,7 @@ function requestAdminQuizRemove(token: ErrorObject | TokenParameter, quizId: num
   } 
 }
 
-function requestAdminQuizList(token: ErrorObject | TokenParameter ) {
+function requestAdminQuizList(token: ErrorObject | string ) {
   const res = request(
     'GET',
     SERVER_URL + `/v1/admin/quiz/list`,
@@ -530,11 +529,11 @@ function requestAdminQuizList(token: ErrorObject | TokenParameter ) {
 /**
  * Send a 'get' request to the corresponding server route to 
  * view quizzes in the trash
- * @param {{TokenParameter}} - token
+ * @param {{string | ErrorObject}} - token
  *
  * @returns {{object}} - response in javascript
 */
-function requestAdminQuizTrash(token: ErrorObject | TokenParameter) {
+function requestAdminQuizTrash(token: ErrorObject | string) {
   const res = request(
     'GET',
     SERVER_URL + '/v1/admin/quiz/trash',
@@ -555,11 +554,11 @@ function requestAdminQuizTrash(token: ErrorObject | TokenParameter) {
 /**
  * Send a 'post' request to the corresponding server route to
  * transfer a quiz from 1 user to another
- * @param {{TokenParameter}} - token
+ * @param {{string | ErrorObject}} - token
  *
  * @returns {{object}} - response in javascript
 */
-function requestAdminQuizTransfer(token: ErrorObject | TokenParameter, quizId: number, userEmail: string) {
+function requestAdminQuizTransfer(token: ErrorObject | string, quizId: number, userEmail: string) {
   const res = request(
     'POST',
     SERVER_URL + `/v1/admin/quiz/${quizId}/transfer`,
@@ -579,7 +578,7 @@ function requestAdminQuizTransfer(token: ErrorObject | TokenParameter, quizId: n
   } 
 }
 
-function requestAdminQuizRestore(token: ErrorObject | TokenParameter, quizId: number) {
+function requestAdminQuizRestore(token: ErrorObject | string, quizId: number) {
   const res = request(
     'POST',
     SERVER_URL + `/v1/admin/quiz/${quizId}/restore`,
@@ -608,7 +607,7 @@ function requestAdminQuizRestore(token: ErrorObject | TokenParameter, quizId: nu
  * @returns 
 */
 
-function requestAdminQuizQuestionMove(quizId: number, questionId: number,  token: ErrorObject | TokenParameter, newPosition: number) {
+function requestAdminQuizQuestionMove(quizId: number, questionId: number,  token: ErrorObject | string, newPosition: number) {
   const res = request(
     'PUT',
     SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}/move`,
@@ -635,7 +634,7 @@ function requestAdminQuizQuestionMove(quizId: number, questionId: number,  token
  * @returns 
 */
 
-function requestAdminQuizQuestionDuplicate(token: ErrorObject | TokenParameter,quizId: number, questionId: number) {
+function requestAdminQuizQuestionDuplicate(token: ErrorObject | string,quizId: number, questionId: number) {
   const res = request(
     'PUT',
     SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}/duplicate`,
@@ -761,7 +760,7 @@ function isQuizInTrash(quizId: number): boolean {
   return false;
 }
 
-function requestAdminQuizQuestionDelete(token: ErrorObject | TokenParameter, quizId: number, questionId: number) {
+function requestAdminQuizQuestionDelete(token: ErrorObject | string, quizId: number, questionId: number) {
   const res = request(
     'DELETE',
     SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}`,
@@ -817,7 +816,7 @@ function newPositioNotSame(data:any, quizId:number,questionId:number, newPositio
 }
 
 
-function requestAdminQuizQuestionUpdate(token: ErrorObject | TokenParameter, quizId: number, questionId: number, quizQuestion: QuizQuestion) {
+function requestAdminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, questionId: number, quizQuestion: QuizQuestion) {
   const res = request(
     'PUT',
     SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}`,

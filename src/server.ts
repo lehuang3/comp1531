@@ -10,7 +10,7 @@ import { adminAuthRegister, adminUserDetails, adminAuthLogin } from './auth';
 import { adminQuizCreate, adminQuizDescriptionUpdate, adminQuizRemove, adminQuizNameUpdate, adminQuizList, adminQuizInfo, adminQuizTrash,
 adminQuizTransfer, adminQuizRestore, adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDupicate, adminQuizQuestionDelete, adminQuizQuestionUpdate } from './quiz';
 import { clear } from './other';
-import { ErrorObject, TokenParameter } from './interfaces';
+import { ErrorObject } from './interfaces';
 
 // Set up web app
 const app = express();
@@ -42,7 +42,7 @@ app.get('/echo', (req: Request, res: Response) => {
 });
 
 app.get('/v1/admin/user/details', (req: Request, res: Response) => {
-  const token = req.query.token;
+  const token = req.query.token as string;
   const response = adminUserDetails(token);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
