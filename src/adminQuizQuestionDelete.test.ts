@@ -91,17 +91,17 @@ describe('Invalid questionId', () => {
 });
 
 describe('Invalid session', () => {
-  test('', () => {
+  test('Invalid token', () => {
     const brokenToken = {
       token: '-1'
     }
-    expect(requestAdminQuizQuestionDelete(brokenToken, quiz1.body.quizId, -1).body).toStrictEqual({ error: 'Not a valid session' })
+    expect(requestAdminQuizQuestionDelete(brokenToken, quiz1.body.quizId, token1Quiz1Question1Id).body).toStrictEqual({ error: 'Not a valid session' })
   })
 });
 
 describe('Invalid token', () => {
   test('Invalid token created from invalid email', () => {
     const invalidToken = requestAdminAuthRegister('', 'happy123', 'tommy', 'bommy');
-    expect(requestAdminQuizQuestionDelete(invalidToken.body, quiz1.body.quizId, -1).body).toStrictEqual({ error: 'Invalid token structure' })
+    expect(requestAdminQuizQuestionDelete(invalidToken.body, quiz1.body.quizId, token1Quiz1Question1Id).body).toStrictEqual({ error: 'Invalid token structure' })
   })
 });
