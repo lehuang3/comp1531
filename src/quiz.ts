@@ -755,7 +755,6 @@ function adminQuizQuestionUpdate(token: ErrorObject | TokenParameter, quizId: nu
     }
   }
   const authUserId = tokenOwner(token);
-
   if (!quizValidCheck(quizId)) {
     return { 
       error: 'Quiz does not exist.' 
@@ -764,10 +763,10 @@ function adminQuizQuestionUpdate(token: ErrorObject | TokenParameter, quizId: nu
     return { 
       error: 'You do not have access to this quiz.' 
     }
-  // } else if (!doesQuestionExist(data, questionId)) {
-  //   return {
-  //     error: 'This question does not exist.'
-  //   }
+  } else if (!questionValidCheck(data, quizId, questionId)) {
+    return {
+      error: 'This question does not exist.'
+    }
   } else if (!questionLengthValid(quizQuestion)) {
     return { 
       error: 'Question must be greater than 4 characters and less than 51 characters.'
@@ -788,7 +787,7 @@ function adminQuizQuestionUpdate(token: ErrorObject | TokenParameter, quizId: nu
     return { 
       error: 'Question must award at least one point and no more than 10 points.' 
     }
-  } else if (quizAnswerValid(quizQuestion)) {
+  } else if (!quizAnswerValid(quizQuestion)) {
     return { 
       error: 'Answer must be greater than 0 characters and less than 31 characters long.' 
     }
@@ -802,17 +801,17 @@ function adminQuizQuestionUpdate(token: ErrorObject | TokenParameter, quizId: nu
     }
   }
   // find the quiz in data.quizzes by matching quizId to data.quizzes.quizId, find the quiz question in data.quizzes.quiz.question, splice out the question.
-  const quiz = data.quizzes.find(quiz => quiz.quizId === quizId)
+  const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
   // console.log(quiz)
   // found the quiz which contains the question
-  // for (const question of quiz.questions) {
-  //   if (question.questionId === questionId) {
-  //     quiz.questions = quizQuestion;
-  //     save(data);
-  //     return {
-  //     };
-  //   }
-  // }
+  for (const question of quiz.questions) {
+    if (question.questionId === questionId) {
+      quiz.questions = quizQuestion;
+      save(data);
+      return {
+      };
+    }
+  }
   return {
     error: 'Something went wrong'
   }
@@ -821,5 +820,5 @@ function adminQuizQuestionUpdate(token: ErrorObject | TokenParameter, quizId: nu
 
 
 export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash, adminQuizTransfer, adminQuizRestore,
-adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDupicate, adminQuizQuestionDelete }
+adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDupicate, adminQuizQuestionDelete, adminQuizQuestionUpdate }
 
