@@ -816,17 +816,6 @@ function newPositioNotSame(data:any, quizId:number,questionId:number, newPositio
 
 }
 
-// function doesQuestionExist(data: Data, questionId: number) {
-//   for (const quiz of data.quizzes) {
-//     for (const question of quiz.questions) {
-//       if (question.questionBody.questionId === questionId) {
-//         return true;
-//       }
-//     }
-//   }
-//   return false;
-// }
-
 
 function requestAdminQuizQuestionUpdate(token: ErrorObject | TokenParameter, quizId: number, questionId: number, quizQuestion: QuizQuestion) {
   const res = request(
@@ -853,5 +842,5 @@ export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUse
   requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
   requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid, 
   quizAnswerCorrectValid, isQuizInTrash,requestAdminQuizQuestionMove,questionValidCheck, newPositioNotSame,newPositionValidCheck,requestAdminQuizQuestionDuplicate, 
-  requestAdminQuizQuestionDelete, /*doesQuestionExist,*/ requestAdminQuizQuestionUpdate };
+  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate };
 
