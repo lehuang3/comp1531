@@ -326,7 +326,7 @@ function requestAdminQuizDescriptionUpdate(token: ErrorObject | TokenParameter, 
  *
  * @returns {{}} - none
 */
-function requestAdminAuthDetailsUpdate(token: ErrorObject | TokenParameter, email: string, nameFirst: string, nameLast: string) {
+function requestAdminAuthPasswordUpdate(token: ErrorObject | TokenParameter, oldPassword: string, newPassword: string) {
     //
     return {
         body: '0',
@@ -336,4 +336,4 @@ function requestAdminAuthDetailsUpdate(token: ErrorObject | TokenParameter, emai
 
 export { clear, save, read, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
 quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
-requestAdminAuthDetailsUpdate };
+requestAdminAuthPasswordUpdate };
