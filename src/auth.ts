@@ -241,4 +241,4 @@ function adminUserDetails (token: ErrorObject | TokenParameter): AdminUserDetail
   
 }
 
-export { adminAuthLogin, adminAuthRegister, adminUserDetails }
+export { adminAuthLogin, adminAuthRegister, adminUserDetails, checkValidString }

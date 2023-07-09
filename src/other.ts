@@ -3,6 +3,8 @@ import { Data, Token } from './interfaces';
 import request from 'sync-request';
 import { port, url } from './config.json';
 import { ErrorObject, TokenParameter } from './interfaces';
+import { checkValidString } from './auth'
+import validator from 'validator';
 const SERVER_URL = `${url}:${port}`;
 
 
@@ -328,10 +330,64 @@ function requestAdminQuizDescriptionUpdate(token: ErrorObject | TokenParameter, 
 */
 function requestAdminAuthDetailsUpdate(token: ErrorObject | TokenParameter, email: string, nameFirst: string, nameLast: string) {
     //
-    return {
-        body: '0',
-        status: 0
+    if (!checkValidString(nameFirst)) {
+        return {
+            error: 'First name is invalid'
+        }
+
     }
+    if (!checkValidString(nameLast)) {
+        return {
+            error: 'Last name is invalid'
+        }
+    }
+    if (!validator.isEmail(email)) {
+        return {
+          error: 'error: email is not valid'
+        }
+    }
+    const data: Data = read();
+
+    for (const user of data.users) {
+        if (user.email === email) {
+            return {
+                error: 'error: email is already being used'
+            }
+        } 
+    }
+    if (!('token' in token)) {
+        return {
+          error: 'Invalid token structure',
+        }
+      }
+      
+      const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
+      if (matchingToken === undefined) {
+        // error if no corresponding token found
+        return {
+          error: 'Not a valid session',
+        }
+      }
+
+      const res = request(
+        'PUT',
+        SERVER_URL + `/v1/admin/user/details`,
+        {
+          // Note that for PUT/POST requests, you should
+          // use the key 'json' instead of the query string 'qs'
+          json: {
+            token,
+            email,
+            nameFirst,
+            nameLast
+          }
+        }
+      );
+      //console.log(JSON.parse(res.body.toString()));
+      return {
+        body: JSON.parse(res.body.toString()),
+        status: res.statusCode,
+      }
 }
 
 export { clear, save, read, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
