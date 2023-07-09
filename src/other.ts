@@ -328,10 +328,41 @@ function requestAdminQuizDescriptionUpdate(token: ErrorObject | TokenParameter, 
 */
 function requestAdminAuthLogout(token: ErrorObject | TokenParameter) {
     //
-    return {
-        body: '0',
-        status: 0
+    const data: Data = read();
+    if (!('token' in token)) {
+        return {
+          error: 'Invalid token structure',
+        }
     }
+  
+    const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
+    if (matchingToken === undefined) {
+    // error if no corresponding token found
+        return {
+            error: 'Not a valid session',
+        }
+    }
+
+    // removes token from active tokens array
+    const index = data.tokens.indexOf(matchingToken);
+    data.tokens = data.tokens.splice(index, 1);
+
+    const res = request(
+        'POST',
+        SERVER_URL + '/v1/admin/auth/login',
+        {
+          // Note that for PUT/POST requests, you should
+          // use the key 'json' instead of the query string 'qs'
+          json: {
+            token
+          }
+        }
+      );
+      //console.log(JSON.parse(res.body.toString()));
+      return {
+        body: JSON.parse(res.body.toString()),
+        status: res.statusCode,
+      }
 }
 
 export { clear, save, read, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
