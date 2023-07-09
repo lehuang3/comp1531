@@ -3,6 +3,7 @@ import { Data, Token } from './interfaces';
 import request from 'sync-request';
 import { port, url } from './config.json';
 import { ErrorObject, TokenParameter } from './interfaces';
+import { checkValidPassword } from './auth';
 const SERVER_URL = `${url}:${port}`;
 
 
@@ -328,10 +329,56 @@ function requestAdminQuizDescriptionUpdate(token: ErrorObject | TokenParameter, 
 */
 function requestAdminAuthPasswordUpdate(token: ErrorObject | TokenParameter, oldPassword: string, newPassword: string) {
     //
-    return {
-        body: '0',
-        status: 0
+    if (!checkValidPassword(newPassword)) {
+        return {
+            error: 'New password is invalid'
+        }
     }
+    const data: Data = read();
+    if (!('token' in token)) {
+        return {
+          error: 'Invalid token structure',
+        }
+      }
+      
+      const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
+      if (matchingToken === undefined) {
+        // error if no corresponding token found
+        return {
+          error: 'Not a valid session',
+        }
+      }
+      const authUserId = matchingToken.authUserId;
+      const user = data.users.find((userID) => userID.authUserId === authUserId);
+      if (oldPassword != user.password) {
+        return {
+            error: 'Old password is incorrect'
+        }
+      }
+      for (const password of user.usedPasswords) {
+        if (newPassword === password) {
+            return {
+                error: 'Password has been used before'
+            }
+        }
+      }
+      const res = request(
+        'PUT',
+        SERVER_URL + `/v1/admin/user/password`,
+        {
+          // Note that for PUT/POST requests, you should
+          // use the key 'json' instead of the query string 'qs'
+          json: {
+            token,
+            newPassword
+          }
+        }
+      );
+      //console.log(JSON.parse(res.body.toString()));
+      return {
+        body: JSON.parse(res.body.toString()),
+        status: res.statusCode,
+      }
 }
 
 export { clear, save, read, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 

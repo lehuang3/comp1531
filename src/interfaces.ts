@@ -61,7 +61,8 @@ interface User {
   password: string;
   numSuccessfulLogins: number;
   numFailedPasswordsSinceLastLogin: number;
-  userQuizzes: number[]
+  userQuizzes: number[];
+  usedPasswords: string[]
 }
 
 export { AdminAuthLoginReturn, AdminUserDetailsReturn, AdminAuthRegisterReturn, ErrorObject, TokenParameter, Data, Token, User, Quiz}
