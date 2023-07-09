@@ -807,6 +807,8 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
   for (const question of quiz.questions) {
     if (question.questionId === questionId) {
       quiz.questions = quizQuestion;
+      const updatedQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+      updatedQuiz.timeLastEdited = Math.floor(Date.now() / 1000)
       save(data);
       return {
       };
