@@ -818,7 +818,65 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
   
 }
 
+/**
+ * Given token, array of quizIds,
+ * removes the corresponding quizzes in the trash
+ *
+ * @param {string | ErrorObject} token - token that represents original owner of the quiz
+ * @param {number[]} quizIdArr - array of quizIds of quizIds
+ *
+ *
+ * @returns {} - empty object
+*/
 
+function adminQuizTrashEmpty(token: string | ErrorObject, quizIdArr: number[]) {
+  const data: Data = read();
+  // check token structure
+  if (!isTokenValid(token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  if (!isSessionValid(token)) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+  // if no quizzes are chosen to be removed, return with 200 status code with 
+  // no modifications of trash
+  if (quizIdArr === undefined) {
+    return {}
+  }
+
+  const authUserId = tokenOwner(token);
+
+  for (const quizId of quizIdArr) {
+    if (!quizValidCheck(quizId)) {
+      return {
+        error: "One or more of the quizzes is not a valid quiz"
+      }
+    }
+    if (!quizValidOwner(authUserId, quizId)) {
+      return {
+        error: "One or more of the quizzes refers to a quiz that this current user does not own"
+      }
+    }
+    if (!isQuizInTrash(quizId)) {
+      return {
+        error: "One or more of the quizzes is not currently in the trash"
+      }
+    }
+  }
+
+  quizIdArr.map(quizIdToRemove => {
+    // user.userQuizzes = user.userQuizzes.filter(userQuizId => userQuizId !== quizId)
+    data.trash = data.trash.filter(quiz => quiz.quizId !== quizIdToRemove);
+    save(data);
+  })
+  return {}
+
+}  
 export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash, adminQuizTransfer, adminQuizRestore,
-adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDupicate, adminQuizQuestionDelete, adminQuizQuestionUpdate }
+adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDupicate, adminQuizQuestionDelete, adminQuizQuestionUpdate, adminQuizTrashEmpty }
 
