@@ -8,7 +8,8 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import { adminAuthRegister, adminUserDetails, adminAuthLogin } from './auth';
 import { adminQuizCreate, adminQuizDescriptionUpdate, adminQuizRemove, adminQuizNameUpdate, adminQuizList, adminQuizInfo, adminQuizTrash,
-adminQuizTransfer, adminQuizRestore, adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDupicate, adminQuizQuestionDelete, adminQuizQuestionUpdate } from './quiz';
+adminQuizTransfer, adminQuizRestore, adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDupicate, adminQuizQuestionDelete, adminQuizQuestionUpdate,
+adminQuizTrashEmpty } from './quiz';
 import { clear } from './other';
 import { ErrorObject } from './interfaces';
 
@@ -313,6 +314,27 @@ app.put('/v1/admin/quiz/:quizId/question/:questionId', (req: Request, res: Respo
       return res.status(400).json(response);
     }
   }
+  res.json(response);
+});
+
+app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
+  let quizIdArr = req.query.quizIdArr as any[];
+  // if the array passed in is empty (no quizzes were chosen)
+  if (quizIdArr !== undefined) {
+    quizIdArr = quizIdArr.map(quizId => parseInt(quizId))
+  }
+  const token = req.query.token;
+  const response = adminQuizTrashEmpty(token, quizIdArr);
+  if ('error' in response) {
+    if (response.error === 'Invalid token structure') {
+      return res.status(401).json(response);
+    } else if (response.error === 'Not a valid session') {
+      return res.status(403).json(response);
+    } else {
+      return res.status(400).json(response);
+    }
+  }
+  console.log('codes in server')
   res.json(response);
 });
 

@@ -836,10 +836,37 @@ function requestAdminQuizQuestionUpdate(token: ErrorObject | string, quizId: num
   } 
 }
 
+/**
+ * Send a 'delete' request to the corresponding server route to
+ * delete quiz/quizzes from the trash
+ * @param {{string | ErrorObject}} - token
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminQuizTrashEmpty(token: ErrorObject | string, quizIdArr: number[]) {
+  const res = request(
+    'DELETE',
+    SERVER_URL + '/v1/admin/quiz/trash/empty',
+    {
+      // Note that for PUT/POST requests, you should
+      // use the key 'json' instead of the query string 'qs'
+      qs: {
+        token,
+        quizIdArr
+      }
+    }
+  );
+  //console.log(JSON.parse(res.body.toString()));
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  } 
+}
+
 export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
   requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
   requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid, 
   quizAnswerCorrectValid, isQuizInTrash,requestAdminQuizQuestionMove,questionValidCheck, newPositioNotSame,newPositionValidCheck,requestAdminQuizQuestionDuplicate, 
-  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate };
+  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty };
 
