@@ -1,16 +1,16 @@
 import { AdminAuthRegisterReturn } from './interfaces';
 import { requestClear, requestAdminAuthRegister, requestAdminQuizDescriptionUpdate, requestAdminQuizCreate } from './other'
-let token1: AdminAuthRegisterReturn;
+let token1: string;
 let quiz1: any;
 beforeEach(() => {
   requestClear()
-  token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body;
+  token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
   quiz1 = requestAdminQuizCreate(token1, 'quiz', '').body;
 })
 
 test('Check for invalid token structure', () => {
   //console.log(token1);
-  const token2 = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body;
+  const token2 = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body.token;
   const response = requestAdminQuizDescriptionUpdate(token2, quiz1.quizId, '');
   expect(response.body).toStrictEqual({
     error: 'Invalid token structure',
@@ -19,9 +19,8 @@ test('Check for invalid token structure', () => {
 });
 
 test('Check for invalid session', () => {
-  const token2 = {
-    token: (parseInt(token1.token) + 1).toString(),
-  }
+  const token2 = (parseInt(token1) + 1).toString();
+  
   
   const response = requestAdminQuizDescriptionUpdate(token2, quiz1.quizId, '');
   expect(response.body).toStrictEqual({
@@ -47,7 +46,7 @@ test('Check for invalid quiz', () => {
 })
 
 test('Check for ownership', () => {
-  const token2 = requestAdminAuthRegister('Le@gmail.com', '1234abcd', 'Le', 'Huang').body;
+  const token2 = requestAdminAuthRegister('Le@gmail.com', '1234abcd', 'Le', 'Huang').body.token;
   const response = requestAdminQuizDescriptionUpdate(token2, quiz1.quizId, 'this quiz now has description');
   expect(response.body).toStrictEqual({
     error: 'This quiz is owned by another user'

@@ -1,4 +1,4 @@
-import { ErrorObject, Quiz, QuizQuestion, TokenParameter } from './interfaces';
+import { ErrorObject, Quiz, QuizQuestion } from './interfaces';
 import { save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong,
          tokenOwner, isTokenValid, isSessionValid,questionLengthValid, answerCountValid,newPositioNotSame,newPositionValidCheck,questionValidCheck, durationValid,QuizDurationValid, quizPointsValid, 
          quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash } from './other';
@@ -10,7 +10,7 @@ import { Data } from './interfaces';
  *
  * @returns {array object} - List of quizzes
 */
-function adminQuizList (token: ErrorObject | TokenParameter) {
+function adminQuizList (token: ErrorObject | string) {
   const data: Data = read();
   if (!isTokenValid(token)) {
     return {
@@ -63,7 +63,7 @@ function adminQuizList (token: ErrorObject | TokenParameter) {
  *
  * @returns {quizID: number} - Quiz's identification number
 */
-function adminQuizCreate (token: ErrorObject | TokenParameter, name: string, description: string) {
+function adminQuizCreate (token: ErrorObject | string, name: string, description: string) {
   const data: Data = read();
   if (!isTokenValid(token)) {
     return {
@@ -139,7 +139,7 @@ function adminQuizCreate (token: ErrorObject | TokenParameter, name: string, des
  *
  * @returns {{}} - Empty object
 */
-function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
+function adminQuizRemove (token: ErrorObject | string, quizId: number) {
   const data: Data = read();
   if (!isTokenValid(token)) {
     return {
@@ -192,7 +192,7 @@ function adminQuizRemove (token: ErrorObject | TokenParameter, quizId: number) {
   *   }
   * }
 */
-function adminQuizInfo (token: ErrorObject | TokenParameter, quizId: number) {
+function adminQuizInfo (token: ErrorObject | string, quizId: number) {
   const data = read();
   if (!(isTokenValid(token))) {
     return {
@@ -236,7 +236,7 @@ function adminQuizInfo (token: ErrorObject | TokenParameter, quizId: number) {
   *
   * @returns {{}} - Empty object.
 */
-function adminQuizNameUpdate (token: ErrorObject | TokenParameter, quizId: number, name: string) {
+function adminQuizNameUpdate (token: ErrorObject | string, quizId: number, name: string) {
   const data: Data = read();
   if (!(isTokenValid(token))) {
     return {
@@ -292,7 +292,7 @@ function adminQuizNameUpdate (token: ErrorObject | TokenParameter, quizId: numbe
   *
   * @returns {{}} - Empty object.
 */
-function adminQuizDescriptionUpdate (token: ErrorObject | TokenParameter, quizId: number, description: string) {
+function adminQuizDescriptionUpdate (token: ErrorObject | string, quizId: number, description: string) {
   const data: Data = read();
   // check token structure
   if (!isTokenValid(token)) {
@@ -344,7 +344,7 @@ function adminQuizDescriptionUpdate (token: ErrorObject | TokenParameter, quizId
   }
 }
 
-function adminQuizTrash(token: TokenParameter) {
+function adminQuizTrash(token: string) {
   const data: Data = read();
   const quizzes = [];
   // check token structure
@@ -371,7 +371,7 @@ function adminQuizTrash(token: TokenParameter) {
   }
 }
 
-function adminQuizRestore(token: ErrorObject | TokenParameter, quizId: number) {
+function adminQuizRestore(token: ErrorObject | string, quizId: number) {
   const data: Data = read();
   if (!isTokenValid(token)) {
     return {
@@ -424,7 +424,7 @@ function adminQuizRestore(token: ErrorObject | TokenParameter, quizId: number) {
  *
  * @returns {quizID: number} - Quiz's identification number
 */
-function adminQuizQuestionCreate (token: ErrorObject | TokenParameter, quizId:number, quizQuestion: QuizQuestion) {
+function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, quizQuestion: QuizQuestion) {
   
   const data: Data = read();
   // check token structure
@@ -499,7 +499,7 @@ function adminQuizQuestionCreate (token: ErrorObject | TokenParameter, quizId:nu
  *
  * @returns {quizID: number} - Quiz's identification number
 */
-function adminQuizQuestionMove (quizId:number ,questionId:number ,token: ErrorObject | TokenParameter, newPosition:number) {
+function adminQuizQuestionMove (quizId:number ,questionId:number ,token: ErrorObject | string, newPosition:number) {
   
   const data: Data = read();
   // check token structure
@@ -550,14 +550,14 @@ function adminQuizQuestionMove (quizId:number ,questionId:number ,token: ErrorOb
  * transfer the quiz from the user represented by the token
  * to the targer user
  *
- * @param {TokenParameter} token - token that represents original owner of the quiz
+ * @param {string | ErrorObject} token - token that represents original owner of the quiz
  * @param {number} quizId - quizId of the quiz
  * @param {string} userEmail - Target user's email
  *
  * @returns {} - empty object
 */
 
-function adminQuizTransfer(token: TokenParameter, quizId: number, userEmail: string) {
+function adminQuizTransfer(token: string | ErrorObject, quizId: number, userEmail: string) {
   const data: Data = read();
   let users = [...data.users];
   
@@ -638,7 +638,7 @@ function adminQuizTransfer(token: TokenParameter, quizId: number, userEmail: str
  *
  * @returns {quizID: number} - Quiz's identification number
 */
-function adminQuizQuestionDupicate (quizId:number ,questionId:number ,token: ErrorObject | TokenParameter) {
+function adminQuizQuestionDupicate (quizId:number ,questionId:number ,token: ErrorObject | string) {
   const data: Data = read();
  
   let users = [...data.users];
@@ -693,7 +693,7 @@ function adminQuizQuestionDupicate (quizId:number ,questionId:number ,token: Err
 }
 
 
-function adminQuizQuestionDelete(token: ErrorObject | TokenParameter, quizId: number, questionId: number) {
+function adminQuizQuestionDelete(token: ErrorObject | string, quizId: number, questionId: number) {
   const data: Data = read();
   // check token structure
   if (!isTokenValid(token)) {
@@ -740,7 +740,7 @@ function adminQuizQuestionDelete(token: ErrorObject | TokenParameter, quizId: nu
   }
 }
 
-function adminQuizQuestionUpdate(token: ErrorObject | TokenParameter, quizId: number, questionId: number, quizQuestion: quizQuestion) {
+function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, questionId: number, quizQuestion: quizQuestion) {
   const data: Data = read();
   // check token structure
   if (!isTokenValid(token)) {
@@ -820,7 +820,65 @@ function adminQuizQuestionUpdate(token: ErrorObject | TokenParameter, quizId: nu
   
 }
 
+/**
+ * Given token, array of quizIds,
+ * removes the corresponding quizzes in the trash
+ *
+ * @param {string | ErrorObject} token - token that represents original owner of the quiz
+ * @param {number[]} quizIdArr - array of quizIds of quizIds
+ *
+ *
+ * @returns {} - empty object
+*/
 
+function adminQuizTrashEmpty(token: string | ErrorObject, quizIdArr: number[]) {
+  const data: Data = read();
+  // check token structure
+  if (!isTokenValid(token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  if (!isSessionValid(token)) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+  // if no quizzes are chosen to be removed, return with 200 status code with 
+  // no modifications of trash
+  if (quizIdArr === undefined) {
+    return {}
+  }
+
+  const authUserId = tokenOwner(token);
+
+  for (const quizId of quizIdArr) {
+    if (!quizValidCheck(quizId)) {
+      return {
+        error: "One or more of the quizzes is not a valid quiz"
+      }
+    }
+    if (!quizValidOwner(authUserId, quizId)) {
+      return {
+        error: "One or more of the quizzes refers to a quiz that this current user does not own"
+      }
+    }
+    if (!isQuizInTrash(quizId)) {
+      return {
+        error: "One or more of the quizzes is not currently in the trash"
+      }
+    }
+  }
+
+  quizIdArr.map(quizIdToRemove => {
+    // user.userQuizzes = user.userQuizzes.filter(userQuizId => userQuizId !== quizId)
+    data.trash = data.trash.filter(quiz => quiz.quizId !== quizIdToRemove);
+    save(data);
+  })
+  return {}
+
+}  
 export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash, adminQuizTransfer, adminQuizRestore,
-adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDupicate, adminQuizQuestionDelete, adminQuizQuestionUpdate }
+adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDupicate, adminQuizQuestionDelete, adminQuizQuestionUpdate, adminQuizTrashEmpty }
 

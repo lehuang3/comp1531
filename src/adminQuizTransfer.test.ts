@@ -1,14 +1,14 @@
 import { AdminAuthRegisterReturn } from './interfaces';
 import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizTransfer, requestAdminQuizList } from './other'
 
-let token1: AdminAuthRegisterReturn;
-let token2: AdminAuthRegisterReturn;
+let token1: string;
+let token2: string;
 let quiz1: any;
 
 beforeEach(() => {
   requestClear()
-  token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body;
-  token2 = requestAdminAuthRegister('Le@gmail.com', '1234abcd', 'Le', 'Huang').body;
+  token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
+  token2 = requestAdminAuthRegister('Le@gmail.com', '1234abcd', 'Le', 'Huang').body.token;
   quiz1 = requestAdminQuizCreate(token1, 'quiz', '').body;
 })
 
@@ -23,9 +23,8 @@ test('Check for invalid token structure', () => {
 });
 
 test('Check for invalid session', () => {
-  const wrongToken = {
-    token: (parseInt(token1.token) + 2).toString(),
-  }
+  const wrongToken = (parseInt(token1) + 2).toString();
+  
   // right structure, but there's no token like this in the tokens array
   const response = requestAdminQuizTransfer(wrongToken, quiz1.quizId, 'Le@gmail.com');
   expect(response.body).toStrictEqual({

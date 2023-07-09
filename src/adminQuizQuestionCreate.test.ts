@@ -1,14 +1,14 @@
 import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizRemove, requestAdminQuizList } from './other'
-import { TokenParameter, QuizQuestion,Answer } from './interfaces';
+import { QuizQuestion,Answer } from './interfaces';
 import { token } from 'morgan';
-let token1: TokenParameter;
+let token1: string;
 
 let quiz: any;
 let quizQuestion: QuizQuestion;
 // Runs before each test
 beforeEach(() => {
   requestClear()
-  token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body;
+  token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
   quiz = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion').body;
   quizQuestion = {
 		questionBody: {
@@ -47,7 +47,7 @@ test('Invalide quiz ID', () => {
 
 
 test('Invalide User ID', () => {
-  let token2 = requestAdminAuthRegister('hayden.hafezimasoomi@gmail.com', '1234abcd', 'hayden', 'Hafezi').body;
+  let token2 = requestAdminAuthRegister('hayden.hafezimasoomi@gmail.com', '1234abcd', 'hayden', 'Hafezi').body.token;
   
   const response = requestQuizQuestionCreate(token2, quiz.quizId, quizQuestion)
   
@@ -56,16 +56,15 @@ test('Invalide User ID', () => {
 })
 
 test('Invalid token struct', () => {
-  const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body;
+  const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
   const response = requestQuizQuestionCreate(token4, quiz.quizId, quizQuestion)
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(401);
 })
 
 test('Check for invalid session', () => {
-  let token2 = {
-    token: (parseInt(token1.token) + 1).toString(),
-  }
+  let token2 = (parseInt(token1) + 1).toString();
+  
   const response = requestQuizQuestionCreate(token2, quiz.quizId, quizQuestion)
   expect(response.body).toStrictEqual({error: expect.any(String)});
   expect(response.status).toStrictEqual(403);

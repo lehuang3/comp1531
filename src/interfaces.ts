@@ -26,11 +26,6 @@ interface ErrorObject {
   error: string;
 } 
 
-// type of a token being passed in as a parameter (for most functions)
-interface TokenParameter {
-  token: string;
-}
-
 // type of datastore
 interface Data {
   users: User[];
@@ -82,4 +77,4 @@ interface Answer {
   correct: boolean;
 }
 
-export { AdminAuthLoginReturn, AdminUserDetailsReturn, Answer, AdminAuthRegisterReturn, ErrorObject, TokenParameter, Data, Token, User, Quiz,QuizQuestion}
+export { AdminAuthLoginReturn, AdminUserDetailsReturn, Answer, AdminAuthRegisterReturn, ErrorObject, Data, Token, User, Quiz,QuizQuestion}
