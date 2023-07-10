@@ -1,16 +1,16 @@
 import { adminAuthLogin } from './auth';
 import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister } from './other';
-import { TokenParameter } from './interfaces';
-let token1: TokenParameter;
+let token1: string
 beforeEach(() => {
   requestClear();
-  token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body;
+  token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
   // authUserId will always be in user1 as adminAuthRegister always succeeds
   // but we need this if statement to bypass typescript
 })
 
 test('Check for invalid token structure', () => {
-  const token2 = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body;
+  const token2 = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body.token;
+  
   const response = requestGetAdminUserDetails(token2);
   expect(response.body).toStrictEqual({
     error: 'Invalid token structure',
@@ -20,9 +20,8 @@ test('Check for invalid token structure', () => {
 
 
 test('Check for invalid session', () => {
-  const token2 = {
-    token: (parseInt(token1.token) + 1).toString(),
-  }
+  const token2 = (parseInt(token1) + 1).toString();
+  
   const response = requestGetAdminUserDetails(token2);
   expect(response.body).toStrictEqual({
     error: 'Not a valid session'
@@ -32,6 +31,7 @@ test('Check for invalid session', () => {
 
 test('Check for valid auth', () => {
   const response = requestGetAdminUserDetails(token1);
+ 
   expect(response.body).toStrictEqual({
     user: {
       userId: expect.any(Number),

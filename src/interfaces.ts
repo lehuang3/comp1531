@@ -26,16 +26,12 @@ interface ErrorObject {
   error: string;
 } 
 
-// type of a token being passed in as a parameter (for most functions)
-interface TokenParameter {
-  token: string;
-}
-
 // type of datastore
 interface Data {
   users: User[];
   quizzes: Quiz[];
   tokens: Token[];
+  trash:Quiz[];
 }
 
 // type of a token object in the tokens array
@@ -50,7 +46,10 @@ interface Quiz {
   name: string;
   timeCreated: number;
   timeLastEdited: number;
-  description: string
+  description: string;
+  numQuestions: number;
+  questions: QuizQuestion[];
+  duration:number;
 }
 
 // type of a user in the users array
@@ -65,4 +64,18 @@ interface User {
   usedPasswords: string[]
 }
 
-export { AdminAuthLoginReturn, AdminUserDetailsReturn, AdminAuthRegisterReturn, ErrorObject, TokenParameter, Data, Token, User, Quiz}
+interface QuizQuestion {
+  questionBody: {
+    question: string;
+    duration: number;
+    points: number;
+    answers: Answer[];
+  };
+}
+
+interface Answer {
+  answer: string;
+  correct: boolean;
+}
+
+export { AdminAuthLoginReturn, AdminUserDetailsReturn, Answer, AdminAuthRegisterReturn, ErrorObject, Data, Token, User, Quiz,QuizQuestion}
