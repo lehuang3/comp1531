@@ -240,41 +240,42 @@ function adminUserDetails (token: ErrorObject | string): AdminUserDetailsReturn 
 }
 
 
+function adminAuthPasswordUpdate (token: ErrorObject | string, oldPassword: string, newPassword: string) {
+  const data: Data = read();
+  if (!isTokenValid(token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  if (!isSessionValid(token)) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+  const authUserId = tokenOwner(token);
+  if (!checkValidPassword(newPassword)) {
+    return {
+        error: 'New password is invalid'
+    }
+  }
+  const user = data.users.find((userID) => userID.authUserId === authUserId);
+  if (oldPassword != user.password) {
+    return {
+        error: 'Old password is incorrect'
+    }
+  } else if (data.user.usedPassword.includes(newPassword)) {
+    return {
+        error: 'Password has been used before'
+    }
+  } 
+  data.user.password = newPassword;
+  save(data);
+  return {
+
+  }
+
+}
 
 
-// if (!checkValidPassword(newPassword)) {
-//   return {
-//       error: 'New password is invalid'
-//   }
-// }
-// const data: Data = read();
-// if (!('token' in token)) {
-//   return {
-//     error: 'Invalid token structure',
-//   }
-// }
-
-// const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
-// if (matchingToken === undefined) {
-//   // error if no corresponding token found
-//   return {
-//     error: 'Not a valid session',
-//   }
-// }
-// const authUserId = matchingToken.authUserId;
-// const user = data.users.find((userID) => userID.authUserId === authUserId);
-// if (oldPassword != user.password) {
-//   return {
-//       error: 'Old password is incorrect'
-//   }
-// }
-// for (const password of user.usedPasswords) {
-//   if (newPassword === password) {
-//       return {
-//           error: 'Password has been used before'
-//       }
-//   }
-// }
-
-
-export { adminAuthLogin, adminAuthRegister, adminUserDetails, checkValidPassword }
+export { adminAuthLogin, adminAuthRegister, adminUserDetails, checkValidPassword, adminAuthPasswordUpdate }

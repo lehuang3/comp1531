@@ -393,7 +393,7 @@ function requestAdminQuizDescriptionUpdate(token: ErrorObject | string, quizId: 
  *
  * @returns {{}} - none
 */
-function requestAdminAuthPasswordUpdate(token: ErrorObject | TokenParameter, oldPassword: string, newPassword: string) {
+function requestAdminAuthPasswordUpdate(token: ErrorObject | string, oldPassword: string, newPassword: string) {
   const res = request(
     'PUT',
     SERVER_URL + `/v1/admin/user/password`,
@@ -905,6 +905,6 @@ export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUse
   requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
   requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid, 
   quizAnswerCorrectValid, isQuizInTrash,requestAdminQuizQuestionMove,questionValidCheck, newPositioNotSame,newPositionValidCheck,requestAdminQuizQuestionDuplicate, 
-  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty,getColour };
+  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate };
 
 
