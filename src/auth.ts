@@ -242,39 +242,39 @@ function adminUserDetails (token: ErrorObject | string): AdminUserDetailsReturn 
 
 
 
-if (!checkValidPassword(newPassword)) {
-  return {
-      error: 'New password is invalid'
-  }
-}
-const data: Data = read();
-if (!('token' in token)) {
-  return {
-    error: 'Invalid token structure',
-  }
-}
+// if (!checkValidPassword(newPassword)) {
+//   return {
+//       error: 'New password is invalid'
+//   }
+// }
+// const data: Data = read();
+// if (!('token' in token)) {
+//   return {
+//     error: 'Invalid token structure',
+//   }
+// }
 
-const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
-if (matchingToken === undefined) {
-  // error if no corresponding token found
-  return {
-    error: 'Not a valid session',
-  }
-}
-const authUserId = matchingToken.authUserId;
-const user = data.users.find((userID) => userID.authUserId === authUserId);
-if (oldPassword != user.password) {
-  return {
-      error: 'Old password is incorrect'
-  }
-}
-for (const password of user.usedPasswords) {
-  if (newPassword === password) {
-      return {
-          error: 'Password has been used before'
-      }
-  }
-}
+// const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
+// if (matchingToken === undefined) {
+//   // error if no corresponding token found
+//   return {
+//     error: 'Not a valid session',
+//   }
+// }
+// const authUserId = matchingToken.authUserId;
+// const user = data.users.find((userID) => userID.authUserId === authUserId);
+// if (oldPassword != user.password) {
+//   return {
+//       error: 'Old password is incorrect'
+//   }
+// }
+// for (const password of user.usedPasswords) {
+//   if (newPassword === password) {
+//       return {
+//           error: 'Password has been used before'
+//       }
+//   }
+// }
 
 
 export { adminAuthLogin, adminAuthRegister, adminUserDetails, checkValidPassword }
