@@ -47,7 +47,7 @@ function checkValidPassword (string:string): boolean {
       intCounter++
     }
   }
-  if ((intCounter > 0) && (charCounter > 0)) {
+  if ((intCounter > 0) && (charCounter > 0) && string.length >= 8) {
     return true
   } else {
     return false
