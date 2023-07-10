@@ -334,7 +334,7 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
       return res.status(400).json(response);
     }
   }
-  console.log('codes in server')
+  //console.log('codes in server')
   res.json(response);
 });
 

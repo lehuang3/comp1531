@@ -892,7 +892,7 @@ function requestAdminAuthLogout(token: ErrorObject | string) {
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  }
+  } 
 }
 
 export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
