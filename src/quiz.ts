@@ -1,14 +1,14 @@
 import { ErrorObject, Quiz, QuizQuestion } from './interfaces';
 import { save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong,
          tokenOwner, isTokenValid, isSessionValid,questionLengthValid, answerCountValid,newPositioNotSame,newPositionValidCheck,questionValidCheck, durationValid,QuizDurationValid, quizPointsValid, 
-         quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash } from './other';
+         quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash, getColour } from './other';
 import { Data } from './interfaces';
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
  * @param {integer} authUserId - Admin user ID
  *
- * @returns {array object} - List of quizzes
+ * @returns {array object} - List of quizze
 */
 function adminQuizList (token: ErrorObject | string) {
   const data: Data = read();
@@ -166,10 +166,11 @@ function adminQuizRemove (token: ErrorObject | string, quizId: number) {
 
   
     const quizIndex = data.quizzes.findIndex((quiz) => quiz.quizId === quizId);
-
+    const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
 
     const removedQuiz = data.quizzes.splice(quizIndex, 1)[0];
     data.trash.push(removedQuiz);
+    quiz.timeLastEdited = Math.floor(Date.now() / 1000);
     
     save(data);
     return {}
@@ -472,18 +473,25 @@ function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, qu
       newQuestionId = lastQuestion.questionId + 1;
     }
 
+
     const newQuestion = {
       questionId: newQuestionId,
       question: quizQuestion.questionBody.question,
       duration: quizQuestion.questionBody.duration,
       points: quizQuestion.questionBody.points,
-      answers: quizQuestion.questionBody.answers
+      answers: quizQuestion.questionBody.answers.map((answer,length) =>({
+        answerId:length,
+        answer: answer.answer,
+        correct: answer.correct,
+        color: getColour()
+      }))
     };
 
     quiz.questions.push(newQuestion);
     quiz.timeLastEdited = Math.floor(Date.now() / 1000);
     quiz.numQuestions++;
     quiz.duration+=quizQuestion.questionBody.duration;
+    console.log(quiz.questions[0]);
     save(data)
     return {questionId:newQuestionId}
 
@@ -685,6 +693,7 @@ function adminQuizQuestionDupicate (quizId:number ,questionId:number ,token: Err
 
     quiz.questions.push(newQuestion);
     quiz.duration += question.duration;
+    quiz.timeLastEdited = Math.floor(Date.now() / 1000);
     quiz.numQuestions++;
     save(data)
     return {newQuestionId:newQuestionId}
