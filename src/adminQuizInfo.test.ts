@@ -1,121 +1,118 @@
-import { adminQuizInfo, adminQuizCreate } from './quiz.js'
-import { clear } from './other.js'
+import { adminQuizNameUpdate, adminQuizCreate } from './quiz.js'
 import { adminAuthLogin, adminAuthRegister } from './auth.js'
+import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizInfo} from './other'
+
+let token1: any;
+let quiz1: any;
+let quiz2: any;
+let token2: any;
+let quiz3: any;
+let quiz4: any;
+
 
 beforeEach(() => {
-  clear()
+  requestClear()
+  token1 = requestAdminAuthRegister('123@email.com', '123adjakjfhgaA', 'david', 'test')
+  quiz1 = requestAdminQuizCreate(token1.body.token, 'quizhello', 'quiz1number')
+  quiz2 = requestAdminQuizCreate(token1.body.token, 'quiz123', 'quizname')
+  token2 = requestAdminAuthRegister('12345@email.com', '123adjakjfhgaA', 'david', 'test')
+  quiz3 = requestAdminQuizCreate(token2.body.token, 'quizname1', 'quiz123')
+  quiz4 = requestAdminQuizCreate(token2.body.token, 'quizname', 'quiz456')
+  
 })
 
 describe('Valid inputs, test pass', () => {
   test('Test 1 correct inputs', () => {
-    adminAuthRegister('123@email.com', '123adjakjfhgaA', 'david', 'test')
-    const user = adminAuthLogin('123@email.com', '123adjakjfhgaA')
-    const quiz = adminQuizCreate(user.authUserId, 'quizhello', 'quiz1number')
-    const quiz1 = adminQuizCreate(user.authUserId, 'quiz123', 'quizname')
-    const quiz2 = adminQuizCreate(user.authUserId, 'test', 'A simple quiz')
-    expect(adminQuizInfo(user.authUserId, quiz.quizId)).toMatchObject({
+    expect(requestAdminQuizInfo(token1.body.token, quiz1.body.quizId).body).toMatchObject({
       quizId: expect.any(Number),
       name: 'quizhello',
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'quiz1number'
     })
-    expect(adminQuizInfo(user.authUserId, quiz1.quizId)).toMatchObject({
+    expect(requestAdminQuizInfo(token1.body.token, quiz2.body.quizId).body).toMatchObject({
       quizId: expect.any(Number),
       name: 'quiz123',
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'quizname'
     })
-    expect(adminQuizInfo(user.authUserId, quiz2.quizId)).toMatchObject({
-      quizId: expect.any(Number),
-      name: 'test',
-      timeCreated: expect.any(Number),
-      timeLastEdited: expect.any(Number),
-      description: 'A simple quiz'
-    })
   })
   test('Test 2 correct inputs', () => {
-    adminAuthRegister('12345@email.com', '123adjakjfhgaA', 'david', 'test')
-    const user2 = adminAuthLogin('12345@email.com', '123adjakjfhgaA')
-    const quiz = adminQuizCreate(user2.authUserId, 'quizname1', 'quiz123')
-    const quiz1 = adminQuizCreate(user2.authUserId, 'quizname', 'quiz456')
-    const quiz2 = adminQuizCreate(user2.authUserId, 'withspechar', 'difficulty 3 *')
-    expect(adminQuizInfo(user2.authUserId, quiz.quizId)).toMatchObject({
+    expect(requestAdminQuizInfo(token2.body.token, quiz3.body.quizId).body).toMatchObject({
       quizId: expect.any(Number),
       name: 'quizname1',
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'quiz123'
     })
-    expect(adminQuizInfo(user2.authUserId, quiz1.quizId)).toMatchObject({
+    expect(requestAdminQuizInfo(token2.body.token, quiz4.body.quizId).body).toMatchObject({
       quizId: expect.any(Number),
       name: 'quizname',
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: 'quiz456'
     })
-    expect(adminQuizInfo(user2.authUserId, quiz2.quizId)).toMatchObject({
-      quizId: expect.any(Number),
-      name: 'withspechar',
-      timeCreated: expect.any(Number),
-      timeLastEdited: expect.any(Number),
-      description: 'difficulty 3 *'
-    })
   })
 })
 
-describe('Invalid authUserId', () => {
+describe('Invalid session', () => {
   test('Test 1 invalid authUserId', () => {
-    adminAuthRegister('123@email.com', '123adjakjfhgaA', 'david', 'test')
-    const user = adminAuthLogin('123@email.com', '123adjakjfhgaA')
-    const quiz = adminQuizCreate(user.authUserId, 'quizhello', 'quiz1number')
-    const quiz1 = adminQuizCreate(user.authUserId, 'quiz123', 'quizname')
-    expect(adminQuizInfo(-1, quiz.quizId)).toStrictEqual({ error: 'Not a valid user.' })
-    expect(adminQuizInfo(-1, quiz1.quizId)).toStrictEqual({ error: 'Not a valid user.' })
+    const tokenInvalid = '-1';
+    
+    expect(requestAdminQuizInfo(tokenInvalid, quiz1.body.quizId).body).toStrictEqual({ error: 'Not a valid session' })
   })
   test('Test 2 invalid authUserId', () => {
-    adminAuthRegister('12345@email.com', '123adjakjfhgaA', 'david', 'test')
-    const user2 = adminAuthLogin('12345@email.com', '123adjakjfhgaA')
-    const quiz = adminQuizCreate(user2.authUserId, 'quizname1', 'quiz123')
-    const quiz1 = adminQuizCreate(user2.authUserId, 'quizname', 'quiz456')
-    expect(adminQuizInfo(-2, quiz.quizId)).toStrictEqual({ error: 'Not a valid user.' })
-    expect(adminQuizInfo(-2, quiz1.quizId)).toStrictEqual({ error: 'Not a valid user.' })
+    const tokenInvalid2 = '-2';
+    
+    expect(requestAdminQuizInfo(tokenInvalid2, quiz1.body.quizId).body).toStrictEqual({ error: 'Not a valid session' })
   })
 })
 
 describe('Invalid quizId', () => {
   test('Test 1 invalid quizId', () => {
-    adminAuthRegister('123@email.com', '123adjakjfhgaA', 'david', 'test')
-    const user = adminAuthLogin('123@email.com', '123adjakjfhgaA')
-    const quiz = adminQuizCreate(user.authUserId, 'quizhello', 'quiz1number')
-    const quiz1 = adminQuizCreate(user.authUserId, 'quiz123', 'quizname')
-    expect(adminQuizInfo(user.authUserId, -1)).toStrictEqual({ error: 'Quiz does not exist.' })
-    expect(adminQuizInfo(user.authUserId, -1)).toStrictEqual({ error: 'Quiz does not exist.' })
+    expect(requestAdminQuizInfo(token1.body.token, -1).body).toStrictEqual({ error: 'Quiz does not exist.' })
   })
   test('Test 2 invalid quizId', () => {
-    adminAuthRegister('12345@email.com', '123adjakjfhgaA', 'david', 'test')
-    const user2 = adminAuthLogin('12345@email.com', '123adjakjfhgaA')
-    const quiz = adminQuizCreate(user2.authUserId, 'quizname1', 'quiz123')
-    const quiz1 = adminQuizCreate(user2.authUserId, 'quizname', 'quiz456')
-    expect(adminQuizInfo(user2.authUserId, -2)).toStrictEqual({ error: 'Quiz does not exist.' })
-    expect(adminQuizInfo(user2.authUserId, -2)).toStrictEqual({ error: 'Quiz does not exist.' })
+    expect(requestAdminQuizInfo(token2.body.token, -2).body).toStrictEqual({ error: 'Quiz does not exist.' })
   })
 })
 
 describe('No permission to view quiz', () => {
-  test('Test two users trying to access quizzes they do not own', () => {
-    adminAuthRegister('123@email.com', '123adjakjfhgaA', 'david', 'test')
-    const user = adminAuthLogin('123@email.com', '123adjakjfhgaA')
-    const quiz = adminQuizCreate(user.authUserId, 'quizhello', 'quiz1number')
-    const quiz1 = adminQuizCreate(user.authUserId, 'quiz123', 'quizname')
-    adminAuthRegister('12345@email.com', '123adjakjfhgaA', 'david', 'test')
-    const user2 = adminAuthLogin('12345@email.com', '123adjakjfhgaA')
-    const quiz2 = adminQuizCreate(user2.authUserId, 'quizname1', 'quiz123')
-    const quiz3 = adminQuizCreate(user2.authUserId, 'quizname', 'quiz456')
-    expect(adminQuizInfo(user.authUserId, quiz2.quizId)).toStrictEqual({ error: 'You do not have access to this quiz.' })
-    expect(adminQuizInfo(user.authUserId, quiz3.quizId)).toStrictEqual({ error: 'You do not have access to this quiz.' })
-    expect(adminQuizInfo(user2.authUserId, quiz1.quizId)).toStrictEqual({ error: 'You do not have access to this quiz.' })
-    expect(adminQuizInfo(user2.authUserId, quiz.quizId)).toStrictEqual({ error: 'You do not have access to this quiz.' })
+  test('Test 1, two users trying to access quizzes they do not own', () => {
+    expect(requestAdminQuizInfo(token1.body.token, quiz3.body.quizId).body).toStrictEqual({ error: 'You do not have access to this quiz.' })
+  })
+  test('Test 2, two users trying to access quizzes they do not own', () => {
+    expect(requestAdminQuizInfo(token1.body.token, quiz4.body.quizId).body).toStrictEqual({ error: 'You do not have access to this quiz.' })
+  })
+  test('Test 3, two users trying to access quizzes they do not own', () => {
+    expect(requestAdminQuizInfo(token2.body.token, quiz1.body.quizId).body).toStrictEqual({ error: 'You do not have access to this quiz.' })
+  })
+  test('Test 4, two users trying to access quizzes they do not own', () => {
+    expect(requestAdminQuizInfo(token2.body.token, quiz2.body.quizId).body).toStrictEqual({ error: 'You do not have access to this quiz.' })
+  })
+})
+
+describe('Invalid session', () => {
+  test('Test 1 invalid authUserId', () => {
+    const tokenInvalid = '-1';
+    
+    expect(requestAdminQuizInfo(tokenInvalid, quiz1.body.quizId).body).toStrictEqual({ error: 'Not a valid session' })
+  })
+  test('Test 2 invalid authUserId', () => {
+    const tokenInvalid = '-2';
+    
+    expect(requestAdminQuizInfo(tokenInvalid, quiz3.body.quizId).body).toStrictEqual({ error: 'Not a valid session' })
+  })
+})
+
+describe('Invalid token', () => {
+  test('Invalid token created from invalid email', () => {
+    const invalidToken1 = requestAdminAuthRegister('', 'happy123', 'tommy', 'bommy');
+    expect(requestAdminQuizInfo(invalidToken1.body.token, quiz1.body.quizId).body).toStrictEqual({ error: 'Invalid token structure' })
+  })
+  test('Invalid token created from invalid password', () => {
+    const invalidToken2 = requestAdminAuthRegister('tommybommy@email.com', '', 'tommy', 'bommy');
+    expect(requestAdminQuizInfo(invalidToken2.body.token, quiz1.body.quizId).body).toStrictEqual({ error: 'Invalid token structure' })
   })
 })

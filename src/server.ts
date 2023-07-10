@@ -92,6 +92,15 @@ app.put('/v1/admin/quiz/:quizId/description', (req: Request, res: Response) => {
   res.json(response);
 });
 
+app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  const response = adminAuthLogin(email, password);
+  if ('error' in response) {
+  return res.status(400).json(response);
+  }
+  res.json(response);
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

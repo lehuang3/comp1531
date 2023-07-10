@@ -1,7 +1,7 @@
 import { Data } from './interfaces';
 import validator from 'validator';
-import { read, save } from './other';
-import { AdminAuthLoginReturn, AdminAuthRegisterReturn, AdminUserDetailsReturn, ErrorObject, TokenParameter } from './interfaces';
+import { read, save, isTokenValid, isSessionValid, tokenOwner } from './other';
+import { AdminAuthLoginReturn, AdminAuthRegisterReturn, AdminUserDetailsReturn, ErrorObject } from './interfaces';
 let counterSession: number = 0;
 
 /**
@@ -207,22 +207,20 @@ function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn 
   *
   * @returns {user: {userId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
 */
-function adminUserDetails (token: ErrorObject | TokenParameter): AdminUserDetailsReturn | ErrorObject  {
+function adminUserDetails (token: ErrorObject | string): AdminUserDetailsReturn | ErrorObject  {
   const data: Data = read();
-  if (!('token' in token)) {
+  if (!isTokenValid(token)) {
     return {
       error: 'Invalid token structure',
     }
   }
-  
-  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
-  if (matchingToken === undefined) {
+  if (!isSessionValid(token)) {
     // error if no corresponding token found
     return {
       error: 'Not a valid session',
     }
   }
-  const authUserId = matchingToken.authUserId;
+  const authUserId = tokenOwner(token);
   // loop through users array
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
