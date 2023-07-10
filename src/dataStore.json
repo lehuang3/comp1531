@@ -1,1 +1,1 @@
-{"users":[{"authUserId":0,"email":"patel@gmail.com","password":"Abcd123%","name":"Pranav Patel","numSuccessfulLogins":1,"numFailedPasswordsSinceLastLogin":0,"userQuizzes":[]},{"authUserId":1,"email":"lain@gmail.com","password":"Abcd123%","name":"Pranav Patel","numSuccessfulLogins":1,"numFailedPasswordsSinceLastLogin":0,"userQuizzes":[]}],"quizzes":[],"tokens":[{"authUserId":0,"sessionId":0},{"authUserId":1,"sessionId":1}],"trash":[]}
+{"users":[],"quizzes":[],"tokens":[],"trash":[]}

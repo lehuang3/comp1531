@@ -386,7 +386,6 @@ function requestAdminQuizDescriptionUpdate(token: ErrorObject | string, quizId: 
 }
 
 /**
-<<<<<<< HEAD
  * Sends a 'put' request to the corresponding server route to
  * update the user details.
  * @param {{token}} - token/sessionId
