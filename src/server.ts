@@ -338,7 +338,7 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   res.json(response);
 });
 
-app.put('/v1/admin/auth/logout', (req: Request, res: Response) => {
+app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   const token = req.body;
   const response = adminAuthLogout(token);
   if ('error' in response) {

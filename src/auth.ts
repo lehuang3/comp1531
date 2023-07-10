@@ -239,8 +239,10 @@ function adminUserDetails (token: ErrorObject | string): AdminUserDetailsReturn 
   
 }
 
-function adminAuthLogout (token) {
+function adminAuthLogout (token: ErrorObject | string) {
   const data: Data = read();
+  console.log(data.tokens)
+  console.log(token)
   if (!isTokenValid(token)) {
     return {
       error: 'Invalid token structure',
@@ -249,7 +251,7 @@ function adminAuthLogout (token) {
   if (!isSessionValid(token)) {
     // error if no corresponding token found
     return {
-      error: 'Not a valid session',
+      error: 'User is already logged out',
     }
   }
 

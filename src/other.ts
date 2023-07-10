@@ -875,7 +875,7 @@ function getColour() {
  *
  * @returns {{}} - none
 */
-function requestAdminAuthLogout(token: ErrorObject | TokenParameter) {
+function requestAdminAuthLogout(token: ErrorObject | string) {
   const res = request(
     'POST',
     SERVER_URL + '/v1/admin/auth/logout',
