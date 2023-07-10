@@ -243,7 +243,6 @@ function adminUserDetails (token: ErrorObject | string): AdminUserDetailsReturn 
 
 function adminAuthPasswordUpdate (token: ErrorObject | string, oldPassword: string, newPassword: string) {
   const data: Data = read();
-  console.log(token)
   if (!isTokenValid(token)) {
     return {
       error: 'Invalid token structure',
@@ -262,7 +261,6 @@ function adminAuthPasswordUpdate (token: ErrorObject | string, oldPassword: stri
     }
   }
   const user = data.users.find((userID) => userID.authUserId === authUserId);
-  console.log(user)
   if (oldPassword != user.password) {
     return {
         error: 'Old password is incorrect'
