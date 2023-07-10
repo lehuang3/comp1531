@@ -1,1 +1,1 @@
-{"users":[],"quizzes":[],"tokens":[],"trash":[]}
+{"users":[{"authUserId":0,"email":"patel@gmail.com","password":"Abcd123%","name":"Pranav Patel","numSuccessfulLogins":1,"numFailedPasswordsSinceLastLogin":1,"userQuizzes":[]}],"quizzes":[],"tokens":[{"authUserId":0,"sessionId":0}],"trash":[]}
