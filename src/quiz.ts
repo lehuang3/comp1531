@@ -359,8 +359,13 @@ function adminQuizTrash(token: string) {
       error: 'Not a valid session',
     }
   }
+  const authUserId = tokenOwner(token);
+  // filter from data.trash an array of quizzes in trash that only the user has access to
+  const userTrash = data.trash.filter(quiz => {
+    return data.users.find(user => user.authUserId === authUserId).userQuizzes.includes(quiz.quizId)
+  })
 
-  data.trash.map(quiz => {
+  userTrash.map(quiz => {
     quizzes.push({
       quizId: quiz.quizId,
       name: quiz.name,
