@@ -239,4 +239,26 @@ function adminUserDetails (token: ErrorObject | string): AdminUserDetailsReturn 
   
 }
 
-export { adminAuthLogin, adminAuthRegister, adminUserDetails }
+function adminAuthLogout (token) {
+  const data: Data = read();
+  if (!isTokenValid(token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  if (!isSessionValid(token)) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+
+  // removes token from active tokens array
+  const index = data.tokens.indexOf(token);
+  data.tokens = data.tokens.splice(index, 1);
+  return {
+
+  }
+}
+
+export { adminAuthLogin, adminAuthRegister, adminUserDetails, adminAuthLogout }

@@ -385,52 +385,6 @@ function requestAdminQuizDescriptionUpdate(token: ErrorObject | string, quizId: 
 }
 
 /**
- * Sends a 'put' request to the corresponding server route to
- * log the user out of the session.
- * @param {{token}} - token/sessionId
- *
- * @returns {{}} - none
-*/
-function requestAdminAuthLogout(token: ErrorObject | TokenParameter) {
-  
-  const data: Data = read();
-  if (!('token' in token)) {
-      return {
-        error: 'Invalid token structure',
-      }
-  }
-
-  const matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token.token));
-  if (matchingToken === undefined) {
-  // error if no corresponding token found
-      return {
-          error: 'Not a valid session',
-      }
-  }
-
-  // removes token from active tokens array
-  const index = data.tokens.indexOf(matchingToken);
-  data.tokens = data.tokens.splice(index, 1);
-
-  const res = request(
-    'POST',
-    SERVER_URL + '/v1/admin/auth/login',
-    {
-      // Note that for PUT/POST requests, you should
-      // use the key 'json' instead of the query string 'qs'
-      json: {
-        token
-      }
-    }
-  );
-  //console.log(JSON.parse(res.body.toString()));
-  return {
-    body: JSON.parse(res.body.toString()),
-    status: res.statusCode,
-  }
-}
-
-/** 
  * Send a 'delete' request to the corresponding server route to reset the
  * application state, returning the response in the form of a javascript object
  * @param {{}} - No parameters
@@ -909,11 +863,43 @@ function requestAdminQuizTrashEmpty(token: ErrorObject | string, quizIdArr: numb
   } 
 }
 
+function getColour() {
+  const colors = ["red", "blue", "green", "yellow", "purple", "brown", "orange"];
+  const randomColorIndex = Math.floor(Math.random() * colors.length);
+  return colors[randomColorIndex];
+}
+
+/**
+ *
+ * @param {{token}} - token/sessionId
+ *
+ * @returns {{}} - none
+*/
+function requestAdminAuthLogout(token: ErrorObject | TokenParameter) {
+  const res = request(
+    'POST',
+    SERVER_URL + '/v1/admin/auth/logout',
+    {
+      // Note that for PUT/POST requests, you should
+      // use the key 'json' instead of the query string 'qs'
+      json: {
+        token
+      }
+    }
+  );
+  //console.log(JSON.parse(res.body.toString()));
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  }
+}
+
+
 export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
   requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
   requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid, 
   quizAnswerCorrectValid, isQuizInTrash,requestAdminQuizQuestionMove,questionValidCheck, newPositioNotSame,newPositionValidCheck,requestAdminQuizQuestionDuplicate, 
-  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, requestAdminAuthLogout };
+  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, requestAdminAuthLogout, getColour };
 
 
