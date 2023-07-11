@@ -403,12 +403,16 @@ describe('Invalid token', () => {
   })
 });
 
-// describe('Time test', () => {
-//   test('Time edited changes with correct param', () => {
-//     (requestAdminQuizQuestionUpdate(token1.body, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, quiz1Question2).body)
-//     wait(1000);
-//   })
-// });
+describe('Time test', () => {
+  test('Time edited changes with correct param', async () => {
+    const timeInitial = requestAdminQuizInfo(token1.body.token, quiz1.body.quizId).body.timeLastEdited;
+    let timeEnd: any;
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, quiz1Question2);
+    timeEnd = requestAdminQuizInfo(token1.body.token, quiz1.body.quizId).body.timeLastEdited;
+    expect(timeEnd - timeInitial).toBeGreaterThanOrEqual(0)
+  });
+});
 
 
 
