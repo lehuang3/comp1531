@@ -60,7 +60,8 @@ interface User {
   password: string;
   numSuccessfulLogins: number;
   numFailedPasswordsSinceLastLogin: number;
-  userQuizzes: number[]
+  userQuizzes: number[];
+  usedPasswords: string[]
 }
 
 interface QuizQuestion {

@@ -1,6 +1,6 @@
 import { Data } from './interfaces';
 import validator from 'validator';
-import { read, save, isTokenValid, isSessionValid, tokenOwner } from './other';
+import { read, save, tokenOwner } from './other';
 import { AdminAuthLoginReturn, AdminAuthRegisterReturn, AdminUserDetailsReturn, ErrorObject } from './interfaces';
 let counterSession: number = 0;
 
@@ -47,7 +47,7 @@ function checkValidPassword (string:string): boolean {
       intCounter++
     }
   }
-  if ((intCounter > 0) && (charCounter > 0)) {
+  if ((intCounter > 0) && (charCounter > 0) && string.length >= 8) {
     return true
   } else {
     return false
@@ -71,6 +71,7 @@ function User (email: string, password: string, nameFirst: string, nameLast: str
   this.numSuccessfulLogins = 1;
   this.numFailedPasswordsSinceLastLogin = 0;
   this.userQuizzes = [];
+  this.usedPasswords = [];
 }
 
 /**
@@ -85,10 +86,7 @@ function User (email: string, password: string, nameFirst: string, nameLast: str
 */
 function adminAuthRegister (email: string, password: string, nameFirst: string, nameLast: string): AdminAuthRegisterReturn | ErrorObject {
   const store: Data = read();
- 
-  
   // check valid email
-
   for (const user of store.users) {
     if (user.email === email) {
       return {
@@ -209,18 +207,13 @@ function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn 
 */
 function adminUserDetails (token: ErrorObject | string): AdminUserDetailsReturn | ErrorObject  {
   const data: Data = read();
-  if (!isTokenValid(token)) {
-    return {
-      error: 'Invalid token structure',
-    }
-  }
-  if (!isSessionValid(token)) {
-    // error if no corresponding token found
-    return {
-      error: 'Not a valid session',
-    }
-  }
   const authUserId = tokenOwner(token);
+  if (typeof authUserId !== 'number') {
+    const error = authUserId.error;
+    return {
+      error
+    }
+  }
   // loop through users array
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
@@ -236,7 +229,72 @@ function adminUserDetails (token: ErrorObject | string): AdminUserDetailsReturn 
       }
     }
   }
-  
 }
 
-export { adminAuthLogin, adminAuthRegister, adminUserDetails }
+/**
+ * Updates the password of the admin user
+ * 
+ * @param {string | ErrorObject} token token object which contains authUserId and sessionId
+ * @param {string} oldPassword old password
+ * @param {string} newPassword new password
+ * 
+ * @returns {{}} returns empty object on sucess and error msg on fail
+ */
+function adminAuthPasswordUpdate (token: ErrorObject | string, oldPassword: string, newPassword: string) {
+  const data: Data = read();
+  const authUserId = tokenOwner(token);
+  if (typeof authUserId !== 'number') {
+    const error = authUserId.error;
+    return {
+      error
+    }
+  }
+  if (!checkValidPassword(newPassword)) {
+    return {
+        error: 'New password is invalid'
+    }
+  }
+  const user = data.users.find((userID) => userID.authUserId === authUserId);
+  if (oldPassword != user.password) {
+    return {
+        error: 'Old password is incorrect'
+    }
+  } else if (user.usedPasswords.includes(newPassword)) {
+    return {
+        error: 'Password has been used before'
+    }
+  } 
+  user.usedPasswords.push(oldPassword);
+  user.password = newPassword;
+  save(data);
+  return {
+
+  }
+}
+
+/**
+ * Log out of session
+ * 
+ * @param {string | ErrorObject} token token object which contains authUserId and sessionId
+ *  
+ * @returns {{}} empty object on success and error msg on fail
+ */
+function adminAuthLogout (token: ErrorObject | string) {
+  const data: Data = read();
+  const authUserId = tokenOwner(token);
+  if (typeof authUserId !== 'number') {
+    const error = authUserId.error;
+    return {
+      error
+    }
+  }
+  const sessionId = parseInt(token as string);
+  // removes token from active tokens array
+  data.tokens = data.tokens.filter((user) => user.sessionId !== sessionId)
+  save(data);
+  return {
+
+  }
+}
+
+export { adminAuthLogin, adminAuthRegister, adminUserDetails, checkValidPassword, adminAuthPasswordUpdate, adminAuthLogout }
