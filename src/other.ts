@@ -82,6 +82,7 @@ function tokenOwner(token: string | ErrorObject) {
   }
 }
 
+
 /**
  * Check if a token passed in has a valid
  * structure, and return a boolean value accordingly.
@@ -899,11 +900,38 @@ function getColour() {
   return colors[randomColorIndex];
 }
 
+
+/**
+ *
+ * @param {{token}} - token/sessionId
+ *
+ * @returns {{}} - none
+*/
+function requestAdminAuthLogout(token: ErrorObject | string) {
+  const res = request(
+    'POST',
+    SERVER_URL + '/v1/admin/auth/logout',
+    {
+      // Note that for PUT/POST requests, you should
+      // use the key 'json' instead of the query string 'qs'
+      json: {
+        token
+      }
+    }
+  );
+  //console.log(JSON.parse(res.body.toString()));
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  } 
+}
+
 export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
   requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
   requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid, 
   quizAnswerCorrectValid, isQuizInTrash,requestAdminQuizQuestionMove,questionValidCheck, newPositioNotSame,newPositionValidCheck,requestAdminQuizQuestionDuplicate, 
-  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate };
+  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate, requestAdminAuthLogout };
+
 
 

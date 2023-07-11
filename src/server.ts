@@ -6,7 +6,7 @@ import cors from 'cors';
 import YAML from 'yaml';
 import sui from 'swagger-ui-express';
 import fs from 'fs';
-import { adminAuthRegister, adminUserDetails, adminAuthLogin, adminAuthPasswordUpdate } from './auth';
+import { adminAuthRegister, adminUserDetails, adminAuthLogin, adminAuthPasswordUpdate, adminAuthLogout } from './auth';
 import { adminQuizCreate, adminQuizDescriptionUpdate, adminQuizRemove, adminQuizNameUpdate, adminQuizList, adminQuizInfo, adminQuizTrash,
 adminQuizTransfer, adminQuizRestore, adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDupicate, adminQuizQuestionDelete, adminQuizQuestionUpdate,
 adminQuizTrashEmpty } from './quiz';
@@ -330,6 +330,20 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
       return res.status(401).json(response);
     } else if (response.error === 'Not a valid session') {
       return res.status(403).json(response);
+    } else {
+      return res.status(400).json(response);
+    }
+  }
+  //console.log('codes in server')
+  res.json(response);
+});
+
+app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
+  const {token} = req.body;
+  const response = adminAuthLogout(token);
+  if ('error' in response) {
+    if (response.error === 'Invalid token structure') {
+      return res.status(401).json(response);
     } else {
       return res.status(400).json(response);
     }

@@ -280,4 +280,28 @@ function adminAuthPasswordUpdate (token: ErrorObject | string, oldPassword: stri
 }
 
 
-export { adminAuthLogin, adminAuthRegister, adminUserDetails, checkValidPassword, adminAuthPasswordUpdate }
+function adminAuthLogout (token: ErrorObject | string) {
+  const data: Data = read();
+  if (!isTokenValid(token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  if (!isSessionValid(token)) {
+    // error if no corresponding token found
+    return {
+      error: 'User is already logged out',
+    }
+  }
+  
+  const sessionId = parseInt(token as string);
+  // removes token from active tokens array
+  data.tokens = data.tokens.filter((user) => user.sessionId !== sessionId)
+  save(data);
+  return {
+
+  }
+}
+
+
+export { adminAuthLogin, adminAuthRegister, adminUserDetails, checkValidPassword, adminAuthPasswordUpdate, adminAuthLogout }
