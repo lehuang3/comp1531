@@ -1,37 +1,31 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizRemove, requestAdminQuizList } from './other'
-import { token } from 'morgan';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizList } from './other';
 let token1: string;
-
 let quiz: any;
-// Runs before each test
+
 beforeEach(() => {
-  requestClear()
+  requestClear();
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
   quiz = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion').body;
-  
-})
-
+});
 
 test('Not current sessions', () => {
   const token2 = (parseInt(token1) + 1).toString();
-  
-  const response = requestAdminQuizList(token2)
-  expect(response.body).toStrictEqual({ error: expect.any(String) })
+
+  const response = requestAdminQuizList(token2);
+  expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(403);
-})
+});
 
 test('Invalid token struct', () => {
   const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
-  const response = requestAdminQuizList(token4)
+  const response = requestAdminQuizList(token4);
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(401);
-})
-
+});
 
 test('Valid entry', () => {
-  
   requestAdminQuizCreate(token1, 'quiz2', 'Descritpion').body.token;
-  const response = requestAdminQuizList(token1)
+  const response = requestAdminQuizList(token1);
   expect(response.body).toStrictEqual({
     quizzes: [
       {
@@ -42,6 +36,6 @@ test('Valid entry', () => {
         quizId: expect.any(Number),
         name: expect.any(String)
       }
-  	]
-  })
-})
+    ]
+  });
+});

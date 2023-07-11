@@ -2,61 +2,61 @@ import { Data } from './interfaces';
 import validator from 'validator';
 import { read, save, tokenOwner } from './other';
 import { AdminAuthLoginReturn, AdminAuthRegisterReturn, AdminUserDetailsReturn, ErrorObject } from './interfaces';
-let counterSession: number = 0;
+let counterSession = 0;
 
 /**
  * Given a string, check if the string is valid
- * 
+ *
  * @param {string} string string to be checked
- * 
- * @returns {boolean} true or false 
+ *
+ * @returns {boolean} true or false
 */
 function checkValidString (string: string): boolean {
   for (const char of string) {
-    const integer = char.charCodeAt(0)
+    const integer = char.charCodeAt(0);
     if ((integer > 64) && (integer < 91)) {
-      continue
+      continue;
     } else if ((integer > 96) && (integer < 123)) {
-      continue
+      continue;
     } else if ((integer === 32) || (integer === 45) || (integer === 39)) {
-      continue
+      continue;
     } else {
-      return false
+      return false;
     }
   }
-  return true
+  return true;
 }
 
 /**
  * Given a string check if the string is a valid password string
- * 
+ *
  * @param {string} string input password string
- * 
+ *
  * @returns {boolean} - true or false
 */
 function checkValidPassword (string:string): boolean {
-  let intCounter = 0
-  let charCounter = 0
+  let intCounter = 0;
+  let charCounter = 0;
   for (const char of string) {
-    const integer = char.charCodeAt(0)
+    const integer = char.charCodeAt(0);
     if ((integer > 64) && (integer < 91)) {
-      charCounter++
+      charCounter++;
     } else if ((integer > 96) && (integer < 123)) {
-      charCounter++
+      charCounter++;
     } else if ((integer > 47) && (integer < 58)) {
-      intCounter++
+      intCounter++;
     }
   }
   if ((intCounter > 0) && (charCounter > 0) && string.length >= 8) {
-    return true
+    return true;
   } else {
-    return false
+    return false;
   }
 }
 
 /**
  * Given user information populate a user object with the imformation in the datastore
- * 
+ *
  * @param {string} email - User's email address
  * @param {string} password - User's password
  * @param {string} nameFirst - User's first name
@@ -91,49 +91,49 @@ function adminAuthRegister (email: string, password: string, nameFirst: string, 
     if (user.email === email) {
       return {
         error: 'error: email is already used for another account'
-      }
+      };
     }
   }
 
   if (!validator.isEmail(email)) {
     return {
       error: 'error: email is not valid'
-    }
+    };
   }
   // check valid first name
   if ((nameFirst.length < 2) || (nameFirst.length > 20)) {
     return {
       error: 'error: first name has an invalid length'
-    }
+    };
   }
 
   if (!checkValidString(nameFirst)) {
     return {
       error: 'error: first name contains invalid characters'
-    }
+    };
   }
   // check valid last name
   if ((nameLast.length < 2) || (nameLast.length > 20)) {
     return {
       error: 'error: last name has an invalid length'
-    }
+    };
   }
 
   if (!checkValidString(nameLast)) {
     return {
       error: 'error: last name contains invalid characters'
-    }
+    };
   }
   // check valid password
   if (password.length < 8) {
     return {
       error: 'error: password is too short'
-    }
+    };
   }
   if (!checkValidPassword(password)) {
     return {
       error: 'error: password is too weak'
-    }
+    };
   }
   // return successful (save)
   const iD = store.users.length;
@@ -145,12 +145,12 @@ function adminAuthRegister (email: string, password: string, nameFirst: string, 
     authUserId: iD,
     sessionId: counterSession,
   });
-  //console.log(store.tokens);
+  // console.log(store.tokens);
   counterSession++;
   save(store);
   return {
     token: (counterSession - 1).toString(),
-  }
+  };
 }
 
 /**
@@ -169,10 +169,10 @@ function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn 
   if (iD === -1) {
     return {
       error: 'error: email address is does not exist'
-    }
+    };
   }
 
-  const user = store.users[iD]
+  const user = store.users[iD];
 
   if (password === user.password) {
     user.numFailedPasswordsSinceLastLogin = 0;
@@ -186,16 +186,15 @@ function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn 
     counterSession++;
     return {
       token: (counterSession - 1).toString(),
-    }  
+    };
     // failed login attempt
-  } else {                
+  } else {
     user.numFailedPasswordsSinceLastLogin++;
     save(store);
     return {
       error: 'error: password incorrect'
-    }
+    };
   }
-  
 }
 
 /**
@@ -205,14 +204,14 @@ function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn 
   *
   * @returns {user: {userId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
 */
-function adminUserDetails (token: ErrorObject | string): AdminUserDetailsReturn | ErrorObject  {
+function adminUserDetails (token: ErrorObject | string): AdminUserDetailsReturn | ErrorObject {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     const error = authUserId.error;
     return {
       error
-    }
+    };
   }
   // loop through users array
   for (const user of data.users) {
@@ -226,18 +225,18 @@ function adminUserDetails (token: ErrorObject | string): AdminUserDetailsReturn 
           numSuccessfulLogins: user.numSuccessfulLogins,
           numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin
         }
-      }
+      };
     }
   }
 }
 
 /**
  * Updates the password of the admin user
- * 
+ *
  * @param {string | ErrorObject} token token object which contains authUserId and sessionId
  * @param {string} oldPassword old password
  * @param {string} newPassword new password
- * 
+ *
  * @returns {{}} returns empty object on sucess and error msg on fail
  */
 function adminAuthPasswordUpdate (token: ErrorObject | string, oldPassword: string, newPassword: string) {
@@ -247,36 +246,36 @@ function adminAuthPasswordUpdate (token: ErrorObject | string, oldPassword: stri
     const error = authUserId.error;
     return {
       error
-    }
+    };
   }
   if (!checkValidPassword(newPassword)) {
     return {
-        error: 'New password is invalid'
-    }
+      error: 'New password is invalid'
+    };
   }
   const user = data.users.find((userID) => userID.authUserId === authUserId);
   if (oldPassword != user.password) {
     return {
-        error: 'Old password is incorrect'
-    }
+      error: 'Old password is incorrect'
+    };
   } else if (user.usedPasswords.includes(newPassword)) {
     return {
-        error: 'Password has been used before'
-    }
-  } 
+      error: 'Password has been used before'
+    };
+  }
   user.usedPasswords.push(oldPassword);
   user.password = newPassword;
   save(data);
   return {
 
-  }
+  };
 }
 
 /**
  * Log out of session
- * 
+ *
  * @param {string | ErrorObject} token token object which contains authUserId and sessionId
- *  
+ *
  * @returns {{}} empty object on success and error msg on fail
  */
 function adminAuthLogout (token: ErrorObject | string) {
@@ -286,15 +285,48 @@ function adminAuthLogout (token: ErrorObject | string) {
     const error = authUserId.error;
     return {
       error
-    }
+    };
   }
   const sessionId = parseInt(token as string);
   // removes token from active tokens array
-  data.tokens = data.tokens.filter((user) => user.sessionId !== sessionId)
+  data.tokens = data.tokens.filter((user) => user.sessionId !== sessionId);
   save(data);
   return {
 
-  }
+  };
 }
 
-export { adminAuthLogin, adminAuthRegister, adminUserDetails, checkValidPassword, adminAuthPasswordUpdate, adminAuthLogout }
+function adminAuthDetailsUpdate(token: string | ErrorObject, email: string, nameFirst: string, nameLast:string) {
+  const data: Data = read();
+  const authUserId = tokenOwner(token);
+  if (typeof authUserId !== 'number') {
+    const error = authUserId.error;
+    return {
+      error
+    };
+  }
+
+  if (!checkValidString(nameFirst)) {
+    return {
+      error: 'First name is invalid'
+    };
+  }
+  if (!checkValidString(nameLast)) {
+    return {
+      error: 'Last name is invalid'
+    };
+  }
+  if (!validator.isEmail(email)) {
+    return {
+      error: 'error: email is not valid'
+    };
+  }
+
+  const user = data.users.find((userID) => userID.authUserId === authUserId);
+  user.email = email;
+  user.name = nameFirst + ' ' + nameLast;
+
+  return {};
+}
+
+export { adminAuthLogin, adminAuthRegister, adminUserDetails, checkValidPassword, adminAuthPasswordUpdate, adminAuthLogout, adminAuthDetailsUpdate };
