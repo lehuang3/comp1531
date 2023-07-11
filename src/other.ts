@@ -2,6 +2,7 @@ import fs from 'fs';
 import { Data, Token } from './interfaces';
 import request from 'sync-request';
 import { port, url } from './config.json';
+import { checkValidPassword } from './auth';
 import { ErrorObject, QuizQuestion } from './interfaces';
 import { Console } from 'console';
 const SERVER_URL = `${url}:${port}`;
@@ -385,6 +386,35 @@ function requestAdminQuizDescriptionUpdate(token: ErrorObject | string, quizId: 
 }
 
 /**
+ * Sends a 'put' request to the corresponding server route to
+ * update the user details.
+ * @param {{token}} - token/sessionId
+ *
+ * @returns {{}} - none
+*/
+function requestAdminAuthPasswordUpdate(token: ErrorObject | string, oldPassword: string, newPassword: string) {
+  const res = request(
+    'PUT',
+    SERVER_URL + `/v1/admin/user/password`,
+    {
+      // Note that for PUT/POST requests, you should
+      // use the key 'json' instead of the query string 'qs'
+      json: {
+        token,
+        oldPassword,
+        newPassword
+      }
+    }
+  );
+  //console.log(JSON.parse(res.body.toString()));
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  }
+}
+
+
+/** 
  * Send a 'delete' request to the corresponding server route to reset the
  * application state, returning the response in the form of a javascript object
  * @param {{}} - No parameters
@@ -863,10 +893,17 @@ function requestAdminQuizTrashEmpty(token: ErrorObject | string, quizIdArr: numb
   } 
 }
 
+function getColour() {
+  const colors = ["red", "blue", "green", "yellow", "purple", "brown", "orange"];
+  const randomColorIndex = Math.floor(Math.random() * colors.length);
+  return colors[randomColorIndex];
+}
+
 export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
   requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
   requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid, 
   quizAnswerCorrectValid, isQuizInTrash,requestAdminQuizQuestionMove,questionValidCheck, newPositioNotSame,newPositionValidCheck,requestAdminQuizQuestionDuplicate, 
-  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty };
+  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate };
+
 
