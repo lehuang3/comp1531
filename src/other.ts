@@ -38,7 +38,7 @@ function requestClear() {
 /**
  * Send a 'get' request to the corresponding server route for user details, 
  * returning the response in the form of a javascript object
- * @param {{}} - No parameters
+ * @param {{string | ErrorObject}}
  *
  * @returns {{object}} - response in javascript
 */
@@ -62,31 +62,9 @@ function requestGetAdminUserDetails(token: ErrorObject | string) {
 }
 
 /**
- * Given a token, find the corresponding user that created
- * the token (by starting a session), and return the user's authUserId
- * if the user exists, and undefined otherwise.
- * @param {{string | ErrorObject}} - Token
- *
- * @returns {{undefined | number}} - undefined or a user's authUserId
-*/
-function tokenOwner(token: string | ErrorObject) {
-  const data: Data = read();
-  if (!isSessionValid(token)) {
-    // error if no corresponding token found
-    return undefined;
-  } else {
-    if (typeof token === 'string') {
-      return data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token)).authUserId;
-    }
-    
-  }
-}
-
-
-/**
  * Check if a token passed in has a valid
  * structure, and return a boolean value accordingly.
- * @param {{ErrorObject | string}} - Token
+ * @param {ErrorObject | string} token 
  *
  * @returns {{boolean}} - True or false
 */
@@ -120,6 +98,34 @@ function isSessionValid(token: string | ErrorObject): boolean {
 }
 
 /**
+ * Given a token, find the corresponding user that created
+ * the token (by starting a session), and return the user's authUserId
+ * if the user exists, and error msg otherwise.
+ * @param {{string | ErrorObject}} - Token
+ *
+ * @returns {{undefined | number}} - error msg or a user's authUserId
+*/
+function tokenOwner(token: string | ErrorObject) {
+  const data: Data = read();
+  if (!isTokenValid(token)) {
+    return {
+      error: 'Invalid token structure'
+    }
+  }
+  if (!isSessionValid(token)) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session'
+    }
+  } else {
+    if (typeof token === 'string') {
+      return data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token)).authUserId;
+    }
+    
+  }
+}
+
+/**
  * Does not return anything, resets the state of the application
  *
  * @param {{}} - No parameters
@@ -148,7 +154,7 @@ function clear () {
 /**
  * Write the new data object to dataStore.json
  * 
- * @param {Data} - data to write 
+ * @param {Data} data - data to write 
  *
  * @returns {void} 
 */
@@ -161,7 +167,7 @@ const save = (data: Data) => {
  * 
  * @param {void} 
  *
- * @returns {void}
+ * @returns {Data} returns the data
 */
 const read = () => {
   const dataJson = fs.readFileSync('./src/dataStore.json');
@@ -304,9 +310,13 @@ function nameTaken (authUserId: number, name: string): boolean {
 }
 
 /**
- * Send a 'delete' request to the corresponding server route to reset the
- * application state, returning the response in the form of a javascript object
- * @param {{}} - No parameters
+ * Send a 'post' request to the corresponding server route to register
+ * an account
+ * 
+ * @param {string} email user email
+ * @param {string} password user password
+ * @param {string} nameFirst first name
+ * @param {string} nameLast last name
  *
  * @returns {{object}} - response in javascript
 */
@@ -333,9 +343,10 @@ function requestAdminAuthRegister(email: string, password: string, nameFirst: st
 }
 
 /**
- * Send a 'delete' request to the corresponding server route to reset the
- * application state, returning the response in the form of a javascript object
- * @param {{}} - No parameters
+ * Send a 'post' request to the corresponding server route to log in
+ * 
+ * @param {string} email user email
+ * @param {string} password user password
  *
  * @returns {{object}} - response in javascript
 */
@@ -360,9 +371,12 @@ function requestAdminAuthLogin(email: string, password: string) {
 }
 
 /**
- * Send a 'delete' request to the corresponding server route to reset the
- * application state, returning the response in the form of a javascript object
- * @param {{}} - No parameters
+ * Send a 'put' request to the corresponding server route to update
+ * quiz description
+ * 
+ * @param {string | ErrorObject} token
+ * @param {string} quizId quiz id
+ * @param {string} description quiz description
  *
  * @returns {{object}} - response in javascript
 */
@@ -388,10 +402,13 @@ function requestAdminQuizDescriptionUpdate(token: ErrorObject | string, quizId: 
 
 /**
  * Sends a 'put' request to the corresponding server route to
- * update the user details.
- * @param {{token}} - token/sessionId
- *
- * @returns {{}} - none
+ * update the user password.
+ * 
+ * @param {string | ErrorObject} token - token/sessionId
+ * @param {string} oldPassword old password
+ * @param {string} newPassword new password
+ * 
+ * @returns {{object}} - response in javascript
 */
 function requestAdminAuthPasswordUpdate(token: ErrorObject | string, oldPassword: string, newPassword: string) {
   const res = request(
@@ -416,9 +433,12 @@ function requestAdminAuthPasswordUpdate(token: ErrorObject | string, oldPassword
 
 
 /** 
- * Send a 'delete' request to the corresponding server route to reset the
- * application state, returning the response in the form of a javascript object
- * @param {{}} - No parameters
+ * Send a 'put' request to the corresponding server route to create
+ * a quiz question
+ * 
+ * @param {string | ErrorObject} token - token/sessionId
+ * @param {number} quizId quiz Id
+ * @param {QuizQuestion} quizQuestion question object
  *
  * @returns {{object}} - response in javascript
 */
@@ -444,13 +464,16 @@ function requestQuizQuestionCreate(token: ErrorObject | string, quizId: number, 
 
 
 /**
- * Send a 'delete' request to the corresponding server route to reset the
- * application state, returning the response in the form of a javascript object
- * @param {{}} - No parameters
+ * Send a 'post' request to the corresponding server route to create
+ * a quiz
+ * 
+ * @param {string | ErrorObject} token - token/sessionId
+ * @param {string} name quiz name
+ * @param {string} description description of quiz
  *
  * @returns {{object}} - response in javascript
 */
-function requestAdminQuizCreate(token: ErrorObject | string, name:string, description:string) {
+function requestAdminQuizCreate(token: ErrorObject | string, name: string, description: string) {
   const res = request(
     'POST',
     SERVER_URL + '/v1/admin/quiz',
@@ -471,6 +494,14 @@ function requestAdminQuizCreate(token: ErrorObject | string, name:string, descri
   } 
 }
 
+/**
+ * Send a 'get' request to the corresponding server route to get the quiz info
+ * 
+ * @param {string | ErrorObject} token - token/sessionId
+ * @param {number} quizId quiz Id
+ * 
+ * @returns {{object}} - response in javascript
+ */
 function requestAdminQuizInfo(token: ErrorObject | string, quizId: number) {
   const res = request(
     'GET',
@@ -488,16 +519,15 @@ function requestAdminQuizInfo(token: ErrorObject | string, quizId: number) {
 }
     
 /**
- * Sends a request to update the name of the current quiz
+ * Sends a 'put' request to update the name of the current quiz
  * 
- * @param token 
- * @param quizId 
- * @param name 
+ * @param {string | ErrorObject} token - token/sessionId
+ * @param {number} quizId quiz Id
+ * @param {string} name quiz name
  * 
- * @returns 
+ * @returns {{object}} - response in javascript
 */
-
-function requestAdminQuizNameUpdate(token: ErrorObject | string, quizId: number, name:string) {
+function requestAdminQuizNameUpdate(token: ErrorObject | string, quizId: number, name: string) {
   const res = request(
     'PUT',
     SERVER_URL + `/v1/admin/quiz/${quizId}/name`,
@@ -515,9 +545,11 @@ function requestAdminQuizNameUpdate(token: ErrorObject | string, quizId: number,
 }
 
 /**
- * Send a 'delete' request to the corresponding server route to reset the
- * application state, returning the response in the form of a javascript object
- * @param {{}} - No parameters
+ * Send a 'delete' request to the corresponding server route to remove
+ * an existing quiz
+ * 
+ * @param {string | ErrorObject} token - token/sessionId
+ * @param {string | ErrorObject} token - token/sessionId
  *
  * @returns {{object}} - response in javascript
 */
@@ -926,12 +958,9 @@ function requestAdminAuthLogout(token: ErrorObject | string) {
   } 
 }
 
-export { clear, save, read, isTokenValid, isSessionValid, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
+export { clear, save, read, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
   requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
   requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid, 
   quizAnswerCorrectValid, isQuizInTrash,requestAdminQuizQuestionMove,questionValidCheck, newPositioNotSame,newPositionValidCheck,requestAdminQuizQuestionDuplicate, 
   requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate, requestAdminAuthLogout };
-
-
-
