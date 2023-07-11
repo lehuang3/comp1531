@@ -1,5 +1,5 @@
 {
-<<<<<<< HEAD
+
   "ignorePatterns": [],
   "parser": "@typescript-eslint/parser",
   "plugins": [
@@ -233,17 +233,5 @@
     "yield-star-spacing": ["error", "both"],
     "yoda": ["error", "never"]
   }
-=======
-    "env": {
-        "browser": true,
-        "es2021": true
-    },
-    "extends": "standard",
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module"
-    },
-    "rules": {
-    }
->>>>>>> master
+
 }
