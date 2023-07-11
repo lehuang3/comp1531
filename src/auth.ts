@@ -296,10 +296,8 @@ function adminAuthLogout (token: ErrorObject | string) {
   
   const sessionId = parseInt(token as string);
   // removes token from active tokens array
-  console.log(data.tokens)
   data.tokens = data.tokens.filter((user) => user.sessionId !== sessionId)
   save(data);
-  console.log(data.tokens)
   return {
 
   }
