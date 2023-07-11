@@ -81,6 +81,7 @@ function tokenOwner(token: string | ErrorObject) {
   }
 }
 
+
 /**
  * Check if a token passed in has a valid
  * structure, and return a boolean value accordingly.

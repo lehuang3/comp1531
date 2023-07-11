@@ -241,7 +241,6 @@ function adminUserDetails (token: ErrorObject | string): AdminUserDetailsReturn 
 
 function adminAuthLogout (token: ErrorObject | string) {
   const data: Data = read();
-  //console.log(token)
   if (!isTokenValid(token)) {
     return {
       error: 'Invalid token structure',
@@ -254,9 +253,14 @@ function adminAuthLogout (token: ErrorObject | string) {
     }
   }
 
+  const sessionId = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token)).sessionId;
+  
   // removes token from active tokens array
-  const index = data.tokens.indexOf(token);
-  data.tokens = data.tokens.splice(index, 1);
+  console.log(data.tokens)
+  console.log(token)
+  data.tokens = data.tokens.filter((user) => user.sessionId !== sessionId)
+  save(data);
+  console.log(data.tokens)
   return {
 
   }
