@@ -10,6 +10,9 @@ beforeEach(() => {
 
   test('Simple test pass', () => {
     const res = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel');
+    const res1 = requestAdminAuthLogin('patel@gmail.com', 'Abcd123%');
+    const res2 = requestAdminAuthLogin('patel@gmail.com', 'Abcd123%');
+    const res4 = requestAdminAuthRegister('patel12@gmail.com', 'Abcd123%', 'Pranav', 'Patel');
     const response = requestAdminAuthLogout(res.body.token);
     expect(response.body).toStrictEqual({});
     expect(response.status).toStrictEqual(200);

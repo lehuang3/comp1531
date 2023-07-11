@@ -252,12 +252,9 @@ function adminAuthLogout (token: ErrorObject | string) {
       error: 'User is already logged out',
     }
   }
-
-  const sessionId = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token)).sessionId;
-  
+  const sessionId = parseInt(token);
   // removes token from active tokens array
   console.log(data.tokens)
-  console.log(token)
   data.tokens = data.tokens.filter((user) => user.sessionId !== sessionId)
   save(data);
   console.log(data.tokens)
