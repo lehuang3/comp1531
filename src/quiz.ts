@@ -820,6 +820,7 @@ function adminQuizTrashEmpty(token: string | ErrorObject, quizIdArr: number[]) {
 
 }
 
+
 export { adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash, adminQuizTransfer, adminQuizRestore,
 adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDupicate, adminQuizQuestionDelete, adminQuizQuestionUpdate, adminQuizTrashEmpty }
 

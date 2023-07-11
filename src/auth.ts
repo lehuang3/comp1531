@@ -297,4 +297,40 @@ function adminAuthLogout (token: ErrorObject | string) {
   }
 }
 
-export { adminAuthLogin, adminAuthRegister, adminUserDetails, checkValidPassword, adminAuthPasswordUpdate, adminAuthLogout }
+function adminAuthDetailsUpdate(token: string | ErrorObject, email: string, nameFirst: string, nameLast:string) {
+
+  const data: Data = read();
+  const authUserId = tokenOwner(token);
+  if (typeof authUserId !== 'number') {
+    const error = authUserId.error;
+    return {
+      error
+    }
+  }
+
+  if (!checkValidString(nameFirst)) {
+    return {
+        error: 'First name is invalid'
+    }
+  }
+  if (!checkValidString(nameLast)) {
+      return {
+          error: 'Last name is invalid'
+      }
+  }
+  if (!validator.isEmail(email)) {
+      return {
+        error: 'error: email is not valid'
+      }
+  }
+
+  const user = data.users.find((userID) => userID.authUserId === authUserId);
+  user.email = email;
+  user.name = nameFirst + ' ' + nameLast;
+
+  return {}
+
+}
+
+
+export { adminAuthLogin, adminAuthRegister, adminUserDetails, checkValidPassword, adminAuthPasswordUpdate, adminAuthLogout, adminAuthDetailsUpdate }
