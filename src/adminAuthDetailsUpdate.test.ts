@@ -4,20 +4,20 @@ import { requestClear, requestAdminAuthRegister, requestAdminAuthLogin, requestA
 // Tests to make sure that adminAuthLogin is working correctly when it should and returning errors when it should
 describe('tests for adminAuthDetailsUpdate', () => {
   beforeEach(() => {
-    requestClear();
-    requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel');
+    requestClear()
+    requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel')
   })
 
   describe('adminAuthLogout success tests', () => {
     test('Simple test pass', () => {
-    	const res = requestAdminAuthRegister('lain@gmail.com', 'Abcd123%', 'Pranav', 'Patel').body.token;
-      const response = requestAdminAuthDetailsUpdate(res, 'santaclaus@gmail.com', 'Santa', 'Claus');
-      expect(response.body).toStrictEqual({});
-      expect(response.status).toStrictEqual(200);
+    	const res = requestAdminAuthRegister('lain@gmail.com', 'Abcd123%', 'Pranav', 'Patel').body.token
+      const response = requestAdminAuthDetailsUpdate(res, 'santaclaus@gmail.com', 'Santa', 'Claus')
+      expect(response.body).toStrictEqual({})
+      expect(response.status).toStrictEqual(200)
     })
   })
 /*
-  describe('Testing if user is logged out', () => {    
+  describe('Testing if user is logged out', () => {
     test.each([
         ['34638', 'portal@gmail.com', 'Portal', 'Gar$en'],
         ['24637', 'patel@gmail.com', 'Patel', 'Norris'],

@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminAuthLogin } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminAuthLogin } from './other'
 
 // Test if the clear function is clearing the data values i.e. if we call adminAuthLogin then clear, we should be able to login again as a different user.
 describe('Testing clear is resetting database', () => {
@@ -10,7 +10,7 @@ describe('Testing clear is resetting database', () => {
   test('Clear database test 1', () => {
     const result = requestAdminAuthRegister('santaclaus@gmail.com', 'S@nta23!', 'Santa', 'Claus')
     expect(result.body).toEqual({
-      token: expect.any(String),
+      token: expect.any(String)
     })
   })
 
