@@ -496,7 +496,7 @@ function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, qu
     quiz.timeLastEdited = Math.floor(Date.now() / 1000);
     quiz.numQuestions++;
     quiz.duration+=quizQuestion.questionBody.duration;
-    console.log(quiz.questions[0]);
+    //console.log(quiz.questions[0]);
     save(data)
     return {questionId:newQuestionId}
 

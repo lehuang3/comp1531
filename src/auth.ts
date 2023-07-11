@@ -47,7 +47,7 @@ function checkValidPassword (string:string): boolean {
       intCounter++
     }
   }
-  if ((intCounter > 0) && (charCounter > 0)) {
+  if ((intCounter > 0) && (charCounter > 0) && string.length >= 8) {
     return true
   } else {
     return false
@@ -71,6 +71,7 @@ function User (email: string, password: string, nameFirst: string, nameLast: str
   this.numSuccessfulLogins = 1;
   this.numFailedPasswordsSinceLastLogin = 0;
   this.userQuizzes = [];
+  this.usedPasswords = [];
 }
 
 /**
@@ -239,4 +240,44 @@ function adminUserDetails (token: ErrorObject | string): AdminUserDetailsReturn 
   
 }
 
-export { adminAuthLogin, adminAuthRegister, adminUserDetails }
+
+function adminAuthPasswordUpdate (token: ErrorObject | string, oldPassword: string, newPassword: string) {
+  const data: Data = read();
+  if (!isTokenValid(token)) {
+    return {
+      error: 'Invalid token structure',
+    }
+  }
+  if (!isSessionValid(token)) {
+    // error if no corresponding token found
+    return {
+      error: 'Not a valid session',
+    }
+  }
+  const authUserId = tokenOwner(token);
+  if (!checkValidPassword(newPassword)) {
+    return {
+        error: 'New password is invalid'
+    }
+  }
+  const user = data.users.find((userID) => userID.authUserId === authUserId);
+  if (oldPassword != user.password) {
+    return {
+        error: 'Old password is incorrect'
+    }
+  } else if (user.usedPasswords.includes(newPassword)) {
+    return {
+        error: 'Password has been used before'
+    }
+  } 
+  user.usedPasswords.push(oldPassword);
+  user.password = newPassword;
+  save(data);
+  return {
+
+  }
+
+}
+
+
+export { adminAuthLogin, adminAuthRegister, adminUserDetails, checkValidPassword, adminAuthPasswordUpdate }
