@@ -1,17 +1,15 @@
-import { AdminAuthRegisterReturn } from './interfaces';
-import { requestClear, requestAdminAuthRegister, requestAdminQuizRemove, requestAdminQuizCreate, requestAdminQuizTrash } from './other'
-
-
+import { requestClear, requestAdminAuthRegister, requestAdminQuizRemove, requestAdminQuizCreate, requestAdminQuizTrash } from './other';
 let token1: string;
 let quiz1: any;
+
 beforeEach(() => {
-  requestClear()
+  requestClear();
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
   quiz1 = requestAdminQuizCreate(token1, 'quiz', '').body;
-})
+});
 
 test('Check for invalid token structure', () => {
-  //console.log(token1);
+  // console.log(token1);
   const token2 = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body.token;
   const response = requestAdminQuizTrash(token2);
   expect(response.body).toStrictEqual({
@@ -22,8 +20,7 @@ test('Check for invalid token structure', () => {
 
 test('Check for invalid session', () => {
   const token2 = (parseInt(token1) + 1).toString();
-  
-  
+
   const response = requestAdminQuizTrash(token2);
   expect(response.body).toStrictEqual({
     error: 'Not a valid session'
@@ -43,7 +40,7 @@ test('1 quiz in trash', () => {
     ]
   });
   expect(response.status).toStrictEqual(200);
-})
+});
 
 test('1 quiz in trash but wrong user', () => {
   const token2 = requestAdminAuthRegister('Le@gmail.com', '1234abcd', 'Le', 'Huang').body.token;
@@ -53,7 +50,7 @@ test('1 quiz in trash but wrong user', () => {
     quizzes: []
   });
   expect(response.status).toStrictEqual(200);
-})
+});
 
 test('empty trash', () => {
   const response = requestAdminQuizTrash(token1);
@@ -61,7 +58,7 @@ test('empty trash', () => {
     quizzes: [],
   });
   expect(response.status).toStrictEqual(200);
-})
+});
 
 test('2 quizzes in trash', () => {
   const quiz2 = requestAdminQuizCreate(token1, 'another quiz', '').body;
@@ -81,7 +78,7 @@ test('2 quizzes in trash', () => {
     ]
   });
   expect(response.status).toStrictEqual(200);
-})
+});
 
 test('2 quizzes in trash, user owns 1 of them', () => {
   const token2 = requestAdminAuthRegister('Le@gmail.com', '1234abcd', 'Le', 'Huang').body.token;
@@ -98,4 +95,4 @@ test('2 quizzes in trash, user owns 1 of them', () => {
     ]
   });
   expect(response.status).toStrictEqual(200);
-})
+});

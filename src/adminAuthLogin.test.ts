@@ -1,22 +1,20 @@
-import { adminAuthRegister, adminAuthLogin } from './auth.js'
-import { requestClear, requestAdminAuthRegister, requestAdminAuthLogin } from './other'
+import { requestClear, requestAdminAuthRegister, requestAdminAuthLogin } from './other';
 
-// Tests to make sure that adminAuthLogin is working correctly when it should and returning errors when it should
 describe('tests for adminAuthLogin', () => {
   beforeEach(() => {
-    requestClear()
-    requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel')
-  })
+    requestClear();
+    requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel');
+  });
 
   describe('adminAuthLogin success tests', () => {
     test('Simple test pass', () => {
-      const response = requestAdminAuthLogin('patel@gmail.com', 'Abcd123%')
+      const response = requestAdminAuthLogin('patel@gmail.com', 'Abcd123%');
       expect(response.body).toStrictEqual({
         token: expect.any(String)
-      })
-      expect(response.status).toStrictEqual(200)
-    })
-  })
+      });
+      expect(response.status).toStrictEqual(200);
+    });
+  });
 
   describe('adminAuthLogin invalid email', () => {
     test.each([
@@ -25,11 +23,11 @@ describe('tests for adminAuthLogin', () => {
       ['pat23@132123ail.com', 'Abcd123%'],
       ['patel@1@ail.com', 'Password']
     ])('Email invalid', (email, password) => {
-      const userLogin = requestAdminAuthLogin(email, password)
-      expect(userLogin.body).toStrictEqual({ error: 'error: email address is does not exist' })
-      expect(userLogin.status).toStrictEqual(400)
-    })
-  })
+      const userLogin = requestAdminAuthLogin(email, password);
+      expect(userLogin.body).toStrictEqual({ error: 'error: email address is does not exist' });
+      expect(userLogin.status).toStrictEqual(400);
+    });
+  });
 
   describe('adminAuthLogin invalid password', () => {
     test.each([
@@ -38,9 +36,9 @@ describe('tests for adminAuthLogin', () => {
       ['patel@gmail.com', '34792834792'],
       ['patel@gmail.com', '          ']
     ])('Password incorrect for (%s, %s)', (email, password) => {
-      const userLogin = requestAdminAuthLogin(email, password)
-      expect(userLogin.body).toStrictEqual({ error: 'error: password incorrect' })
-      expect(userLogin.status).toStrictEqual(400)
-    })
-  })
-})
+      const userLogin = requestAdminAuthLogin(email, password);
+      expect(userLogin.body).toStrictEqual({ error: 'error: password incorrect' });
+      expect(userLogin.status).toStrictEqual(400);
+    });
+  });
+});

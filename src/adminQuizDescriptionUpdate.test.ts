@@ -1,15 +1,15 @@
-import { AdminAuthRegisterReturn } from './interfaces';
-import { requestClear, requestAdminAuthRegister, requestAdminQuizDescriptionUpdate, requestAdminQuizCreate } from './other'
+import { requestClear, requestAdminAuthRegister, requestAdminQuizDescriptionUpdate, requestAdminQuizCreate } from './other';
 let token1: string;
 let quiz1: any;
+
 beforeEach(() => {
-  requestClear()
+  requestClear();
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
   quiz1 = requestAdminQuizCreate(token1, 'quiz', '').body;
-})
+});
 
 test('Check for invalid token structure', () => {
-  //console.log(token1);
+  // console.log(token1);
   const token2 = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body.token;
   const response = requestAdminQuizDescriptionUpdate(token2, quiz1.quizId, '');
   expect(response.body).toStrictEqual({
@@ -20,8 +20,7 @@ test('Check for invalid token structure', () => {
 
 test('Check for invalid session', () => {
   const token2 = (parseInt(token1) + 1).toString();
-  
-  
+
   const response = requestAdminQuizDescriptionUpdate(token2, quiz1.quizId, '');
   expect(response.body).toStrictEqual({
     error: 'Not a valid session'
@@ -35,7 +34,7 @@ test('Check for length of description', () => {
     error: 'Description is too long'
   });
   expect(response.status).toStrictEqual(400);
-})
+});
 
 test('Check for invalid quiz', () => {
   const response = requestAdminQuizDescriptionUpdate(token1, quiz1.quizId + 1, 'this quiz now has description');
@@ -43,7 +42,7 @@ test('Check for invalid quiz', () => {
     error: 'Not a valid quiz'
   });
   expect(response.status).toStrictEqual(400);
-})
+});
 
 test('Check for ownership', () => {
   const token2 = requestAdminAuthRegister('Le@gmail.com', '1234abcd', 'Le', 'Huang').body.token;
@@ -52,19 +51,18 @@ test('Check for ownership', () => {
     error: 'This quiz is owned by another user'
   });
   expect(response.status).toStrictEqual(400);
-})
+});
 
 describe('Check for valid quiz', () => {
   test('Check for valid quiz - description with moderate length', () => {
     const response = requestAdminQuizDescriptionUpdate(token1, quiz1.quizId, 'this quiz now has description');
-  	expect(response.body).toStrictEqual({});
+    expect(response.body).toStrictEqual({});
     expect(response.status).toStrictEqual(200);
-  })
+  });
 
   test('Check for valid quiz - empty description', () => {
     const response = requestAdminQuizDescriptionUpdate(token1, quiz1.quizId, '');
-  	expect(response.body).toStrictEqual({});
+    expect(response.body).toStrictEqual({});
     expect(response.status).toStrictEqual(200);
-
-  })
-})
+  });
+});
