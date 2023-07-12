@@ -565,6 +565,13 @@ function requestAdminQuizRemove(token: ErrorObject | string, quizId: number) {
   };
 }
 
+/**
+ * Send a 'GET' request to the corresponding server route to show the list of user quizzes
+ *
+ * @param {string | ErrorObject} token - token/sessionId
+ *
+ * @returns {{object}} - response in javascript
+*/
 function requestAdminQuizList(token: ErrorObject | string) {
   const res = request(
     'GET',
@@ -635,6 +642,15 @@ function requestAdminQuizTransfer(token: ErrorObject | string, quizId: number, u
   };
 }
 
+/**
+ * Send a 'POST' request to the corresponding server route to restore
+ * an existing quiz
+ *
+ * @param {string | ErrorObject} token - token/sessionId
+ * @param {number} quizId - Quiz Id
+ *
+ * @returns {{object}} - response in javascript
+*/
 function requestAdminQuizRestore(token: ErrorObject | string, quizId: number) {
   const res = request(
     'POST',
@@ -653,17 +669,17 @@ function requestAdminQuizRestore(token: ErrorObject | string, quizId: number) {
     status: res.statusCode,
   };
 }
-
 /**
- * Sends a request to update the name of the current quiz
+ * Send a 'PUT' request to the corresponding server route to move
+ * an existing quiz question
  *
- * @param token
- * @param quizId
- * @param name
+ * @param {number} quizId - token/sessionId
+ * @param {number} questionId - token/sessionId
+ * @param {string | ErrorObject} token - token/sessionId
+ * @param {number} newPosition - new position of quiz question
  *
- * @returns
+ * @returns {{object}} - response in javascript
 */
-
 function requestAdminQuizQuestionMove(quizId: number, questionId: number, token: ErrorObject | string, newPosition: number) {
   const res = request(
     'PUT',
@@ -682,15 +698,15 @@ function requestAdminQuizQuestionMove(quizId: number, questionId: number, token:
 }
 
 /**
- * Sends a request to update the name of the current quiz
+ * Send a 'PUT' request to the corresponding server route to duplicate
+ * an existing quiz question
  *
- * @param token
- * @param quizId
- * @param name
+ * @param {number} quizId - token/sessionId
+ * @param {number} questionId - token/sessionId
+ * @param {string | ErrorObject} token - token/sessionId
  *
- * @returns
+ * @returns {{object}} - response in javascript
 */
-
 function requestAdminQuizQuestionDuplicate(token: ErrorObject | string, quizId: number, questionId: number) {
   const res = request(
     'PUT',
@@ -707,6 +723,13 @@ function requestAdminQuizQuestionDuplicate(token: ErrorObject | string, quizId: 
   };
 }
 
+/**
+ * Given a quiz question, check if the quiz question length is valid
+ *
+ * @param {object} quizQuestion question content
+ *
+ * @returns {boolean} - true or false
+*/
 function questionLengthValid(quizQuestion: QuizQuestion) {
   const question = quizQuestion.questionBody.question;
 
@@ -717,6 +740,13 @@ function questionLengthValid(quizQuestion: QuizQuestion) {
   }
 }
 
+/**
+ * Given a quiz question, check if the quiz there sufficent asnwer within the question
+ *
+ * @param {string} quizQuestion Question content
+ *
+ * @returns {boolean} - true or false
+*/
 function answerCountValid(quizQuestion: QuizQuestion) {
   const answers = quizQuestion.questionBody.answers;
 
@@ -727,6 +757,13 @@ function answerCountValid(quizQuestion: QuizQuestion) {
   }
 }
 
+/**
+ * Given a quiz question, check if the quiz question the duration is valid within the question
+ *
+ * @param {object} quizQuestion Question content
+ *
+ * @returns {boolean} - true or false
+*/
 function durationValid(quizQuestion: QuizQuestion) {
   const duration = quizQuestion.questionBody.duration;
 
@@ -737,6 +774,14 @@ function durationValid(quizQuestion: QuizQuestion) {
   }
 }
 
+/**
+ * Given a quiz question, check if the quiz does not go over 180sec duration
+ * @param {object} data Question content
+ * @param {object} quizQuestion Question content
+ * @param {number} quizId quiz Id
+ *
+ * @returns {boolean} - true or false
+*/
 function QuizDurationValid(data:any, quizQuestion:QuizQuestion, quizId:number) {
   let totalDuration = 0;
 
@@ -755,6 +800,13 @@ function QuizDurationValid(data:any, quizQuestion:QuizQuestion, quizId:number) {
   return true;
 }
 
+/**
+ * Given a quiz question, check if the quiz question points is valid
+ *
+ * @param {object} quizQuestion question content
+ *
+ * @returns {boolean} - true or false
+*/
 function quizPointsValid(quizQuestion:QuizQuestion) {
   const points = quizQuestion.questionBody.points;
 
@@ -765,6 +817,13 @@ function quizPointsValid(quizQuestion:QuizQuestion) {
   return true;
 }
 
+/**
+ * Given a quiz question, check if the quiz question asnwer length is valid
+ *
+ * @param {object} quizQuestion question content
+ *
+ * @returns {boolean} - true or false
+*/
 function quizAnswerValid(quizQuestion: QuizQuestion) {
   const answers = quizQuestion.questionBody.answers;
 
@@ -779,6 +838,13 @@ function quizAnswerValid(quizQuestion: QuizQuestion) {
   return true;
 }
 
+/**
+ * Given a quiz question, check if the quiz question asnwer are duplicates
+ *
+ * @param {object} quizQuestion question content
+ *
+ * @returns {boolean} - true or false
+*/
 function quizAnswerDuplicateValid(quizQuestion:QuizQuestion) {
   const answers = quizQuestion.questionBody.answers;
   const answerSet = new Set();
@@ -794,6 +860,13 @@ function quizAnswerDuplicateValid(quizQuestion:QuizQuestion) {
   return true;
 }
 
+/**
+ * Given a quiz question, check if the quiz question has at least 1 correct asnwer
+ *
+ * @param {object} quizQuestion question content
+ *
+ * @returns {boolean} - true or false
+*/
 function quizAnswerCorrectValid(quizQuestion:QuizQuestion) {
   const answers = quizQuestion.questionBody.answers;
 
@@ -806,6 +879,13 @@ function quizAnswerCorrectValid(quizQuestion:QuizQuestion) {
   return false;
 }
 
+/**
+ * Given a quizId, check if the quiz is in the trash
+ *
+ * @param {number} quizId QuizId
+ *
+ * @returns {boolean} - true or false
+*/
 function isQuizInTrash(quizId: number): boolean {
   const data: Data = read();
   for (const quiz of data.trash) {
@@ -816,6 +896,13 @@ function isQuizInTrash(quizId: number): boolean {
   return false;
 }
 
+/**
+ * Send a 'DELETE' request to the corresponding server route for user details,
+ * returning the response in the form of a javascript object
+ * @param {{string | ErrorObject}}
+ *
+ * @returns {{object}} - response in javascript
+*/
 function requestAdminQuizQuestionDelete(token: ErrorObject | string, quizId: number, questionId: number) {
   const res = request(
     'DELETE',
@@ -835,6 +922,15 @@ function requestAdminQuizQuestionDelete(token: ErrorObject | string, quizId: num
   };
 }
 
+/**
+ * Given a quiz question, check if the quiz question has at least 1 correct asnwer
+ *
+ * @param {object} data Datastore
+ * @param {number} quizId Quiz Id
+ * @param {number} questionId Question Id
+ * 
+ * @returns {boolean} - true or false
+*/
 function questionValidCheck(data:any, quizId:number, questionId:number) {
   const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
   for (const question of quiz.questions) {
@@ -845,6 +941,15 @@ function questionValidCheck(data:any, quizId:number, questionId:number) {
   return false;
 }
 
+/**
+ * Given a quiz question new position, check if its valid
+ *
+ * @param {object} data Datastore
+ * @param {number} quizId Quiz Id
+ * @param {number} newPosition Newposition of quiz question
+ * 
+ * @returns {boolean} - true or false
+*/
 function newPositionValidCheck(data:any, quizId:number, newPosition: number) {
   const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
 
@@ -855,6 +960,15 @@ function newPositionValidCheck(data:any, quizId:number, newPosition: number) {
   return true;
 }
 
+/**
+ * Given a quiz question new position, check if its the same as original position
+ *
+ * @param {object} data Datastore
+ * @param {number} quizId Quiz Id
+ * @param {number} newPosition Newposition of quiz question
+ * 
+ * @returns {boolean} - true or false
+*/
 function newPositioNotSame(data:any, quizId:number, questionId:number, newPosition: number) {
   const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
 
@@ -867,6 +981,13 @@ function newPositioNotSame(data:any, quizId:number, questionId:number, newPositi
   return false;
 }
 
+/**
+ * Send a 'put' request to the corresponding server route to
+ * question update
+ * @param {{string | ErrorObject}} - token
+ *
+ * @returns {{object}} - response in javascript
+*/
 function requestAdminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, questionId: number, quizQuestion: QuizQuestion) {
   const res = request(
     'PUT',
@@ -891,6 +1012,7 @@ function requestAdminQuizQuestionUpdate(token: ErrorObject | string, quizId: num
  * Send a 'delete' request to the corresponding server route to
  * delete quiz/quizzes from the trash
  * @param {{string | ErrorObject}} - token
+ * @param {number[]} - quizIds
  *
  * @returns {{object}} - response in javascript
 */
@@ -914,6 +1036,11 @@ function requestAdminQuizTrashEmpty(token: ErrorObject | string, quizIdArr: numb
   };
 }
 
+/**
+ * Gnerates random colour
+ * 
+ * @returns {string} - colour
+*/
 function getColour() {
   const colors = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
   const randomColorIndex = Math.floor(Math.random() * colors.length);
@@ -945,6 +1072,16 @@ function requestAdminAuthLogout(token: ErrorObject | string) {
   };
 }
 
+/**
+ * Send a 'put' request to the corresponding server route to
+ * update user details
+ * @param {{string | ErrorObject}} - token
+ * @param {string} - user email
+ * @param {string} - user first name
+ * @param {string} - user last name
+ *
+ * @returns {{object}} - response in javascript
+*/
 function requestAdminAuthDetailsUpdate(token: ErrorObject | string, email: string, nameFirst: string, nameLast: string) {
   const res = request(
     'PUT',
