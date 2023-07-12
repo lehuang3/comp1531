@@ -336,6 +336,7 @@ function adminAuthDetailsUpdate(token: string | ErrorObject, email: string, name
   const user = data.users.find((userID) => userID.authUserId === authUserId);
   user.email = email;
   user.name = nameFirst + ' ' + nameLast;
+  save(data);
 
   return {};
 }
