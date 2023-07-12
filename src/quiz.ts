@@ -42,7 +42,6 @@ function adminQuizList (token: ErrorObject | string) {
           quizId: quiz.quizId,
           name: quiz.name
         };
-
         quizzList.push(currentUserQuiz);
       }
     }
@@ -154,6 +153,7 @@ function adminQuizRemove (token: ErrorObject | string, quizId: number) {
     quiz.timeLastEdited = Math.floor(Date.now() / 1000);
 
     save(data);
+    console.log(data.quizzes)
     return {};
   }
 }
@@ -175,6 +175,7 @@ function adminQuizRemove (token: ErrorObject | string, quizId: number) {
   * }
 */
 function adminQuizInfo (token: ErrorObject | string, quizId: number) {
+  console.log('called')
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
@@ -198,6 +199,11 @@ function adminQuizInfo (token: ErrorObject | string, quizId: number) {
     };
   }
   for (const quiz of data.quizzes) {
+    if (quiz.quizId === quizId) {
+      return quiz;
+    }
+  }
+  for (const quiz of data.trash) {
     if (quiz.quizId === quizId) {
       return quiz;
     }
@@ -540,12 +546,16 @@ function adminQuizTransfer(token: string | ErrorObject, quizId: number, userEmai
     };
   } else {
     const targetUserQuizzes = users.filter(user => user.email === userEmail)[0].userQuizzes;
-    const quizzes = [...data.quizzes];
-    const transferedQuizName = quizzes.filter(quiz => quiz.quizId === quizId)[0].name;
+    const transferedQuizName = data.quizzes.filter(quiz => quiz.quizId === quizId)[0].name;
     // compare name of quiz to be transfered with every quiz name of quizzes that the target user has
     for (const userQuizId of targetUserQuizzes) {
-      const targetUserQuizName = quizzes.filter(quiz => quiz.quizId === userQuizId)[0].name;
-      if (transferedQuizName == targetUserQuizName) {
+      let targetUserQuiz = data.quizzes.filter(quiz => quiz.quizId === userQuizId)[0];
+      console.log(targetUserQuiz)
+      if (targetUserQuiz === undefined) {
+        targetUserQuiz = data.trash.filter(quiz => quiz.quizId === userQuizId)[0];
+      }
+      console.log(targetUserQuiz)
+      if (transferedQuizName === targetUserQuiz.name) {
         return {
           error: "Quiz to be transfered has the same name as one of target user's quizzes",
         };
@@ -770,6 +780,7 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
  * @returns {} - empty object
 */
 function adminQuizTrashEmpty(token: string | ErrorObject, quizIdArr: number[]) {
+  console.log(quizIdArr)
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
@@ -802,9 +813,15 @@ function adminQuizTrashEmpty(token: string | ErrorObject, quizIdArr: number[]) {
     }
   }
 
-  quizIdArr.map(quizIdToRemove => {
+  quizIdArr.map((quizIdToRemove) => {
     // user.userQuizzes = user.userQuizzes.filter(userQuizId => userQuizId !== quizId)
     data.trash = data.trash.filter(quiz => quiz.quizId !== quizIdToRemove);
+    data.quizzes = data.quizzes.filter(quiz => quiz.quizId !== quizIdToRemove);
+    for (const user of data.users) {
+      if (user.userQuizzes.includes(quizIdToRemove)) {
+        user.userQuizzes = user.userQuizzes.filter(quizId => quizId !== quizIdToRemove);
+      }
+    }
     save(data);
   });
   return {};
