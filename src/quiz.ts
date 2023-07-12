@@ -203,6 +203,9 @@ function adminQuizInfo (token: ErrorObject | string, quizId: number) {
       return quiz;
     }
   }
+  return {
+    error: 'Quiz does not exist'
+  }
 }
 
 /**

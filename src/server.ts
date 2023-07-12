@@ -102,7 +102,7 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   res.json(response);
 });
 
-app.put('/v1/admin/quiz/:quizId/question', (req: Request, res: Response) => {
+app.post('/v1/admin/quiz/:quizId/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { token, quizQuestion } = req.body;
   const response = adminQuizQuestionCreate(token, quizId, quizQuestion);
@@ -281,7 +281,7 @@ app.delete('/v1/admin/quiz/:quizId/question/:questionId', (req: Request, res: Re
   res.json(response);
 });
 
-app.put('/v1/admin/quiz/:quizId/question/:questionId/duplicate', (req: Request, res: Response) => {
+app.post('/v1/admin/quiz/:quizId/question/:questionId/duplicate', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionId);
   const { token } = req.body;
