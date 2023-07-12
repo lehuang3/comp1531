@@ -5,10 +5,11 @@ import {
   quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash, getColour
 } from './other';
 import { Data } from './interfaces';
+
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
- * @param {integer} authUserId - Admin user ID
+ * @param {string} token - Token
  *
  * @returns {array object} - List of quizze
 */
@@ -54,9 +55,9 @@ function adminQuizList (token: ErrorObject | string) {
 /**
  * Given basic details about a new quiz, create one for the logged in user.
  *
- * @param {integer} authUserId - Admin user ID
+ * @param {string} token - Token
  * @param {integer} name - Name of quiz
- * @param {string} authUserId - Description of quiz
+ * @param {string} description - Description of quiz
  *
  * @returns {quizID: number} - Quiz's identification number
 */
@@ -125,7 +126,7 @@ function adminQuizCreate (token: ErrorObject | string, name: string, description
 /**
  * Given user ID and Quiz ID it deletes it.
  *
- * @param {integer} authUserId - Admin user ID
+ * @param {integer} token - Token
  * @param {integer} quizId - Quiz's identification number
  *
  * @returns {{}} - Empty object
@@ -161,7 +162,7 @@ function adminQuizRemove (token: ErrorObject | string, quizId: number) {
 /**
   * Get all of the relevant information about the current quiz.
   *
-  * @param {number} authUserId - Admin user ID
+  * @param {string} token - Token
   * @param {number} quizId - Quiz's identification number
   *
   * @returns {
@@ -207,7 +208,7 @@ function adminQuizInfo (token: ErrorObject | string, quizId: number) {
 /**
   * Update name of relevant quiz.
   *
-  * @param {number} authUserId - Admin user ID
+  * @param {string} token - Token
   * @param {number} quizId - Quiz's identification number
   * @param {string} name - Name of quiz
   *
@@ -258,7 +259,7 @@ function adminQuizNameUpdate (token: ErrorObject | string, quizId: number, name:
 /**
   * Update the description of the relevant quiz.
   *
-  * @param {number} authUserId - Admin user ID
+  * @param {string} token - Token
   * @param {number} quizId - Quiz's identification number
   * @param {string} description - Quiz's description
   *
@@ -313,7 +314,7 @@ function adminQuizDescriptionUpdate (token: ErrorObject | string, quizId: number
  * @returns {{}} empty object on success and error msg on fail
  */
 function adminQuizTrash(token: string) {
-  const quizzes = [];
+  const quizzes: { quizId: number; name: string; }[] = [];
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
@@ -384,13 +385,13 @@ function adminQuizRestore(token: ErrorObject | string, quizId: number) {
 }
 
 /**
- * Given basic details about a new quiz, create one for the logged in user.
+ * Given basic details about a new quiz question, creates a question in the question for the logged in user.
  *
- * @param {integer} authUserId - Admin user ID
- * @param {integer} name - Name of quiz
- * @param {string} authUserId - Description of quiz
+ * @param {string} token - Token
+ * @param {integer} quizId - Quiz Id
+ * @param {object} QuestionQuestion - Description of quiz question
  *
- * @returns {quizID: number} - Quiz's identification number
+ * @returns {questionID: number} - Quiz Question Id
 */
 function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, quizQuestion: QuizQuestion) {
   const data: Data = read();
@@ -428,10 +429,20 @@ function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, qu
     const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
 
     let newQuestionId = 0;
-    if (quiz.questions.length > 0) {
-      const lastQuestion = quiz.questions[quiz.questions.length - 1];
-      newQuestionId = lastQuestion.questionId + 1;
+    const quizQuestionLength = quiz.questions.length;
+
+    if (quizQuestionLength === 0) {
+      newQuestionId = 0;
+    } else {
+      let max = 0;
+      for (const index of quiz.questions) {
+        if (index.questionId > max) {
+          max = index.questionId;
+        }
+      }
+      newQuestionId = max + 1;
     }
+
 
     const newQuestion = {
       questionId: newQuestionId,
@@ -457,11 +468,12 @@ function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, qu
 }
 
 /**
- * Given basic details about a new quiz, create one for the logged in user.
+ * Given basic details about a quiz Question, it moves the order within the quiz.
  *
- * @param {integer} authUserId - Admin user ID
- * @param {integer} name - Name of quiz
- * @param {string} authUserId - Description of quiz
+ * @param {integer} quizId - QuizId
+ * @param {integer} questionId - Quiz Question Id
+ * @param {string} token - Token
+ * @param {integer} newPosition - new position of question
  *
  * @returns {quizID: number} - Quiz's identification number
 */
@@ -573,13 +585,13 @@ function adminQuizTransfer(token: string | ErrorObject, quizId: number, userEmai
 }
 
 /**
- * Given basic details about a new quiz, create one for the logged in user.
+ * Given basic details about a question in a quiz,it duplicates it for the logged in user.
  *
- * @param {integer} authUserId - Admin user ID
- * @param {integer} name - Name of quiz
- * @param {string} authUserId - Description of quiz
+ * @param {integer} quizId - Quid Id
+ * @param {integer} questionId - QuestionId
+ * @param {string} token - Token
  *
- * @returns {quizID: number} - Quiz's identification number
+ * @returns {questionID: number} - Quiz question identification number
 */
 function adminQuizQuestionDupicate (quizId:number, questionId:number, token: ErrorObject | string) {
   const data: Data = read();
@@ -604,9 +616,18 @@ function adminQuizQuestionDupicate (quizId:number, questionId:number, token: Err
     const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
     const question = quiz.questions.find(question => question.questionId === questionId);
     let newQuestionId = 0;
-    if (quiz.questions.length > 0) {
-      const lastQuestion = quiz.questions[quiz.questions.length - 1];
-      newQuestionId = lastQuestion.questionId + 1;
+    const quizQuestionLength = quiz.questions.length;
+
+    if (quizQuestionLength === 0) {
+      newQuestionId = 0;
+    } else {
+      let max = 0;
+      for (const index of quiz.questions) {
+        if (index.questionId > max) {
+          max = index.questionId;
+        }
+      }
+      newQuestionId = max + 1;
     }
 
     const newQuestion = {
@@ -671,6 +692,7 @@ function adminQuizQuestionDelete(token: ErrorObject | string, quizId: number, qu
     }
     index++;
   }
+  quiz.numQuestions--;
   return {
     error: 'Something went wrong'
   };
