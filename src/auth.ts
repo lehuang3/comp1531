@@ -198,9 +198,9 @@ function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn 
 }
 
 /**
-  * Given an admin user's authUserId, return details about the user
+  * Given an admin user's token, return details about the user
   *
-  * @param {number} authUserId - User's identification
+  * @param {string} token - User's identification
   *
   * @returns {user: {userId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
 */
@@ -254,7 +254,7 @@ function adminAuthPasswordUpdate (token: ErrorObject | string, oldPassword: stri
     };
   }
   const user = data.users.find((userID) => userID.authUserId === authUserId);
-  if (oldPassword != user.password) {
+  if (oldPassword !== user.password) {
     return {
       error: 'Old password is incorrect'
     };
@@ -295,6 +295,17 @@ function adminAuthLogout (token: ErrorObject | string) {
 
   };
 }
+
+/**
+ * Given a new details about a current user, the users info is updated
+ *
+ * @param {string} token token
+ * @param {string} email user email
+ * @param {string} nameFirst username first name
+ * @param {string} nameLast user lastname
+ *
+ * @returns {} 
+*/
 
 function adminAuthDetailsUpdate(token: string | ErrorObject, email: string, nameFirst: string, nameLast:string) {
   const data: Data = read();
