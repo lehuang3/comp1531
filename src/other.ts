@@ -439,7 +439,7 @@ function requestAdminAuthPasswordUpdate(token: ErrorObject | string, oldPassword
 */
 function requestQuizQuestionCreate(token: ErrorObject | string, quizId: number, quizQuestion: object) {
   const res = request(
-    'PUT',
+    'POST',
     SERVER_URL + `/v1/admin/quiz/${quizId}/question`,
     {
       // Note that for PUT/POST requests, you should
@@ -709,7 +709,7 @@ function requestAdminQuizQuestionMove(quizId: number, questionId: number, token:
 */
 function requestAdminQuizQuestionDuplicate(token: ErrorObject | string, quizId: number, questionId: number) {
   const res = request(
-    'PUT',
+    'POST',
     SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}/duplicate`,
     {
       json: {
