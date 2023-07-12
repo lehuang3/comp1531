@@ -2,12 +2,9 @@ import fs from 'fs';
 import { Data, Token } from './interfaces';
 import request from 'sync-request';
 import { port, url } from './config.json';
-import { checkValidPassword } from './auth';
 import { ErrorObject, QuizQuestion } from './interfaces';
 import { Console } from 'console';
 const SERVER_URL = `${url}:${port}`;
-
-
 
 /**
  * Send a 'delete' request to the corresponding server route to reset the
@@ -24,19 +21,19 @@ function requestClear() {
       // Note that for PUT/POST requests, you should
       // use the key 'json' instead of the query string 'qs'
       qs: {
-        
+
       }
     }
   );
-  //console.log(JSON.parse(res.body.toString()));
+  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  } 
+  };
 }
 
 /**
- * Send a 'get' request to the corresponding server route for user details, 
+ * Send a 'get' request to the corresponding server route for user details,
  * returning the response in the form of a javascript object
  * @param {{string | ErrorObject}}
  *
@@ -54,17 +51,17 @@ function requestGetAdminUserDetails(token: ErrorObject | string) {
       }
     }
   );
-  //console.log(JSON.parse(res.body.toString()));
+  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  } 
+  };
 }
 
 /**
  * Check if a token passed in has a valid
  * structure, and return a boolean value accordingly.
- * @param {ErrorObject | string} token 
+ * @param {ErrorObject | string} token
  *
  * @returns {{boolean}} - True or false
 */
@@ -81,7 +78,7 @@ function isTokenValid(token: ErrorObject | string) {
  * exists, false otherwise
  * @param {{ErrorObject | string}} - Token
  *
- * @returns {{boolean}} - True/false or matching token's 
+ * @returns {{boolean}} - True/false or matching token's
  * associated authUserId
 */
 function isSessionValid(token: string | ErrorObject): boolean {
@@ -94,7 +91,7 @@ function isSessionValid(token: string | ErrorObject): boolean {
     // error if no corresponding token found
     return false;
   }
-  return true
+  return true;
 }
 
 /**
@@ -110,18 +107,17 @@ function tokenOwner(token: string | ErrorObject) {
   if (!isTokenValid(token)) {
     return {
       error: 'Invalid token structure'
-    }
+    };
   }
   if (!isSessionValid(token)) {
     // error if no corresponding token found
     return {
       error: 'Not a valid session'
-    }
+    };
   } else {
     if (typeof token === 'string') {
       return data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token)).authUserId;
     }
-    
   }
 }
 
@@ -133,7 +129,7 @@ function tokenOwner(token: string | ErrorObject) {
  * @returns {{}} - Empty object
 */
 function clear () {
-  let store = read()
+  let store = read();
   store = {
 
     // User Data
@@ -144,35 +140,35 @@ function clear () {
 
     tokens: [],
 
-    trash:[]
-  }
-  save(store)
+    trash: []
+  };
+  save(store);
   return {
 
-  }
+  };
 }
 /**
  * Write the new data object to dataStore.json
- * 
- * @param {Data} data - data to write 
  *
- * @returns {void} 
+ * @param {Data} data - data to write
+ *
+ * @returns {void}
 */
 const save = (data: Data) => {
   fs.writeFileSync('./src/dataStore.json', JSON.stringify(data));
-}
+};
 
 /**
  * Return the data object stored in dataStore.json
- * 
- * @param {void} 
+ *
+ * @param {void}
  *
  * @returns {Data} returns the data
 */
 const read = () => {
   const dataJson = fs.readFileSync('./src/dataStore.json');
   return JSON.parse(String(dataJson));
-}
+};
 
 /**
  * Given authUserId, return true or false depending on whether authUserId matches an existing
@@ -185,10 +181,10 @@ function isValidUser (authUserId: number): boolean {
   const data = read();
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
-      return true
+      return true;
     }
   }
-  return false
+  return false;
 }
 /**
  * Given the authUserId and quizId of, find if the user has access to the quiz, returns true if they
@@ -200,13 +196,13 @@ function isValidUser (authUserId: number): boolean {
  * @returns {boolean} - true or false
 */
 function quizValidOwner (authUserId: number, quizId: number): boolean {
-  const data = read()
+  const data = read();
   for (const user of data.users) {
     if (user.authUserId === authUserId && user.userQuizzes.includes(quizId)) {
-      return true
+      return true;
     }
   }
-  return false
+  return false;
 }
 
 /**
@@ -218,18 +214,18 @@ function quizValidOwner (authUserId: number, quizId: number): boolean {
  * @returns {boolean} - true or false
  */
 function quizValidCheck (quizId: number): boolean {
-  const data = read()
+  const data = read();
   for (const quiz of data.quizzes) {
     if (quiz.quizId === quizId) {
-      return true
+      return true;
     }
   }
   for (const quiz of data.trash) {
     if (quiz.quizId === quizId) {
-      return true
+      return true;
     }
   }
-  return false
+  return false;
 }
 
 /**
@@ -241,78 +237,78 @@ function quizValidCheck (quizId: number): boolean {
 */
 function isDescriptionLong (description: string): boolean {
   if (description.length > 100) {
-    return true
+    return true;
   }
-  return false
+  return false;
 }
 
 /**
  * Given a quiz name, check if the quiz name contains valid characters
- * 
+ *
  * @param {string} name name of the quiz
- * 
+ *
  * @returns {boolean} - true or false
 */
 function nameQuizIsValid (name: string): boolean {
   const namePattern = /^[a-z\d\s]+$/i;
 
   if (namePattern.test(name)) {
-    return true
+    return true;
   }
-  return false
+  return false;
 }
 
 /**
  * Given a name of a quiz, check if the quiz name is of valid length
- * 
+ *
  * @param {string} name name of the quiz
- *  
- * @returns {boolean} - true or false 
+ *
+ * @returns {boolean} - true or false
 */
 function nameLengthIsValid (name: string): boolean {
   if (name.length < 3 || name.length > 30) {
-    return false
+    return false;
   } else {
-    return true
+    return true;
   }
 }
 
 /**
  * Given a name to a quiz, check if the user already has a quiz with the same name
- * 
- * @param {number} authUserId 
- * @param {string} name 
- * 
+ *
+ * @param {number} authUserId
+ * @param {string} name
+ *
  * @returns {boolean} - true or false
  */
 function nameTaken (authUserId: number, name: string): boolean {
-  const data = read()
+  const data = read();
 
-  let userQuizzes: number[] = []
+  let userQuizzes: number[] = [];
 
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
-      userQuizzes = user.userQuizzes
+      userQuizzes = user.userQuizzes;
     }
   }
 
   for (let i = 0; i < userQuizzes.length; i++) {
-    const quizId = userQuizzes[i]
+    const quizId = userQuizzes[i];
 
     for (let j = 0; j < data.quizzes.length; j++) {
       if (data.quizzes[j].quizId === quizId && data.quizzes[j].name === name) {
-        return true
+        return true;
       }
     }
   }
 
-  return false
+  return false;
 }
 
 /**
  * Send a 'post' request to the corresponding server route to register
  * an account
- * 
+ *
  * @param {string} email user email
  * @param {string} password user password
  * @param {string} nameFirst first name
@@ -335,16 +331,16 @@ function requestAdminAuthRegister(email: string, password: string, nameFirst: st
       }
     }
   );
-  //console.log(JSON.parse(res.body.toString()));
+  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  } 
+  };
 }
 
 /**
  * Send a 'post' request to the corresponding server route to log in
- * 
+ *
  * @param {string} email user email
  * @param {string} password user password
  *
@@ -363,17 +359,17 @@ function requestAdminAuthLogin(email: string, password: string) {
       }
     }
   );
-  //console.log(JSON.parse(res.body.toString()));
+  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  } 
+  };
 }
 
 /**
  * Send a 'put' request to the corresponding server route to update
  * quiz description
- * 
+ *
  * @param {string | ErrorObject} token
  * @param {string} quizId quiz id
  * @param {string} description quiz description
@@ -393,27 +389,27 @@ function requestAdminQuizDescriptionUpdate(token: ErrorObject | string, quizId: 
       }
     }
   );
-  //console.log(JSON.parse(res.body.toString()));
+  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  } 
+  };
 }
 
 /**
  * Sends a 'put' request to the corresponding server route to
  * update the user password.
- * 
+ *
  * @param {string | ErrorObject} token - token/sessionId
  * @param {string} oldPassword old password
  * @param {string} newPassword new password
- * 
+ *
  * @returns {{object}} - response in javascript
 */
 function requestAdminAuthPasswordUpdate(token: ErrorObject | string, oldPassword: string, newPassword: string) {
   const res = request(
     'PUT',
-    SERVER_URL + `/v1/admin/user/password`,
+    SERVER_URL + '/v1/admin/user/password',
     {
       // Note that for PUT/POST requests, you should
       // use the key 'json' instead of the query string 'qs'
@@ -424,18 +420,17 @@ function requestAdminAuthPasswordUpdate(token: ErrorObject | string, oldPassword
       }
     }
   );
-  //console.log(JSON.parse(res.body.toString()));
+  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  }
+  };
 }
 
-
-/** 
+/**
  * Send a 'put' request to the corresponding server route to create
  * a quiz question
- * 
+ *
  * @param {string | ErrorObject} token - token/sessionId
  * @param {number} quizId quiz Id
  * @param {QuizQuestion} quizQuestion question object
@@ -455,18 +450,17 @@ function requestQuizQuestionCreate(token: ErrorObject | string, quizId: number, 
       }
     }
   );
-  //console.log(JSON.parse(res.body.toString()));
+  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  } 
+  };
 }
-
 
 /**
  * Send a 'post' request to the corresponding server route to create
  * a quiz
- * 
+ *
  * @param {string | ErrorObject} token - token/sessionId
  * @param {string} name quiz name
  * @param {string} description description of quiz
@@ -487,19 +481,19 @@ function requestAdminQuizCreate(token: ErrorObject | string, name: string, descr
       }
     }
   );
-  //console.log(JSON.parse(res.body.toString()));
+  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  } 
+  };
 }
 
 /**
  * Send a 'get' request to the corresponding server route to get the quiz info
- * 
+ *
  * @param {string | ErrorObject} token - token/sessionId
  * @param {number} quizId quiz Id
- * 
+ *
  * @returns {{object}} - response in javascript
  */
 function requestAdminQuizInfo(token: ErrorObject | string, quizId: number) {
@@ -515,16 +509,16 @@ function requestAdminQuizInfo(token: ErrorObject | string, quizId: number) {
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  } 
+  };
 }
-    
+
 /**
  * Sends a 'put' request to update the name of the current quiz
- * 
+ *
  * @param {string | ErrorObject} token - token/sessionId
  * @param {number} quizId quiz Id
  * @param {string} name quiz name
- * 
+ *
  * @returns {{object}} - response in javascript
 */
 function requestAdminQuizNameUpdate(token: ErrorObject | string, quizId: number, name: string) {
@@ -541,19 +535,19 @@ function requestAdminQuizNameUpdate(token: ErrorObject | string, quizId: number,
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  } 
+  };
 }
 
 /**
  * Send a 'delete' request to the corresponding server route to remove
  * an existing quiz
- * 
+ *
  * @param {string | ErrorObject} token - token/sessionId
  * @param {string | ErrorObject} token - token/sessionId
  *
  * @returns {{object}} - response in javascript
 */
-function requestAdminQuizRemove(token: ErrorObject | string, quizId: number ) {
+function requestAdminQuizRemove(token: ErrorObject | string, quizId: number) {
   const res = request(
     'DELETE',
     SERVER_URL + `/v1/admin/quiz/${quizId}`,
@@ -568,13 +562,20 @@ function requestAdminQuizRemove(token: ErrorObject | string, quizId: number ) {
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  } 
+  };
 }
 
-function requestAdminQuizList(token: ErrorObject | string ) {
+/**
+ * Send a 'GET' request to the corresponding server route to show the list of user quizzes
+ *
+ * @param {string | ErrorObject} token - token/sessionId
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminQuizList(token: ErrorObject | string) {
   const res = request(
     'GET',
-    SERVER_URL + `/v1/admin/quiz/list`,
+    SERVER_URL + '/v1/admin/quiz/list',
     {
       // Note that for PUT/POST requests, you should
       // use the key 'json' instead of the query string 'qs'
@@ -586,11 +587,11 @@ function requestAdminQuizList(token: ErrorObject | string ) {
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  } 
+  };
 }
 
 /**
- * Send a 'get' request to the corresponding server route to 
+ * Send a 'get' request to the corresponding server route to
  * view quizzes in the trash
  * @param {{string | ErrorObject}} - token
  *
@@ -611,7 +612,7 @@ function requestAdminQuizTrash(token: ErrorObject | string) {
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  } 
+  };
 }
 
 /**
@@ -634,13 +635,22 @@ function requestAdminQuizTransfer(token: ErrorObject | string, quizId: number, u
       }
     }
   );
-  //console.log(JSON.parse(res.body.toString()));
+  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  } 
+  };
 }
 
+/**
+ * Send a 'POST' request to the corresponding server route to restore
+ * an existing quiz
+ *
+ * @param {string | ErrorObject} token - token/sessionId
+ * @param {number} quizId - Quiz Id
+ *
+ * @returns {{object}} - response in javascript
+*/
 function requestAdminQuizRestore(token: ErrorObject | string, quizId: number) {
   const res = request(
     'POST',
@@ -653,24 +663,24 @@ function requestAdminQuizRestore(token: ErrorObject | string, quizId: number) {
       }
     }
   );
-  //console.log(JSON.parse(res.body.toString()));
+  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  } 
+  };
 }
-
 /**
- * Sends a request to update the name of the current quiz
- * 
- * @param token 
- * @param quizId 
- * @param name 
- * 
- * @returns 
+ * Send a 'PUT' request to the corresponding server route to move
+ * an existing quiz question
+ *
+ * @param {number} quizId - token/sessionId
+ * @param {number} questionId - token/sessionId
+ * @param {string | ErrorObject} token - token/sessionId
+ * @param {number} newPosition - new position of quiz question
+ *
+ * @returns {{object}} - response in javascript
 */
-
-function requestAdminQuizQuestionMove(quizId: number, questionId: number,  token: ErrorObject | string, newPosition: number) {
+function requestAdminQuizQuestionMove(quizId: number, questionId: number, token: ErrorObject | string, newPosition: number) {
   const res = request(
     'PUT',
     SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}/move`,
@@ -684,20 +694,20 @@ function requestAdminQuizQuestionMove(quizId: number, questionId: number,  token
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  } 
+  };
 }
 
 /**
- * Sends a request to update the name of the current quiz
- * 
- * @param token 
- * @param quizId 
- * @param name 
- * 
- * @returns 
+ * Send a 'PUT' request to the corresponding server route to duplicate
+ * an existing quiz question
+ *
+ * @param {number} quizId - token/sessionId
+ * @param {number} questionId - token/sessionId
+ * @param {string | ErrorObject} token - token/sessionId
+ *
+ * @returns {{object}} - response in javascript
 */
-
-function requestAdminQuizQuestionDuplicate(token: ErrorObject | string,quizId: number, questionId: number) {
+function requestAdminQuizQuestionDuplicate(token: ErrorObject | string, quizId: number, questionId: number) {
   const res = request(
     'PUT',
     SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}/duplicate`,
@@ -710,12 +720,18 @@ function requestAdminQuizQuestionDuplicate(token: ErrorObject | string,quizId: n
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  } 
+  };
 }
 
-
+/**
+ * Given a quiz question, check if the quiz question length is valid
+ *
+ * @param {object} quizQuestion question content
+ *
+ * @returns {boolean} - true or false
+*/
 function questionLengthValid(quizQuestion: QuizQuestion) {
-  var question = quizQuestion.questionBody.question;
+  const question = quizQuestion.questionBody.question;
 
   if (question.length < 5 || question.length > 50) {
     return false;
@@ -724,8 +740,15 @@ function questionLengthValid(quizQuestion: QuizQuestion) {
   }
 }
 
+/**
+ * Given a quiz question, check if the quiz there sufficent asnwer within the question
+ *
+ * @param {string} quizQuestion Question content
+ *
+ * @returns {boolean} - true or false
+*/
 function answerCountValid(quizQuestion: QuizQuestion) {
-  var answers = quizQuestion.questionBody.answers;
+  const answers = quizQuestion.questionBody.answers;
 
   if (answers.length < 2 || answers.length > 6) {
     return false;
@@ -734,8 +757,15 @@ function answerCountValid(quizQuestion: QuizQuestion) {
   }
 }
 
+/**
+ * Given a quiz question, check if the quiz question the duration is valid within the question
+ *
+ * @param {object} quizQuestion Question content
+ *
+ * @returns {boolean} - true or false
+*/
 function durationValid(quizQuestion: QuizQuestion) {
-  var duration = quizQuestion.questionBody.duration;
+  const duration = quizQuestion.questionBody.duration;
 
   if (duration > 0) {
     return true;
@@ -744,6 +774,14 @@ function durationValid(quizQuestion: QuizQuestion) {
   }
 }
 
+/**
+ * Given a quiz question, check if the quiz does not go over 180sec duration
+ * @param {object} data Question content
+ * @param {object} quizQuestion Question content
+ * @param {number} quizId quiz Id
+ *
+ * @returns {boolean} - true or false
+*/
 function QuizDurationValid(data:any, quizQuestion:QuizQuestion, quizId:number) {
   let totalDuration = 0;
 
@@ -762,6 +800,13 @@ function QuizDurationValid(data:any, quizQuestion:QuizQuestion, quizId:number) {
   return true;
 }
 
+/**
+ * Given a quiz question, check if the quiz question points is valid
+ *
+ * @param {object} quizQuestion question content
+ *
+ * @returns {boolean} - true or false
+*/
 function quizPointsValid(quizQuestion:QuizQuestion) {
   const points = quizQuestion.questionBody.points;
 
@@ -772,6 +817,13 @@ function quizPointsValid(quizQuestion:QuizQuestion) {
   return true;
 }
 
+/**
+ * Given a quiz question, check if the quiz question asnwer length is valid
+ *
+ * @param {object} quizQuestion question content
+ *
+ * @returns {boolean} - true or false
+*/
 function quizAnswerValid(quizQuestion: QuizQuestion) {
   const answers = quizQuestion.questionBody.answers;
 
@@ -786,6 +838,13 @@ function quizAnswerValid(quizQuestion: QuizQuestion) {
   return true;
 }
 
+/**
+ * Given a quiz question, check if the quiz question asnwer are duplicates
+ *
+ * @param {object} quizQuestion question content
+ *
+ * @returns {boolean} - true or false
+*/
 function quizAnswerDuplicateValid(quizQuestion:QuizQuestion) {
   const answers = quizQuestion.questionBody.answers;
   const answerSet = new Set();
@@ -801,6 +860,13 @@ function quizAnswerDuplicateValid(quizQuestion:QuizQuestion) {
   return true;
 }
 
+/**
+ * Given a quiz question, check if the quiz question has at least 1 correct asnwer
+ *
+ * @param {object} quizQuestion question content
+ *
+ * @returns {boolean} - true or false
+*/
 function quizAnswerCorrectValid(quizQuestion:QuizQuestion) {
   const answers = quizQuestion.questionBody.answers;
 
@@ -813,6 +879,13 @@ function quizAnswerCorrectValid(quizQuestion:QuizQuestion) {
   return false;
 }
 
+/**
+ * Given a quizId, check if the quiz is in the trash
+ *
+ * @param {number} quizId QuizId
+ *
+ * @returns {boolean} - true or false
+*/
 function isQuizInTrash(quizId: number): boolean {
   const data: Data = read();
   for (const quiz of data.trash) {
@@ -823,6 +896,13 @@ function isQuizInTrash(quizId: number): boolean {
   return false;
 }
 
+/**
+ * Send a 'DELETE' request to the corresponding server route for user details,
+ * returning the response in the form of a javascript object
+ * @param {{string | ErrorObject}}
+ *
+ * @returns {{object}} - response in javascript
+*/
 function requestAdminQuizQuestionDelete(token: ErrorObject | string, quizId: number, questionId: number) {
   const res = request(
     'DELETE',
@@ -835,14 +915,22 @@ function requestAdminQuizQuestionDelete(token: ErrorObject | string, quizId: num
       }
     }
   );
-  //console.log(JSON.parse(res.body.toString()));
+  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  } 
+  };
 }
 
-
+/**
+ * Given a quiz question, check if the quiz question has at least 1 correct asnwer
+ *
+ * @param {object} data Datastore
+ * @param {number} quizId Quiz Id
+ * @param {number} questionId Question Id
+ * 
+ * @returns {boolean} - true or false
+*/
 function questionValidCheck(data:any, quizId:number, questionId:number) {
   const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
   for (const question of quiz.questions) {
@@ -853,32 +941,53 @@ function questionValidCheck(data:any, quizId:number, questionId:number) {
   return false;
 }
 
-
+/**
+ * Given a quiz question new position, check if its valid
+ *
+ * @param {object} data Datastore
+ * @param {number} quizId Quiz Id
+ * @param {number} newPosition Newposition of quiz question
+ * 
+ * @returns {boolean} - true or false
+*/
 function newPositionValidCheck(data:any, quizId:number, newPosition: number) {
   const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
 
-  if(newPosition < 0 || (newPosition > (quiz.questions.length-1))){
+  if (newPosition < 0 || (newPosition > (quiz.questions.length - 1))) {
     return false;
   }
 
   return true;
-
 }
 
-function newPositioNotSame(data:any, quizId:number,questionId:number, newPosition: number) {
+/**
+ * Given a quiz question new position, check if its the same as original position
+ *
+ * @param {object} data Datastore
+ * @param {number} quizId Quiz Id
+ * @param {number} newPosition Newposition of quiz question
+ * 
+ * @returns {boolean} - true or false
+*/
+function newPositioNotSame(data:any, quizId:number, questionId:number, newPosition: number) {
   const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
 
   const originalPosition = quiz.questions.findIndex((question: { questionId: number; }) => question.questionId === questionId);
 
-  if(originalPosition !== newPosition){
+  if (originalPosition !== newPosition) {
     return true;
   }
 
   return false;
-
 }
 
-
+/**
+ * Send a 'put' request to the corresponding server route to
+ * question update
+ * @param {{string | ErrorObject}} - token
+ *
+ * @returns {{object}} - response in javascript
+*/
 function requestAdminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, questionId: number, quizQuestion: QuizQuestion) {
   const res = request(
     'PUT',
@@ -892,17 +1001,18 @@ function requestAdminQuizQuestionUpdate(token: ErrorObject | string, quizId: num
       }
     }
   );
-  //console.log(JSON.parse(res.body.toString()));
+  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  } 
+  };
 }
 
 /**
  * Send a 'delete' request to the corresponding server route to
  * delete quiz/quizzes from the trash
  * @param {{string | ErrorObject}} - token
+ * @param {number[]} - quizIds
  *
  * @returns {{object}} - response in javascript
 */
@@ -919,19 +1029,23 @@ function requestAdminQuizTrashEmpty(token: ErrorObject | string, quizIdArr: numb
       }
     }
   );
-  //console.log(JSON.parse(res.body.toString()));
+  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  } 
+  };
 }
 
+/**
+ * Gnerates random colour
+ * 
+ * @returns {string} - colour
+*/
 function getColour() {
-  const colors = ["red", "blue", "green", "yellow", "purple", "brown", "orange"];
+  const colors = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
   const randomColorIndex = Math.floor(Math.random() * colors.length);
   return colors[randomColorIndex];
 }
-
 
 /**
  *
@@ -951,16 +1065,50 @@ function requestAdminAuthLogout(token: ErrorObject | string) {
       }
     }
   );
-  //console.log(JSON.parse(res.body.toString()));
+  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
-  } 
+  };
 }
 
-export { clear, save, read, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, 
+/**
+ * Send a 'put' request to the corresponding server route to
+ * update user details
+ * @param {{string | ErrorObject}} - token
+ * @param {string} - user email
+ * @param {string} - user first name
+ * @param {string} - user last name
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminAuthDetailsUpdate(token: ErrorObject | string, email: string, nameFirst: string, nameLast: string) {
+  const res = request(
+    'PUT',
+    SERVER_URL + '/v1/admin/user/details',
+    {
+      // Note that for PUT/POST requests, you should
+      // use the key 'json' instead of the query string 'qs'
+      json: {
+        token,
+        email,
+        nameFirst,
+        nameLast
+      }
+    }
+  );
+  // console.log(JSON.parse(res.body.toString()));
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+export {
+  clear, save, read, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong,
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
   requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
-  requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid, 
-  quizAnswerCorrectValid, isQuizInTrash,requestAdminQuizQuestionMove,questionValidCheck, newPositioNotSame,newPositionValidCheck,requestAdminQuizQuestionDuplicate, 
-  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate, requestAdminAuthLogout };
+  requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid,
+  quizAnswerCorrectValid, isQuizInTrash, requestAdminQuizQuestionMove, questionValidCheck, newPositioNotSame, newPositionValidCheck, requestAdminQuizQuestionDuplicate,
+  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate, requestAdminAuthLogout, requestAdminAuthDetailsUpdate
+};

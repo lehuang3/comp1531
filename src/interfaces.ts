@@ -1,5 +1,4 @@
 
-
 // return type for adminAuthRegister
 interface AdminAuthRegisterReturn {
   token: string
@@ -24,7 +23,7 @@ interface AdminUserDetailsReturn {
 // return type of an error message
 interface ErrorObject {
   error: string;
-} 
+}
 
 // type of datastore
 interface Data {
@@ -78,4 +77,4 @@ interface Answer {
   correct: boolean;
 }
 
-export { AdminAuthLoginReturn, AdminUserDetailsReturn, Answer, AdminAuthRegisterReturn, ErrorObject, Data, Token, User, Quiz,QuizQuestion}
+export { AdminAuthLoginReturn, AdminUserDetailsReturn, Answer, AdminAuthRegisterReturn, ErrorObject, Data, Token, User, Quiz, QuizQuestion };
