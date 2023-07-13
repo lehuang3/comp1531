@@ -789,7 +789,7 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
   }
   // find the quiz in data.quizzes by matching quizId to data.quizzes.quizId, find the quiz question in data.quizzes.quiz.question, splice out the question.
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
-  // console.log(quiz)
+  console.log(quiz)
   // found the quiz which contains the question
   for (const question of quiz.questions) {
     if (question.questionId === questionId) {

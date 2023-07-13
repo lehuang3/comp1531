@@ -400,7 +400,7 @@ describe('Invalid token', () => {
 
 describe('Time test', () => {
   test('Time edited changes with correct param', async () => {
-    const timeInitial: number = requestAdminQuizInfo(token1.body.token, quiz1.body.quizId).body.timeLastEdited;
+    const timeInitial = requestAdminQuizInfo(token1.body.token, quiz1.body.quizId).body.timeLastEdited;
     await new Promise((resolve) => setTimeout(resolve, 1000));
     await requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, quiz1Question2.questionBody);
     const timeEnd: number = requestAdminQuizInfo(token1.body.token, quiz1.body.quizId).body.timeLastEdited;
