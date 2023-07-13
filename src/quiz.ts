@@ -767,14 +767,20 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
   }
   // find the quiz in data.quizzes by matching quizId to data.quizzes.quizId, find the quiz question in data.quizzes.quiz.question, splice out the question.
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
-  // console.log(quiz)
+  console.log(quiz)
   // found the quiz which contains the question
   for (const question of quiz.questions) {
     if (question.questionId === questionId) {
-      quiz.questions = quizQuestion;
+      //const questionId = quiz.questions.questionBody.questionId;
+      quiz.questions.question = quizQuestion.questionBody.question;
+      quiz.questions.duration = quizQuestion.questionBody.duration;
+      quiz.questions.points = quizQuestion.questionBody.points;
+      quiz.questions.answers = quizQuestion.questionBody.answers;
+      //quiz.questions.questionBody.questionId = questionId;
       const updatedQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
       updatedQuiz.timeLastEdited = Math.floor(Date.now() / 1000);
       save(data);
+      console.log(quiz)
       return {
 
       };

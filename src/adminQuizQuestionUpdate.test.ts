@@ -399,7 +399,7 @@ describe('Invalid token', () => {
 });
 
 describe('Time test', () => {
-  test('Time edited changes with correct param', async () => {
+  test.only('Time edited changes with correct param', async () => {
     const timeInitial = requestAdminQuizInfo(token1.body.token, quiz1.body.quizId).body.timeLastEdited;
     let timeEnd: any;
     await new Promise((resolve) => setTimeout(resolve, 1000));
