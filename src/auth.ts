@@ -263,11 +263,9 @@ function adminAuthPasswordUpdate (token: ErrorObject | string, oldPassword: stri
       error: 'Password has been used before'
     };
   }
-  console.log(data.users)
   user.usedPasswords.push(oldPassword);
   user.password = newPassword;
   save(data);
-  console.log(data.users)
   return {
 
   };
