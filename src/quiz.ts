@@ -203,6 +203,11 @@ function adminQuizInfo (token: ErrorObject | string, quizId: number) {
       return quiz;
     }
   }
+  for (const quiz of data.trash) {
+    if (quiz.quizId === quizId) {
+      return quiz;
+    }
+  }
   return {
     error: 'Quiz does not exist'
   }
@@ -378,7 +383,7 @@ function adminQuizRestore(token: ErrorObject | string, quizId: number) {
     };
   }
 
-  data.quizzes.push(data.trash.filter(quiz => quiz.quizId === quizId));
+  data.quizzes.push(data.trash.find((quiz) => quiz.quizId === quizId));
   const newTrash: Quiz[] = data.trash.filter(quiz => quiz.quizId !== quizId).map(quiz => quiz);
   data.trash = newTrash;
   save(data);
@@ -396,7 +401,7 @@ function adminQuizRestore(token: ErrorObject | string, quizId: number) {
  *
  * @returns {questionID: number} - Quiz Question Id
 */
-function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, quizQuestion: QuizQuestion) {
+function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, questionBody: any) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
@@ -412,24 +417,25 @@ function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, qu
     return { error: 'quiz id not valid' };
   } else if (quizValidOwner(authUserId, quizId) === false) {
     return { error: 'Not owner of quiz' };
-  } else if (questionLengthValid(quizQuestion) === false) {
+  } else if (questionLengthValid(questionBody) === false) {
     return { error: 'Question length is not valid' };
-  } else if (answerCountValid(quizQuestion) === false) {
+  } else if (answerCountValid(questionBody) === false) {
     return { error: 'There must 2 asnwer and no greater than 6' };
-  } else if (durationValid(quizQuestion) === false) {
+  } else if (durationValid(questionBody) === false) {
     return { error: 'Duration must be a positive number' };
-  } else if (QuizDurationValid(data, quizQuestion, quizId) === false) {
+  } else if (QuizDurationValid(data, questionBody, quizId) === false) {
     return { error: 'Duration excesseds 3 minutes' };
-  } else if (quizPointsValid(quizQuestion) === false) {
+  } else if (quizPointsValid(questionBody) === false) {
     return { error: 'Points must not be less than 1 or greater than 10' };
-  } else if (quizAnswerValid(quizQuestion) === false) {
+  } else if (quizAnswerValid(questionBody) === false) {
     return { error: '1 or more of your asnwer is less than 1 or greater 30 characters' };
-  } else if (quizAnswerDuplicateValid(quizQuestion) === false) {
+  } else if (quizAnswerDuplicateValid(questionBody) === false) {
     return { error: 'There are duplicate answers' };
-  } else if (quizAnswerCorrectValid(quizQuestion) === false) {
+  } else if (quizAnswerCorrectValid(questionBody) === false) {
     return { error: 'There are no correct asnwers' };
   } else {
     const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+    const user = data.users.find(user => user.authUserId === authUserId);
 
     let newQuestionId = 0;
     const quizQuestionLength = quiz.questions.length;
@@ -444,15 +450,23 @@ function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, qu
         }
       }
       newQuestionId = max + 1;
+
+      for (const quiz of data.trash) {
+        if (user.userQuizzes.includes(quiz.quizId) && quiz.quizId > max) {
+          max = quiz.quizId;
+          newQuestionId = max + 1;
+        }
+      }
+
     }
 
 
     const newQuestion = {
       questionId: newQuestionId,
-      question: quizQuestion.questionBody.question,
-      duration: quizQuestion.questionBody.duration,
-      points: quizQuestion.questionBody.points,
-      answers: quizQuestion.questionBody.answers.map((answer, length) => ({
+      question: questionBody.question,
+      duration: questionBody.duration,
+      points: questionBody.points,
+      answers: questionBody.answers.map((answer, length) => ({
         answerId: length,
         answer: answer.answer,
         correct: answer.correct,
@@ -463,8 +477,7 @@ function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, qu
     quiz.questions.push(newQuestion);
     quiz.timeLastEdited = Math.floor(Date.now() / 1000);
     quiz.numQuestions++;
-    quiz.duration += quizQuestion.questionBody.duration;
-    // console.log(quiz.questions[0]);
+    quiz.duration += questionBody.duration;
     save(data);
     return { questionId: newQuestionId };
   }
@@ -510,7 +523,7 @@ function adminQuizQuestionMove (quizId:number, questionId:number, token: ErrorOb
     quiz.questions.splice(originalPosition, 1);
     quiz.questions.splice(newPosition, 0, questionToMove);
     quiz.timeLastEdited = Math.floor(Date.now() / 1000);
-    // console.log( quiz.questions);
+   
     save(data);
     return {};
   }
@@ -650,6 +663,7 @@ function adminQuizQuestionDupicate (quizId:number, questionId:number, token: Err
     quiz.timeLastEdited = Math.floor(Date.now() / 1000);
     quiz.numQuestions++;
     save(data);
+    console.log(data.quizzes[0].questions)
     return { newQuestionId: newQuestionId };
   }
 }
@@ -689,17 +703,22 @@ function adminQuizQuestionDelete(token: ErrorObject | string, quizId: number, qu
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
   // console.log(quiz)
   // found the quiz which contains the question
+  console.log("before");
+  console.log(data.quizzes[0].questions)
   let index = 0;
   for (const question of quiz.questions) {
     if (question.questionId === questionId) {
       quiz.questions.splice(index, 1);
       save(data);
+     
+      quiz.numQuestions--;
+      
       return {
       };
     }
     index++;
   }
-  quiz.numQuestions--;
+  
   return {
     error: 'Something went wrong'
   };
@@ -715,7 +734,7 @@ function adminQuizQuestionDelete(token: ErrorObject | string, quizId: number, qu
  *
  * @returns {{}} return empty object on sucess and error msg on fail
  */
-function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, questionId: number, quizQuestion: quizQuestion) {
+function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, questionId: number, questionBody: any) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
@@ -736,35 +755,35 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
     return {
       error: 'This question does not exist.'
     };
-  } else if (!questionLengthValid(quizQuestion)) {
+  } else if (!questionLengthValid(questionBody)) {
     return {
       error: 'Question must be greater than 4 characters and less than 51 characters.'
     };
-  } else if (!answerCountValid(quizQuestion)) {
+  } else if (!answerCountValid(questionBody)) {
     return {
       error: 'Must have more than one answer and less than 7 answers.'
     };
-  } else if (!durationValid(quizQuestion)) {
+  } else if (!durationValid(questionBody)) {
     return {
       error: 'Time allowed must be a postive number.'
     };
-  } else if (!QuizDurationValid(data, quizQuestion, quizId)) {
+  } else if (!QuizDurationValid(data, questionBody, quizId)) {
     return {
       error: 'Quiz duration longer than 3 minutes.'
     };
-  } else if (!quizPointsValid(quizQuestion)) {
+  } else if (!quizPointsValid(questionBody)) {
     return {
       error: 'Question must award at least one point and no more than 10 points.'
     };
-  } else if (!quizAnswerValid(quizQuestion)) {
+  } else if (!quizAnswerValid(questionBody)) {
     return {
       error: 'Answer must be greater than 0 characters and less than 31 characters long.'
     };
-  } else if (!quizAnswerDuplicateValid(quizQuestion)) {
+  } else if (!quizAnswerDuplicateValid(questionBody)) {
     return {
       error: 'Cannot have same answers for one question.'
     };
-  } else if (!quizAnswerCorrectValid(quizQuestion)) {
+  } else if (!quizAnswerCorrectValid(questionBody)) {
     return {
       error: 'There are no correct answers.'
     };
@@ -773,12 +792,24 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
   // console.log(quiz)
   // found the quiz which contains the question
-  for (const question of quiz.questions) {
+  for (let question of quiz.questions) {
     if (question.questionId === questionId) {
-      quiz.questions = quizQuestion;
+      console.log("before")
+      console.log(data.quizzes[0].questions);
+      question.question = questionBody.question;
+      question.duration = questionBody.duration;
+      question.points = questionBody.points;
+      question.answers = questionBody.answers.map((answer, index) => ({
+        answerId: index,
+        answer: answer.answer,
+        correct: answer.correct,
+        color: getColour()
+      }));
       const updatedQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
       updatedQuiz.timeLastEdited = Math.floor(Date.now() / 1000);
       save(data);
+      console.log("after");
+      console.log(data.quizzes[0].questions);
       return {
 
       };

@@ -220,6 +220,7 @@ function quizValidCheck (quizId: number): boolean {
       return true;
     }
   }
+  console.log(data.trash);
   for (const quiz of data.trash) {
     if (quiz.quizId === quizId) {
       return true;
@@ -437,7 +438,8 @@ function requestAdminAuthPasswordUpdate(token: ErrorObject | string, oldPassword
  *
  * @returns {{object}} - response in javascript
 */
-function requestQuizQuestionCreate(token: ErrorObject | string, quizId: number, quizQuestion: object) {
+function requestQuizQuestionCreate(token: ErrorObject | string, quizId: number, questionBody: any) {
+  
   const res = request(
     'POST',
     SERVER_URL + `/v1/admin/quiz/${quizId}/question`,
@@ -446,7 +448,7 @@ function requestQuizQuestionCreate(token: ErrorObject | string, quizId: number, 
       // use the key 'json' instead of the query string 'qs'
       json: {
         token,
-        quizQuestion
+        questionBody
       }
     }
   );
@@ -730,8 +732,8 @@ function requestAdminQuizQuestionDuplicate(token: ErrorObject | string, quizId: 
  *
  * @returns {boolean} - true or false
 */
-function questionLengthValid(quizQuestion: QuizQuestion) {
-  const question = quizQuestion.questionBody.question;
+function questionLengthValid(questionBody: any) {
+  const question = questionBody.question;
 
   if (question.length < 5 || question.length > 50) {
     return false;
@@ -747,8 +749,8 @@ function questionLengthValid(quizQuestion: QuizQuestion) {
  *
  * @returns {boolean} - true or false
 */
-function answerCountValid(quizQuestion: QuizQuestion) {
-  const answers = quizQuestion.questionBody.answers;
+function answerCountValid(questionBody: any) {
+  const answers = questionBody.answers;
 
   if (answers.length < 2 || answers.length > 6) {
     return false;
@@ -764,8 +766,8 @@ function answerCountValid(quizQuestion: QuizQuestion) {
  *
  * @returns {boolean} - true or false
 */
-function durationValid(quizQuestion: QuizQuestion) {
-  const duration = quizQuestion.questionBody.duration;
+function durationValid(questionBody: any) {
+  const duration = questionBody.duration;
 
   if (duration > 0) {
     return true;
@@ -782,7 +784,7 @@ function durationValid(quizQuestion: QuizQuestion) {
  *
  * @returns {boolean} - true or false
 */
-function QuizDurationValid(data:any, quizQuestion:QuizQuestion, quizId:number) {
+function QuizDurationValid(data:any, questionBody:any, quizId:number) {
   let totalDuration = 0;
 
   const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
@@ -791,7 +793,7 @@ function QuizDurationValid(data:any, quizQuestion:QuizQuestion, quizId:number) {
     totalDuration += question.duration;
   }
 
-  totalDuration += quizQuestion.questionBody.duration;
+  totalDuration += questionBody.duration;
 
   if (totalDuration > 180) {
     return false;
@@ -807,8 +809,8 @@ function QuizDurationValid(data:any, quizQuestion:QuizQuestion, quizId:number) {
  *
  * @returns {boolean} - true or false
 */
-function quizPointsValid(quizQuestion:QuizQuestion) {
-  const points = quizQuestion.questionBody.points;
+function quizPointsValid(questionBody:any) {
+  const points = questionBody.points;
 
   if (points < 1 || points > 10) {
     return false;
@@ -824,8 +826,8 @@ function quizPointsValid(quizQuestion:QuizQuestion) {
  *
  * @returns {boolean} - true or false
 */
-function quizAnswerValid(quizQuestion: QuizQuestion) {
-  const answers = quizQuestion.questionBody.answers;
+function quizAnswerValid(questionBody: any) {
+  const answers = questionBody.answers;
 
   for (const answer of answers) {
     const answerLength = answer.answer.length;
@@ -845,8 +847,8 @@ function quizAnswerValid(quizQuestion: QuizQuestion) {
  *
  * @returns {boolean} - true or false
 */
-function quizAnswerDuplicateValid(quizQuestion:QuizQuestion) {
-  const answers = quizQuestion.questionBody.answers;
+function quizAnswerDuplicateValid(questionBody:any) {
+  const answers = questionBody.answers;
   const answerSet = new Set();
 
   for (const answer of answers) {
@@ -867,8 +869,8 @@ function quizAnswerDuplicateValid(quizQuestion:QuizQuestion) {
  *
  * @returns {boolean} - true or false
 */
-function quizAnswerCorrectValid(quizQuestion:QuizQuestion) {
-  const answers = quizQuestion.questionBody.answers;
+function quizAnswerCorrectValid(questionBody:any) {
+  const answers = questionBody.answers;
 
   for (const answer of answers) {
     if (answer.correct) {
@@ -988,7 +990,7 @@ function newPositioNotSame(data:any, quizId:number, questionId:number, newPositi
  *
  * @returns {{object}} - response in javascript
 */
-function requestAdminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, questionId: number, quizQuestion: QuizQuestion) {
+function requestAdminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, questionId: number, questionBody: any) {
   const res = request(
     'PUT',
     SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}`,
@@ -997,7 +999,7 @@ function requestAdminQuizQuestionUpdate(token: ErrorObject | string, quizId: num
       // use the key 'json' instead of the query string 'qs'
       json: {
         token,
-        quizQuestion
+        questionBody
       }
     }
   );

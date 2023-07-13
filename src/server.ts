@@ -104,8 +104,8 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
 
 app.post('/v1/admin/quiz/:quizId/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
-  const { token, quizQuestion } = req.body;
-  const response = adminQuizQuestionCreate(token, quizId, quizQuestion);
+  const { token, questionBody } = req.body;
+  const response = adminQuizQuestionCreate(token, quizId, questionBody);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
       return res.status(401).json(response);
@@ -301,8 +301,8 @@ app.post('/v1/admin/quiz/:quizId/question/:questionId/duplicate', (req: Request,
 app.put('/v1/admin/quiz/:quizId/question/:questionId', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionId);
-  const { token, quizQuestion } = req.body;
-  const response = adminQuizQuestionUpdate(token, quizId, questionId, quizQuestion);
+  const { token, questionBody } = req.body;
+  const response = adminQuizQuestionUpdate(token, quizId, questionId, questionBody);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
       return res.status(401).json(response);
