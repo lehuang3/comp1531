@@ -14,7 +14,7 @@ import { Data, Answer } from './interfaces';
  * @returns {array object} - List of quizze
 */
 function adminQuizList (token: ErrorObject | string) {
-  //const data: Data = read();
+  // const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     const error = authUserId.error;
