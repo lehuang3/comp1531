@@ -2,7 +2,7 @@ import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requ
 import { QuizQuestion } from './interfaces';
 let token1: string;
 let quiz: any;
-let quizQuestion: QuizQuestion;
+let quizQuestion: any;
 let questionId: any;
 
 beforeEach(() => {
@@ -32,7 +32,7 @@ beforeEach(() => {
     }
   };
 
-  questionId = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion).body;
+  questionId = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion.questionBody).body;
 });
 
 test('Invalid token struct', () => {

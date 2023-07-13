@@ -64,12 +64,13 @@ interface User {
 }
 
 interface QuizQuestion {
-  questionBody: {
+  questionId:number;
     question: string;
     duration: number;
     points: number;
     answers: Answer[];
-  };
+    colour:string;
+  
 }
 
 interface Answer {

@@ -56,8 +56,8 @@ beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test');
   quiz1 = requestAdminQuizCreate(token1.body.token, 'captials', 'quiz1');
-  token1Quiz1Question1Id = requestQuizQuestionCreate(token1.body.token, quiz1.body.quizId, quiz1Question1);
-  token1Quiz1Question2Id = requestQuizQuestionCreate(token1.body.token, quiz1.body.quizId, quiz1Question2);
+  token1Quiz1Question1Id = requestQuizQuestionCreate(token1.body.token, quiz1.body.quizId, quiz1Question1.questionBody);
+  token1Quiz1Question2Id = requestQuizQuestionCreate(token1.body.token, quiz1.body.quizId, quiz1Question2.questionBody);
 });
 
 describe('Passing cases', () => {
@@ -76,7 +76,7 @@ describe('Quiz not owned', () => {
   test('User 1 trying to delete question of user 2', () => {
     const token2 = requestAdminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test');
     const quiz2 = requestAdminQuizCreate(token2.body.token, 'quiz', 'quiz1');
-    const token2Quiz2Question1Id = requestQuizQuestionCreate(token2.body.token, quiz2.body.quizId, quiz1Question1);
+    const token2Quiz2Question1Id = requestQuizQuestionCreate(token2.body.token, quiz2.body.quizId, quiz1Question1.questionBody);
     expect(requestAdminQuizQuestionDelete(token1.body.token, quiz2.body.quizId, token2Quiz2Question1Id.body.questionId).body).toStrictEqual({ error: 'You do not have access to this quiz.' });
   });
 });
