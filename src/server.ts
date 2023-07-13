@@ -13,7 +13,6 @@ import {
   adminQuizTrashEmpty
 } from './quiz';
 import { clear } from './other';
-import { ErrorObject } from './interfaces';
 
 // Set up web app
 const app = express();
@@ -119,7 +118,7 @@ app.post('/v1/admin/quiz/:quizId/question', (req: Request, res: Response) => {
 });
 
 app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
-  const token = req.query.token;
+  const token = req.query.token as string;
   const response = adminQuizList(token);
 
   if ('error' in response) {
@@ -133,7 +132,7 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
 });
 
 app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
-  const token = req.query.token;
+  const token = req.query.token as string;
   const response = adminQuizTrash(token);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
@@ -147,7 +146,7 @@ app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
 
 app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
-  const token = req.query.token;
+  const token = req.query.token as string;
   const response = adminQuizRemove(token, quizId);
   if ('error' in response) {
     if (response.error === 'Token is not valid') {
@@ -185,7 +184,7 @@ app.put('/v1/admin/quiz/:quizId/description', (req: Request, res: Response) => {
 
 app.get('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
-  const token = req.query.token;
+  const token = req.query.token as string;
   const response = adminQuizInfo(token, quizId);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
@@ -267,7 +266,7 @@ app.put('/v1/admin/quiz/:quizId/question/:questionId/move', (req: Request, res: 
 app.delete('/v1/admin/quiz/:quizId/question/:questionId', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionId);
-  const token = req.query.token;
+  const token = req.query.token as string;
   const response = adminQuizQuestionDelete(token, quizId, questionId);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
@@ -321,7 +320,7 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   if (quizIdArr !== undefined) {
     quizIdArr = quizIdArr.map(quizId => parseInt(quizId));
   }
-  const token = req.query.token;
+  const token = req.query.token as string;
   const response = adminQuizTrashEmpty(token, quizIdArr);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {

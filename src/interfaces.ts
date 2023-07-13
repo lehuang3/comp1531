@@ -25,30 +25,10 @@ interface ErrorObject {
   error: string;
 }
 
-// type of datastore
-interface Data {
-  users: User[];
-  quizzes: Quiz[];
-  tokens: Token[];
-  trash:Quiz[];
-}
-
 // type of a token object in the tokens array
 interface Token {
   authUserId: number;
   sessionId: number;
-}
-
-// type of a quiz in the quizzes array
-interface Quiz {
-  quizId: number;
-  name: string;
-  timeCreated: number;
-  timeLastEdited: number;
-  description: string;
-  numQuestions: number;
-  questions: QuizQuestion[];
-  duration:number;
 }
 
 // type of a user in the users array
@@ -63,6 +43,11 @@ interface User {
   usedPasswords: string[]
 }
 
+interface Answer {
+  answer: string;
+  correct: boolean;
+}
+
 interface QuizQuestion {
   questionId:number;
     question: string;
@@ -70,12 +55,27 @@ interface QuizQuestion {
     points: number;
     answers: Answer[];
     colour:string;
-  
+
 }
 
-interface Answer {
-  answer: string;
-  correct: boolean;
+// type of a quiz in the quizzes array
+interface Quiz {
+  quizId: number;
+  name: string;
+  timeCreated: number;
+  timeLastEdited: number;
+  description: string;
+  numQuestions: number;
+  questions: QuizQuestion[];
+  duration:number;
+}
+
+// type of datastore
+interface Data {
+  users: User[];
+  quizzes: Quiz[];
+  tokens: Token[];
+  trash:Quiz[];
 }
 
 export { AdminAuthLoginReturn, AdminUserDetailsReturn, Answer, AdminAuthRegisterReturn, ErrorObject, Data, Token, User, Quiz, QuizQuestion };

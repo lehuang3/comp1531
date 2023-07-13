@@ -4,7 +4,7 @@ import {
   tokenOwner, questionLengthValid, answerCountValid, newPositioNotSame, newPositionValidCheck, questionValidCheck, durationValid, QuizDurationValid, quizPointsValid,
   quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash, getColour
 } from './other';
-import { Data } from './interfaces';
+import { Data, Answer } from './interfaces';
 
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -154,7 +154,7 @@ function adminQuizRemove (token: ErrorObject | string, quizId: number) {
     quiz.timeLastEdited = Math.floor(Date.now() / 1000);
 
     save(data);
-    console.log(data.quizzes)
+    console.log(data.quizzes);
     return {};
   }
 }
@@ -210,7 +210,7 @@ function adminQuizInfo (token: ErrorObject | string, quizId: number) {
   }
   return {
     error: 'Quiz does not exist'
-  }
+  };
 }
 
 /**
@@ -341,6 +341,7 @@ function adminQuizTrash(token: string) {
       quizId: quiz.quizId,
       name: quiz.name,
     });
+    return {};
   });
   return {
     quizzes,
@@ -457,16 +458,14 @@ function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, qu
           newQuestionId = max + 1;
         }
       }
-
     }
-
 
     const newQuestion = {
       questionId: newQuestionId,
       question: questionBody.question,
       duration: questionBody.duration,
       points: questionBody.points,
-      answers: questionBody.answers.map((answer, length) => ({
+      answers: questionBody.answers.map((answer: Answer, length: number) => ({
         answerId: length,
         answer: answer.answer,
         correct: answer.correct,
@@ -523,7 +522,7 @@ function adminQuizQuestionMove (quizId:number, questionId:number, token: ErrorOb
     quiz.questions.splice(originalPosition, 1);
     quiz.questions.splice(newPosition, 0, questionToMove);
     quiz.timeLastEdited = Math.floor(Date.now() / 1000);
-   
+
     save(data);
     return {};
   }
@@ -572,11 +571,11 @@ function adminQuizTransfer(token: string | ErrorObject, quizId: number, userEmai
     // compare name of quiz to be transfered with every quiz name of quizzes that the target user has
     for (const userQuizId of targetUserQuizzes) {
       let targetUserQuiz = data.quizzes.filter(quiz => quiz.quizId === userQuizId)[0];
-      console.log(targetUserQuiz)
+      console.log(targetUserQuiz);
       if (targetUserQuiz === undefined) {
         targetUserQuiz = data.trash.filter(quiz => quiz.quizId === userQuizId)[0];
       }
-      console.log(targetUserQuiz)
+      console.log(targetUserQuiz);
       if (transferedQuizName === targetUserQuiz.name) {
         return {
           error: "Quiz to be transfered has the same name as one of target user's quizzes",
@@ -597,6 +596,7 @@ function adminQuizTransfer(token: string | ErrorObject, quizId: number, userEmai
       user.userQuizzes.push(quizId);
       // console.log(user.userQuizzes)
     }
+    return {};
   });
   save(data);
   return {
@@ -663,7 +663,7 @@ function adminQuizQuestionDupicate (quizId:number, questionId:number, token: Err
     quiz.timeLastEdited = Math.floor(Date.now() / 1000);
     quiz.numQuestions++;
     save(data);
-    console.log(data.quizzes[0].questions)
+    console.log(data.quizzes[0].questions);
     return { newQuestionId: newQuestionId };
   }
 }
@@ -703,22 +703,22 @@ function adminQuizQuestionDelete(token: ErrorObject | string, quizId: number, qu
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
   // console.log(quiz)
   // found the quiz which contains the question
-  console.log("before");
-  console.log(data.quizzes[0].questions)
+  console.log('before');
+  console.log(data.quizzes[0].questions);
   let index = 0;
   for (const question of quiz.questions) {
     if (question.questionId === questionId) {
       quiz.questions.splice(index, 1);
       save(data);
-     
+
       quiz.numQuestions--;
-      
+
       return {
       };
     }
     index++;
   }
-  
+
   return {
     error: 'Something went wrong'
   };
@@ -794,7 +794,7 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
   // found the quiz which contains the question
   for (let question of quiz.questions) {
     if (question.questionId === questionId) {
-      console.log("before")
+      console.log('before');
       console.log(data.quizzes[0].questions);
       question.question = questionBody.question;
       question.duration = questionBody.duration;
@@ -830,7 +830,7 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
  * @returns {} - empty object
 */
 function adminQuizTrashEmpty(token: string | ErrorObject, quizIdArr: number[]) {
-  console.log(quizIdArr)
+  console.log(quizIdArr);
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
