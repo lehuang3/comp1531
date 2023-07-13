@@ -12,7 +12,7 @@ let counterSession = 0;
  * @returns {boolean} true or false
 */
 function checkValidString (string: string): boolean {
-  for (const char of string) {
+  for (const char of Array.from(string)) {
     const integer = char.charCodeAt(0);
     if ((integer > 64) && (integer < 91)) {
       continue;
@@ -37,7 +37,7 @@ function checkValidString (string: string): boolean {
 function checkValidPassword (string:string): boolean {
   let intCounter = 0;
   let charCounter = 0;
-  for (const char of string) {
+  for (const char of Array.from(string)) {
     const integer = char.charCodeAt(0);
     if ((integer > 64) && (integer < 91)) {
       charCounter++;
@@ -304,7 +304,7 @@ function adminAuthLogout (token: ErrorObject | string) {
  * @param {string} nameFirst username first name
  * @param {string} nameLast user lastname
  *
- * @returns {} 
+ * @returns {}
 */
 
 function adminAuthDetailsUpdate(token: string | ErrorObject, email: string, nameFirst: string, nameLast:string) {

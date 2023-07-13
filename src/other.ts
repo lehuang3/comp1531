@@ -439,7 +439,6 @@ function requestAdminAuthPasswordUpdate(token: ErrorObject | string, oldPassword
  * @returns {{object}} - response in javascript
 */
 function requestQuizQuestionCreate(token: ErrorObject | string, quizId: number, questionBody: any) {
-  
   const res = request(
     'POST',
     SERVER_URL + `/v1/admin/quiz/${quizId}/question`,
@@ -930,7 +929,7 @@ function requestAdminQuizQuestionDelete(token: ErrorObject | string, quizId: num
  * @param {object} data Datastore
  * @param {number} quizId Quiz Id
  * @param {number} questionId Question Id
- * 
+ *
  * @returns {boolean} - true or false
 */
 function questionValidCheck(data:any, quizId:number, questionId:number) {
@@ -949,7 +948,7 @@ function questionValidCheck(data:any, quizId:number, questionId:number) {
  * @param {object} data Datastore
  * @param {number} quizId Quiz Id
  * @param {number} newPosition Newposition of quiz question
- * 
+ *
  * @returns {boolean} - true or false
 */
 function newPositionValidCheck(data:any, quizId:number, newPosition: number) {
@@ -968,7 +967,7 @@ function newPositionValidCheck(data:any, quizId:number, newPosition: number) {
  * @param {object} data Datastore
  * @param {number} quizId Quiz Id
  * @param {number} newPosition Newposition of quiz question
- * 
+ *
  * @returns {boolean} - true or false
 */
 function newPositioNotSame(data:any, quizId:number, questionId:number, newPosition: number) {
@@ -1040,7 +1039,7 @@ function requestAdminQuizTrashEmpty(token: ErrorObject | string, quizIdArr: numb
 
 /**
  * Gnerates random colour
- * 
+ *
  * @returns {string} - colour
 */
 function getColour() {
