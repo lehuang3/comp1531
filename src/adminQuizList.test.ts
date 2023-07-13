@@ -1,11 +1,11 @@
 import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizList } from './other';
+
 let token1: string;
-let quiz: any;
 
 beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
-  quiz = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion').body;
+  requestAdminQuizCreate(token1, 'quiz1', 'Descritpion');
 });
 
 test('Not current sessions', () => {
@@ -24,7 +24,7 @@ test('Invalid token struct', () => {
 });
 
 test('Valid entry', () => {
-  requestAdminQuizCreate(token1, 'quiz2', 'Descritpion').body.token;
+  requestAdminQuizCreate(token1, 'quiz2', 'Descritpion');
   const response = requestAdminQuizList(token1);
   expect(response.body).toStrictEqual({
     quizzes: [

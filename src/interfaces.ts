@@ -50,11 +50,10 @@ interface Answer {
 
 interface QuizQuestion {
   questionId:number;
-    question: string;
-    duration: number;
-    points: number;
-    answers: Answer[];
-    colour:string;
+  question: string;
+  duration: number;
+  points: number;
+  answers: Answer[];
 
 }
 

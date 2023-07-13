@@ -383,7 +383,6 @@ function adminQuizRestore(token: ErrorObject | string, quizId: number) {
       error: 'You do not have access to this quiz.'
     };
   }
-
   data.quizzes.push(data.trash.find((quiz) => quiz.quizId === quizId));
   const newTrash: Quiz[] = data.trash.filter(quiz => quiz.quizId !== quizId).map(quiz => quiz);
   data.trash = newTrash;
@@ -615,7 +614,7 @@ function adminQuizTransfer(token: string | ErrorObject, quizId: number, userEmai
 */
 function adminQuizQuestionDupicate (quizId:number, questionId:number, token: ErrorObject | string) {
   const data: Data = read();
-  const users = [...data.users];
+  // const users = [...data.users];
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     const error = authUserId.error;
@@ -650,7 +649,7 @@ function adminQuizQuestionDupicate (quizId:number, questionId:number, token: Err
       newQuestionId = max + 1;
     }
 
-    const newQuestion = {
+    const newQuestion: QuizQuestion = {
       questionId: newQuestionId,
       question: question.question,
       duration: question.duration,
@@ -663,7 +662,7 @@ function adminQuizQuestionDupicate (quizId:number, questionId:number, token: Err
     quiz.timeLastEdited = Math.floor(Date.now() / 1000);
     quiz.numQuestions++;
     save(data);
-    console.log(data.quizzes[0].questions);
+    // console.log(data.quizzes[0].questions);
     return { newQuestionId: newQuestionId };
   }
 }
@@ -792,14 +791,12 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
   // console.log(quiz)
   // found the quiz which contains the question
-  for (let question of quiz.questions) {
+  for (const question of quiz.questions) {
     if (question.questionId === questionId) {
-      console.log('before');
-      console.log(data.quizzes[0].questions);
       question.question = questionBody.question;
       question.duration = questionBody.duration;
       question.points = questionBody.points;
-      question.answers = questionBody.answers.map((answer, index) => ({
+      question.answers = questionBody.answers.map((answer: Answer, index: number) => ({
         answerId: index,
         answer: answer.answer,
         correct: answer.correct,
@@ -808,8 +805,6 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
       const updatedQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
       updatedQuiz.timeLastEdited = Math.floor(Date.now() / 1000);
       save(data);
-      console.log("after");
-      console.log(data.quizzes[0].questions);
       return {
 
       };
@@ -872,8 +867,9 @@ function adminQuizTrashEmpty(token: string | ErrorObject, quizIdArr: number[]) {
         user.userQuizzes = user.userQuizzes.filter(quizId => quizId !== quizIdToRemove);
       }
     }
-    save(data);
+    return data;
   });
+  save(data);
   return {};
 }
 

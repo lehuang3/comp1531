@@ -1,5 +1,5 @@
 import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizRemove } from './other';
-import { token } from 'morgan';
+
 let token1: string;
 
 let quiz: any;
@@ -12,9 +12,7 @@ beforeEach(() => {
 
 test('Invalide User ID', () => {
   const token2 = requestAdminAuthRegister('hayden.hafezimasoomi@gmail.com', '1234abcd', 'hayden', 'Hafezi').body.token;
-
   const response = requestAdminQuizRemove(token2, quiz.quizId);
-
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
 });
@@ -24,7 +22,6 @@ test('Invalide quiz ID', () => {
     quizId: quiz.quizId + 1,
   };
   const response = requestAdminQuizRemove(token1, quiz2.quizId);
-
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
 });
@@ -38,15 +35,13 @@ test('Invalid token struct', () => {
 
 test('Check for invalid session', () => {
   const token2 = (parseInt(token1) + 1).toString();
-
   const response = requestAdminQuizRemove(token2, quiz.quizId);
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(403);
 });
 
 test('Valid entry', () => {
-  const quiz2 = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion').body.token;
-
+  requestAdminQuizCreate(token1, 'quiz1', 'Descritpion');
   const response = requestAdminQuizRemove(token1, quiz.quizId);
   expect(response.body).toStrictEqual({});
   expect(response.status).toStrictEqual(200);

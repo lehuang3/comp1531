@@ -1,5 +1,5 @@
 import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizInfo, requestAdminQuizQuestionUpdate, requestQuizQuestionCreate } from './other';
-import { QuizQuestion } from './interfaces';
+
 let token1: any;
 let quiz1: any;
 let token1Quiz1Question1Id: any;
@@ -400,11 +400,10 @@ describe('Invalid token', () => {
 
 describe('Time test', () => {
   test('Time edited changes with correct param', async () => {
-    const timeInitial = requestAdminQuizInfo(token1.body.token, quiz1.body.quizId).body.timeLastEdited;
-    let timeEnd: any;
+    const timeInitial: number = requestAdminQuizInfo(token1.body.token, quiz1.body.quizId).body.timeLastEdited;
     await new Promise((resolve) => setTimeout(resolve, 1000));
     await requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, quiz1Question2.questionBody);
-    timeEnd = requestAdminQuizInfo(token1.body.token, quiz1.body.quizId).body.timeLastEdited;
+    const timeEnd: number = requestAdminQuizInfo(token1.body.token, quiz1.body.quizId).body.timeLastEdited;
     expect(timeEnd - timeInitial).toBeGreaterThanOrEqual(0);
   });
 });

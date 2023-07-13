@@ -2,8 +2,7 @@ import fs from 'fs';
 import { Data, Token } from './interfaces';
 import request from 'sync-request';
 import { port, url } from './config.json';
-import { ErrorObject, QuizQuestion } from './interfaces';
-import { Console } from 'console';
+import { ErrorObject } from './interfaces';
 const SERVER_URL = `${url}:${port}`;
 
 /**
