@@ -2,9 +2,9 @@ import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requ
 import { QuizQuestion } from './interfaces';
 let token1: string;
 let quiz: any;
-let quizQuestion: QuizQuestion;
-let quizQuestion2: QuizQuestion;
-let quizQuestion3: QuizQuestion;
+let quizQuestion: any;
+let quizQuestion2: any;
+let quizQuestion3: any;
 let questionId3: any;
 
 beforeEach(() => {
@@ -80,9 +80,9 @@ beforeEach(() => {
     }
   };
 
-  requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion);
-  requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2);
-  questionId3 = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion3).body;
+  requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion.questionBody);
+  requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
+  questionId3 = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion3.questionBody).body;
 });
 
 test('Invalid token struct', () => {
