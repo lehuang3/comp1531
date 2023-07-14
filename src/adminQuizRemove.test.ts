@@ -45,8 +45,6 @@ test('Check for invalid session', () => {
 });
 
 test('Valid entry', () => {
-  const quiz2 = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion').body.token;
-
   const response = requestAdminQuizRemove(token1, quiz.quizId);
   expect(response.body).toStrictEqual({});
   expect(response.status).toStrictEqual(200);

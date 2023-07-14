@@ -24,7 +24,7 @@ describe('tests for adminAuthLogin', () => {
       ['patel@1@ail.com', 'Password']
     ])('Email invalid', (email, password) => {
       const userLogin = requestAdminAuthLogin(email, password);
-      expect(userLogin.body).toStrictEqual({ error: 'error: email address is does not exist' });
+      expect(userLogin.body).toStrictEqual({ error: 'error: email address does not exist' });
       expect(userLogin.status).toStrictEqual(400);
     });
   });
