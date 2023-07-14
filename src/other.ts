@@ -17,14 +17,11 @@ function requestClear() {
     'DELETE',
     SERVER_URL + '/v1/clear',
     {
-      // Note that for PUT/POST requests, you should
-      // use the key 'json' instead of the query string 'qs'
       qs: {
 
       }
     }
   );
-  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -43,14 +40,11 @@ function requestGetAdminUserDetails(token: ErrorObject | string) {
     'GET',
     SERVER_URL + '/v1/admin/user/details',
     {
-      // Note that for PUT/POST requests, you should
-      // use the key 'json' instead of the query string 'qs'
       qs: {
         token,
       }
     }
   );
-  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -219,7 +213,6 @@ function quizValidCheck (quizId: number): boolean {
       return true;
     }
   }
-  console.log(data.trash);
   for (const quiz of data.trash) {
     if (quiz.quizId === quizId) {
       return true;
@@ -321,8 +314,6 @@ function requestAdminAuthRegister(email: string, password: string, nameFirst: st
     'POST',
     SERVER_URL + '/v1/admin/auth/register',
     {
-      // Note that for PUT/POST requests, you should
-      // use the key 'json' instead of the query string 'qs'
       json: {
         email,
         password,
@@ -331,7 +322,6 @@ function requestAdminAuthRegister(email: string, password: string, nameFirst: st
       }
     }
   );
-  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -351,15 +341,12 @@ function requestAdminAuthLogin(email: string, password: string) {
     'POST',
     SERVER_URL + '/v1/admin/auth/login',
     {
-      // Note that for PUT/POST requests, you should
-      // use the key 'json' instead of the query string 'qs'
       json: {
         email,
         password,
       }
     }
   );
-  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -381,15 +368,12 @@ function requestAdminQuizDescriptionUpdate(token: ErrorObject | string, quizId: 
     'PUT',
     SERVER_URL + `/v1/admin/quiz/${quizId}/description`,
     {
-      // Note that for PUT/POST requests, you should
-      // use the key 'json' instead of the query string 'qs'
       json: {
         token,
         description
       }
     }
   );
-  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -411,8 +395,6 @@ function requestAdminAuthPasswordUpdate(token: ErrorObject | string, oldPassword
     'PUT',
     SERVER_URL + '/v1/admin/user/password',
     {
-      // Note that for PUT/POST requests, you should
-      // use the key 'json' instead of the query string 'qs'
       json: {
         token,
         oldPassword,
@@ -420,7 +402,6 @@ function requestAdminAuthPasswordUpdate(token: ErrorObject | string, oldPassword
       }
     }
   );
-  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -442,15 +423,12 @@ function requestQuizQuestionCreate(token: ErrorObject | string, quizId: number, 
     'POST',
     SERVER_URL + `/v1/admin/quiz/${quizId}/question`,
     {
-      // Note that for PUT/POST requests, you should
-      // use the key 'json' instead of the query string 'qs'
       json: {
         token,
         questionBody
       }
     }
   );
-  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -472,8 +450,6 @@ function requestAdminQuizCreate(token: ErrorObject | string, name: string, descr
     'POST',
     SERVER_URL + '/v1/admin/quiz',
     {
-      // Note that for PUT/POST requests, you should
-      // use the key 'json' instead of the query string 'qs'
       json: {
         token,
         name,
@@ -481,7 +457,6 @@ function requestAdminQuizCreate(token: ErrorObject | string, name: string, descr
       }
     }
   );
-  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -543,7 +518,7 @@ function requestAdminQuizNameUpdate(token: ErrorObject | string, quizId: number,
  * an existing quiz
  *
  * @param {string | ErrorObject} token - token/sessionId
- * @param {string | ErrorObject} token - token/sessionId
+ * @param {number} quizId - quiz Id
  *
  * @returns {{object}} - response in javascript
 */
@@ -552,8 +527,6 @@ function requestAdminQuizRemove(token: ErrorObject | string, quizId: number) {
     'DELETE',
     SERVER_URL + `/v1/admin/quiz/${quizId}`,
     {
-      // Note that for PUT/POST requests, you should
-      // use the key 'json' instead of the query string 'qs'
       qs: {
         token,
       }
@@ -577,8 +550,6 @@ function requestAdminQuizList(token: ErrorObject | string) {
     'GET',
     SERVER_URL + '/v1/admin/quiz/list',
     {
-      // Note that for PUT/POST requests, you should
-      // use the key 'json' instead of the query string 'qs'
       qs: {
         token,
       }
@@ -593,7 +564,8 @@ function requestAdminQuizList(token: ErrorObject | string) {
 /**
  * Send a 'get' request to the corresponding server route to
  * view quizzes in the trash
- * @param {{string | ErrorObject}} - token
+ * 
+ * @param {string | ErrorObject} token - token
  *
  * @returns {{object}} - response in javascript
 */
@@ -602,8 +574,6 @@ function requestAdminQuizTrash(token: ErrorObject | string) {
     'GET',
     SERVER_URL + '/v1/admin/quiz/trash',
     {
-      // Note that for PUT/POST requests, you should
-      // use the key 'json' instead of the query string 'qs'
       qs: {
         token,
       }
@@ -618,7 +588,10 @@ function requestAdminQuizTrash(token: ErrorObject | string) {
 /**
  * Send a 'post' request to the corresponding server route to
  * transfer a quiz from 1 user to another
- * @param {{string | ErrorObject}} - token
+ * 
+ * @param {string | ErrorObject} token - token
+ * @param {number} quizId - quiz Id
+ * @param {string | ErrorObject} token - token
  *
  * @returns {{object}} - response in javascript
 */
@@ -627,15 +600,12 @@ function requestAdminQuizTransfer(token: ErrorObject | string, quizId: number, u
     'POST',
     SERVER_URL + `/v1/admin/quiz/${quizId}/transfer`,
     {
-      // Note that for PUT/POST requests, you should
-      // use the key 'json' instead of the query string 'qs'
       json: {
         token,
         userEmail
       }
     }
   );
-  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -656,14 +626,11 @@ function requestAdminQuizRestore(token: ErrorObject | string, quizId: number) {
     'POST',
     SERVER_URL + `/v1/admin/quiz/${quizId}/restore`,
     {
-      // Note that for PUT/POST requests, you should
-      // use the key 'json' instead of the query string 'qs'
       json: {
         token
       }
     }
   );
-  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -726,7 +693,7 @@ function requestAdminQuizQuestionDuplicate(token: ErrorObject | string, quizId: 
 /**
  * Given a quiz question, check if the quiz question length is valid
  *
- * @param {object} quizQuestion question content
+ * @param {object} questionBody question content
  *
  * @returns {boolean} - true or false
 */
@@ -743,7 +710,7 @@ function questionLengthValid(questionBody: any) {
 /**
  * Given a quiz question, check if the quiz there sufficent asnwer within the question
  *
- * @param {string} quizQuestion Question content
+ * @param {object} questionBody Question content
  *
  * @returns {boolean} - true or false
 */
@@ -760,7 +727,7 @@ function answerCountValid(questionBody: any) {
 /**
  * Given a quiz question, check if the quiz question the duration is valid within the question
  *
- * @param {object} quizQuestion Question content
+ * @param {object} questionBody Question content
  *
  * @returns {boolean} - true or false
 */
@@ -776,13 +743,14 @@ function durationValid(questionBody: any) {
 
 /**
  * Given a quiz question, check if the quiz does not go over 180sec duration
+ * 
  * @param {object} data Question content
- * @param {object} quizQuestion Question content
+ * @param {object} questionBody Question content
  * @param {number} quizId quiz Id
  *
  * @returns {boolean} - true or false
 */
-function QuizDurationValid(data:any, questionBody:any, quizId:number) {
+function QuizDurationValid(data: any, questionBody: any, quizId: number) {
   let totalDuration = 0;
 
   const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
@@ -803,11 +771,11 @@ function QuizDurationValid(data:any, questionBody:any, quizId:number) {
 /**
  * Given a quiz question, check if the quiz question points is valid
  *
- * @param {object} quizQuestion question content
+ * @param {object} questionBody question content
  *
  * @returns {boolean} - true or false
 */
-function quizPointsValid(questionBody:any) {
+function quizPointsValid(questionBody: any) {
   const points = questionBody.points;
 
   if (points < 1 || points > 10) {
@@ -820,7 +788,7 @@ function quizPointsValid(questionBody:any) {
 /**
  * Given a quiz question, check if the quiz question asnwer length is valid
  *
- * @param {object} quizQuestion question content
+ * @param {object} questionBody question content
  *
  * @returns {boolean} - true or false
 */
@@ -841,11 +809,11 @@ function quizAnswerValid(questionBody: any) {
 /**
  * Given a quiz question, check if the quiz question asnwer are duplicates
  *
- * @param {object} quizQuestion question content
+ * @param {object} questionBody question content
  *
  * @returns {boolean} - true or false
 */
-function quizAnswerDuplicateValid(questionBody:any) {
+function quizAnswerDuplicateValid(questionBody: any) {
   const answers = questionBody.answers;
   const answerSet = new Set();
 
@@ -863,7 +831,7 @@ function quizAnswerDuplicateValid(questionBody:any) {
 /**
  * Given a quiz question, check if the quiz question has at least 1 correct asnwer
  *
- * @param {object} quizQuestion question content
+ * @param {object} questionBody question content
  *
  * @returns {boolean} - true or false
 */
@@ -899,7 +867,10 @@ function isQuizInTrash(quizId: number): boolean {
 /**
  * Send a 'DELETE' request to the corresponding server route for user details,
  * returning the response in the form of a javascript object
- * @param {{string | ErrorObject}}
+ * 
+ * @param {string | ErrorObject} token - token
+ * @param {number} quizId - quiz Id
+ * @param {number} questionId - question Id
  *
  * @returns {{object}} - response in javascript
 */
@@ -908,14 +879,11 @@ function requestAdminQuizQuestionDelete(token: ErrorObject | string, quizId: num
     'DELETE',
     SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}`,
     {
-      // Note that for PUT/POST requests, you should
-      // use the key 'json' instead of the query string 'qs'
       qs: {
         token
       }
     }
   );
-  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -931,7 +899,7 @@ function requestAdminQuizQuestionDelete(token: ErrorObject | string, quizId: num
  *
  * @returns {boolean} - true or false
 */
-function questionValidCheck(data:any, quizId:number, questionId:number) {
+function questionValidCheck(data: any, quizId: number, questionId: number) {
   const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
   for (const question of quiz.questions) {
     if (question.questionId === questionId) {
@@ -950,7 +918,7 @@ function questionValidCheck(data:any, quizId:number, questionId:number) {
  *
  * @returns {boolean} - true or false
 */
-function newPositionValidCheck(data:any, quizId:number, newPosition: number) {
+function newPositionValidCheck(data: any, quizId: number, newPosition: number) {
   const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
 
   if (newPosition < 0 || (newPosition > (quiz.questions.length - 1))) {
@@ -965,11 +933,12 @@ function newPositionValidCheck(data:any, quizId:number, newPosition: number) {
  *
  * @param {object} data Datastore
  * @param {number} quizId Quiz Id
+ * @param {number} questionId Question Id
  * @param {number} newPosition Newposition of quiz question
  *
  * @returns {boolean} - true or false
 */
-function newPositioNotSame(data:any, quizId:number, questionId:number, newPosition: number) {
+function newPositioNotSame(data: any, quizId: number, questionId: number, newPosition: number) {
   const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
 
   const originalPosition = quiz.questions.findIndex((question: { questionId: number; }) => question.questionId === questionId);
@@ -984,7 +953,11 @@ function newPositioNotSame(data:any, quizId:number, questionId:number, newPositi
 /**
  * Send a 'put' request to the corresponding server route to
  * question update
- * @param {{string | ErrorObject}} - token
+ * 
+ * @param {string | ErrorObject} token - token
+ * @param {number} quizId - quiz Id
+ * @param {number} questionId - question Id
+ * @param {object} questionBody - question object
  *
  * @returns {{object}} - response in javascript
 */
@@ -993,15 +966,12 @@ function requestAdminQuizQuestionUpdate(token: ErrorObject | string, quizId: num
     'PUT',
     SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}`,
     {
-      // Note that for PUT/POST requests, you should
-      // use the key 'json' instead of the query string 'qs'
       json: {
         token,
         questionBody
       }
     }
   );
-  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -1011,8 +981,9 @@ function requestAdminQuizQuestionUpdate(token: ErrorObject | string, quizId: num
 /**
  * Send a 'delete' request to the corresponding server route to
  * delete quiz/quizzes from the trash
- * @param {{string | ErrorObject}} - token
- * @param {number[]} - quizIds
+ * 
+ * @param {string | ErrorObject} token - token
+ * @param {number[]} quizIdArr - quizIds array
  *
  * @returns {{object}} - response in javascript
 */
@@ -1021,15 +992,12 @@ function requestAdminQuizTrashEmpty(token: ErrorObject | string, quizIdArr: numb
     'DELETE',
     SERVER_URL + '/v1/admin/quiz/trash/empty',
     {
-      // Note that for PUT/POST requests, you should
-      // use the key 'json' instead of the query string 'qs'
       qs: {
         token,
         quizIdArr
       }
     }
   );
-  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -1048,8 +1016,9 @@ function getColour() {
 }
 
 /**
- *
- * @param {{token}} - token/sessionId
+ * Send a 'post' which logs out the provided tokens user session
+ * 
+ * @param {ErrorObject | string} token - token/sessionId
  *
  * @returns {{}} - none
 */
@@ -1058,14 +1027,11 @@ function requestAdminAuthLogout(token: ErrorObject | string) {
     'POST',
     SERVER_URL + '/v1/admin/auth/logout',
     {
-      // Note that for PUT/POST requests, you should
-      // use the key 'json' instead of the query string 'qs'
       json: {
         token
       }
     }
   );
-  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -1075,7 +1041,8 @@ function requestAdminAuthLogout(token: ErrorObject | string) {
 /**
  * Send a 'put' request to the corresponding server route to
  * update user details
- * @param {{string | ErrorObject}} - token
+ * 
+ * @param {string | ErrorObject} token - token
  * @param {string} - user email
  * @param {string} - user first name
  * @param {string} - user last name
@@ -1087,8 +1054,6 @@ function requestAdminAuthDetailsUpdate(token: ErrorObject | string, email: strin
     'PUT',
     SERVER_URL + '/v1/admin/user/details',
     {
-      // Note that for PUT/POST requests, you should
-      // use the key 'json' instead of the query string 'qs'
       json: {
         token,
         email,
@@ -1097,7 +1062,6 @@ function requestAdminAuthDetailsUpdate(token: ErrorObject | string, email: strin
       }
     }
   );
-  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,

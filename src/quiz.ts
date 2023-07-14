@@ -166,7 +166,6 @@ function adminQuizRemove (token: ErrorObject | string, quizId: number) {
     quiz.timeLastEdited = Math.floor(Date.now() / 1000);
 
     save(data);
-    console.log(data.quizzes);
     return {};
   }
 }
@@ -579,11 +578,9 @@ function adminQuizTransfer(token: string | ErrorObject, quizId: number, userEmai
     // compare name of quiz to be transfered with every quiz name of quizzes that the target user has
     for (const userQuizId of targetUserQuizzes) {
       let targetUserQuiz = data.quizzes.filter(quiz => quiz.quizId === userQuizId)[0];
-      console.log(targetUserQuiz);
       if (targetUserQuiz === undefined) {
         targetUserQuiz = data.trash.filter(quiz => quiz.quizId === userQuizId)[0];
       }
-      console.log(targetUserQuiz);
       if (transferedQuizName === targetUserQuiz.name) {
         return {
           error: "Quiz to be transfered has the same name as one of target user's quizzes",
@@ -595,14 +592,10 @@ function adminQuizTransfer(token: string | ErrorObject, quizId: number, userEmai
   // original user, and added to userQuizzes of target user.
   data.users.map(user => {
     if (user.authUserId === authUserId) {
-      // console.log(user.userQuizzes)
       user.userQuizzes = user.userQuizzes.filter(userQuizId => userQuizId !== quizId);
-      // console.log(user.userQuizzes)
     }
     if (user.email === userEmail) {
-      // console.log(user.userQuizzes)
       user.userQuizzes.push(quizId);
-      // console.log(user.userQuizzes)
     }
     return {};
   });
@@ -668,7 +661,6 @@ function adminQuizQuestionDuplicate (quizId:number, questionId:number, token: Er
     quiz.timeLastEdited = Math.floor(Date.now() / 1000);
     quiz.numQuestions++;
     save(data);
-    console.log(data.quizzes[0].questions);
     return { newQuestionId: newQuestionId };
   }
 }
@@ -706,10 +698,7 @@ function adminQuizQuestionDelete(token: ErrorObject | string, quizId: number, qu
   }
   // find the quiz in data.quizzes by matching quizId to data.quizzes.quizId, find the quiz question in data.quizzes.quiz.question, splice out the question.
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
-  // console.log(quiz)
   // found the quiz which contains the question
-  console.log('before');
-  console.log(data.quizzes[0].questions);
   let index = 0;
   for (const question of quiz.questions) {
     if (question.questionId === questionId) {
@@ -795,12 +784,9 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
   }
   // find the quiz in data.quizzes by matching quizId to data.quizzes.quizId, find the quiz question in data.quizzes.quiz.question, splice out the question.
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
-  // console.log(quiz)
   // found the quiz which contains the question
   for (const question of quiz.questions) {
     if (question.questionId === questionId) {
-      console.log('before');
-      console.log(data.quizzes[0].questions);
       question.question = questionBody.question;
       question.duration = questionBody.duration;
       question.points = questionBody.points;
@@ -813,8 +799,6 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
       const updatedQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
       updatedQuiz.timeLastEdited = Math.floor(Date.now() / 1000);
       save(data);
-      console.log('after');
-      console.log(data.quizzes[0].questions);
       return {
 
       };

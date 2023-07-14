@@ -315,7 +315,6 @@ app.put('/v1/admin/quiz/:quizId/question/:questionId', (req: Request, res: Respo
 });
 
 app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
-  console.log(req.query);
   let quizIdArr = req.query.quizIdArr as any[];
   // if the array passed in is empty (no quizzes were chosen)
   if (quizIdArr !== undefined) {
@@ -332,7 +331,6 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
       return res.status(400).json(response);
     }
   }
-  // console.log('codes in server')
   res.json(response);
 });
 
