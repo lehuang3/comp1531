@@ -1,5 +1,5 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
-import { Data, Token, Quiz, User } from './interfaces';
+import { Data } from './interfaces';
 
 let data: Data = {
 

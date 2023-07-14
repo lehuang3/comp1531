@@ -28,7 +28,6 @@ describe('No ownership of quiz', () => {
   test('token1 attempts to restore quiz owned by 2', () => {
     const token2 = requestAdminAuthRegister('12345@email.com', '123adjakjfhgaA', 'david', 'test');
     const quiz3 = requestAdminQuizCreate(token2.body.token, 'quizname1', 'quiz123');
-    const quiz4 = requestAdminQuizCreate(token2.body.token, 'quizname', 'quiz456');
     requestAdminQuizRemove(token2.body.token, quiz3.body.quizId);
     expect(requestAdminQuizRestore(token1.body.token, quiz3.body.quizId).body).toStrictEqual({ error: 'You do not have access to this quiz.' });
   });
