@@ -9,7 +9,7 @@ import fs from 'fs';
 import { adminAuthRegister, adminUserDetails, adminAuthLogin, adminAuthPasswordUpdate, adminAuthLogout, adminAuthDetailsUpdate } from './auth';
 import {
   adminQuizCreate, adminQuizDescriptionUpdate, adminQuizRemove, adminQuizNameUpdate, adminQuizList, adminQuizInfo, adminQuizTrash,
-  adminQuizTransfer, adminQuizRestore, adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDupicate, adminQuizQuestionDelete, adminQuizQuestionUpdate,
+  adminQuizTransfer, adminQuizRestore, adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDuplicate, adminQuizQuestionDelete, adminQuizQuestionUpdate,
   adminQuizTrashEmpty
 } from './quiz';
 import { clear } from './other';
@@ -284,7 +284,7 @@ app.post('/v1/admin/quiz/:quizId/question/:questionId/duplicate', (req: Request,
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionId);
   const { token } = req.body;
-  const response = adminQuizQuestionDupicate(quizId, questionId, token);
+  const response = adminQuizQuestionDuplicate(quizId, questionId, token);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
       return res.status(401).json(response);
@@ -315,6 +315,7 @@ app.put('/v1/admin/quiz/:quizId/question/:questionId', (req: Request, res: Respo
 });
 
 app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
+  console.log(req.query);
   let quizIdArr = req.query.quizIdArr as any[];
   // if the array passed in is empty (no quizzes were chosen)
   if (quizIdArr !== undefined) {

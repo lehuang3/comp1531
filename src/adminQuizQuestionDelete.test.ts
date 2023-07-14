@@ -2,9 +2,7 @@ import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, request
 
 let token1: any;
 let quiz1: any;
-let quiz2: any;
 let token1Quiz1Question1Id: any;
-let token1Quiz1Question2Id: any;
 
 const quiz1Question1 = {
   questionBody: {
@@ -57,7 +55,6 @@ beforeEach(() => {
   token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test');
   quiz1 = requestAdminQuizCreate(token1.body.token, 'captials', 'quiz1');
   token1Quiz1Question1Id = requestQuizQuestionCreate(token1.body.token, quiz1.body.quizId, quiz1Question1.questionBody);
-  token1Quiz1Question2Id = requestQuizQuestionCreate(token1.body.token, quiz1.body.quizId, quiz1Question2.questionBody);
 });
 
 describe('Passing cases', () => {

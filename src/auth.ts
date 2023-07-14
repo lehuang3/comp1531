@@ -171,7 +171,7 @@ function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn 
 
   if (iD === -1) {
     return {
-      error: 'error: email address is does not exist'
+      error: 'error: email address does not exist'
     };
   }
 
@@ -251,6 +251,7 @@ function adminAuthPasswordUpdate (token: ErrorObject | string, oldPassword: stri
       error
     };
   }
+
   if (!checkValidPassword(newPassword)) {
     return {
       error: 'New password is invalid'
@@ -320,6 +321,15 @@ function adminAuthDetailsUpdate(token: string | ErrorObject, email: string, name
     };
   }
 
+  // check valid email
+  for (const user of data.users) {
+    if (user.email === email && user.authUserId !== authUserId) {
+      return {
+        error: 'error: email is already used for another account'
+      };
+    }
+  }
+
   if (!checkValidString(nameFirst)) {
     return {
       error: 'First name is invalid'
@@ -328,6 +338,18 @@ function adminAuthDetailsUpdate(token: string | ErrorObject, email: string, name
   if (!checkValidString(nameLast)) {
     return {
       error: 'Last name is invalid'
+    };
+  }
+  // check valid first name
+  if ((nameFirst.length < 2) || (nameFirst.length > 20)) {
+    return {
+      error: 'error: first name has an invalid length'
+    };
+  }
+  // check valid last name
+  if ((nameLast.length < 2) || (nameLast.length > 20)) {
+    return {
+      error: 'error: last name has an invalid length'
     };
   }
   if (!validator.isEmail(email)) {
