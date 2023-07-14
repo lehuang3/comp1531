@@ -77,11 +77,29 @@ function adminQuizCreate (token: ErrorObject | string, name: string, description
   } else {
     const quizLength = data.quizzes.length;
     let quizId = 0;
-
+    // max needs to be -1 because if the 1st quiz created is in trash
+    // then max can take the value of 0. If max is assigned with 0
+    // by default, then line 98 will always be executed, which we don't
+    // want in the case where the quiz being created is the 1st ever.
+    let max = -1;
+    // check in trash for existing quizIds
+    for (const index of data.trash) {
+      if (index.quizId > max) {
+        max = index.quizId;
+      }
+    }
     if (quizLength === 0) {
       quizId = 0;
+      for (const index of data.trash) {
+        if (index.quizId > max) {
+          max = index.quizId;
+        }
+      }
+      // if there are quizzes in trash
+      if (max >= 0) {
+        quizId = max + 1;
+      }
     } else {
-      let max = 0;
       for (const index of data.quizzes) {
         if (index.quizId > max) {
           max = index.quizId;
