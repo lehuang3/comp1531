@@ -564,7 +564,7 @@ function requestAdminQuizList(token: ErrorObject | string) {
 /**
  * Send a 'get' request to the corresponding server route to
  * view quizzes in the trash
- * 
+ *
  * @param {string | ErrorObject} token - token
  *
  * @returns {{object}} - response in javascript
@@ -588,7 +588,7 @@ function requestAdminQuizTrash(token: ErrorObject | string) {
 /**
  * Send a 'post' request to the corresponding server route to
  * transfer a quiz from 1 user to another
- * 
+ *
  * @param {string | ErrorObject} token - token
  * @param {number} quizId - quiz Id
  * @param {string | ErrorObject} token - token
@@ -743,7 +743,7 @@ function durationValid(questionBody: any) {
 
 /**
  * Given a quiz question, check if the quiz does not go over 180sec duration
- * 
+ *
  * @param {object} data Question content
  * @param {object} questionBody Question content
  * @param {number} quizId quiz Id
@@ -867,7 +867,7 @@ function isQuizInTrash(quizId: number): boolean {
 /**
  * Send a 'DELETE' request to the corresponding server route for user details,
  * returning the response in the form of a javascript object
- * 
+ *
  * @param {string | ErrorObject} token - token
  * @param {number} quizId - quiz Id
  * @param {number} questionId - question Id
@@ -953,7 +953,7 @@ function newPositioNotSame(data: any, quizId: number, questionId: number, newPos
 /**
  * Send a 'put' request to the corresponding server route to
  * question update
- * 
+ *
  * @param {string | ErrorObject} token - token
  * @param {number} quizId - quiz Id
  * @param {number} questionId - question Id
@@ -981,7 +981,7 @@ function requestAdminQuizQuestionUpdate(token: ErrorObject | string, quizId: num
 /**
  * Send a 'delete' request to the corresponding server route to
  * delete quiz/quizzes from the trash
- * 
+ *
  * @param {string | ErrorObject} token - token
  * @param {number[]} quizIdArr - quizIds array
  *
@@ -1017,7 +1017,7 @@ function getColour() {
 
 /**
  * Send a 'post' which logs out the provided tokens user session
- * 
+ *
  * @param {ErrorObject | string} token - token/sessionId
  *
  * @returns {{}} - none
@@ -1041,7 +1041,7 @@ function requestAdminAuthLogout(token: ErrorObject | string) {
 /**
  * Send a 'put' request to the corresponding server route to
  * update user details
- * 
+ *
  * @param {string | ErrorObject} token - token
  * @param {string} - user email
  * @param {string} - user first name
