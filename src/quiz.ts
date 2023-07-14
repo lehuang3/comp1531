@@ -445,7 +445,6 @@ function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, qu
     return { error: 'There are no correct asnwers' };
   } else {
     const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
-    const user = data.users.find(user => user.authUserId === authUserId);
 
     let newQuestionId = 0;
     const quizQuestionLength = quiz.questions.length;
@@ -460,13 +459,6 @@ function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, qu
         }
       }
       newQuestionId = max + 1;
-
-      for (const quiz of data.trash) {
-        if (user.userQuizzes.includes(quiz.quizId) && quiz.quizId > max) {
-          max = quiz.quizId;
-          newQuestionId = max + 1;
-        }
-      }
     }
 
     const newQuestion = {
