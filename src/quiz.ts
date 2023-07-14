@@ -786,7 +786,7 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
       question.question = questionBody.question;
       question.duration = questionBody.duration;
       question.points = questionBody.points;
-      question.answers = questionBody.answers.map((answer, index) => ({
+      question.answers = questionBody.answers.map((answer: any, index: number) => ({
         answerId: index,
         answer: answer.answer,
         correct: answer.correct,

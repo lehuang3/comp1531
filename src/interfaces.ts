@@ -49,12 +49,12 @@ interface Answer {
 }
 
 interface QuizQuestion {
-  questionId:number;
+    questionId:number;
     question: string;
     duration: number;
     points: number;
     answers: Answer[];
-    colour:string;
+    // colour:string;
 
 }
 
