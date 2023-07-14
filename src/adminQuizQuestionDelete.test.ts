@@ -27,29 +27,6 @@ const quiz1Question1 = {
   }
 };
 
-const quiz1Question2 = {
-  questionBody: {
-    question: 'What is capital of NSW?',
-    duration: 5,
-    points: 5,
-    answers: [
-      {
-        answer: 'Sydney',
-        correct: true
-      },
-      {
-        answer: 'Melbourne',
-        correct: false
-      },
-      {
-        answer: 'Canberra',
-        correct: false
-      }
-
-    ]
-  }
-};
-
 beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test');

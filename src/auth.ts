@@ -145,7 +145,6 @@ function adminAuthRegister (email: string, password: string, nameFirst: string, 
     authUserId: iD,
     sessionId: counterSession,
   });
-  // console.log(store.tokens);
   counterSession++;
   save(store);
   return {

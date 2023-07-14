@@ -1,5 +1,5 @@
 import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizRemove } from './other';
-import { token } from 'morgan';
+
 let token1: string;
 
 let quiz: any;
