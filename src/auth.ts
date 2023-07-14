@@ -12,9 +12,6 @@ let counterSession = 0;
  * @returns {boolean} true or false
 */
 function checkValidString (string: string): boolean {
-  if (string.length < 2 || string.length > 30) {
-    return false;
-  }
   for (const char of Array.from(string)) {
     const integer = char.charCodeAt(0);
     if ((integer > 64) && (integer < 91)) {
