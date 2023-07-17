@@ -2225,10 +2225,6 @@ paths:
       description: | 
        - A particular question gets duplicated to immediately after where the source question is
        - When this route is called, the timeLastEdited is updated
-      summary: Create quiz question
-      description: |
-        Create a new stub question for a particular quiz.
-        When this route is called, and a question is created, the timeLastEdited for quiz is set as the current time, and the colours of each answer are randomly generated again.
       tags:
         # - "By Topic: Quiz Management"
         - "Iteration 2 (New)"
