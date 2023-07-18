@@ -1907,7 +1907,7 @@ paths:
       summary: Create quiz question
       description: |
         Create a new stub question for a particular quiz.
-        When this route is called, and a question is created, the timeLastEdited is set as the same as the created time, and the colours of a question are randomly generated.
+        When this route is called, and a question is created, the timeLastEdited is set as the same as the created time, and the colours of all answers of that question are randomly generated.
       tags:
         # - "By Topic: Quiz Management"
         - "Iteration 2 (New)"
@@ -1947,7 +1947,7 @@ paths:
       summary: Create quiz question
       description: |
         Create a new stub question for a particular quiz.
-        When this route is called, and a question is created, the timeLastEdited is set as the same as the created time, and the colours of a question are randomly generated.
+        When this route is called, and a question is created, the timeLastEdited is set as the same as the created time, and the colours of all answers of that question are randomly generated.
       tags:
         # - "By Topic: Quiz Management"
         - "Iteration 3 (Modified)"
@@ -1993,7 +1993,7 @@ paths:
       summary: Update quiz question
       description: |
         Update the relevant details of a particular question within a quiz.
-        When this route is called, the last edited time is updated, and the colours of a question are randomly generated.
+        When this route is called, the last edited time is updated, and the colours of all answers of that question are randomly generated.
       tags:
         # - "By Topic: Quiz Management"
         - "Iteration 2 (New)"
@@ -2067,7 +2067,7 @@ paths:
       summary: Update quiz question
       description: |
         Update the relevant details of a particular question within a quiz.
-        When this route is called, the last edited time is updated, and the colours of a question are randomly generated.
+        When this route is called, the last edited time is updated, and the colours of all answers of that question are randomly generated.
       tags:
         # - "By Topic: Quiz Management"
         - "Iteration 3 (Modified)"
