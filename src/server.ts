@@ -39,14 +39,20 @@ app.get('/echo', (req: Request, res: Response) => {
   return res.json(echo(data));
 });
 
+app.get('/v2/admin/user/details', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const response = adminUserDetails(token);
+  res.json(response);
+});
+
 app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const response = adminUserDetails(token);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
-      return res.status(401).json(response);
+      res.status(401).json(response);
     } else if (response.error === 'Not a valid session') {
-      return res.status(403).json(response);
+      res.status(403).json(response);
     }
   }
   res.json(response);
@@ -152,7 +158,7 @@ app.get('/v2/admin/quiz/list', (req: Request, res: Response) => {
 
 
 app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
-  const token = req.query.token as string;
+  const token = req.headers.token as string;
   const response = adminQuizTrash(token);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
@@ -161,6 +167,12 @@ app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
       return res.status(403).json(response);
     }
   }
+  res.json(response);
+});
+
+app.get('/v2/admin/quiz/trash', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const response = adminQuizTrash(token);
   res.json(response);
 });
 
@@ -211,6 +223,14 @@ app.put('/v1/admin/quiz/:quizId/description', (req: Request, res: Response) => {
   res.json(response);
 });
 
+app.put('/v2/admin/quiz/:quizId/description', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const { description } = req.body;
+  const token = req.headers.token as string;
+  const response = adminQuizDescriptionUpdate(token, quizId, description);
+  res.json(response);
+});
+
 app.get('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const token = req.query.token as string;
@@ -256,6 +276,14 @@ app.post('/v1/admin/quiz/:quizId/transfer', (req: Request, res: Response) => {
       return res.status(400).json(response);
     }
   }
+  res.json(response);
+});
+
+app.post('/v2/admin/quiz/:quizId/transfer', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const token = req.headers.token as string;
+  const { userEmail } = req.body;
+  const response = adminQuizTransfer(token, quizId, userEmail);
   res.json(response);
 });
 
@@ -381,6 +409,17 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   res.json(response);
 });
 
+app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
+  let quizIdArr = req.query.quizIdArr as any[];
+  // if the array passed in is empty (no quizzes were chosen)
+  if (quizIdArr !== undefined) {
+    quizIdArr = quizIdArr.map(quizId => parseInt(quizId));
+  }
+  const token = req.headers.token as string;
+  const response = adminQuizTrashEmpty(token, quizIdArr);
+  res.json(response);
+});
+
 app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   const { token } = req.body;
   const response = adminAuthLogout(token);
@@ -388,9 +427,15 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
     if (response.error === 'Invalid token structure') {
       return res.status(401).json(response);
     } else {
-      return res.status(400).json(response);
+      return res.status(403).json(response);
     }
   }
+  res.json(response);
+});
+
+app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const response = adminAuthLogout(token);
   res.json(response);
 });
 
@@ -406,6 +451,13 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
       return res.status(400).json(response);
     }
   }
+  res.json(response);
+});
+
+app.put('/v2/admin/user/password', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const { oldPassword, newPassword } = req.body;
+  const response = adminAuthPasswordUpdate(token, oldPassword, newPassword);
   res.json(response);
 });
 
@@ -430,7 +482,6 @@ app.put('/v2/admin/user/details', (req: Request, res: Response) => {
   const response = adminAuthDetailsUpdate(token, email, nameFirst, nameLast);
   res.json(response);
 });
-
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

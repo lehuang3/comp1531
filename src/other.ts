@@ -38,10 +38,13 @@ function requestClear() {
 function requestGetAdminUserDetails(token: ErrorObject | string) {
   const res = request(
     'GET',
-    SERVER_URL + '/v1/admin/user/details',
+    SERVER_URL + '/v2/admin/user/details',
     {
+      headers: {
+        token: token as string,
+      },
       qs: {
-        token,
+
       }
     }
   );
@@ -366,11 +369,13 @@ function requestAdminAuthLogin(email: string, password: string) {
 function requestAdminQuizDescriptionUpdate(token: ErrorObject | string, quizId: number, description: string) {
   const res = request(
     'PUT',
-    SERVER_URL + `/v1/admin/quiz/${quizId}/description`,
+    SERVER_URL + `/v2/admin/quiz/${quizId}/description`,
     {
+      headers: {
+        token: token as string,
+      },
       json: {
-        token,
-        description
+        description,
       }
     }
   );
@@ -393,10 +398,12 @@ function requestAdminQuizDescriptionUpdate(token: ErrorObject | string, quizId: 
 function requestAdminAuthPasswordUpdate(token: ErrorObject | string, oldPassword: string, newPassword: string) {
   const res = request(
     'PUT',
-    SERVER_URL + '/v1/admin/user/password',
+    SERVER_URL + '/v2/admin/user/password',
     {
+      headers: {
+        token: token as string,
+      },
       json: {
-        token,
         oldPassword,
         newPassword
       }
@@ -576,10 +583,13 @@ function requestAdminQuizList(token: ErrorObject | string) {
 function requestAdminQuizTrash(token: ErrorObject | string) {
   const res = request(
     'GET',
-    SERVER_URL + '/v1/admin/quiz/trash',
+    SERVER_URL + '/v2/admin/quiz/trash',
     {
+      headers: {
+        token: token as string,
+      },
       qs: {
-        token,
+
       }
     }
   );
@@ -602,10 +612,12 @@ function requestAdminQuizTrash(token: ErrorObject | string) {
 function requestAdminQuizTransfer(token: ErrorObject | string, quizId: number, userEmail: string) {
   const res = request(
     'POST',
-    SERVER_URL + `/v1/admin/quiz/${quizId}/transfer`,
+    SERVER_URL + `/v2/admin/quiz/${quizId}/transfer`,
     {
+      headers: {
+        token: token as string,
+      },
       json: {
-        token,
         userEmail
       }
     }
@@ -992,10 +1004,12 @@ function requestAdminQuizQuestionUpdate(token: ErrorObject | string, quizId: num
 function requestAdminQuizTrashEmpty(token: ErrorObject | string, quizIdArr: number[]) {
   const res = request(
     'DELETE',
-    SERVER_URL + '/v1/admin/quiz/trash/empty',
+    SERVER_URL + '/v2/admin/quiz/trash/empty',
     {
+      headers: {
+        token: token as string,
+      },
       qs: {
-        token,
         quizIdArr
       }
     }
@@ -1027,10 +1041,12 @@ function getColour() {
 function requestAdminAuthLogout(token: ErrorObject | string) {
   const res = request(
     'POST',
-    SERVER_URL + '/v1/admin/auth/logout',
+    SERVER_URL + '/v2/admin/auth/logout',
     {
+      headers: {
+        token: token as string,
+      },
       json: {
-        token
       }
     }
   );
@@ -1057,10 +1073,9 @@ function requestAdminAuthDetailsUpdate(token: ErrorObject | string, email: strin
     SERVER_URL + '/v2/admin/user/details',
     {
       headers:{
-        token:token as string
+        token: token as string
       },
       json: {
-       
         email,
         nameFirst,
         nameLast
@@ -1073,8 +1088,26 @@ function requestAdminAuthDetailsUpdate(token: ErrorObject | string, email: strin
   };
 }
 
+function isSameQuizName(userEmail: string, quizId: number): boolean {
+  const data: Data = read();
+  const users = data.users;
+  const targetUserQuizzes = users.filter(user => user.email === userEmail)[0].userQuizzes;
+  const transferedQuizName = data.quizzes.filter(quiz => quiz.quizId === quizId)[0].name;
+  // compare name of quiz to be transfered with every quiz name of quizzes that the target user has
+  for (const userQuizId of targetUserQuizzes) {
+    let targetUserQuiz = data.quizzes.filter(quiz => quiz.quizId === userQuizId)[0];
+    if (targetUserQuiz === undefined) {
+      targetUserQuiz = data.trash.filter(quiz => quiz.quizId === userQuizId)[0];
+    }
+    if (transferedQuizName === targetUserQuiz.name) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export {
-  clear, save, read, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong,
+  clear, save, read, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, isSameQuizName,
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
   requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
   requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid,

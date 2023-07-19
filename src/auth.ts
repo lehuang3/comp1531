@@ -208,10 +208,12 @@ function adminUserDetails (token: ErrorObject | string): AdminUserDetailsReturn 
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
-    const error = authUserId.error;
-    return {
-      error
-    };
+    if (authUserId.error === 'Invalid token structure') {
+      throw HTTPError(401, 'Invalid token structure');
+      // invalid session
+    } else {
+      throw HTTPError(403, 'Not a valid session');
+    }
   }
   // loop through users array
   for (const user of data.users) {
@@ -243,26 +245,22 @@ function adminAuthPasswordUpdate (token: ErrorObject | string, oldPassword: stri
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
-    const error = authUserId.error;
-    return {
-      error
-    };
+    if (authUserId.error === 'Invalid token structure') {
+      throw HTTPError(401, 'Invalid token structure');
+      // invalid session
+    } else {
+      throw HTTPError(403, 'Not a valid session');
+    }
   }
 
   if (!checkValidPassword(newPassword)) {
-    return {
-      error: 'New password is invalid'
-    };
+    throw HTTPError(400, 'New password is invalid');
   }
   const user = data.users.find((userID) => userID.authUserId === authUserId);
   if (oldPassword !== user.password) {
-    return {
-      error: 'Old password is incorrect'
-    };
+    throw HTTPError(400, 'Old password is incorrect');
   } else if (user.usedPasswords.includes(newPassword)) {
-    return {
-      error: 'Password has been used before'
-    };
+    throw HTTPError(400, 'Password has been used before');
   }
   user.usedPasswords.push(oldPassword);
   user.password = newPassword;
@@ -283,10 +281,12 @@ function adminAuthLogout (token: ErrorObject | string) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
-    const error = authUserId.error;
-    return {
-      error
-    };
+    if (authUserId.error === 'Invalid token structure') {
+      throw HTTPError(401, 'Invalid token structure');
+      // invalid session
+    } else {
+      throw HTTPError(403, 'Not a valid session');
+    }
   }
   const sessionId = parseInt(token as string);
   // removes token from active tokens array

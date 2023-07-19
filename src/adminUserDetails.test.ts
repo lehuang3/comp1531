@@ -10,7 +10,6 @@ beforeEach(() => {
 
 test('Check for invalid token structure', () => {
   const token2 = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body.token;
-
   const response = requestGetAdminUserDetails(token2);
   expect(response.body).toStrictEqual({
     error: 'Invalid token structure',
