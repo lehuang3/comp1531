@@ -606,10 +606,12 @@ function requestAdminQuizTrash(token: ErrorObject | string) {
 function requestAdminQuizTransfer(token: ErrorObject | string, quizId: number, userEmail: string) {
   const res = request(
     'POST',
-    SERVER_URL + `/v1/admin/quiz/${quizId}/transfer`,
+    SERVER_URL + `/v2/admin/quiz/${quizId}/transfer`,
     {
+      headers: {
+        token: token as string,
+      },
       json: {
-        token,
         userEmail
       }
     }
@@ -1078,8 +1080,26 @@ function requestAdminAuthDetailsUpdate(token: ErrorObject | string, email: strin
   };
 }
 
+function isSameQuizName(userEmail: string, quizId: number): boolean {
+  const data: Data = read();
+  const users = data.users;
+  const targetUserQuizzes = users.filter(user => user.email === userEmail)[0].userQuizzes;
+  const transferedQuizName = data.quizzes.filter(quiz => quiz.quizId === quizId)[0].name;
+  // compare name of quiz to be transfered with every quiz name of quizzes that the target user has
+  for (const userQuizId of targetUserQuizzes) {
+    let targetUserQuiz = data.quizzes.filter(quiz => quiz.quizId === userQuizId)[0];
+    if (targetUserQuiz === undefined) {
+      targetUserQuiz = data.trash.filter(quiz => quiz.quizId === userQuizId)[0];
+    }
+    if (transferedQuizName === targetUserQuiz.name) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export {
-  clear, save, read, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong,
+  clear, save, read, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, isSameQuizName,
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
   requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
   requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid,

@@ -2,7 +2,7 @@ import { ErrorObject, Quiz } from './interfaces';
 import {
   save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong,
   tokenOwner, questionLengthValid, answerCountValid, newPositioNotSame, newPositionValidCheck, questionValidCheck, durationValid, QuizDurationValid, quizPointsValid,
-  quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash, getColour
+  quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash, getColour, isSameQuizName
 } from './other';
 import { Data, Answer } from './interfaces';
 import HTTPError from 'http-errors';
@@ -542,42 +542,23 @@ function adminQuizTransfer(token: string | ErrorObject, quizId: number, userEmai
   const users = [...data.users];
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
-    const error = authUserId.error;
-    return {
-      error
-    };
+    if (authUserId.error === 'Invalid token structure') {
+      throw HTTPError(401, 'Invalid token structure');
+      // invalid session
+    } else {
+      throw HTTPError(403, 'Not a valid session');
+    }
   }
   if (!quizValidCheck(quizId)) {
-    return {
-      error: 'Quiz does not exist.'
-    };
+    throw HTTPError(400, 'Quiz does not exist.');
   } else if (!quizValidOwner(authUserId, quizId)) {
-    return {
-      error: 'You do not have access to this quiz.'
-    };
+    throw HTTPError(400, 'You do not have access to this quiz.');
   } else if (users.filter(user => user.email === userEmail).length === 0) {
-    return {
-      error: 'Target user does not exist'
-    };
+    throw HTTPError(400, 'Target user does not exist');
   } else if (users.filter(user => user.email === userEmail)[0].authUserId === authUserId) {
-    return {
-      error: 'Target user is also original user'
-    };
-  } else {
-    const targetUserQuizzes = users.filter(user => user.email === userEmail)[0].userQuizzes;
-    const transferedQuizName = data.quizzes.filter(quiz => quiz.quizId === quizId)[0].name;
-    // compare name of quiz to be transfered with every quiz name of quizzes that the target user has
-    for (const userQuizId of targetUserQuizzes) {
-      let targetUserQuiz = data.quizzes.filter(quiz => quiz.quizId === userQuizId)[0];
-      if (targetUserQuiz === undefined) {
-        targetUserQuiz = data.trash.filter(quiz => quiz.quizId === userQuizId)[0];
-      }
-      if (transferedQuizName === targetUserQuiz.name) {
-        return {
-          error: "Quiz to be transfered has the same name as one of target user's quizzes",
-        };
-      }
-    }
+    throw HTTPError(400, 'Target user is also original user');
+  } else if (isSameQuizName(userEmail, quizId)) {
+    throw HTTPError(400, "Quiz to be transfered has the same name as one of target user's quizzes");
   }
   // Quiz is not removed from quizzes array, but is rather removed from userQuizzes of the
   // original user, and added to userQuizzes of target user.

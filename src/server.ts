@@ -245,6 +245,14 @@ app.post('/v1/admin/quiz/:quizId/transfer', (req: Request, res: Response) => {
   res.json(response);
 });
 
+app.post('/v2/admin/quiz/:quizId/transfer', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const token = req.headers.token as string;
+  const { userEmail } = req.body;
+  const response = adminQuizTransfer(token, quizId, userEmail);
+  res.json(response);
+});
+
 app.post('/v1/admin/quiz/:quizId/restore', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { token } = req.body;
