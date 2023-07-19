@@ -1,4 +1,5 @@
 import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate } from './other';
+import HTTPError from 'http-errors';
 let token1: string;
 let quiz: any;
 let quizQuestion: any;
@@ -7,6 +8,7 @@ beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
   quiz = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion').body;
+  
   quizQuestion = {
     questionBody: {
       question: 'What is capital of sydney?',
@@ -26,43 +28,37 @@ beforeEach(() => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
+  
 });
 
 test('Invalide quiz ID', () => {
   const quiz2 = {
     quizId: quiz.quizId + 1,
   };
-  const response = requestQuizQuestionCreate(token1, quiz2.quizId, quizQuestion.questionBody);
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestQuizQuestionCreate(token1, quiz2.quizId, quizQuestion.questionBody)).toThrow(HTTPError[400]);
 });
 
 test('Invalide User ID', () => {
   const token2 = requestAdminAuthRegister('hayden.hafezimasoomi@gmail.com', '1234abcd', 'hayden', 'Hafezi').body.token;
 
-  const response = requestQuizQuestionCreate(token2, quiz.quizId, quizQuestion.questionBody);
-
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestQuizQuestionCreate(token2, quiz.quizId, quizQuestion.questionBody)).toThrow(HTTPError[400]);
 });
 
 test('Invalid token struct', () => {
   const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
-  const response = requestQuizQuestionCreate(token4, quiz.quizId, quizQuestion.questionBody);
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(401);
+
+  expect(() => requestQuizQuestionCreate(token4, quiz.quizId, quizQuestion.questionBody)).toThrow(HTTPError[401]);
 });
 
 test('Check for invalid session', () => {
   const token2 = (parseInt(token1) + 1).toString();
 
-  const response = requestQuizQuestionCreate(token2, quiz.quizId, quizQuestion.questionBody);
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(403);
+  expect(() => requestQuizQuestionCreate(token2, quiz.quizId, quizQuestion.questionBody)).toThrow(HTTPError[403]);
 });
 
 test('Invalid question length > 50', () => {
@@ -85,14 +81,12 @@ test('Invalid question length > 50', () => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
-
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody)).toThrow(HTTPError[400]);
 });
 
 test('Invalid question length < 50', () => {
@@ -115,14 +109,12 @@ test('Invalid question length < 50', () => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
-
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody)).toThrow(HTTPError[400]);
 });
 
 test('Answer > 6', () => {
@@ -161,14 +153,12 @@ test('Answer > 6', () => {
           correct: true
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
-
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody)).toThrow(HTTPError[400]);
 });
 
 test('Answer < 2', () => {
@@ -186,32 +176,10 @@ test('Answer < 2', () => {
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
-
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody)).toThrow(HTTPError[400]);
 });
 
-test('Answer < 2', () => {
-  const quizQuestion2 = {
-    questionBody: {
-      question: 'What is capital of sydney?',
-      duration: 5,
-      points: 5,
-      answers: [
-        {
-          answer: 'sydney',
-          correct: true
-        }
-      ]
-    }
-  };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
-
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
-});
 
 test('duration < 0', () => {
   const quizQuestion2 = {
@@ -232,14 +200,12 @@ test('duration < 0', () => {
           answer: 'canberaa',
           correct: false
         },
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
-
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody)).toThrow(HTTPError[400]);
 });
 
 test('duration > 180', () => {
@@ -262,15 +228,14 @@ test('duration > 180', () => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
   requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion.questionBody);
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody)).toThrow(HTTPError[400]);
 });
 
 test('Point < 1', () => {
@@ -293,14 +258,12 @@ test('Point < 1', () => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
-
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody)).toThrow(HTTPError[400]);
 });
 
 test('Point > 10', () => {
@@ -323,44 +286,12 @@ test('Point > 10', () => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
-
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
-});
-
-test('Point > 10', () => {
-  const quizQuestion2 = {
-    questionBody: {
-      question: 'What is capital of USA?',
-      duration: 500,
-      points: 11,
-      answers: [
-        {
-          answer: 'NYC',
-          correct: true
-        },
-        {
-          answer: 'SANFRACIO',
-          correct: false
-        },
-        {
-          answer: 'Los ANgleds',
-          correct: false
-        }
-
-      ]
-    }
-  };
-
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
-
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody)).toThrow(HTTPError[400]);
 });
 
 test('answer length < 1', () => {
@@ -383,14 +314,12 @@ test('answer length < 1', () => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
-
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody)).toThrow(HTTPError[400]);
 });
 
 test('answer length > 30', () => {
@@ -413,14 +342,12 @@ test('answer length > 30', () => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
-
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody)).toThrow(HTTPError[400]);
 });
 
 test('Duplicate asnwer', () => {
@@ -443,14 +370,12 @@ test('Duplicate asnwer', () => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
-
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody)).toThrow(HTTPError[400]);
 });
 
 test('No correct asnwer', () => {
@@ -473,14 +398,12 @@ test('No correct asnwer', () => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
-
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody)).toThrow(HTTPError[400]);
 });
 
 test('Valid entry', () => {
@@ -488,4 +411,33 @@ test('Valid entry', () => {
 
   expect(response.body).toStrictEqual({ questionId: expect.any(Number) });
   expect(response.status).toStrictEqual(200);
+});
+
+test('Bad Image', () => {
+
+  let quizQuestion5 = {
+    questionBody: {
+      question: 'What is capital of sydney?',
+      duration: 5,
+      points: 5,
+      answers: [
+        {
+          answer: 'sydney',
+          correct: true
+        },
+        {
+          answer: 'Melbourne',
+          correct: false
+        },
+        {
+          answer: 'Camberra',
+          correct: false
+        }
+
+      ],
+      thumbnailUrl: "https://nw-syd-gitlab.cseunsw.tech/COMP1531/23T2/groups/M17D_EGGS/project-backend/-/blob/master/swagger.yaml"
+    }
+  };
+
+  expect(() => requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion5.questionBody)).toThrow(HTTPError[400]);
 });

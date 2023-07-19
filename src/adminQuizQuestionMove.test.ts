@@ -1,5 +1,5 @@
 import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizQuestionMove } from './other';
-
+import HTTPError from 'http-errors';
 let token1: string;
 let quiz: any;
 let quizQuestion: any;
@@ -88,29 +88,22 @@ beforeEach(() => {
 test('Invalid token struct', () => {
   const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
   const newPosition = 0;
-  const response = requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token4, newPosition);
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(401);
+  expect(() => requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token4, newPosition)).toThrow(HTTPError[401]);
 });
 
 test('Check for invalid session', () => {
   const token2 = (parseInt(token1) + 1).toString();
-
   const newPosition = 0;
-  const response = requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token2, newPosition);
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(403);
+  expect(() => requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token2, newPosition)).toThrow(HTTPError[403]);
 });
 
 test('Invalide User ID ie not owner', () => {
   const token2 = requestAdminAuthRegister('hayden.hafezimasoomi@gmail.com', '1234abcd', 'hayden', 'Hafezi').body.token;
   const newPosition = 0;
-  const response = requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token2, newPosition);
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token2, newPosition)).toThrow(HTTPError[400]);
 });
 
 test('Invalide quiz ID', () => {
@@ -118,10 +111,8 @@ test('Invalide quiz ID', () => {
     quizId: quiz.quizId + 1,
   };
   const newPosition = 0;
-  const response = requestAdminQuizQuestionMove(quiz2.quizId, questionId3.questionId, token1, newPosition);
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestAdminQuizQuestionMove(quiz2.quizId, questionId3.questionId, token1, newPosition)).toThrow(HTTPError[400]);
 });
 
 test('Invalide question ID', () => {
@@ -129,34 +120,26 @@ test('Invalide question ID', () => {
     questionId: questionId3.questionId + 1,
   };
   const newPosition = 0;
-  const response = requestAdminQuizQuestionMove(quiz.quizId, questionId4.questionId, token1, newPosition);
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestAdminQuizQuestionMove(quiz.quizId, questionId4.questionId, token1, newPosition)).toThrow(HTTPError[400]);
 });
 
 test('position > n-1', () => {
   const newPosition = 3;
-  const response = requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token1, newPosition);
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token1, newPosition)).toThrow(HTTPError[400]);
 });
 
 test('Position < 0', () => {
   const newPosition = -1;
-  const response = requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token1, newPosition);
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token1, newPosition)).toThrow(HTTPError[400]);
 });
 
 test('Same Position as before', () => {
   const newPosition = 2;
-  const response = requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token1, newPosition);
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token1, newPosition)).toThrow(HTTPError[400]);
 });
 
 test('Valid entry', () => {

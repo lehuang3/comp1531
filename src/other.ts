@@ -3,6 +3,7 @@ import { Data, Token } from './interfaces';
 import request from 'sync-request';
 import { port, url } from './config.json';
 import { ErrorObject } from './interfaces';
+import  HTTPError  from 'http-errors';
 const SERVER_URL = `${url}:${port}`;
 
 /**
@@ -418,17 +419,29 @@ function requestAdminAuthPasswordUpdate(token: ErrorObject | string, oldPassword
  *
  * @returns {{object}} - response in javascript
 */
-function requestQuizQuestionCreate(token: ErrorObject | string, quizId: number, questionBody: any) {
+function requestQuizQuestionCreate(token: any, quizId: number, questionBody: any) {
   const res = request(
     'POST',
-    SERVER_URL + `/v1/admin/quiz/${quizId}/question`,
+    SERVER_URL + `/v2/admin/quiz/${quizId}/question`,
     {
+      headers: {
+        token
+      },
       json: {
-        token,
+        
         questionBody
       }
     }
   );
+
+  if(res.statusCode === 401) {
+		throw HTTPError(res.statusCode,JSON.parse(res.body.toString()));
+	} else if(res.statusCode === 403) {
+		throw HTTPError(res.statusCode,JSON.parse(res.body.toString()));
+	} else if(res.statusCode === 400) {
+		throw HTTPError(res.statusCode,JSON.parse(res.body.toString()));
+	}
+
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -445,18 +458,30 @@ function requestQuizQuestionCreate(token: ErrorObject | string, quizId: number, 
  *
  * @returns {{object}} - response in javascript
 */
-function requestAdminQuizCreate(token: ErrorObject | string, name: string, description: string) {
+function requestAdminQuizCreate(token: any, name: string, description: string) {
   const res = request(
     'POST',
-    SERVER_URL + '/v1/admin/quiz',
+    SERVER_URL + '/v2/admin/quiz',
     {
+      headers:{
+        token
+      },
       json: {
-        token,
+        
         name,
         description
       }
     }
   );
+
+  if(res.statusCode === 401) {
+		throw HTTPError(res.statusCode,JSON.parse(res.body.toString()));
+	} else if(res.statusCode === 403) {
+		throw HTTPError(res.statusCode,JSON.parse(res.body.toString()));
+	} else if(res.statusCode === 400) {
+		throw HTTPError(res.statusCode,JSON.parse(res.body.toString()));
+	}
+
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -522,16 +547,25 @@ function requestAdminQuizNameUpdate(token: ErrorObject | string, quizId: number,
  *
  * @returns {{object}} - response in javascript
 */
-function requestAdminQuizRemove(token: ErrorObject | string, quizId: number) {
+function requestAdminQuizRemove(token: any, quizId: number) {
   const res = request(
     'DELETE',
-    SERVER_URL + `/v1/admin/quiz/${quizId}`,
+    SERVER_URL + `/v2/admin/quiz/${quizId}`,
     {
-      qs: {
-        token,
+      headers: {
+        token
       }
     }
   );
+
+	if(res.statusCode === 401) {
+		throw HTTPError(res.statusCode,JSON.parse(res.body.toString()));
+	} else if(res.statusCode === 403) {
+		throw HTTPError(res.statusCode,JSON.parse(res.body.toString()));
+	} else if(res.statusCode === 400) {
+		throw HTTPError(res.statusCode,JSON.parse(res.body.toString()));
+	}
+
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -545,16 +579,23 @@ function requestAdminQuizRemove(token: ErrorObject | string, quizId: number) {
  *
  * @returns {{object}} - response in javascript
 */
-function requestAdminQuizList(token: ErrorObject | string) {
+function requestAdminQuizList(token: any) {
   const res = request(
     'GET',
-    SERVER_URL + '/v1/admin/quiz/list',
+    SERVER_URL + '/v2/admin/quiz/list',
     {
-      qs: {
-        token,
-      }
+      headers: {
+				token
+			}
     }
   );
+
+	if(res.statusCode === 401) {
+		throw HTTPError(res.statusCode,JSON.parse(res.body.toString()));
+	} else if(res.statusCode === 403) {
+		throw HTTPError(res.statusCode,JSON.parse(res.body.toString()));
+	}
+
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -647,17 +688,29 @@ function requestAdminQuizRestore(token: ErrorObject | string, quizId: number) {
  *
  * @returns {{object}} - response in javascript
 */
-function requestAdminQuizQuestionMove(quizId: number, questionId: number, token: ErrorObject | string, newPosition: number) {
+function requestAdminQuizQuestionMove(quizId: number, questionId: number, token: any, newPosition: number) {
   const res = request(
     'PUT',
-    SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}/move`,
+    SERVER_URL + `/v2/admin/quiz/${quizId}/question/${questionId}/move`,
     {
+      headers: {
+        token
+      },
       json: {
-        token,
+        
         newPosition
       }
     }
   );
+
+  if(res.statusCode === 401) {
+		throw HTTPError(res.statusCode,JSON.parse(res.body.toString()));
+	} else if(res.statusCode === 403) {
+		throw HTTPError(res.statusCode,JSON.parse(res.body.toString()));
+	} else if(res.statusCode === 400) {
+		throw HTTPError(res.statusCode,JSON.parse(res.body.toString()));
+	}
+
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -754,13 +807,10 @@ function QuizDurationValid(data: any, questionBody: any, quizId: number) {
   let totalDuration = 0;
 
   const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
+ 
 
-  for (const question of quiz.questions) {
-    totalDuration += question.duration;
-  }
-
-  totalDuration += questionBody.duration;
-
+  totalDuration = questionBody.duration + quiz.duration;
+  
   if (totalDuration > 180) {
     return false;
   }
@@ -1049,24 +1099,39 @@ function requestAdminAuthLogout(token: ErrorObject | string) {
  *
  * @returns {{object}} - response in javascript
 */
-function requestAdminAuthDetailsUpdate(token: ErrorObject | string, email: string, nameFirst: string, nameLast: string) {
+function requestAdminAuthDetailsUpdate(token: any, email: string, nameFirst: string, nameLast: string) {
   const res = request(
     'PUT',
-    SERVER_URL + '/v1/admin/user/details',
+    SERVER_URL + '/v2/admin/user/details',
     {
+      headers: {
+        token
+      },
       json: {
-        token,
+        
         email,
         nameFirst,
         nameLast
       }
     }
   );
+
+  if(res.statusCode === 401) {
+		throw HTTPError(res.statusCode,JSON.parse(res.body.toString()));
+	} else if(res.statusCode === 403) {
+		throw HTTPError(res.statusCode,JSON.parse(res.body.toString()));
+	} else if(res.statusCode === 400) {
+		throw HTTPError(res.statusCode,JSON.parse(res.body.toString()));
+	}
+
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
   };
 }
+
+
+
 
 export {
   clear, save, read, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong,
@@ -1074,5 +1139,5 @@ export {
   requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
   requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid,
   quizAnswerCorrectValid, isQuizInTrash, requestAdminQuizQuestionMove, questionValidCheck, newPositioNotSame, newPositionValidCheck, requestAdminQuizQuestionDuplicate,
-  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate, requestAdminAuthLogout, requestAdminAuthDetailsUpdate
-};
+  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate, requestAdminAuthLogout, requestAdminAuthDetailsUpdate,
+  };

@@ -17,6 +17,7 @@ import { clear } from './other';
 
 // Set up web app
 const app = express();
+app.use(errorHandler())
 // Use middleware that allows us to access the JSON body of requests
 app.use(json());
 // Use middleware that allows for access from other domains
@@ -96,10 +97,52 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   res.json(response);
 });
 
+app.post('/v2/admin/quiz', (req: Request, res: Response) => {
+  const { name, description } = req.body;
+  const token = req.header('token');
+  const response = adminQuizCreate(token, name, description);
+
+  if ('error' in response) {
+    if (response.error === 'Invalid token structure') {
+      return res.status(401).json(response);
+    } else if (response.error === 'Not a valid session') {
+      return res.status(403).json(response);
+    } else if (response.error === 'Quiz name is not valid') {
+      return res.status(400).json(response);
+    } else if (response.error === 'Quiz name length is not valid') {
+      return res.status(400).json(response);
+    } else if (response.error === 'Quiz name is taken') {
+      return res.status(400).json(response);
+    } else if (response.error === 'Quiz description is not valid') {
+      return res.status(400).json(response);
+    }
+  }
+  res.json(response);
+});
+
 app.post('/v1/admin/quiz/:quizId/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { token, questionBody } = req.body;
   const response = adminQuizQuestionCreate(token, quizId, questionBody);
+  if ('error' in response) {
+    if (response.error === 'Invalid token structure') {
+      return res.status(401).json(response);
+    } else if (response.error === 'Not a valid session') {
+      return res.status(403).json(response);
+    } else {
+      return res.status(400).json(response);
+    }
+  }
+  res.json(response);
+});
+
+app.post('/v2/admin/quiz/:quizId/question', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const token = req.header('token');
+  console.log("V2)");
+  const { questionBody } = req.body;
+  const response = adminQuizQuestionCreate(token, quizId, questionBody);
+  console.log(response);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
       return res.status(401).json(response);
@@ -126,6 +169,20 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   res.json(response);
 });
 
+app.get('/v2/admin/quiz/list', (req: Request, res: Response) => {
+  const token = req.header('token');
+  const response = adminQuizList(token);
+ 
+  if ('error' in response) {
+    if (response.error === 'Invalid token structure') {
+      return res.status(401).json(response);
+    } else if (response.error === 'Not a valid session') {
+      return res.status(403).json(response);
+    }
+  }
+  res.json(response);
+});
+
 app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const response = adminQuizTrash(token);
@@ -142,6 +199,28 @@ app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
 app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const token = req.query.token as string;
+  const response = adminQuizRemove(token, quizId);
+  if ('error' in response) {
+    if (response.error === 'Token is not valid') {
+      return res.status(401).json(response);
+    } else if (response.error === 'Not a valid session') {
+      return res.status(403).json(response);
+    } else if (response.error === 'Invalid token structure') {
+      return res.status(401).json(response);
+    } else if (response.error === 'User id not valid') {
+      return res.status(400).json(response);
+    } else if (response.error === 'quiz id not valid') {
+      return res.status(400).json(response);
+    } else if (response.error === 'Not owner of quiz') {
+      return res.status(400).json(response);
+    }
+  }
+  res.json(response);
+});
+
+app.delete('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const token = req.header('token');
   const response = adminQuizRemove(token, quizId);
   if ('error' in response) {
     if (response.error === 'Token is not valid') {
@@ -258,6 +337,24 @@ app.put('/v1/admin/quiz/:quizId/question/:questionId/move', (req: Request, res: 
   res.json(response);
 });
 
+app.put('/v2/admin/quiz/:quizId/question/:questionId/move', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const questionId = parseInt(req.params.questionId);
+  const token = req.header('token');
+  const {  newPosition } = req.body;
+  const response = adminQuizQuestionMove(quizId, questionId, token, newPosition);
+  if ('error' in response) {
+    if (response.error === 'Invalid token structure') {
+      return res.status(401).json(response);
+    } else if (response.error === 'Not a valid session') {
+      return res.status(403).json(response);
+    } else {
+      return res.status(400).json(response);
+    }
+  }
+  res.json(response);
+});
+
 app.delete('/v1/admin/quiz/:quizId/question/:questionId', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionId);
@@ -359,6 +456,22 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
 
 app.put('/v1/admin/user/details', (req: Request, res: Response) => {
   const { token, email, nameFirst, nameLast } = req.body;
+  const response = adminAuthDetailsUpdate(token, email, nameFirst, nameLast);
+  if ('error' in response) {
+    if (response.error === 'Invalid token structure') {
+      return res.status(401).json(response);
+    } else if (response.error === 'Not a valid session') {
+      return res.status(403).json(response);
+    } else {
+      return res.status(400).json(response);
+    }
+  }
+  res.json(response);
+});
+
+app.put('/v2/admin/user/details', (req: Request, res: Response) => {
+  const { email, nameFirst, nameLast } = req.body;
+  const token = req.header('token');
   const response = adminAuthDetailsUpdate(token, email, nameFirst, nameLast);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {

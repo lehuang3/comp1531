@@ -1,5 +1,5 @@
 import { requestClear, requestAdminAuthRegister, requestAdminAuthDetailsUpdate } from './other';
-
+import  HTTPError  from 'http-errors';
 let token1: any;
 describe('tests for adminAuthDetailsUpdate', () => {
   beforeEach(() => {
@@ -16,9 +16,7 @@ describe('tests for adminAuthDetailsUpdate', () => {
   test('email used by another user', () => {
     // Wrong password
     const token2 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
-    const userLogin = requestAdminAuthDetailsUpdate(token2, 'patel@gmail.com', 'Santa', 'Claus');
-    expect(userLogin.body).toStrictEqual({ error: 'error: email is already used for another account' });
-    expect(userLogin.status).toStrictEqual(400);
+    expect(() => requestAdminAuthDetailsUpdate(token2, 'patel@gmail.com', 'Santa', 'Claus')).toThrow(HTTPError[400]);
   });
 
   describe('Testing if user is logged out', () => {
@@ -30,24 +28,16 @@ describe('tests for adminAuthDetailsUpdate', () => {
     ])('Invalid email/first name/last name', (email, nameFirst, nameLast) => {
       requestClear();
       const res = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel').body.token;
-      const userLogin = requestAdminAuthDetailsUpdate(res, email, nameFirst, nameLast);
-      expect(userLogin.body).toStrictEqual({ error: expect.any(String) });
-      expect(userLogin.status).toStrictEqual(400);
+      expect(() => requestAdminAuthDetailsUpdate(res, email, nameFirst, nameLast)).toThrow(HTTPError[400]);
     });
   });
   test('Testing token is not a valid structure', () => {
     // Wrong password
     const response = requestAdminAuthRegister('patel@gmail.com', 'Abcd173%', 'L', 'Cyberia').body.token;
-    const userLogin = requestAdminAuthDetailsUpdate(response, 'santaclaus@gmail.com', 'Santa', 'Claus');
-    expect(userLogin.body).toStrictEqual({ error: expect.any(String) });
-    expect(userLogin.status).toStrictEqual(401);
+    expect(() => requestAdminAuthDetailsUpdate(response, 'santaclaus@gmail.com', 'Santa', 'Claus')).toThrow(HTTPError[401]);
   });
   test('invalid session', () => {
     const token2 = (parseInt(token1) + 1).toString();
-    const response = requestAdminAuthDetailsUpdate(token2, 'santaclaus@gmail.com', 'Santa', 'Claus');
-    expect(response.body).toStrictEqual({
-      error: 'Not a valid session'
-    });
-    expect(response.status).toStrictEqual(403);
+    expect(() => requestAdminAuthDetailsUpdate(token2, 'santaclaus@gmail.com', 'Santa', 'Claus')).toThrow(HTTPError[403]);
   });
 });

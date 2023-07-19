@@ -1,4 +1,5 @@
 import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizList } from './other';
+import HTTPError from 'http-errors';
 let token1: string;
 
 beforeEach(() => {
@@ -9,17 +10,12 @@ beforeEach(() => {
 
 test('Not current sessions', () => {
   const token2 = (parseInt(token1) + 1).toString();
-
-  const response = requestAdminQuizList(token2);
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(403);
+  expect(() => requestAdminQuizList(token2)).toThrow(HTTPError[403]);
 });
 
 test('Invalid token struct', () => {
   const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
-  const response = requestAdminQuizList(token4);
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(401);
+  expect(() => requestAdminQuizList(token4)).toThrow(HTTPError[401]);
 });
 
 test('Valid entry', () => {

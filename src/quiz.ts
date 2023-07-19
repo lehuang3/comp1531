@@ -5,6 +5,7 @@ import {
   quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash, getColour
 } from './other';
 import { Data, Answer } from './interfaces';
+const isImageUrl = require('is-image-url');
 
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -443,6 +444,8 @@ function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, qu
     return { error: 'There are duplicate answers' };
   } else if (quizAnswerCorrectValid(questionBody) === false) {
     return { error: 'There are no correct asnwers' };
+  } else if (isImageUrl(questionBody.thumbnailUrl)=== false) {
+    return { error: 'Bad Image' };
   } else {
     const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
 
@@ -471,7 +474,8 @@ function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, qu
         answer: answer.answer,
         correct: answer.correct,
         color: getColour()
-      }))
+      })),
+      thumbnailUrl: questionBody.thumbnailUrl
     };
 
     quiz.questions.push(newQuestion);
@@ -479,6 +483,7 @@ function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, qu
     quiz.numQuestions++;
     quiz.duration += questionBody.duration;
     save(data);
+   
     return { questionId: newQuestionId };
   }
 }

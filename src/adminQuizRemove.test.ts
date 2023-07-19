@@ -1,5 +1,5 @@
 import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizRemove } from './other';
-
+import HTTPError from 'http-errors';
 let token1: string;
 
 let quiz: any;
@@ -12,36 +12,24 @@ beforeEach(() => {
 
 test('Invalide User ID', () => {
   const token2 = requestAdminAuthRegister('hayden.hafezimasoomi@gmail.com', '1234abcd', 'hayden', 'Hafezi').body.token;
-
-  const response = requestAdminQuizRemove(token2, quiz.quizId);
-
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestAdminQuizRemove(token2, quiz.quizId)).toThrow(HTTPError[400]);
 });
 
 test('Invalide quiz ID', () => {
   const quiz2 = {
     quizId: quiz.quizId + 1,
   };
-  const response = requestAdminQuizRemove(token1, quiz2.quizId);
-
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
+  expect(() => requestAdminQuizRemove(token1, quiz2.quizId)).toThrow(HTTPError[400]);
 });
 
 test('Invalid token struct', () => {
   const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
-  const response = requestAdminQuizRemove(token4, quiz.quizId);
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(401);
+  expect(() => requestAdminQuizRemove(token4, quiz.quizId)).toThrow(HTTPError[401]);
 });
 
 test('Check for invalid session', () => {
   const token2 = (parseInt(token1) + 1).toString();
-
-  const response = requestAdminQuizRemove(token2, quiz.quizId);
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(403);
+  expect(() => requestAdminQuizRemove(token2, quiz.quizId)).toThrow(HTTPError[403]);
 });
 
 test('Valid entry', () => {
