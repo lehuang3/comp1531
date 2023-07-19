@@ -18,7 +18,7 @@ test('Token is already logout', () => {
   requestAdminAuthLogout(token1.body.token);
   const userLogin = requestAdminAuthLogout(token1.body.token);
   expect(userLogin.body).toStrictEqual({ error: 'Not a valid session' });
-  expect(userLogin.status).toStrictEqual(400);
+  expect(userLogin.status).toStrictEqual(403);
 });
 
 test('Testing token is not a valid structure', () => {

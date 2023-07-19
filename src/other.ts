@@ -1037,10 +1037,12 @@ function getColour() {
 function requestAdminAuthLogout(token: ErrorObject | string) {
   const res = request(
     'POST',
-    SERVER_URL + '/v1/admin/auth/logout',
+    SERVER_URL + '/v2/admin/auth/logout',
     {
+      headers: {
+        token: token as string,
+      },
       json: {
-        token
       }
     }
   );

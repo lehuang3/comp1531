@@ -375,9 +375,15 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
     if (response.error === 'Invalid token structure') {
       return res.status(401).json(response);
     } else {
-      return res.status(400).json(response);
+      return res.status(403).json(response);
     }
   }
+  res.json(response);
+});
+
+app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const response = adminAuthLogout(token);
   res.json(response);
 });
 
