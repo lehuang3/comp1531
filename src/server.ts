@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
 import errorHandler from 'middleware-http-errors';
+import HTTPError from 'http-errors';
 import YAML from 'yaml';
 import sui from 'swagger-ui-express';
 import fs from 'fs';
@@ -43,9 +44,9 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   const response = adminUserDetails(token);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
-      return res.status(401).json(response);
+      throw HTTPError(401, 'Invalid token structure');
     } else if (response.error === 'Not a valid session') {
-      return res.status(403).json(response);
+      throw HTTPError(403, 'Not a valid session');
     }
   }
   res.json(response);

@@ -3,6 +3,7 @@ import { Data, Token } from './interfaces';
 import request from 'sync-request';
 import { port, url } from './config.json';
 import { ErrorObject } from './interfaces';
+import HTTPError from 'http-errors';
 const SERVER_URL = `${url}:${port}`;
 
 /**
@@ -45,6 +46,9 @@ function requestGetAdminUserDetails(token: ErrorObject | string) {
       }
     }
   );
+  if (res.statusCode === 401 || res.statusCode === 403 || res.statusCode === 400) {
+    throw HTTPError(res.statusCode, JSON.parse(res.body.toString()));
+  }
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
