@@ -424,6 +424,13 @@ app.put('/v1/admin/user/details', (req: Request, res: Response) => {
   res.json(response);
 });
 
+app.put('/v2/admin/user/details', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const { email, nameFirst, nameLast } = req.body;
+  const response = adminAuthDetailsUpdate(token, email, nameFirst, nameLast);
+  res.json(response);
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

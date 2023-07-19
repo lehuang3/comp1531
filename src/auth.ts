@@ -312,47 +312,37 @@ function adminAuthDetailsUpdate(token: string | ErrorObject, email: string, name
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
-    const error = authUserId.error;
-    return {
-      error
-    };
+    if (authUserId.error === 'Invalid token structure') {
+      throw HTTPError(401, 'Invalid token structure');
+      // invalid session
+    } else {
+      throw HTTPError(403, 'Not a valid session');
+    }
   }
 
   // check valid email
   for (const user of data.users) {
     if (user.email === email && user.authUserId !== authUserId) {
-      return {
-        error: 'error: email is already used for another account'
-      };
+      throw HTTPError(400, 'error: email is already used for another account');
     }
   }
 
   if (!checkValidString(nameFirst)) {
-    return {
-      error: 'First name is invalid'
-    };
+    throw HTTPError(400, 'First name is invalid');
   }
   if (!checkValidString(nameLast)) {
-    return {
-      error: 'Last name is invalid'
-    };
+    throw HTTPError(400, 'Last name is invalid');
   }
   // check valid first name
   if ((nameFirst.length < 2) || (nameFirst.length > 20)) {
-    return {
-      error: 'error: first name has an invalid length'
-    };
+    throw HTTPError(400, 'error: first name has an invalid length');
   }
   // check valid last name
   if ((nameLast.length < 2) || (nameLast.length > 20)) {
-    return {
-      error: 'error: last name has an invalid length'
-    };
+    throw HTTPError(400, 'error: last name has an invalid length');
   }
   if (!validator.isEmail(email)) {
-    return {
-      error: 'error: email is not valid'
-    };
+    throw HTTPError(400, 'error: email is not valid');
   }
 
   const user = data.users.find((userID) => userID.authUserId === authUserId);

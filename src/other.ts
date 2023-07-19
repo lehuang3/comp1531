@@ -1068,10 +1068,12 @@ function requestAdminAuthLogout(token: ErrorObject | string) {
 function requestAdminAuthDetailsUpdate(token: ErrorObject | string, email: string, nameFirst: string, nameLast: string) {
   const res = request(
     'PUT',
-    SERVER_URL + '/v1/admin/user/details',
+    SERVER_URL + '/v2/admin/user/details',
     {
+      headers: {
+        token: token as string,
+      },
       json: {
-        token,
         email,
         nameFirst,
         nameLast
