@@ -37,12 +37,18 @@ function requestClear() {
  * @returns {{object}} - response in javascript
 */
 function requestGetAdminUserDetails(token: ErrorObject | string) {
+  console.log(token);
+  // token = JSON.stringify(token);
+  // console.log(token);
   const res = request(
     'GET',
     SERVER_URL + '/v1/admin/user/details',
     {
+      headers: {
+        token: token as string,
+      },
       qs: {
-        token,
+        
       }
     }
   );

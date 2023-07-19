@@ -40,7 +40,8 @@ app.get('/echo', (req: Request, res: Response) => {
 });
 
 app.get('/v1/admin/user/details', (req: Request, res: Response) => {
-  const token = req.query.token as string;
+  const token = req.headers.token as string;
+  // console.log(token);
   const response = adminUserDetails(token);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
