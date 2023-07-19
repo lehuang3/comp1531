@@ -318,12 +318,12 @@ function adminAuthDetailsUpdate(token: string | ErrorObject, email: string, name
     } else {
       throw HTTPError(403, 'Not a valid session');
     }
-  }
+  } 
 
   // check valid email
   for (const user of data.users) {
     if (user.email === email && user.authUserId !== authUserId) {
-      throw HTTPError(400, 'error: email is already used for another account');
+      throw HTTPError(400, 'email is already used for another account');
     }
   }
 

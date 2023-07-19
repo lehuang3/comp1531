@@ -19,6 +19,7 @@ import { clear } from './other';
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
 app.use(json());
+app.use(errorHandler())
 // Use middleware that allows for access from other domains
 app.use(cors());
 // for producing the docs that define the API
@@ -102,6 +103,13 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   res.json(response);
 });
 
+app.post('/v2/admin/quiz', (req: Request, res: Response) => {
+  const { name, description } = req.body;
+  const token = req.header('token');
+  const response = adminQuizCreate(token, name, description);
+  res.json(response);
+});
+
 app.post('/v1/admin/quiz/:quizId/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { token, questionBody } = req.body;
@@ -118,6 +126,15 @@ app.post('/v1/admin/quiz/:quizId/question', (req: Request, res: Response) => {
   res.json(response);
 });
 
+app.post('/v2/admin/quiz/:quizId/question', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const token = req.header('token');
+  const { questionBody } = req.body;
+  const response = adminQuizQuestionCreate(token, quizId, questionBody);
+  res.json(response);
+});
+
+
 app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const response = adminQuizList(token);
@@ -131,6 +148,14 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   }
   res.json(response);
 });
+
+app.get('/v2/admin/quiz/list', (req: Request, res: Response) => {
+  const token = req.header('token');
+  const response = adminQuizList(token);
+ 
+  res.json(response);
+});
+
 
 app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
   const token = req.headers.token as string;
@@ -172,6 +197,15 @@ app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   }
   res.json(response);
 });
+
+app.delete('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const token = req.header('token');
+  const response = adminQuizRemove(token, quizId);
+
+  res.json(response);
+});
+
 
 app.put('/v1/admin/quiz/:quizId/description', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
@@ -286,6 +320,16 @@ app.put('/v1/admin/quiz/:quizId/question/:questionId/move', (req: Request, res: 
   res.json(response);
 });
 
+app.put('/v2/admin/quiz/:quizId/question/:questionId/move', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const questionId = parseInt(req.params.questionId);
+  const token = req.header('token');
+  const {  newPosition } = req.body;
+  const response = adminQuizQuestionMove(quizId, questionId, token, newPosition);
+  res.json(response);
+});
+
+
 app.delete('/v1/admin/quiz/:quizId/question/:questionId', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionId);
@@ -317,6 +361,14 @@ app.post('/v1/admin/quiz/:quizId/question/:questionId/duplicate', (req: Request,
       return res.status(400).json(response);
     }
   }
+  res.json(response);
+});
+
+app.post('/v2/admin/quiz/:quizId/question/:questionId/duplicate', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const questionId = parseInt(req.params.questionId);
+  const token = req.header('token');
+  const response = adminQuizQuestionDuplicate(quizId, questionId, token);
   res.json(response);
 });
 
@@ -425,8 +477,8 @@ app.put('/v1/admin/user/details', (req: Request, res: Response) => {
 });
 
 app.put('/v2/admin/user/details', (req: Request, res: Response) => {
-  const token = req.headers.token as string;
   const { email, nameFirst, nameLast } = req.body;
+  const token = req.header('token');
   const response = adminAuthDetailsUpdate(token, email, nameFirst, nameLast);
   res.json(response);
 });

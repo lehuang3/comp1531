@@ -428,10 +428,12 @@ function requestAdminAuthPasswordUpdate(token: ErrorObject | string, oldPassword
 function requestQuizQuestionCreate(token: ErrorObject | string, quizId: number, questionBody: any) {
   const res = request(
     'POST',
-    SERVER_URL + `/v1/admin/quiz/${quizId}/question`,
+    SERVER_URL + `/v2/admin/quiz/${quizId}/question`,
     {
-      json: {
-        token,
+      headers:{
+        token:token as string
+      },
+      json: {       
         questionBody
       }
     }
@@ -455,10 +457,12 @@ function requestQuizQuestionCreate(token: ErrorObject | string, quizId: number, 
 function requestAdminQuizCreate(token: ErrorObject | string, name: string, description: string) {
   const res = request(
     'POST',
-    SERVER_URL + '/v1/admin/quiz',
+    SERVER_URL + '/v2/admin/quiz',
     {
-      json: {
-        token,
+      headers: {
+        token: token as string
+      },
+      json: {     
         name,
         description
       }
@@ -532,10 +536,10 @@ function requestAdminQuizNameUpdate(token: ErrorObject | string, quizId: number,
 function requestAdminQuizRemove(token: ErrorObject | string, quizId: number) {
   const res = request(
     'DELETE',
-    SERVER_URL + `/v1/admin/quiz/${quizId}`,
+    SERVER_URL + `/v2/admin/quiz/${quizId}`,
     {
-      qs: {
-        token,
+      headers:{
+        token:token as string
       }
     }
   );
@@ -555,10 +559,10 @@ function requestAdminQuizRemove(token: ErrorObject | string, quizId: number) {
 function requestAdminQuizList(token: ErrorObject | string) {
   const res = request(
     'GET',
-    SERVER_URL + '/v1/admin/quiz/list',
+    SERVER_URL + '/v2/admin/quiz/list',
     {
-      qs: {
-        token,
+      headers: {
+        token:token as string
       }
     }
   );
@@ -662,10 +666,12 @@ function requestAdminQuizRestore(token: ErrorObject | string, quizId: number) {
 function requestAdminQuizQuestionMove(quizId: number, questionId: number, token: ErrorObject | string, newPosition: number) {
   const res = request(
     'PUT',
-    SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}/move`,
+    SERVER_URL + `/v2/admin/quiz/${quizId}/question/${questionId}/move`,
     {
+      headers:{
+        token: token as string
+      },
       json: {
-        token,
         newPosition
       }
     }
@@ -689,10 +695,10 @@ function requestAdminQuizQuestionMove(quizId: number, questionId: number, token:
 function requestAdminQuizQuestionDuplicate(token: ErrorObject | string, quizId: number, questionId: number) {
   const res = request(
     'POST',
-    SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}/duplicate`,
+    SERVER_URL + `/v2/admin/quiz/${quizId}/question/${questionId}/duplicate`,
     {
-      json: {
-        token,
+      headers: {
+        token:token as string
       }
     }
   );
@@ -767,11 +773,7 @@ function QuizDurationValid(data: any, questionBody: any, quizId: number) {
 
   const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
 
-  for (const question of quiz.questions) {
-    totalDuration += question.duration;
-  }
-
-  totalDuration += questionBody.duration;
+  totalDuration = questionBody.duration + quiz.duration;
 
   if (totalDuration > 180) {
     return false;
@@ -1070,8 +1072,8 @@ function requestAdminAuthDetailsUpdate(token: ErrorObject | string, email: strin
     'PUT',
     SERVER_URL + '/v2/admin/user/details',
     {
-      headers: {
-        token: token as string,
+      headers:{
+        token: token as string
       },
       json: {
         email,
