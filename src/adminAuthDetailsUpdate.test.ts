@@ -17,7 +17,7 @@ describe('tests for adminAuthDetailsUpdate', () => {
     // Wrong password
     const token2 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
     const userLogin = requestAdminAuthDetailsUpdate(token2, 'patel@gmail.com', 'Santa', 'Claus');
-    expect(userLogin.body).toStrictEqual({ error: 'error: email is already used for another account' });
+    expect(userLogin.body).toStrictEqual({ error: 'email is already used for another account' });
     expect(userLogin.status).toStrictEqual(400);
   });
 
