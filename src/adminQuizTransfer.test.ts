@@ -12,7 +12,7 @@ beforeEach(() => {
 
 test('Check for invalid token structure', () => {
   // console.log(token1);
-  const invalidToken = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body;
+  const invalidToken = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body.token;
   const response = requestAdminQuizTransfer(invalidToken, quiz1.quizId, 'Le@gmail.com');
   expect(response.body).toStrictEqual({
     error: 'Invalid token structure',
