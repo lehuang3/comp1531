@@ -40,7 +40,6 @@ app.get('/echo', (req: Request, res: Response) => {
 
 app.get('/v2/admin/user/details', (req: Request, res: Response) => {
   const token = req.headers.token as string;
-  console.log(token);
   const response = adminUserDetails(token);
   res.json(response);
 });
@@ -134,7 +133,7 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
 });
 
 app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
-  const token = req.query.token as string;
+  const token = req.headers.token as string;
   const response = adminQuizTrash(token);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
@@ -143,6 +142,12 @@ app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
       return res.status(403).json(response);
     }
   }
+  res.json(response);
+});
+
+app.get('/v2/admin/quiz/trash', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const response = adminQuizTrash(token);
   res.json(response);
 });
 
@@ -181,6 +186,14 @@ app.put('/v1/admin/quiz/:quizId/description', (req: Request, res: Response) => {
       return res.status(400).json(response);
     }
   }
+  res.json(response);
+});
+
+app.put('/v2/admin/quiz/:quizId/description', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const { description } = req.body;
+  const token = req.headers.token as string;
+  const response = adminQuizDescriptionUpdate(token, quizId, description);
   res.json(response);
 });
 
@@ -333,6 +346,17 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
       return res.status(400).json(response);
     }
   }
+  res.json(response);
+});
+
+app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
+  let quizIdArr = req.query.quizIdArr as any[];
+  // if the array passed in is empty (no quizzes were chosen)
+  if (quizIdArr !== undefined) {
+    quizIdArr = quizIdArr.map(quizId => parseInt(quizId));
+  }
+  const token = req.headers.token as string;
+  const response = adminQuizTrashEmpty(token, quizIdArr);
   res.json(response);
 });
 

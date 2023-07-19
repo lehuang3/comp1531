@@ -3,7 +3,6 @@ import { Data, Token } from './interfaces';
 import request from 'sync-request';
 import { port, url } from './config.json';
 import { ErrorObject } from './interfaces';
-import HTTPError from 'http-errors';
 const SERVER_URL = `${url}:${port}`;
 
 /**
@@ -45,7 +44,7 @@ function requestGetAdminUserDetails(token: ErrorObject | string) {
         token: token as string,
       },
       qs: {
-        
+
       }
     }
   );
@@ -370,11 +369,13 @@ function requestAdminAuthLogin(email: string, password: string) {
 function requestAdminQuizDescriptionUpdate(token: ErrorObject | string, quizId: number, description: string) {
   const res = request(
     'PUT',
-    SERVER_URL + `/v1/admin/quiz/${quizId}/description`,
+    SERVER_URL + `/v2/admin/quiz/${quizId}/description`,
     {
+      headers: {
+        token: token as string,
+      },
       json: {
-        token,
-        description
+        description,
       }
     }
   );
@@ -576,10 +577,13 @@ function requestAdminQuizList(token: ErrorObject | string) {
 function requestAdminQuizTrash(token: ErrorObject | string) {
   const res = request(
     'GET',
-    SERVER_URL + '/v1/admin/quiz/trash',
+    SERVER_URL + '/v2/admin/quiz/trash',
     {
+      headers: {
+        token: token as string,
+      },
       qs: {
-        token,
+
       }
     }
   );
@@ -994,10 +998,12 @@ function requestAdminQuizQuestionUpdate(token: ErrorObject | string, quizId: num
 function requestAdminQuizTrashEmpty(token: ErrorObject | string, quizIdArr: number[]) {
   const res = request(
     'DELETE',
-    SERVER_URL + '/v1/admin/quiz/trash/empty',
+    SERVER_URL + '/v2/admin/quiz/trash/empty',
     {
+      headers: {
+        token: token as string,
+      },
       qs: {
-        token,
         quizIdArr
       }
     }

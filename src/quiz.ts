@@ -5,6 +5,7 @@ import {
   quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash, getColour
 } from './other';
 import { Data, Answer } from './interfaces';
+import HTTPError from 'http-errors';
 
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -288,28 +289,24 @@ function adminQuizDescriptionUpdate (token: ErrorObject | string, quizId: number
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
-    const error = authUserId.error;
-    return {
-      error
-    };
+    if (authUserId.error === 'Invalid token structure') {
+      throw HTTPError(401, 'Invalid token structure');
+      // invalid session
+    } else {
+      throw HTTPError(403, 'Not a valid session');
+    }
   }
   // check quizId
   if (!quizValidCheck(quizId)) {
-    return {
-      error: 'Not a valid quiz'
-    };
+    throw HTTPError(400, 'Not a valid quiz');
   }
   // check ownership of quiz
   if (!quizValidOwner(authUserId, quizId)) {
-    return {
-      error: 'This quiz is owned by another user'
-    };
+    throw HTTPError(400, 'This quiz is owned by another user');
   }
   // check description's length
   if (isDescriptionLong(description)) {
-    return {
-      error: 'Description is too long'
-    };
+    throw HTTPError(400, 'Description is too long');
   }
   // change description
   for (const quiz of data.quizzes) {
@@ -337,10 +334,12 @@ function adminQuizTrash(token: string) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
-    const error = authUserId.error;
-    return {
-      error
-    };
+    if (authUserId.error === 'Invalid token structure') {
+      throw HTTPError(401, 'Invalid token structure');
+      // invalid session
+    } else {
+      throw HTTPError(403, 'Not a valid session');
+    }
   }
   // filter from data.trash an array of quizzes in trash that only the user has access to
   const userTrash = data.trash.filter(quiz => {
@@ -814,10 +813,12 @@ function adminQuizTrashEmpty(token: string | ErrorObject, quizIdArr: number[]) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
-    const error = authUserId.error;
-    return {
-      error
-    };
+    if (authUserId.error === 'Invalid token structure') {
+      throw HTTPError(401, 'Invalid token structure');
+      // invalid session
+    } else {
+      throw HTTPError(403, 'Not a valid session');
+    }
   }
   // if no quizzes are chosen to be removed, return with 200 status code with
   // no modifications of trash
@@ -827,19 +828,13 @@ function adminQuizTrashEmpty(token: string | ErrorObject, quizIdArr: number[]) {
 
   for (const quizId of quizIdArr) {
     if (!quizValidCheck(quizId)) {
-      return {
-        error: 'One or more of the quizzes is not a valid quiz'
-      };
+      throw HTTPError(400, 'One or more of the quizzes is not a valid quiz');
     }
     if (!quizValidOwner(authUserId, quizId)) {
-      return {
-        error: 'One or more of the quizzes refers to a quiz that this current user does not own'
-      };
+      throw HTTPError(400, 'One or more of the quizzes refers to a quiz that this current user does not own');
     }
     if (!isQuizInTrash(quizId)) {
-      return {
-        error: 'One or more of the quizzes is not currently in the trash'
-      };
+      throw HTTPError(400, 'One or more of the quizzes is not currently in the trash');
     }
   }
 

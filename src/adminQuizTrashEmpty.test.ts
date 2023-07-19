@@ -10,7 +10,7 @@ beforeEach(() => {
 });
 
 test('Check for invalid token structure', () => {
-  const invalidToken = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body;
+  const invalidToken = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body.token;
   const response = requestAdminQuizTrashEmpty(invalidToken, [quiz1.quizId]);
   expect(response.body).toStrictEqual({
     error: 'Invalid token structure',
