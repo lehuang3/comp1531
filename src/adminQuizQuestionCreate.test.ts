@@ -26,7 +26,8 @@ beforeEach(() => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 });
@@ -85,7 +86,8 @@ test('Invalid question length > 50', () => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
@@ -115,7 +117,8 @@ test('Invalid question length < 50', () => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
@@ -161,7 +164,8 @@ test('Answer > 6', () => {
           correct: true
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
@@ -182,28 +186,8 @@ test('Answer < 2', () => {
           answer: 'sydney',
           correct: true
         }
-      ]
-    }
-  };
-
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
-
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
-});
-
-test('Answer < 2', () => {
-  const quizQuestion2 = {
-    questionBody: {
-      question: 'What is capital of sydney?',
-      duration: 5,
-      points: 5,
-      answers: [
-        {
-          answer: 'sydney',
-          correct: true
-        }
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
@@ -232,7 +216,8 @@ test('duration < 0', () => {
           answer: 'canberaa',
           correct: false
         },
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
@@ -262,7 +247,8 @@ test('duration > 180', () => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
@@ -293,7 +279,8 @@ test('Point < 1', () => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
@@ -323,7 +310,8 @@ test('Point > 10', () => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
@@ -353,7 +341,8 @@ test('Point > 10', () => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
@@ -383,7 +372,8 @@ test('answer length < 1', () => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
@@ -413,7 +403,8 @@ test('answer length > 30', () => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
@@ -443,7 +434,8 @@ test('Duplicate asnwer', () => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
@@ -473,7 +465,8 @@ test('No correct asnwer', () => {
           correct: false
         }
 
-      ]
+      ],
+      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
     }
   };
 
@@ -488,4 +481,35 @@ test('Valid entry', () => {
 
   expect(response.body).toStrictEqual({ questionId: expect.any(Number) });
   expect(response.status).toStrictEqual(200);
+});
+
+test('Bad Images', () => {
+  let quizQuestion5 = {
+    questionBody: {
+      question: 'What is capital of sydney?',
+      duration: 5,
+      points: 5,
+      answers: [
+        {
+          answer: 'sydney',
+          correct: true
+        },
+        {
+          answer: 'Melbourne',
+          correct: false
+        },
+        {
+          answer: 'Camberra',
+          correct: false
+        }
+
+      ],
+      thumbnailUrl: "https://nw-syd-gitlab.cseunsw.tech/COMP1531/23T2/groups/M17D_EGGS/project-backend/-/tree/master/src"
+    }
+  };
+
+  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion5.questionBody);
+
+  expect(response.body).toStrictEqual({ error: expect.any(String) });
+  expect(response.status).toStrictEqual(400);
 });
