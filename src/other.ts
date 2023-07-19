@@ -37,12 +37,9 @@ function requestClear() {
  * @returns {{object}} - response in javascript
 */
 function requestGetAdminUserDetails(token: ErrorObject | string) {
-  console.log(token);
-  // token = JSON.stringify(token);
-  // console.log(token);
   const res = request(
     'GET',
-    SERVER_URL + '/v1/admin/user/details',
+    SERVER_URL + '/v2/admin/user/details',
     {
       headers: {
         token: token as string,
@@ -52,9 +49,6 @@ function requestGetAdminUserDetails(token: ErrorObject | string) {
       }
     }
   );
-  if (res.statusCode === 401 || res.statusCode === 403 || res.statusCode === 400) {
-    throw HTTPError(res.statusCode, JSON.parse(res.body.toString()));
-  }
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,

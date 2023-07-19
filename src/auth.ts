@@ -2,6 +2,7 @@ import { Data } from './interfaces';
 import validator from 'validator';
 import { read, save, tokenOwner } from './other';
 import { AdminAuthLoginReturn, AdminAuthRegisterReturn, AdminUserDetailsReturn, ErrorObject } from './interfaces';
+import HTTPError from 'http-errors';
 let counterSession = 0;
 
 /**
@@ -207,10 +208,12 @@ function adminUserDetails (token: ErrorObject | string): AdminUserDetailsReturn 
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
-    const error = authUserId.error;
-    return {
-      error
-    };
+    if (authUserId.error === 'Invalid token structure') {
+      throw HTTPError(401, 'Invalid token structure');
+      // invalid session
+    } else {
+      throw HTTPError(403, 'Not a valid session');
+    }
   }
   // loop through users array
   for (const user of data.users) {

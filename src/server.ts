@@ -4,7 +4,6 @@ import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
 import errorHandler from 'middleware-http-errors';
-import HTTPError from 'http-errors';
 import YAML from 'yaml';
 import sui from 'swagger-ui-express';
 import fs from 'fs';
@@ -39,15 +38,21 @@ app.get('/echo', (req: Request, res: Response) => {
   return res.json(echo(data));
 });
 
-app.get('/v1/admin/user/details', (req: Request, res: Response) => {
+app.get('/v2/admin/user/details', (req: Request, res: Response) => {
   const token = req.headers.token as string;
-  // console.log(token);
+  console.log(token);
+  const response = adminUserDetails(token);
+  res.json(response);
+});
+
+app.get('/v1/admin/user/details', (req: Request, res: Response) => {
+  const token = req.query.token as string;
   const response = adminUserDetails(token);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
+      res.status(401).json(response);
     } else if (response.error === 'Not a valid session') {
-      throw HTTPError(403, 'Not a valid session');
+      res.status(403).json(response);
     }
   }
   res.json(response);

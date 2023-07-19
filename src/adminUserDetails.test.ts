@@ -1,6 +1,5 @@
 import { adminAuthLogin } from './auth';
 import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister } from './other';
-import HTTPError from 'http-errors';
 let token1: string;
 beforeEach(() => {
   requestClear();
@@ -11,24 +10,21 @@ beforeEach(() => {
 
 test('Check for invalid token structure', () => {
   const token2 = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body.token;
-
-  // const response = requestGetAdminUserDetails(token2);
-  // expect(response.body).toStrictEqual({
-  //   error: 'Invalid token structure',
-  // });
-  // expect(response.status).toStrictEqual(401);
-  expect(() => requestGetAdminUserDetails(token2)).toThrow(HTTPError[401]);
+  const response = requestGetAdminUserDetails(token2);
+  expect(response.body).toStrictEqual({
+    error: 'Invalid token structure',
+  });
+  expect(response.status).toStrictEqual(401);
 });
 
 test('Check for invalid session', () => {
   const token2 = (parseInt(token1) + 1).toString();
 
-  // const response = requestGetAdminUserDetails(token2);
-  // expect(response.body).toStrictEqual({
-  //   error: 'Not a valid session'
-  // });
-  // expect(response.status).toStrictEqual(403);
-  expect(() => requestGetAdminUserDetails(token2)).toThrow(HTTPError[403]);
+  const response = requestGetAdminUserDetails(token2);
+  expect(response.body).toStrictEqual({
+    error: 'Not a valid session'
+  });
+  expect(response.status).toStrictEqual(403);
 });
 
 test('Check for valid auth', () => {
