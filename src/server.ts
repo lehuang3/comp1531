@@ -402,6 +402,13 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   res.json(response);
 });
 
+app.put('/v2/admin/user/password', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const { oldPassword, newPassword } = req.body;
+  const response = adminAuthPasswordUpdate(token, oldPassword, newPassword);
+  res.json(response);
+});
+
 app.put('/v1/admin/user/details', (req: Request, res: Response) => {
   const { token, email, nameFirst, nameLast } = req.body;
   const response = adminAuthDetailsUpdate(token, email, nameFirst, nameLast);

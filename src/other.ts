@@ -398,10 +398,12 @@ function requestAdminQuizDescriptionUpdate(token: ErrorObject | string, quizId: 
 function requestAdminAuthPasswordUpdate(token: ErrorObject | string, oldPassword: string, newPassword: string) {
   const res = request(
     'PUT',
-    SERVER_URL + '/v1/admin/user/password',
+    SERVER_URL + '/v2/admin/user/password',
     {
+      headers: {
+        token: token as string,
+      },
       json: {
-        token,
         oldPassword,
         newPassword
       }
