@@ -483,6 +483,13 @@ app.put('/v2/admin/user/details', (req: Request, res: Response) => {
   res.json(response);
 });
 
+app.get('/v2/admin/quiz/:quizId', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const token = req.header('token');
+  const response = adminQuizInfo(token, quizId);
+  res.json(response);
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
