@@ -1,8 +1,29 @@
 ```javascript
 let data = {
-    // TODO: insert your data structure that contains 
-    // users + quizzes here
-}
-```
+    
+  // User Data
+  users: [
+    {
+    UserId: 1,
+    nameFirst: 'joe',
+    nameLast: 'devon',
+    email: 'joe.devon@gmail.com',
+    password: "test123",
+    numSuccessfulLogins: 3,
+    numFailedPasswordsSinceLastLogin: 1,
+    }
+  ],
+    
 
-[Optional] short description: 
+  //Quiz Data
+  quizzes: [
+    {
+      quizId: 1,
+      name: 'My Quiz',
+      timeCreated: 1683125870,
+      timeLastEdited: 1683125871,
+      description: 'This is my quiz',
+    }
+  ]
+	
+}

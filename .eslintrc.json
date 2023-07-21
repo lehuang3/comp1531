@@ -1,4 +1,5 @@
 {
+
   "ignorePatterns": [],
   "parser": "@typescript-eslint/parser",
   "plugins": [
@@ -232,4 +233,6 @@
     "yield-star-spacing": ["error", "both"],
     "yoda": ["error", "never"]
   }
+
 }
+
