@@ -23,7 +23,8 @@ const quiz1Question1: any = {
         correct: false
       }
 
-    ]
+    ],
+    thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
   }
 };
 
@@ -46,7 +47,8 @@ const quiz1Question2: any = {
         correct: false
       }
 
-    ]
+    ],
+    thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
   }
 };
 

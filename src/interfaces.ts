@@ -70,6 +70,70 @@ interface Quiz {
   duration:number;
 }
 
+// different states of a session
+enum State {
+  LOBBY,
+  QUESTION_COUNTDOWN,
+  QUESTION_OPEN,
+  QUESTION_CLOSE,
+  ANSWER_SHOW,
+  FINAL_RESULTS,
+  END
+}
+
+interface Message {
+  playerId: number;
+  messageBody: string;
+  playerName: string;
+  timeSent: number;
+}
+
+interface Player {
+  playerId: number;
+  playerName: string;
+  playerScore: number;
+}
+
+interface AnswerResult {
+  answerId: number;
+  playersCorrect: string[];
+}
+
+// QuizQuestion object but with an extra key
+interface QuizQuestionSession {
+  questionId:number;
+  question: string;
+  duration: number;
+  points: number;
+  answers: Answer[];
+  // colour:string;
+  questionCorrectBreakdown: AnswerResult[]
+}
+
+// Quiz object but with 2 extra keys + modified questions array
+interface QuizSession {
+  quizId: number;
+  name: string;
+  timeCreated: number;
+  timeLastEdited: number;
+  description: string;
+  numQuestions: number;
+  questions: QuizQuestionSession[];
+  duration:number;
+  averageAnswerTime: number;
+  percentCorrect: number;
+}
+
+interface Session {
+  metadata: QuizSession;
+  quizSessionId: number;
+  state: State;
+  autoStartNum: number;
+  atQuestion: number;
+  messages: Message[];
+  players: Player[];
+}
+
 // type of datastore
 interface Data {
   users: User[];
@@ -78,4 +142,4 @@ interface Data {
   trash:Quiz[];
 }
 
-export { AdminAuthLoginReturn, AdminUserDetailsReturn, Answer, AdminAuthRegisterReturn, ErrorObject, Data, Token, User, Quiz, QuizQuestion };
+export { AdminAuthLoginReturn, AdminUserDetailsReturn, Answer, AdminAuthRegisterReturn, ErrorObject, Data, Token, User, Quiz, QuizQuestion, Session };
