@@ -1,0 +1,92 @@
+
+src/adminAuthDetailsUpdate.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminAuthLogin.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminAuthLogout.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminAuthPasswordUpdate.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminAuthRegister.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizCreate.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizDescriptionUpdate.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizInfo.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizList.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizNameUpdate.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizQuestionCreate.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizQuestionDelete.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizQuestionDuplicate.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizQuestionMove.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizQuestionUpdate.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizRemove.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizRestore.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizTransfer.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizTrash.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizTrashEmpty.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminUserDetails.test.ts
+  0:0  passing  No linting issues  success
+
+src/auth.ts
+  0:0  passing  No linting issues  success
+
+src/clear.test.ts
+  0:0  passing  No linting issues  success
+
+src/dataStore.ts
+  0:0  passing  No linting issues  success
+
+src/echo.test.ts
+  0:0  passing  No linting issues  success
+
+src/echo.ts
+  0:0  passing  No linting issues  success
+
+src/interfaces.ts
+  0:0  passing  No linting issues  success
+
+src/other.ts
+  0:0  passing  No linting issues  success
+
+src/quiz.ts
+  0:0  passing  No linting issues  success
+
+src/server.ts
+  0:0  passing  No linting issues  success
+
+✔ 30 files successfully linted.

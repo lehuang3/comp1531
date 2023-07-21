@@ -1,0 +1,40 @@
+
+> test
+> jest **/?(*.)+(test).ts
+
+  Invalid testPattern **/?(*.)+(test).ts supplied. Running all tests instead.
+  Invalid testPattern **/?(*.)+(test).ts supplied. Running all tests instead.
+PASS src/adminUserDetails.test.ts (5.045 s)
+PASS src/adminAuthDetailsUpdate.test.ts
+PASS src/echo.test.ts
+PASS src/adminQuizNameUpdate.test.ts
+PASS src/adminAuthRegister.test.ts
+PASS src/adminQuizTransfer.test.ts
+PASS src/adminQuizInfo.test.ts
+PASS src/adminQuizRemove.test.ts
+PASS src/adminQuizCreate.test.ts
+PASS src/adminQuizDescriptionUpdate.test.ts
+PASS src/adminQuizList.test.ts
+PASS src/adminAuthLogout.test.ts
+PASS src/adminAuthLogin.test.ts
+PASS src/adminQuizQuestionUpdate.test.ts
+PASS src/adminQuizQuestionCreate.test.ts
+PASS src/adminQuizTrashEmpty.test.ts
+PASS src/adminQuizQuestionMove.test.ts
+PASS src/adminAuthPasswordUpdate.test.ts
+PASS src/adminQuizTrash.test.ts
+PASS src/adminQuizQuestionDelete.test.ts
+PASS src/adminQuizQuestionDuplicate.test.ts
+PASS src/adminQuizRestore.test.ts
+PASS src/clear.test.ts
+
+Test Suites: 23 passed, 23 total
+Tests:       208 passed, 208 total
+Snapshots:   0 total
+Time:        54.987 s
+Ran all test suites.
+npm notice 
+npm notice New minor version of npm available! 9.5.1 -> 9.8.0
+npm notice Changelog: <https://github.com/npm/cli/releases/tag/v9.8.0>
+npm notice Run `npm install -g npm@9.8.0` to update!
+npm notice 
