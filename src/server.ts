@@ -490,6 +490,39 @@ app.get('/v2/admin/quiz/:quizId', (req: Request, res: Response) => {
   res.json(response);
 });
 
+app.put('/v2/admin/quiz/:quizId/name', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const token = req.header('token');
+  const { name } = req.body;
+  const response = adminQuizNameUpdate(token, quizId, name);
+  res.json(response);
+});
+
+app.post('/v2/admin/quiz/:quizId/restore', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const token = req.header('token');
+  const response = adminQuizRestore(token, quizId);
+  res.json(response);
+});
+
+app.put('/v2/admin/quiz/:quizId/question/:questionId', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const questionId = parseInt(req.params.questionId);
+  const token = req.header('token');
+  const questionBody = req.body.questionBody;
+  const response = adminQuizQuestionUpdate(token, quizId, questionId, questionBody);
+  res.json(response);
+});
+
+app.delete('/v2/admin/quiz/:quizId/question/:questionId', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const questionId = parseInt(req.params.questionId);
+  const token = req.header('token');
+  const response = adminQuizQuestionDelete(token, quizId, questionId);
+  res.json(response);
+});
+
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

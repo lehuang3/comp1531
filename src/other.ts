@@ -485,10 +485,10 @@ function requestAdminQuizCreate(token: ErrorObject | string, name: string, descr
 function requestAdminQuizInfo(token: ErrorObject | string, quizId: number) {
   const res = request(
     'GET',
-    SERVER_URL + `/v1/admin/quiz/${quizId}`,
+    SERVER_URL + `/v2/admin/quiz/${quizId}`,
     {
-      qs: {
-        token
+      headers: {
+        token: token as string
       }
     }
   );
@@ -510,10 +510,12 @@ function requestAdminQuizInfo(token: ErrorObject | string, quizId: number) {
 function requestAdminQuizNameUpdate(token: ErrorObject | string, quizId: number, name: string) {
   const res = request(
     'PUT',
-    SERVER_URL + `/v1/admin/quiz/${quizId}/name`,
+    SERVER_URL + `/v2/admin/quiz/${quizId}/name`,
     {
+      headers: {
+        token: token as string
+      },
       json: {
-        token,
         name
       }
     }
@@ -640,10 +642,10 @@ function requestAdminQuizTransfer(token: ErrorObject | string, quizId: number, u
 function requestAdminQuizRestore(token: ErrorObject | string, quizId: number) {
   const res = request(
     'POST',
-    SERVER_URL + `/v1/admin/quiz/${quizId}/restore`,
+    SERVER_URL + `/v2/admin/quiz/${quizId}/restore`,
     {
-      json: {
-        token
+      headers: {
+        token: token as string
       }
     }
   );
@@ -891,10 +893,10 @@ function isQuizInTrash(quizId: number): boolean {
 function requestAdminQuizQuestionDelete(token: ErrorObject | string, quizId: number, questionId: number) {
   const res = request(
     'DELETE',
-    SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}`,
+    SERVER_URL + `/v2/admin/quiz/${quizId}/question/${questionId}`,
     {
-      qs: {
-        token
+      headers: {
+        token: token as string
       }
     }
   );
@@ -978,10 +980,12 @@ function newPositioNotSame(data: any, quizId: number, questionId: number, newPos
 function requestAdminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, questionId: number, questionBody: any) {
   const res = request(
     'PUT',
-    SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}`,
+    SERVER_URL + `/v2/admin/quiz/${quizId}/question/${questionId}`,
     {
+      headers: {
+        token: token as string
+      },
       json: {
-        token,
         questionBody
       }
     }
