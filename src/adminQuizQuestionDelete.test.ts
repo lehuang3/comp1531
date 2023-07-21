@@ -22,8 +22,8 @@ const quiz1Question1 = {
         answer: 'Los Angeles',
         correct: false
       }
-
-    ]
+    ],
+    thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
   }
 };
 

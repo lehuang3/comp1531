@@ -452,7 +452,7 @@ function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, qu
     throw HTTPError(400, 'There are duplicate answers');
   } else if (quizAnswerCorrectValid(questionBody) === false) {
     throw HTTPError(400, 'There are no correct asnwers');
-  } else if (isImageUrl(questionBody.thumbnailUrl)=== false) {
+  } else if (isImageUrl(questionBody.thumbnailUrl) === false) {
     throw HTTPError(400, 'Image not valid');
   } else {
     const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
