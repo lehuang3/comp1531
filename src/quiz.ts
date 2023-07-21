@@ -199,24 +199,17 @@ function adminQuizInfo (token: ErrorObject | string, quizId: number) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
-    const error = authUserId.error;
-    return {
-      error
-    };
+    if (authUserId.error === 'Invalid token structure') {
+      throw HTTPError(401, 'Invalid token structure');
+    } else {
+      throw HTTPError(403, 'Not a valid session');
+    }
   }
 
   if (!quizValidCheck(quizId)) {
-    return {
-      error: 'Quiz does not exist.'
-    };
-  } else if (!isValidUser(authUserId)) {
-    return {
-      error: 'Not a valid user.'
-    };
+    throw HTTPError(400, 'Quiz does not exist.');
   } else if (!quizValidOwner(authUserId, quizId)) {
-    return {
-      error: 'You do not have access to this quiz.'
-    };
+    throw HTTPError(400, 'You do not have access to this quiz.');
   }
   for (const quiz of data.quizzes) {
     if (quiz.quizId === quizId) {
@@ -228,9 +221,7 @@ function adminQuizInfo (token: ErrorObject | string, quizId: number) {
       return quiz;
     }
   }
-  return {
-    error: 'Quiz does not exist'
-  };
+
 }
 
 /**
@@ -246,32 +237,23 @@ function adminQuizNameUpdate (token: ErrorObject | string, quizId: number, name:
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
-    const error = authUserId.error;
-    return {
-      error
-    };
+    if (authUserId.error === 'Invalid token structure') {
+      throw HTTPError(401, 'Invalid token structure');
+    } else {
+      throw HTTPError(403, 'Not a valid session');
+    }
   }
 
   if (!nameLengthIsValid(name)) {
-    return {
-      error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.'
-    };
+    throw HTTPError(400,'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.');
   } else if (!nameQuizIsValid(name)) {
-    return {
-      error: 'Quiz name cannot have special characters.'
-    };
+    throw HTTPError(400, 'Quiz name cannot have special characters.');
   } else if (nameTaken(authUserId, name)) {
-    return {
-      error: 'Quiz name already exists.'
-    };
+    throw HTTPError(400, 'Quiz name already exists.');
   } else if (!quizValidCheck(quizId)) {
-    return {
-      error: 'Quiz does not exist.'
-    };
+    throw HTTPError(400, 'Quiz does not exist.');
   } else if (!quizValidOwner(authUserId, quizId)) {
-    return {
-      error: 'You do not have access to this quiz.'
-    };
+    throw HTTPError(400, 'You do not have access to this quiz.');
   }
   for (const quiz of data.quizzes) {
     if (quiz.quizId === quizId) {
@@ -378,28 +360,19 @@ function adminQuizRestore(token: ErrorObject | string, quizId: number) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
-    const error = authUserId.error;
-    return {
-      error
-    };
+    if (authUserId.error === 'Invalid token structure') {
+      throw HTTPError(401, 'Invalid token structure');
+    } else {
+      throw HTTPError(403, 'Not a valid session');
+    }
   }
 
   if (!quizValidCheck(quizId)) {
-    return {
-      error: 'Not a valid quiz'
-    };
-  }
-
-  if (!isQuizInTrash(quizId)) {
-    return {
-      error: 'Quiz not in trash.'
-    };
-  }
-
-  if (!quizValidOwner(authUserId, quizId)) {
-    return {
-      error: 'You do not have access to this quiz.'
-    };
+    throw HTTPError(400, 'Not a valid quiz');
+  } else if (!isQuizInTrash(quizId)) {
+    throw HTTPError(400, 'Quiz not in trash.');
+  } else if (!quizValidOwner(authUserId, quizId)) {
+    throw HTTPError(400, 'You do not have access to this quiz.');
   }
 
   data.quizzes.push(data.trash.find((quiz) => quiz.quizId === quizId));
@@ -669,23 +642,18 @@ function adminQuizQuestionDelete(token: ErrorObject | string, quizId: number, qu
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
-    const error = authUserId.error;
-    return {
-      error
-    };
+    if (authUserId.error === 'Invalid token structure') {
+      throw HTTPError(401, 'Invalid token structure');
+    } else {
+      throw HTTPError(403, 'Not a valid session');
+    }
   }
   if (!quizValidCheck(quizId)) {
-    return {
-      error: 'Quiz does not exist.'
-    };
+    throw HTTPError(400, 'Quiz does not exist.');
   } else if (!quizValidOwner(authUserId, quizId)) {
-    return {
-      error: 'You do not have access to this quiz.'
-    };
+    throw HTTPError(400, 'You do not have access to this quiz.');
   } else if (!questionValidCheck(data, quizId, questionId)) {
-    return {
-      error: 'Question does not exist.'
-    };
+    throw HTTPError(400, 'Question does not exist.');
   }
   // find the quiz in data.quizzes by matching quizId to data.quizzes.quizId, find the quiz question in data.quizzes.quiz.question, splice out the question.
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
@@ -694,19 +662,13 @@ function adminQuizQuestionDelete(token: ErrorObject | string, quizId: number, qu
   for (const question of quiz.questions) {
     if (question.questionId === questionId) {
       quiz.questions.splice(index, 1);
-      save(data);
-
       quiz.numQuestions--;
-
+      save(data);
       return {
       };
     }
     index++;
   }
-
-  return {
-    error: 'Something went wrong'
-  };
 }
 /**
  * Given a token, quizId, questionId and quizQuestions, update the quiz and its corresponding question to that of the new
@@ -723,56 +685,42 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
-    const error = authUserId.error;
-    return {
-      error
-    };
+    if (authUserId.error === 'Invalid token structure') {
+      throw HTTPError(401, 'Invalid token structure');
+    } else {
+      throw HTTPError(403, 'Not a valid session');
+    }
   }
   if (!quizValidCheck(quizId)) {
-    return {
-      error: 'Quiz does not exist.'
-    };
+    throw HTTPError(400, 'Quiz does not exist.');
   } else if (!quizValidOwner(authUserId, quizId)) {
-    return {
-      error: 'You do not have access to this quiz.'
-    };
+    throw HTTPError(400, 'You do not have access to this quiz.');
   } else if (!questionValidCheck(data, quizId, questionId)) {
-    return {
-      error: 'This question does not exist.'
-    };
+    throw HTTPError(400, 'This question does not exist.');
   } else if (!questionLengthValid(questionBody)) {
-    return {
-      error: 'Question must be greater than 4 characters and less than 51 characters.'
-    };
+    throw HTTPError(400, 'Question must be greater than 4 characters and less than 51 characters.');
   } else if (!answerCountValid(questionBody)) {
-    return {
-      error: 'Must have more than one answer and less than 7 answers.'
-    };
+    throw HTTPError(400, 'Must have more than one answer and less than 7 answers.');
   } else if (!durationValid(questionBody)) {
-    return {
-      error: 'Time allowed must be a postive number.'
-    };
+    throw HTTPError(400, 'Time allowed must be a postive number.');
   } else if (!QuizDurationValid(data, questionBody, quizId)) {
-    return {
-      error: 'Quiz duration longer than 3 minutes.'
-    };
+    throw HTTPError(400, 'Quiz duration longer than 3 minutes.');
   } else if (!quizPointsValid(questionBody)) {
-    return {
-      error: 'Question must award at least one point and no more than 10 points.'
-    };
+    throw HTTPError(400, 'Question must award at least one point and no more than 10 points.');
   } else if (!quizAnswerValid(questionBody)) {
-    return {
-      error: 'Answer must be greater than 0 characters and less than 31 characters long.'
-    };
+    throw HTTPError(400, 'Answer must be greater than 0 characters and less than 31 characters long.');
   } else if (!quizAnswerDuplicateValid(questionBody)) {
-    return {
-      error: 'Cannot have same answers for one question.'
-    };
+    throw HTTPError(400, 'Cannot have same answers for one question.');
   } else if (!quizAnswerCorrectValid(questionBody)) {
-    return {
-      error: 'There are no correct answers.'
-    };
-  }
+    throw HTTPError(400, 'There are no correct answers.');
+  } 
+
+  // if (questionBody.thumbnailUrl.length === 0) {
+  //   throw HTTPError(400, 'Missing thumbnail URL.');
+  // }
+
+
+
   // find the quiz in data.quizzes by matching quizId to data.quizzes.quizId, find the quiz question in data.quizzes.quiz.question, splice out the question.
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
   // found the quiz which contains the question
@@ -795,9 +743,6 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
       };
     }
   }
-  return {
-    error: 'Something went wrong'
-  };
 }
 
 /**
@@ -852,6 +797,9 @@ function adminQuizTrashEmpty(token: string | ErrorObject, quizIdArr: number[]) {
   });
   return {};
 }
+
+
+
 
 export {
   adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash, adminQuizTransfer, adminQuizRestore,

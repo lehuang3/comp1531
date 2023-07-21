@@ -54,8 +54,7 @@ interface QuizQuestion {
     duration: number;
     points: number;
     answers: Answer[];
-    // colour:string;
-
+    thumbnailUrl: string;
 }
 
 // type of a quiz in the quizzes array
@@ -106,7 +105,6 @@ interface QuizQuestionSession {
   duration: number;
   points: number;
   answers: Answer[];
-  // colour:string;
   questionCorrectBreakdown: AnswerResult[]
 }
 
