@@ -105,7 +105,9 @@ interface QuizQuestionSession {
   duration: number;
   points: number;
   answers: Answer[];
-  questionCorrectBreakdown: AnswerResult[]
+  questionCorrectBreakdown: AnswerResult[];
+  averageAnswerTime: number;
+  percentCorrect: number;
 }
 
 // Quiz object but with 2 extra keys + modified questions array
@@ -118,8 +120,6 @@ interface QuizSession {
   numQuestions: number;
   questions: QuizQuestionSession[];
   duration:number;
-  averageAnswerTime: number;
-  percentCorrect: number;
 }
 
 interface Session {
