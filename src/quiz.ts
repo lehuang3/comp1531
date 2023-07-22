@@ -6,6 +6,7 @@ import {
 } from './other';
 import { Data, Answer } from './interfaces';
 import HTTPError from 'http-errors';
+const isUrl = require('is-url');
 const isImageUrl = require('is-image-url');
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -713,13 +714,13 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
     throw HTTPError(400, 'Cannot have same answers for one question.');
   } else if (!quizAnswerCorrectValid(questionBody)) {
     throw HTTPError(400, 'There are no correct answers.');
-  } 
-
-  // if (questionBody.thumbnailUrl.length === 0) {
-  //   throw HTTPError(400, 'Missing thumbnail URL.');
-  // }
-
-
+  } else if (questionBody.thumbnailUrl.length === 0) {
+    throw HTTPError(400, 'Missing thumbnail URL.');
+  } else if (!isUrl(questionBody.thumbnailUrl)) {
+    throw HTTPError(400, 'Not a valid url.');
+  } else if (!isImageUrl(questionBody.thumbnailUrl)) {
+    throw HTTPError(400, 'Url is not an image.');
+  }
 
   // find the quiz in data.quizzes by matching quizId to data.quizzes.quizId, find the quiz question in data.quizzes.quiz.question, splice out the question.
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
