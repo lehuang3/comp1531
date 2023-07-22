@@ -24,7 +24,7 @@ const quiz1Question1: any = {
       }
 
     ],
-    thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
+    thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
   }
 };
 
@@ -48,7 +48,7 @@ const quiz1Question2: any = {
       }
 
     ],
-    thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
+    thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
   }
 };
 
@@ -407,5 +407,77 @@ describe('Time test', () => {
     await requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, quiz1Question2.questionBody);
     const timeEnd = requestAdminQuizInfo(token1.body.token, quiz1.body.quizId).body.timeLastEdited;
     expect(timeEnd - timeInitial).toBeGreaterThanOrEqual(0);
+  });
+});
+
+describe('No url input', () => {
+  test('No url', () => {
+    const noUrl = {
+      questionBody: {
+        question: 'Why so serious',
+        duration: 10,
+        points: 1,
+        answers: [
+          {
+            answer: 'I am dumb',
+            correct: true
+          },
+          {
+            answer: 'I am smart',
+            correct: false
+          }
+        ],
+        thumbnailUrl: ''
+      }
+    };
+    expect(requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, noUrl.questionBody).body).toStrictEqual({ error: 'Missing thumbnail URL.' });
+  });
+});
+
+describe('Url does not exist', () => {
+  test('Invalid Url', () => {
+    const fakeUrl = {
+      questionBody: {
+        question: 'Why so serious',
+        duration: 10,
+        points: 1,
+        answers: [
+          {
+            answer: 'I am dumb',
+            correct: true
+          },
+          {
+            answer: 'I am smart',
+            correct: false
+          }
+        ],
+        thumbnailUrl: 'gsfsdfhgsdg'
+      }
+    };
+    expect(requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, fakeUrl.questionBody).body).toStrictEqual({ error: 'Not a valid url.' });
+  });
+});
+
+describe('Url is not an image', () => {
+  test('Not image', () => {
+    const notImage = {
+      questionBody: {
+        question: 'Why so serious',
+        duration: 10,
+        points: 1,
+        answers: [
+          {
+            answer: 'I am dumb',
+            correct: true
+          },
+          {
+            answer: 'I am smart',
+            correct: false
+          }
+        ],
+        thumbnailUrl: 'https://www.youtube.com/'
+      }
+    };
+    expect(requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, notImage.questionBody).body).toStrictEqual({ error: 'Url is not an image.' });
   });
 });

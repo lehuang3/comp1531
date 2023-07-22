@@ -27,7 +27,7 @@ beforeEach(() => {
         }
 
       ],
-      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
+      thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
     }
   };
 });
@@ -87,7 +87,7 @@ test('Invalid question length > 50', () => {
         }
 
       ],
-      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
+      thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
     }
   };
 
@@ -118,7 +118,7 @@ test('Invalid question length < 50', () => {
         }
 
       ],
-      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
+      thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
     }
   };
 
@@ -165,7 +165,7 @@ test('Answer > 6', () => {
         }
 
       ],
-      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
+      thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
     }
   };
 
@@ -187,7 +187,7 @@ test('Answer < 2', () => {
           correct: true
         }
       ],
-      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
+      thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
     }
   };
 
@@ -217,7 +217,7 @@ test('duration < 0', () => {
           correct: false
         },
       ],
-      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
+      thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
     }
   };
 
@@ -248,7 +248,7 @@ test('duration > 180', () => {
         }
 
       ],
-      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
+      thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
     }
   };
 
@@ -280,7 +280,7 @@ test('Point < 1', () => {
         }
 
       ],
-      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
+      thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
     }
   };
 
@@ -311,7 +311,7 @@ test('Point > 10', () => {
         }
 
       ],
-      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
+      thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
     }
   };
 
@@ -342,7 +342,7 @@ test('Point > 10', () => {
         }
 
       ],
-      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
+      thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
     }
   };
 
@@ -373,7 +373,7 @@ test('answer length < 1', () => {
         }
 
       ],
-      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
+      thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
     }
   };
 
@@ -404,7 +404,7 @@ test('answer length > 30', () => {
         }
 
       ],
-      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
+      thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
     }
   };
 
@@ -435,7 +435,7 @@ test('Duplicate asnwer', () => {
         }
 
       ],
-      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
+      thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
     }
   };
 
@@ -466,7 +466,7 @@ test('No correct asnwer', () => {
         }
 
       ],
-      thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
+      thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
     }
   };
 
@@ -484,7 +484,7 @@ test('Valid entry', () => {
 });
 
 test('Bad Images', () => {
-  let quizQuestion5 = {
+  const quizQuestion5 = {
     questionBody: {
       question: 'What is capital of sydney?',
       duration: 5,
@@ -504,7 +504,7 @@ test('Bad Images', () => {
         }
 
       ],
-      thumbnailUrl: "https://nw-syd-gitlab.cseunsw.tech/COMP1531/23T2/groups/M17D_EGGS/project-backend/-/tree/master/src"
+      thumbnailUrl: 'https://nw-syd-gitlab.cseunsw.tech/COMP1531/23T2/groups/M17D_EGGS/project-backend/-/tree/master/src'
     }
   };
 
