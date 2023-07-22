@@ -25,7 +25,7 @@ function adminQuizList (token: ErrorObject | string) {
     } else {
       throw HTTPError(403, 'Not a valid session');
     }
-  } 
+  }
 
   let userQuizs: any[] = [];
   const quizzList = [];
@@ -68,8 +68,7 @@ function adminQuizCreate (token: ErrorObject | string, name: string, description
     } else {
       throw HTTPError(403, 'Not a valid session');
     }
-  } 
-
+  }
 
   if (isValidUser(authUserId) === false) {
     throw HTTPError(400, 'User id not valid');
@@ -81,7 +80,7 @@ function adminQuizCreate (token: ErrorObject | string, name: string, description
     throw HTTPError(400, 'uiz name is taken');
   } else if (isDescriptionLong(description) === true) {
     throw HTTPError(400, 'Quiz description is not valid');
-  }  else {
+  } else {
     const quizLength = data.quizzes.length;
     let quizId = 0;
     // max needs to be -1 because if the 1st quiz created is in trash
@@ -159,8 +158,8 @@ function adminQuizRemove (token: ErrorObject | string, quizId: number) {
     } else {
       throw HTTPError(403, 'Not a valid session');
     }
-  } 
-  
+  }
+
   if (isValidUser(authUserId) === false) {
     throw HTTPError(400, 'User id not valid');
   } else if (quizValidCheck(quizId) === false) {
@@ -222,7 +221,6 @@ function adminQuizInfo (token: ErrorObject | string, quizId: number) {
       return quiz;
     }
   }
-
 }
 
 /**
@@ -246,7 +244,7 @@ function adminQuizNameUpdate (token: ErrorObject | string, quizId: number, name:
   }
 
   if (!nameLengthIsValid(name)) {
-    throw HTTPError(400,'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.');
+    throw HTTPError(400, 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.');
   } else if (!nameQuizIsValid(name)) {
     throw HTTPError(400, 'Quiz name cannot have special characters.');
   } else if (nameTaken(authUserId, name)) {
@@ -404,7 +402,7 @@ function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, qu
     } else {
       throw HTTPError(403, 'Not a valid session');
     }
-  } 
+  }
 
   if (quizValidCheck(quizId) === false) {
     throw HTTPError(400, 'quiz id not valid');
@@ -489,7 +487,7 @@ function adminQuizQuestionMove (quizId:number, questionId:number, token: ErrorOb
     } else {
       throw HTTPError(403, 'Not a valid session');
     }
-  } 
+  }
 
   if (quizValidCheck(quizId) === false) {
     throw HTTPError(400, 'quiz id not valid');
@@ -585,7 +583,7 @@ function adminQuizQuestionDuplicate (quizId:number, questionId:number, token: Er
     } else {
       throw HTTPError(403, 'Not a valid session');
     }
-  } 
+  }
 
   if (quizValidCheck(quizId) === false) {
     throw HTTPError(400, 'Quiz does not exits');
@@ -798,9 +796,6 @@ function adminQuizTrashEmpty(token: string | ErrorObject, quizIdArr: number[]) {
   });
   return {};
 }
-
-
-
 
 export {
   adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash, adminQuizTransfer, adminQuizRestore,

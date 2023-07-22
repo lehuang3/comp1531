@@ -23,7 +23,7 @@ const quiz1Question1 = {
         correct: false
       }
     ],
-    thumbnailUrl: "https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg"
+    thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
   }
 };
 

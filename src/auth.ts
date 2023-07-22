@@ -318,7 +318,7 @@ function adminAuthDetailsUpdate(token: string | ErrorObject, email: string, name
     } else {
       throw HTTPError(403, 'Not a valid session');
     }
-  } 
+  }
 
   // check valid email
   for (const user of data.users) {

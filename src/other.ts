@@ -430,10 +430,10 @@ function requestQuizQuestionCreate(token: ErrorObject | string, quizId: number, 
     'POST',
     SERVER_URL + `/v2/admin/quiz/${quizId}/question`,
     {
-      headers:{
-        token:token as string
+      headers: {
+        token: token as string
       },
-      json: {       
+      json: {
         questionBody
       }
     }
@@ -462,7 +462,7 @@ function requestAdminQuizCreate(token: ErrorObject | string, name: string, descr
       headers: {
         token: token as string
       },
-      json: {     
+      json: {
         name,
         description
       }
@@ -540,8 +540,8 @@ function requestAdminQuizRemove(token: ErrorObject | string, quizId: number) {
     'DELETE',
     SERVER_URL + `/v2/admin/quiz/${quizId}`,
     {
-      headers:{
-        token:token as string
+      headers: {
+        token: token as string
       }
     }
   );
@@ -564,7 +564,7 @@ function requestAdminQuizList(token: ErrorObject | string) {
     SERVER_URL + '/v2/admin/quiz/list',
     {
       headers: {
-        token:token as string
+        token: token as string
       }
     }
   );
@@ -670,7 +670,7 @@ function requestAdminQuizQuestionMove(quizId: number, questionId: number, token:
     'PUT',
     SERVER_URL + `/v2/admin/quiz/${quizId}/question/${questionId}/move`,
     {
-      headers:{
+      headers: {
         token: token as string
       },
       json: {
@@ -700,7 +700,7 @@ function requestAdminQuizQuestionDuplicate(token: ErrorObject | string, quizId: 
     SERVER_URL + `/v2/admin/quiz/${quizId}/question/${questionId}/duplicate`,
     {
       headers: {
-        token:token as string
+        token: token as string
       }
     }
   );
@@ -1076,7 +1076,7 @@ function requestAdminAuthDetailsUpdate(token: ErrorObject | string, email: strin
     'PUT',
     SERVER_URL + '/v2/admin/user/details',
     {
-      headers:{
+      headers: {
         token: token as string
       },
       json: {
