@@ -3,9 +3,9 @@ import {
   save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong,
   tokenOwner, questionLengthValid, answerCountValid, newPositioNotSame, newPositionValidCheck, questionValidCheck, durationValid, QuizDurationValid, quizPointsValid,
   quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash, getColour, isSameQuizName, quizActiveCheck,quizHasQuestion, activeSessions,
-  generateSessionId
+  generateSessionId, quizSessionIdValidCheck, isActionApplicable
 } from './other';
-import { Data, Answer } from './interfaces';
+import { Data, Answer, Action } from './interfaces';
 import HTTPError from 'http-errors';
 const isUrl = require('is-url');
 const isImageUrl = require('is-image-url');
@@ -868,7 +868,46 @@ function adminQuizSessionStart(token: ErrorObject | string, quizId: number, auto
   }
 }
 
+
+function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number, sessionId: number, action: string) {
+  const data: Data = read();
+  const authUserId = tokenOwner(token);
+  if (typeof authUserId !== 'number') {
+    if (authUserId.error === 'Invalid token structure') {
+      throw HTTPError(401, 'Invalid token structure');
+      // invalid session
+    } else {
+      throw HTTPError(403, 'Not a valid session');
+    }
+  }
+  if (!quizActiveCheck(quizId)) {
+    throw HTTPError(400, 'Quiz does not exist');
+  }
+  if (!quizValidOwner(authUserId, quizId)) {
+    throw HTTPError(400, 'You do not have access to this quiz');
+  }
+  if (!quizSessionIdValidCheck(quizId, sessionId)) {
+    throw HTTPError(400, 'Session is not valid');
+  }
+  if (!Object.keys(Action).includes(action)) {
+    throw HTTPError(400, 'Invalid Action enum');
+  }
+  if (!isActionApplicable(sessionId, action).applicable) {
+    throw HTTPError(400, 'Action is not applicable');
+  }
+
+  const nextState = isActionApplicable(sessionId, action).nextState;
+  for (const session of data.sessions) {
+    if (session.quizSessionId === sessionId) {
+      session.state = nextState;
+    }
+  }
+  save(data);
+  return {};
+}
+
 export {
   adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash, adminQuizTransfer, adminQuizRestore,
-  adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDuplicate, adminQuizQuestionDelete, adminQuizQuestionUpdate, adminQuizTrashEmpty, adminQuizSessionStart
+  adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDuplicate, adminQuizQuestionDelete, adminQuizQuestionUpdate, adminQuizTrashEmpty, adminQuizSessionStart,
+  adminQuizSessionStateUpdate
 };
