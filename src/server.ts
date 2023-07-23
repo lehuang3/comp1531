@@ -11,8 +11,9 @@ import { adminAuthRegister, adminUserDetails, adminAuthLogin, adminAuthPasswordU
 import {
   adminQuizCreate, adminQuizDescriptionUpdate, adminQuizRemove, adminQuizNameUpdate, adminQuizList, adminQuizInfo, adminQuizTrash,
   adminQuizTransfer, adminQuizRestore, adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDuplicate, adminQuizQuestionDelete, adminQuizQuestionUpdate,
-  adminQuizTrashEmpty, adminQuizSessionStart, adminQuizSessionStateUpdate, adminQuizThumbnailUpdate
+  adminQuizTrashEmpty, adminQuizThumbnailUpdate
 } from './quiz';
+import { adminQuizSessionStart, adminQuizSessionStateUpdate } from './session';
 import { clear } from './other';
 
 // Set up web app
