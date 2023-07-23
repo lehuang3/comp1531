@@ -111,4 +111,26 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
   return {};
 }
 
-export { adminQuizSessionStart, adminQuizSessionStateUpdate };
+function adminSessionChatSend(playerId: number, message: string) {
+  const data: Data = read();
+  const playerMatch = data.sessions.filter((session) => {
+    session.players.filter((player) => player.playerId === playerId)
+  })
+  if (playerMatch.length === 0) {
+    throw HTTPError(400, 'Player does not exist.')
+  } else if (message.length < 1 || message.length > 100) {
+    throw HTTPError(400, 'Message length must be greater than 0 and less than 101.')
+  }
+
+  // check this section
+  const newMessage = {
+    playerId: playerId,
+    messageBody: message,
+    playerName: 1,
+    timeSent: Math.floor(Date.now() / 1000)
+  }
+  //const session = data.sessions.filter((session) => session.players.includes())
+  return {}
+}
+
+export { adminQuizSessionStart, adminQuizSessionStateUpdate, adminSessionChatSend };

@@ -1131,6 +1131,22 @@ function requestAdminQuizThumbnailUpdate(token: ErrorObject | string, quizId: nu
   };
 }
 
+function requestAdminSessionChatSend(playerId: number, message: string) {
+  const res = request(
+    'POST',
+    SERVER_URL + `/v1/player/${playerId}/chat`,
+    {
+      json: {
+        message
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
 function isSameQuizName(userEmail: string, quizId: number): boolean {
   const data: Data = read();
   const users = data.users;
@@ -1366,5 +1382,5 @@ export {
   quizAnswerCorrectValid, isQuizInTrash, requestAdminQuizQuestionMove, questionValidCheck, newPositioNotSame, newPositionValidCheck, requestAdminQuizQuestionDuplicate,
   requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate, requestAdminAuthLogout,
   requestAdminAuthDetailsUpdate, requestAdminQuizSessionStart, quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId, requestAdminQuizSessionStateUpdate,
-  quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate
+  quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate, requestAdminSessionChatSend
 };

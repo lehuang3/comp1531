@@ -13,7 +13,7 @@ import {
   adminQuizTransfer, adminQuizRestore, adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDuplicate, adminQuizQuestionDelete, adminQuizQuestionUpdate,
   adminQuizTrashEmpty, adminQuizThumbnailUpdate
 } from './quiz';
-import { adminQuizSessionStart, adminQuizSessionStateUpdate } from './session';
+import { adminQuizSessionStart, adminQuizSessionStateUpdate, adminSessionChatSend } from './session';
 import { clear } from './other';
 
 // Set up web app
@@ -537,6 +537,13 @@ app.put('/v1/admin/quiz/:quizId/thumbnail', (req: Request, res: Response) => {
   const imgUrl = req.body.imgUrl;
   const token = req.header('token');
   const response = adminQuizThumbnailUpdate(token, quizId, imgUrl);
+  res.json(response);
+});
+
+app.post('/v1/player/:playerId/chat', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerId);
+  const message= req.body.message;
+  const response = adminSessionChatSend(playerId, message);
   res.json(response);
 });
 
