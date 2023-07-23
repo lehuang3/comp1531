@@ -2,7 +2,7 @@ import { ErrorObject, Quiz, State } from './interfaces';
 import {
   save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong,
   tokenOwner, questionLengthValid, answerCountValid, newPositioNotSame, newPositionValidCheck, questionValidCheck, durationValid, QuizDurationValid, quizPointsValid,
-  quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash, getColour, isSameQuizName, quizActiveCheck,quizHasQuestion, activeSessions,
+  quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash, getColour, isSameQuizName, quizActiveCheck, quizHasQuestion, activeSessions,
   generateSessionId, quizSessionIdValidCheck, isActionApplicable
 } from './other';
 import { Data, Answer, Action } from './interfaces';
@@ -129,8 +129,8 @@ function adminQuizCreate (token: ErrorObject | string, name: string, description
       description: description,
       numQuestions: 0,
       questions: [],
-      duration: 0
-
+      duration: 0,
+      imgUrl: ''
     };
 
     data.quizzes.push(newQuiz);
@@ -627,7 +627,7 @@ function adminQuizQuestionDuplicate (quizId:number, questionId:number, token: Er
     quiz.duration += question.duration;
     quiz.timeLastEdited = Math.floor(Date.now() / 1000);
     quiz.numQuestions++;
-    console.log(data.quizzes[0]);
+    // console.log(data.quizzes[0]);
     save(data);
     return { newQuestionId: newQuestionId };
   }
@@ -850,7 +850,7 @@ function adminQuizSessionStart(token: ErrorObject | string, quizId: number, auto
           averageAnswerTime: 0,
           // default value of percentCorrect
           percentCorrect: 0,
-        }
+        };
       }),
       duration: quiz.duration,
     },
@@ -865,9 +865,8 @@ function adminQuizSessionStart(token: ErrorObject | string, quizId: number, auto
   save(data);
   return {
     sessionId: newSessionId,
-  }
+  };
 }
-
 
 function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number, sessionId: number, action: string) {
   const data: Data = read();
@@ -906,8 +905,37 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
   return {};
 }
 
+function adminQuizThumbnailUpdate(token: string| ErrorObject, quizId: number, imgUrl: string) {
+  const data: Data = read();
+  const authUserId = tokenOwner(token);
+  if (typeof authUserId !== 'number') {
+    if (authUserId.error === 'Invalid token structure') {
+      throw HTTPError(401, 'Invalid token structure');
+    } else {
+      throw HTTPError(403, 'Not a valid session');
+    }
+  }
+  if (!quizValidCheck(quizId)) {
+    throw HTTPError(400, 'Quiz does not exist.');
+  } else if (!quizValidOwner(authUserId, quizId)) {
+    throw HTTPError(400, 'You do not have access to this quiz.');
+  } else if (!isUrl(imgUrl)) {
+    throw HTTPError(400, 'Not a valid url.');
+  } else if (!isImageUrl(imgUrl)) {
+    throw HTTPError(400, 'Url is not an image.');
+  }
+  const quiz = data.quizzes.filter((quiz) => quiz.quizId === quizId);
+  // console.log(quiz);
+  quiz[0].imgUrl = imgUrl;
+  // console.log(quiz);
+  save(data);
+  return {
+
+  };
+}
+
 export {
   adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash, adminQuizTransfer, adminQuizRestore,
   adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDuplicate, adminQuizQuestionDelete, adminQuizQuestionUpdate, adminQuizTrashEmpty, adminQuizSessionStart,
-  adminQuizSessionStateUpdate
+  adminQuizSessionStateUpdate, adminQuizThumbnailUpdate
 };

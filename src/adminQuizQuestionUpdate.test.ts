@@ -101,7 +101,8 @@ describe('Question too short/long', () => {
             answer: 'I am smart',
             correct: false
           }
-        ]
+        ],
+        thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
       }
     };
     expect(requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, longQuestion.questionBody).body).toStrictEqual({ error: 'Question must be greater than 4 characters and less than 51 characters.' });
@@ -121,7 +122,8 @@ describe('Question too short/long', () => {
             answer: 'I am smart',
             correct: false
           }
-        ]
+        ],
+        thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
       }
     };
     expect(requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, shortQuestion.questionBody).body).toStrictEqual({ error: 'Question must be greater than 4 characters and less than 51 characters.' });
@@ -164,7 +166,8 @@ describe('Too many/little answers', () => {
             answer: 'Apple',
             correct: false
           }
-        ]
+        ],
+        thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
       }
     };
     expect(requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, aLotOfAnswers.questionBody).body).toStrictEqual({ error: 'Must have more than one answer and less than 7 answers.' });
@@ -180,7 +183,8 @@ describe('Too many/little answers', () => {
             answer: 'Because',
             correct: true
           }
-        ]
+        ],
+        thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
       }
     };
     expect(requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, notEnoughAnswers.questionBody).body).toStrictEqual({ error: 'Must have more than one answer and less than 7 answers.' });
@@ -203,7 +207,8 @@ describe('Invalid timer', () => {
             answer: 'I am smart',
             correct: false
           }
-        ]
+        ],
+        thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
       }
     };
     expect(requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, invalidTime1.questionBody).body).toStrictEqual({ error: 'Time allowed must be a postive number.' });
@@ -223,7 +228,8 @@ describe('Invalid timer', () => {
             answer: 'I am smart',
             correct: false
           }
-        ]
+        ],
+        thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
       }
     };
     expect(requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, invalidTime2.questionBody).body).toStrictEqual({ error: 'Time allowed must be a postive number.' });
@@ -246,7 +252,8 @@ describe('Quiz total duration > 3minutes', () => {
             answer: 'I am smart',
             correct: false
           }
-        ]
+        ],
+        thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
       }
     };
     expect(requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, timeTooLong.questionBody).body).toStrictEqual({ error: 'Quiz duration longer than 3 minutes.' });
@@ -269,7 +276,8 @@ describe('Question awards too little/much points', () => {
             answer: 'I am smart',
             correct: false
           }
-        ]
+        ],
+        thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
       }
     };
     expect(requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, points.questionBody).body).toStrictEqual({ error: 'Question must award at least one point and no more than 10 points.' });
@@ -289,7 +297,8 @@ describe('Question awards too little/much points', () => {
             answer: 'I am smart',
             correct: false
           }
-        ]
+        ],
+        thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
       }
     };
     expect(requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, point.questionBody).body).toStrictEqual({ error: 'Question must award at least one point and no more than 10 points.' });
@@ -312,7 +321,8 @@ describe('Answer too long/short', () => {
             answer: 'I am smart',
             correct: false
           }
-        ]
+        ],
+        thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
       }
     };
     expect(requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, longAnswer.questionBody).body).toStrictEqual({ error: 'Answer must be greater than 0 characters and less than 31 characters long.' });
@@ -332,7 +342,8 @@ describe('Answer too long/short', () => {
             answer: 'I am smart',
             correct: false
           }
-        ]
+        ],
+        thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
       }
     };
     expect(requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, shortAnswer.questionBody).body).toStrictEqual({ error: 'Answer must be greater than 0 characters and less than 31 characters long.' });
@@ -355,7 +366,8 @@ describe('Two or more answers in question are the same', () => {
             answer: 'I am smart',
             correct: false
           }
-        ]
+        ],
+        thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
       }
     };
     expect(requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, sameAnswer.questionBody).body).toStrictEqual({ error: 'Cannot have same answers for one question.' });
@@ -378,7 +390,8 @@ describe('No correct answers', () => {
             answer: 'I am smart',
             correct: false
           }
-        ]
+        ],
+        thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
       }
     };
     expect(requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, noAnswer.questionBody).body).toStrictEqual({ error: 'There are no correct answers.' });
@@ -481,3 +494,7 @@ describe('Url is not an image', () => {
     expect(requestAdminQuizQuestionUpdate(token1.body.token, quiz1.body.quizId, token1Quiz1Question1Id.body.questionId, notImage.questionBody).body).toStrictEqual({ error: 'Url is not an image.' });
   });
 });
+
+// while(!data.sessions.includes(math.random()*1000)) {
+
+// }

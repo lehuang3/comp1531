@@ -11,7 +11,7 @@ import { adminAuthRegister, adminUserDetails, adminAuthLogin, adminAuthPasswordU
 import {
   adminQuizCreate, adminQuizDescriptionUpdate, adminQuizRemove, adminQuizNameUpdate, adminQuizList, adminQuizInfo, adminQuizTrash,
   adminQuizTransfer, adminQuizRestore, adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDuplicate, adminQuizQuestionDelete, adminQuizQuestionUpdate,
-  adminQuizTrashEmpty, adminQuizSessionStart, adminQuizSessionStateUpdate
+  adminQuizTrashEmpty, adminQuizSessionStart, adminQuizSessionStateUpdate, adminQuizThumbnailUpdate
 } from './quiz';
 import { clear } from './other';
 
@@ -528,6 +528,14 @@ app.put('/v1/admin/quiz/:quizId/session/:sessionId', (req: Request, res: Respons
   const token = req.header('token');
   const { action } = req.body;
   const response = adminQuizSessionStateUpdate(token, quizId, sessionId, action);
+  res.json(response);
+});
+
+app.put('/v1/admin/quiz/:quizId/thumbnail', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const imgUrl = req.body.imgUrl;
+  const token = req.header('token');
+  const response = adminQuizThumbnailUpdate(token, quizId, imgUrl);
   res.json(response);
 });
 

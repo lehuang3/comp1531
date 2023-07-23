@@ -137,7 +137,7 @@ function clear () {
     tokens: [],
 
     trash: [],
-    
+
     sessions: [],
   };
   save(store);
@@ -227,7 +227,7 @@ function quizValidCheck (quizId: number): boolean {
 }
 
 /**
- * Given a quizId check if it exists within the list of active quizzes, 
+ * Given a quizId check if it exists within the list of active quizzes,
  * returning true if it exists and false if it does not
  *
  * @param {number} quizId
@@ -1112,6 +1112,25 @@ function requestAdminAuthDetailsUpdate(token: ErrorObject | string, email: strin
   };
 }
 
+function requestAdminQuizThumbnailUpdate(token: ErrorObject | string, quizId: number, imgUrl: string) {
+  const res = request(
+    'PUT',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/thumbnail`,
+    {
+      headers: {
+        token: token as string
+      },
+      json: {
+        imgUrl
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
 function isSameQuizName(userEmail: string, quizId: number): boolean {
   const data: Data = read();
   const users = data.users;
@@ -1309,7 +1328,7 @@ function isActionApplicable(sessionId: number, action: string): any {
             return {
               applicable: true,
               nextState: 'FINAL_RESULTS'
-            }
+            };
           } else {
             return {
               applicable: false,
@@ -1347,5 +1366,5 @@ export {
   quizAnswerCorrectValid, isQuizInTrash, requestAdminQuizQuestionMove, questionValidCheck, newPositioNotSame, newPositionValidCheck, requestAdminQuizQuestionDuplicate,
   requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate, requestAdminAuthLogout,
   requestAdminAuthDetailsUpdate, requestAdminQuizSessionStart, quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId, requestAdminQuizSessionStateUpdate,
-  quizSessionIdValidCheck, isActionApplicable
+  quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate
 };

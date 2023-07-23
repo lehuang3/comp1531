@@ -1,5 +1,7 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizSessionStart,
-requestAdminQuizSessionStateUpdate } from './other';
+import {
+  requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizSessionStart,
+  requestAdminQuizSessionStateUpdate
+} from './other';
 
 let token1: string;
 let quiz1: number;
@@ -37,7 +39,7 @@ beforeEach(() => {
 
 test('Check for invalid token structure', () => {
   const token2 = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body.token;
-  const response = requestAdminQuizSessionStateUpdate(token2, quiz1, session1, "NEXT_QUESTION");
+  const response = requestAdminQuizSessionStateUpdate(token2, quiz1, session1, 'NEXT_QUESTION');
   expect(response.body).toStrictEqual({
     error: 'Invalid token structure',
   });
@@ -47,7 +49,7 @@ test('Check for invalid token structure', () => {
 test('Check for invalid session', () => {
   const token2 = (parseInt(token1) + 1).toString();
 
-  const response = requestAdminQuizSessionStateUpdate(token2, quiz1, session1, "NEXT_QUESTION");
+  const response = requestAdminQuizSessionStateUpdate(token2, quiz1, session1, 'NEXT_QUESTION');
   expect(response.body).toStrictEqual({
     error: 'Not a valid session'
   });
@@ -55,7 +57,7 @@ test('Check for invalid session', () => {
 });
 
 test('Invalid quizId', () => {
-  const response = requestAdminQuizSessionStateUpdate(token1, quiz1 + 1, session1, "NEXT_QUESTION");
+  const response = requestAdminQuizSessionStateUpdate(token1, quiz1 + 1, session1, 'NEXT_QUESTION');
   expect(response.body).toStrictEqual({
     error: 'Quiz does not exist',
   });
@@ -64,11 +66,10 @@ test('Invalid quizId', () => {
 
 test('No permission to view quiz', () => {
   const token2 = requestAdminAuthRegister('Le@gmail.com', '1234abcd', 'Le', 'Huang').body.token;
-  const response = requestAdminQuizSessionStateUpdate(token2, quiz1, session1, "NEXT_QUESTION");
+  const response = requestAdminQuizSessionStateUpdate(token2, quiz1, session1, 'NEXT_QUESTION');
   expect(response.body).toStrictEqual({ error: 'You do not have access to this quiz' });
   expect(response.status).toStrictEqual(400);
 });
-
 
 describe('sessionId tests', () => {
   test('session from another quiz', () => {
@@ -91,24 +92,24 @@ describe('sessionId tests', () => {
             answer: 'Camberra',
             correct: false
           }
-  
+
         ],
         thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
       });
-    const response = requestAdminQuizSessionStateUpdate(token1, quiz2, session1, "NEXT_QUESTION");
+    const response = requestAdminQuizSessionStateUpdate(token1, quiz2, session1, 'NEXT_QUESTION');
     expect(response.body).toStrictEqual({ error: 'Session is not valid' });
     expect(response.status).toStrictEqual(400);
   });
 });
 
 test('session not in any quiz', () => {
-  const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1 + 1, "NEXT_QUESTION");
+  const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1 + 1, 'NEXT_QUESTION');
   expect(response.body).toStrictEqual({ error: 'Session is not valid' });
   expect(response.status).toStrictEqual(400);
 });
 
 test('Invalid Action enum', () => {
-  const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, "WRONG_ACTION");
+  const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'WRONG_ACTION');
   expect(response.body).toStrictEqual({ error: 'Invalid Action enum' });
   expect(response.status).toStrictEqual(400);
 });
