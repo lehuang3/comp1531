@@ -846,6 +846,10 @@ function adminQuizSessionStart(token: ErrorObject | string, quizId: number, auto
           points: question.points,
           answers: question.answers,
           questionCorrectBreakdown: [],
+          // default value of averageAnswerTime
+          averageAnswerTime: 0,
+          // default value of percentCorrect
+          percentCorrect: 0,
         }
       }),
       duration: quiz.duration,

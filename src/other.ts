@@ -1025,7 +1025,7 @@ function requestAdminQuizQuestionUpdate(token: ErrorObject | string, quizId: num
  *
  * @returns {{object}} - response in javascript
 */
-function requestAdminQuizTrashEmpty(token: ErrorObject | string, quizIdArr: number[]) {
+function requestAdminQuizTrashEmpty(token: ErrorObject | string, quizIdArr: string) {
   const res = request(
     'DELETE',
     SERVER_URL + '/v2/admin/quiz/trash/empty',
