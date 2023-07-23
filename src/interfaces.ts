@@ -138,6 +138,7 @@ interface Data {
   quizzes: Quiz[];
   tokens: Token[];
   trash:Quiz[];
+  sessions: Session[];
 }
 
-export { AdminAuthLoginReturn, AdminUserDetailsReturn, Answer, AdminAuthRegisterReturn, ErrorObject, Data, Token, User, Quiz, QuizQuestion, Session };
+export { AdminAuthLoginReturn, AdminUserDetailsReturn, Answer, AdminAuthRegisterReturn, ErrorObject, Data, Token, User, Quiz, QuizQuestion, Session, State };
