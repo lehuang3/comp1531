@@ -1,11 +1,8 @@
-import { adminAuthLogin } from './auth';
-import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister } from './other';
+import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin } from './other';
 let token1: string;
 beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
-  // authUserId will always be in user1 as adminAuthRegister always succeeds
-  // but we need this if statement to bypass typescript
 });
 
 test('Check for invalid token structure', () => {
@@ -44,7 +41,7 @@ test('Check for valid auth', () => {
 
 describe('Check for successful and failed logins due to incorrect password', () => {
   test('Successful followed by failed login', () => {
-    adminAuthLogin('Minh@gmail.com', '1234abcd');
+    requestAdminAuthLogin('Minh@gmail.com', '1234abcd');
     let response = requestGetAdminUserDetails(token1);
     expect(response.body).toStrictEqual({
       user: {
@@ -57,7 +54,7 @@ describe('Check for successful and failed logins due to incorrect password', () 
     });
     expect(response.status).toStrictEqual(200);
 
-    adminAuthLogin('Minh@gmail.com', '12345abcd');
+    requestAdminAuthLogin('Minh@gmail.com', '12345abcd');
     response = requestGetAdminUserDetails(token1);
     expect(response.body).toStrictEqual({
       user: {
@@ -72,7 +69,7 @@ describe('Check for successful and failed logins due to incorrect password', () 
   });
 
   test('Failed followed by successful login', () => {
-    adminAuthLogin('Minh@gmail.com', '12345abcd');
+    requestAdminAuthLogin('Minh@gmail.com', '12345abcd');
     let response = requestGetAdminUserDetails(token1);
     expect(response.body).toStrictEqual({
       user: {
@@ -85,7 +82,7 @@ describe('Check for successful and failed logins due to incorrect password', () 
     });
     expect(response.status).toStrictEqual(200);
 
-    adminAuthLogin('Minh@gmail.com', '1234abcd');
+    requestAdminAuthLogin('Minh@gmail.com', '1234abcd');
     response = requestGetAdminUserDetails(token1);
     expect(response.body).toStrictEqual({
       user: {
@@ -102,7 +99,7 @@ describe('Check for successful and failed logins due to incorrect password', () 
 
 describe('Check for successful and failed logins due to incorrect email', () => {
   test('Successful followed by failed login', () => {
-    adminAuthLogin('Minh@gmail.com', '1234abcd');
+    requestAdminAuthLogin('Minh@gmail.com', '1234abcd');
     let response = requestGetAdminUserDetails(token1);
     expect(response.body).toStrictEqual({
       user: {
@@ -115,7 +112,7 @@ describe('Check for successful and failed logins due to incorrect email', () => 
     });
     expect(response.status).toStrictEqual(200);
 
-    adminAuthLogin('Minh@gmaill.com', '1234abcd');
+    requestAdminAuthLogin('Minh@gmaill.com', '1234abcd');
     response = requestGetAdminUserDetails(token1);
     expect(response.body).toStrictEqual({
       user: {
@@ -130,7 +127,7 @@ describe('Check for successful and failed logins due to incorrect email', () => 
   });
 
   test('Failed followed by successful login', () => {
-    adminAuthLogin('Minh@gmaill.com', '1234abcd');
+    requestAdminAuthLogin('Minh@gmaill.com', '1234abcd');
     let response = requestGetAdminUserDetails(token1);
     expect(response.body).toStrictEqual({
       user: {
@@ -143,7 +140,7 @@ describe('Check for successful and failed logins due to incorrect email', () => 
     });
     expect(response.status).toStrictEqual(200);
 
-    adminAuthLogin('Minh@gmail.com', '1234abcd');
+    requestAdminAuthLogin('Minh@gmail.com', '1234abcd');
     response = requestGetAdminUserDetails(token1);
     expect(response.body).toStrictEqual({
       user: {

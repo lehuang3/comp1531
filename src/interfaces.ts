@@ -46,6 +46,8 @@ interface User {
 interface Answer {
   answer: string;
   correct: boolean;
+  answerId:number;
+  colour: string;
 }
 
 interface QuizQuestion {
@@ -72,13 +74,20 @@ interface Quiz {
 
 // different states of a session
 enum State {
-  LOBBY,
-  QUESTION_COUNTDOWN,
-  QUESTION_OPEN,
-  QUESTION_CLOSE,
-  ANSWER_SHOW,
-  FINAL_RESULTS,
-  END
+  LOBBY = 'LOBBY',
+  QUESTION_COUNTDOWN = 'QUESTION_COUNTDOWN',
+  QUESTION_OPEN = 'QUESTION_OPEN',
+  QUESTION_CLOSE = 'QUESTION_CLOSE',
+  ANSWER_SHOW = 'ANSWER_SHOW',
+  FINAL_RESULTS = 'FINAL_RESULTS',
+  END = 'END'
+}
+
+enum Action {
+  END = 'END',
+  GO_TO_FINAL_RESULTS = 'GO_TO_FINAL_RESULTS',
+  GO_TO_ANSWER = 'GO_TO_ANSWER',
+  NEXT_QUESTION = 'NEXT_QUESTION'
 }
 
 interface Message {
@@ -138,7 +147,8 @@ interface Data {
   users: User[];
   quizzes: Quiz[];
   tokens: Token[];
-  trash: Quiz[];
+  trash:Quiz[];
+  sessions: Session[];
 }
 
-export { AdminAuthLoginReturn, AdminUserDetailsReturn, Answer, AdminAuthRegisterReturn, ErrorObject, Data, Token, User, Quiz, QuizQuestion, Session };
+export { AdminAuthLoginReturn, AdminUserDetailsReturn, Answer, AdminAuthRegisterReturn, ErrorObject, Data, Token, User, Quiz, QuizQuestion, Session, State, Action };

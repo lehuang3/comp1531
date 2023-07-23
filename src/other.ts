@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { Data, Token } from './interfaces';
+import { Data, Token, State } from './interfaces';
 import request from 'sync-request';
 import { port, url } from './config.json';
 import { ErrorObject } from './interfaces';
@@ -136,7 +136,9 @@ function clear () {
 
     tokens: [],
 
-    trash: []
+    trash: [],
+    
+    sessions: [],
   };
   save(store);
   return {
@@ -217,6 +219,24 @@ function quizValidCheck (quizId: number): boolean {
     }
   }
   for (const quiz of data.trash) {
+    if (quiz.quizId === quizId) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Given a quizId check if it exists within the list of active quizzes, 
+ * returning true if it exists and false if it does not
+ *
+ * @param {number} quizId
+ *
+ * @returns {boolean} - true or false
+ */
+function quizActiveCheck (quizId: number): boolean {
+  const data = read();
+  for (const quiz of data.quizzes) {
     if (quiz.quizId === quizId) {
       return true;
     }
@@ -1005,7 +1025,7 @@ function requestAdminQuizQuestionUpdate(token: ErrorObject | string, quizId: num
  *
  * @returns {{object}} - response in javascript
 */
-function requestAdminQuizTrashEmpty(token: ErrorObject | string, quizIdArr: number[]) {
+function requestAdminQuizTrashEmpty(token: ErrorObject | string, quizIdArr: string) {
   const res = request(
     'DELETE',
     SERVER_URL + '/v2/admin/quiz/trash/empty',
@@ -1129,12 +1149,222 @@ function isSameQuizName(userEmail: string, quizId: number): boolean {
   return false;
 }
 
+/**
+ * Send a 'POST' request to the corresponding server route to
+ * create a new session (instance) for a quiz
+ *
+ * @param {string | ErrorObject} token - token
+ * @param {number} - quizId
+ * @param {number} - autoStartNum
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminQuizSessionStart(token: string | ErrorObject, quizId: number, autoStartNum: number) {
+  const res = request(
+    'POST',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/session/start`,
+    {
+      headers: {
+        token: token as string
+      },
+      json: {
+        autoStartNum,
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
+ * Given a quizId, returns true or false depending on
+ * whether the questions array of the quiz is empty
+ *
+ * @param {number} quizId Quiz Id
+ *
+ * @returns {boolean} - true or false
+*/
+function quizHasQuestion(quizId: number): boolean {
+  const data: Data = read();
+  for (const quiz of data.quizzes) {
+    if (quiz.quizId === quizId) {
+      if (quiz.questions.length === 0) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * Counts the number of currently active sessions (not in END state) (in general - across all users
+ * and quizzes) and returns the count
+ *
+ * @param {number} quizId Quiz Id
+ *
+ * @returns {number} - number of active sessions
+*/
+function activeSessions(): number {
+  const data: Data = read();
+  return data.sessions.filter(session => session.state !== State.END).length;
+}
+
+/**
+ * Generates a random sessionId that is unique
+ *
+ * @param {void}
+ *
+ * @returns {number} - sessionId
+*/
+function generateSessionId(): number {
+  const data: Data = read();
+  let sessionId = Math.floor(Math.random() * 1000);
+  while (data.sessions.filter(sesison => sesison.quizSessionId === sessionId).length !== 0) {
+    sessionId = Math.floor(Math.random() * 1000);
+  }
+  return sessionId;
+}
+
+/**
+ * Send a 'put' request to the corresponding server route to
+ * create a new session (instance) for a quiz
+ *
+ * @param {string | ErrorObject} token - token
+ * @param {number} - quizId
+ * @param {number} - sessionId
+ * @param {string} - action
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminQuizSessionStateUpdate(token: string | ErrorObject, quizId: number, sessionId: number, action: string) {
+  const res = request(
+    'PUT',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/session/${sessionId}`,
+    {
+      headers: {
+        token: token as string
+      },
+      json: {
+        action
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
+ * Checks whether sessionId is related to the quizId
+ * passed in, returning true or false accordingly
+ *
+ * @param {number} - quizId
+ * @param {number} - sessionId
+ *
+ * @returns {number} - sessionId
+*/
+function quizSessionIdValidCheck(quizId: number, sessionId: number): boolean {
+  const data: Data = read();
+  for (const session of data.sessions) {
+    if (session.quizSessionId === sessionId) {
+      if (session.metadata.quizId === quizId) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * Checks whether action passed in is applicable given the
+ * current state of the passed in session
+ *
+ * @param {number} - sessionId
+ * @param {string} - action
+ *
+ * @returns {object} - applicability & nextState if there is one
+*/
+function isActionApplicable(sessionId: number, action: string): any {
+  const data: Data = read();
+  for (const session of data.sessions) {
+    if (session.quizSessionId === sessionId) {
+      const state = session.state;
+      switch (state) {
+        case State.LOBBY:
+          if (action === 'NEXT_QUESTION') {
+            return {
+              applicable: true,
+              nextState: 'QUESTION_COUNTDOWN'
+            };
+          } else if (action === 'END') {
+            return {
+              applicable: true,
+              nextState: 'END'
+            };
+          } else {
+            return {
+              applicable: false,
+              nextState: ''
+            };
+          }
+        case State.QUESTION_COUNTDOWN:
+        case State.QUESTION_OPEN:
+        case State.QUESTION_CLOSE:
+        case State.ANSWER_SHOW:
+          if (action === 'NEXT_QUESTION') {
+            return {
+              applicable: true,
+              nextState: 'QUESTION_COUNTDOWN'
+            };
+          } else if (action === 'END') {
+            return {
+              applicable: true,
+              nextState: 'END'
+            };
+          } else if (action === 'GO_TO_FINAL_RESULTS') {
+            return {
+              applicable: true,
+              nextState: 'FINAL_RESULTS'
+            }
+          } else {
+            return {
+              applicable: false,
+              nextState: ''
+            };
+          }
+        case State.FINAL_RESULTS:
+          if (action === 'END') {
+            return {
+              applicable: true,
+              nextState: 'END'
+            };
+          } else {
+            return {
+              applicable: false,
+              nextState: ''
+            };
+          }
+        case State.END:
+          return {
+            applicable: false,
+            nextState: ''
+          };
+      }
+    }
+  }
+  return true;
+}
+
 export {
   clear, save, read, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, isSameQuizName,
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
   requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
   requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid,
   quizAnswerCorrectValid, isQuizInTrash, requestAdminQuizQuestionMove, questionValidCheck, newPositioNotSame, newPositionValidCheck, requestAdminQuizQuestionDuplicate,
-  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate, requestAdminAuthLogout, requestAdminAuthDetailsUpdate,
-  requestAdminQuizThumbnailUpdate
+  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate, requestAdminAuthLogout,
+  requestAdminAuthDetailsUpdate, requestAdminQuizSessionStart, quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId, requestAdminQuizSessionStateUpdate,
+  quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate
 };
