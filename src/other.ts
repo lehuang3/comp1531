@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { Data, Token } from './interfaces';
+import { Data, Token, State } from './interfaces';
 import request from 'sync-request';
 import { port, url } from './config.json';
 import { ErrorObject } from './interfaces';
@@ -136,7 +136,9 @@ function clear () {
 
     tokens: [],
 
-    trash: []
+    trash: [],
+    
+    sessions: [],
   };
   save(store);
   return {
@@ -217,6 +219,24 @@ function quizValidCheck (quizId: number): boolean {
     }
   }
   for (const quiz of data.trash) {
+    if (quiz.quizId === quizId) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Given a quizId check if it exists within the list of active quizzes, 
+ * returning true if it exists and false if it does not
+ *
+ * @param {number} quizId
+ *
+ * @returns {boolean} - true or false
+ */
+function quizActiveCheck (quizId: number): boolean {
+  const data = read();
+  for (const quiz of data.quizzes) {
     if (quiz.quizId === quizId) {
       return true;
     }
@@ -1005,7 +1025,7 @@ function requestAdminQuizQuestionUpdate(token: ErrorObject | string, quizId: num
  *
  * @returns {{object}} - response in javascript
 */
-function requestAdminQuizTrashEmpty(token: ErrorObject | string, quizIdArr: number[]) {
+function requestAdminQuizTrashEmpty(token: ErrorObject | string, quizIdArr: string) {
   const res = request(
     'DELETE',
     SERVER_URL + '/v2/admin/quiz/trash/empty',
@@ -1110,11 +1130,80 @@ function isSameQuizName(userEmail: string, quizId: number): boolean {
   return false;
 }
 
+function requestAdminQuizSessionStart(token: string | ErrorObject, quizId: number, autoStartNum: number) {
+  const res = request(
+    'POST',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/session/start`,
+    {
+      headers: {
+        token: token as string
+      },
+      json: {
+        autoStartNum,
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
+ * Given a quizId, returns true or false depending on
+ * whether the questions array of the quiz is empty
+ *
+ * @param {number} quizId Quiz Id
+ *
+ * @returns {boolean} - true or false
+*/
+function quizHasQuestion(quizId: number): boolean {
+  const data: Data = read();
+  for (const quiz of data.quizzes) {
+    if (quiz.quizId === quizId) {
+      if (quiz.questions.length === 0) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * Counts the number of currently active sessions (not in END state) (in general - across all users
+ * and quizzes) and returns the count
+ *
+ * @param {number} quizId Quiz Id
+ *
+ * @returns {number} - number of active sessions
+*/
+function activeSessions(): number {
+  const data: Data = read();
+  return data.sessions.filter(session => session.state !== State.END).length;
+}
+
+/**
+ * Generates a random sessionId that is unique
+ *
+ * @param {void}
+ *
+ * @returns {number} - sessionId
+*/
+function generateSessionId(): number {
+  const data: Data = read();
+  let sessionId = Math.floor(Math.random() * 1000);
+  while (data.sessions.filter(sesison => sesison.quizSessionId === sessionId).length !== 0) {
+    sessionId = Math.floor(Math.random() * 1000);
+  }
+  return sessionId;
+}
+
 export {
   clear, save, read, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, isSameQuizName,
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
   requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
   requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid,
   quizAnswerCorrectValid, isQuizInTrash, requestAdminQuizQuestionMove, questionValidCheck, newPositioNotSame, newPositionValidCheck, requestAdminQuizQuestionDuplicate,
-  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate, requestAdminAuthLogout, requestAdminAuthDetailsUpdate
+  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate, requestAdminAuthLogout,
+  requestAdminAuthDetailsUpdate, requestAdminQuizSessionStart, quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId
 };

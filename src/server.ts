@@ -11,7 +11,7 @@ import { adminAuthRegister, adminUserDetails, adminAuthLogin, adminAuthPasswordU
 import {
   adminQuizCreate, adminQuizDescriptionUpdate, adminQuizRemove, adminQuizNameUpdate, adminQuizList, adminQuizInfo, adminQuizTrash,
   adminQuizTransfer, adminQuizRestore, adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDuplicate, adminQuizQuestionDelete, adminQuizQuestionUpdate,
-  adminQuizTrashEmpty
+  adminQuizTrashEmpty, adminQuizSessionStart
 } from './quiz';
 import { clear } from './other';
 
@@ -410,11 +410,7 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
 });
 
 app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
-  let quizIdArr = req.query.quizIdArr as any[];
-  // if the array passed in is empty (no quizzes were chosen)
-  if (quizIdArr !== undefined) {
-    quizIdArr = quizIdArr.map(quizId => parseInt(quizId));
-  }
+  const quizIdArr = JSON.parse(req.query.quizIdArr as string);
   const token = req.headers.token as string;
   const response = adminQuizTrashEmpty(token, quizIdArr);
   res.json(response);
@@ -519,6 +515,14 @@ app.delete('/v2/admin/quiz/:quizId/question/:questionId', (req: Request, res: Re
   const questionId = parseInt(req.params.questionId);
   const token = req.header('token');
   const response = adminQuizQuestionDelete(token, quizId, questionId);
+  res.json(response);
+});
+
+app.post('/v1/admin/quiz/:quizId/session/start', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const token = req.header('token');
+  const { autoStartNum } = req.body;
+  const response = adminQuizSessionStart(token, quizId, autoStartNum);
   res.json(response);
 });
 

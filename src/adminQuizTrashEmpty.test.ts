@@ -11,7 +11,7 @@ beforeEach(() => {
 
 test('Check for invalid token structure', () => {
   const invalidToken = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body.token;
-  const response = requestAdminQuizTrashEmpty(invalidToken, [quiz1.quizId]);
+  const response = requestAdminQuizTrashEmpty(invalidToken, `[${quiz1.quizId}]`);
   expect(response.body).toStrictEqual({
     error: 'Invalid token structure',
   });
@@ -22,7 +22,7 @@ test('Check for invalid session', () => {
   const wrongToken = (parseInt(token1) + 1).toString();
 
   // right structure, but there's no token like this in the tokens array
-  const response = requestAdminQuizTrashEmpty(wrongToken, [quiz1.quizId]);
+  const response = requestAdminQuizTrashEmpty(wrongToken, `[${quiz1.quizId}]`);
   expect(response.body).toStrictEqual({
     error: 'Not a valid session'
   });
@@ -31,7 +31,7 @@ test('Check for invalid session', () => {
 
 test('1 x quiz in the trash, quizId is invalid', () => {
   requestAdminQuizRemove(token1, quiz1.quizId);
-  const response = requestAdminQuizTrashEmpty(token1, [quiz1.quizId + 1]);
+  const response = requestAdminQuizTrashEmpty(token1, `[${quiz1.quizId + 1}]`);
   expect(response.body).toStrictEqual({
     error: 'One or more of the quizzes is not a valid quiz'
   });
@@ -42,7 +42,7 @@ test('2 x quiz in the trash, delete both but 1 x quizId is invalid', () => {
   const quiz2 = requestAdminQuizCreate(token1, 'quiz2', 'Descritpion').body;
   requestAdminQuizRemove(token1, quiz1.quizId);
   requestAdminQuizRemove(token1, quiz2.quizId);
-  const response = requestAdminQuizTrashEmpty(token1, [quiz1.quizId, quiz2.quizId + 1]);
+  const response = requestAdminQuizTrashEmpty(token1, `[${quiz1.quizId}, ${quiz2.quizId + 1}]`);
   expect(response.body).toStrictEqual({
     error: 'One or more of the quizzes is not a valid quiz'
   });
@@ -52,7 +52,7 @@ test('2 x quiz in the trash, delete both but 1 x quizId is invalid', () => {
 test('1 x quiz in the trash, quizId is of another quiz that token1 cannot access', () => {
   const token2 = requestAdminAuthRegister('Le@gmail.com', '1234abcd', 'Le', 'Huang').body.token;
   requestAdminQuizRemove(token1, quiz1.quizId);
-  const response = requestAdminQuizTrashEmpty(token2, [quiz1.quizId]);
+  const response = requestAdminQuizTrashEmpty(token2, `[${quiz1.quizId}]`);
   expect(response.body).toStrictEqual({
     error: 'One or more of the quizzes refers to a quiz that this current user does not own'
   });
@@ -64,7 +64,7 @@ test('2 x quiz in the trash, remove both but 1 x quizId is of another quiz that 
   const quiz2 = requestAdminQuizCreate(token2, 'quiz2', 'Descritpion').body;
   requestAdminQuizRemove(token1, quiz1.quizId);
   requestAdminQuizRemove(token2, quiz2.quizId);
-  const response = requestAdminQuizTrashEmpty(token2, [quiz1.quizId, quiz2.quizId]);
+  const response = requestAdminQuizTrashEmpty(token2, `[${quiz1.quizId}, ${quiz2.quizId}]`);
   expect(response.body).toStrictEqual({
     error: 'One or more of the quizzes refers to a quiz that this current user does not own'
   });
@@ -72,13 +72,13 @@ test('2 x quiz in the trash, remove both but 1 x quizId is of another quiz that 
 });
 
 test('trash is empty', () => {
-  const response = requestAdminQuizTrashEmpty(token1, []);
+  const response = requestAdminQuizTrashEmpty(token1, '[]');
   expect(response.body).toStrictEqual({});
   expect(response.status).toStrictEqual(200);
 });
 
 test('trash is empty, remove 1 x quiz not in the trash', () => {
-  const response = requestAdminQuizTrashEmpty(token1, [quiz1.quizId]);
+  const response = requestAdminQuizTrashEmpty(token1, `[${quiz1.quizId}]`);
   expect(response.body).toStrictEqual({
     error: 'One or more of the quizzes is not currently in the trash'
   });
@@ -87,7 +87,7 @@ test('trash is empty, remove 1 x quiz not in the trash', () => {
 
 test('trash has 1 quiz, remove no quiz', () => {
   requestAdminQuizRemove(token1, quiz1.quizId);
-  const response = requestAdminQuizTrashEmpty(token1, []);
+  const response = requestAdminQuizTrashEmpty(token1, '[]');
   expect(response.body).toStrictEqual({});
   expect(response.status).toStrictEqual(200);
 
@@ -104,7 +104,7 @@ test('trash has 1 quiz, remove no quiz', () => {
 
 test('trash has 1 quiz, remove 1 quiz', () => {
   requestAdminQuizRemove(token1, quiz1.quizId);
-  const response = requestAdminQuizTrashEmpty(token1, [quiz1.quizId]);
+  const response = requestAdminQuizTrashEmpty(token1, `[${quiz1.quizId}]`);
   expect(response.body).toStrictEqual({});
   expect(response.status).toStrictEqual(200);
 
@@ -131,7 +131,7 @@ test('trash has 2 quizzes, remove 2 quiz', () => {
       }
     ]
   });
-  const response = requestAdminQuizTrashEmpty(token1, [quiz1.quizId, quiz2.quizId]);
+  const response = requestAdminQuizTrashEmpty(token1, `[${quiz1.quizId}, ${quiz2.quizId}]`);
   expect(response.body).toStrictEqual({});
   expect(response.status).toStrictEqual(200);
 
