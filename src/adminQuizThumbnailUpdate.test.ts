@@ -12,7 +12,7 @@ beforeEach(() => {
   quiz1 = requestAdminQuizCreate(token1.body.token, 'quiz', 'quiz1');
 });
 
-describe('Passing case', () => {
+describe.only('Passing case', () => {
   test('User 1 enters correct information', () => {
     expect(requestAdminQuizThumbnailUpdate(token1.body.token, quiz1.body.quizId, imageUrl.imgUrl).body).toStrictEqual({ });
   });

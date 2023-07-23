@@ -1092,6 +1092,25 @@ function requestAdminAuthDetailsUpdate(token: ErrorObject | string, email: strin
   };
 }
 
+function requestAdminQuizThumbnailUpdate(token: ErrorObject | string, quizId: number, imgUrl: string) {
+  const res = request(
+    'PUT',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/thumbnail`,
+    {
+      headers: {
+        token: token as string
+      },
+      json: {
+        imgUrl
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
 function isSameQuizName(userEmail: string, quizId: number): boolean {
   const data: Data = read();
   const users = data.users;
@@ -1116,5 +1135,6 @@ export {
   requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
   requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid,
   quizAnswerCorrectValid, isQuizInTrash, requestAdminQuizQuestionMove, questionValidCheck, newPositioNotSame, newPositionValidCheck, requestAdminQuizQuestionDuplicate,
-  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate, requestAdminAuthLogout, requestAdminAuthDetailsUpdate
+  requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate, requestAdminAuthLogout, requestAdminAuthDetailsUpdate,
+  requestAdminQuizThumbnailUpdate
 };

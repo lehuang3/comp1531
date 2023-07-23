@@ -67,6 +67,7 @@ interface Quiz {
   numQuestions: number;
   questions: QuizQuestion[];
   duration:number;
+  imgUrl: string;
 }
 
 // different states of a session
@@ -137,7 +138,7 @@ interface Data {
   users: User[];
   quizzes: Quiz[];
   tokens: Token[];
-  trash:Quiz[];
+  trash: Quiz[];
 }
 
 export { AdminAuthLoginReturn, AdminUserDetailsReturn, Answer, AdminAuthRegisterReturn, ErrorObject, Data, Token, User, Quiz, QuizQuestion, Session };

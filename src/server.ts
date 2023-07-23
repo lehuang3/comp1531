@@ -11,7 +11,7 @@ import { adminAuthRegister, adminUserDetails, adminAuthLogin, adminAuthPasswordU
 import {
   adminQuizCreate, adminQuizDescriptionUpdate, adminQuizRemove, adminQuizNameUpdate, adminQuizList, adminQuizInfo, adminQuizTrash,
   adminQuizTransfer, adminQuizRestore, adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDuplicate, adminQuizQuestionDelete, adminQuizQuestionUpdate,
-  adminQuizTrashEmpty
+  adminQuizTrashEmpty, adminQuizThumbnailUpdate
 } from './quiz';
 import { clear } from './other';
 
@@ -519,6 +519,14 @@ app.delete('/v2/admin/quiz/:quizId/question/:questionId', (req: Request, res: Re
   const questionId = parseInt(req.params.questionId);
   const token = req.header('token');
   const response = adminQuizQuestionDelete(token, quizId, questionId);
+  res.json(response);
+});
+
+app.put('/v1/admin/quiz/:quizId/thumbnail', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const imgUrl = req.body.imgUrl;
+  const token = req.header('token');
+  const response = adminQuizThumbnailUpdate(token, quizId, imgUrl);
   res.json(response);
 });
 
