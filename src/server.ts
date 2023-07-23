@@ -11,7 +11,7 @@ import { adminAuthRegister, adminUserDetails, adminAuthLogin, adminAuthPasswordU
 import {
   adminQuizCreate, adminQuizDescriptionUpdate, adminQuizRemove, adminQuizNameUpdate, adminQuizList, adminQuizInfo, adminQuizTrash,
   adminQuizTransfer, adminQuizRestore, adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDuplicate, adminQuizQuestionDelete, adminQuizQuestionUpdate,
-  adminQuizTrashEmpty, adminQuizSessionStart
+  adminQuizTrashEmpty, adminQuizSessionStart, adminQuizSessionStateUpdate
 } from './quiz';
 import { clear } from './other';
 
@@ -390,11 +390,7 @@ app.put('/v1/admin/quiz/:quizId/question/:questionId', (req: Request, res: Respo
 });
 
 app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
-  let quizIdArr = req.query.quizIdArr as any[];
-  // if the array passed in is empty (no quizzes were chosen)
-  if (quizIdArr !== undefined) {
-    quizIdArr = quizIdArr.map(quizId => parseInt(quizId));
-  }
+  const quizIdArr = JSON.parse(req.query.quizIdArr as string);
   const token = req.query.token as string;
   const response = adminQuizTrashEmpty(token, quizIdArr);
   if ('error' in response) {
@@ -523,6 +519,15 @@ app.post('/v1/admin/quiz/:quizId/session/start', (req: Request, res: Response) =
   const token = req.header('token');
   const { autoStartNum } = req.body;
   const response = adminQuizSessionStart(token, quizId, autoStartNum);
+  res.json(response);
+});
+
+app.put('/v1/admin/quiz/:quizId/session/:sessionId', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const sessionId = parseInt(req.params.sessionId);
+  const token = req.header('token');
+  const { action } = req.body;
+  const response = adminQuizSessionStateUpdate(token, quizId, sessionId, action);
   res.json(response);
 });
 

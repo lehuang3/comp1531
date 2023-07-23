@@ -1130,6 +1130,16 @@ function isSameQuizName(userEmail: string, quizId: number): boolean {
   return false;
 }
 
+/**
+ * Send a 'POST' request to the corresponding server route to
+ * create a new session (instance) for a quiz
+ *
+ * @param {string | ErrorObject} token - token
+ * @param {number} - quizId
+ * @param {number} - autoStartNum
+ *
+ * @returns {{object}} - response in javascript
+*/
 function requestAdminQuizSessionStart(token: string | ErrorObject, quizId: number, autoStartNum: number) {
   const res = request(
     'POST',
@@ -1198,6 +1208,137 @@ function generateSessionId(): number {
   return sessionId;
 }
 
+/**
+ * Send a 'put' request to the corresponding server route to
+ * create a new session (instance) for a quiz
+ *
+ * @param {string | ErrorObject} token - token
+ * @param {number} - quizId
+ * @param {number} - sessionId
+ * @param {string} - action
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminQuizSessionStateUpdate(token: string | ErrorObject, quizId: number, sessionId: number, action: string) {
+  const res = request(
+    'PUT',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/session/${sessionId}`,
+    {
+      headers: {
+        token: token as string
+      },
+      json: {
+        action
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
+ * Checks whether sessionId is related to the quizId
+ * passed in, returning true or false accordingly
+ *
+ * @param {number} - quizId
+ * @param {number} - sessionId
+ *
+ * @returns {number} - sessionId
+*/
+function quizSessionIdValidCheck(quizId: number, sessionId: number): boolean {
+  const data: Data = read();
+  for (const session of data.sessions) {
+    if (session.quizSessionId === sessionId) {
+      if (session.metadata.quizId === quizId) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * Checks whether action passed in is applicable given the
+ * current state of the passed in session
+ *
+ * @param {number} - sessionId
+ * @param {string} - action
+ *
+ * @returns {object} - applicability & nextState if there is one
+*/
+function isActionApplicable(sessionId: number, action: string): any {
+  const data: Data = read();
+  for (const session of data.sessions) {
+    if (session.quizSessionId === sessionId) {
+      const state = session.state;
+      switch (state) {
+        case State.LOBBY:
+          if (action === 'NEXT_QUESTION') {
+            return {
+              applicable: true,
+              nextState: 'QUESTION_COUNTDOWN'
+            };
+          } else if (action === 'END') {
+            return {
+              applicable: true,
+              nextState: 'END'
+            };
+          } else {
+            return {
+              applicable: false,
+              nextState: ''
+            };
+          }
+        case State.QUESTION_COUNTDOWN:
+        case State.QUESTION_OPEN:
+        case State.QUESTION_CLOSE:
+        case State.ANSWER_SHOW:
+          if (action === 'NEXT_QUESTION') {
+            return {
+              applicable: true,
+              nextState: 'QUESTION_COUNTDOWN'
+            };
+          } else if (action === 'END') {
+            return {
+              applicable: true,
+              nextState: 'END'
+            };
+          } else if (action === 'GO_TO_FINAL_RESULTS') {
+            return {
+              applicable: true,
+              nextState: 'FINAL_RESULTS'
+            }
+          } else {
+            return {
+              applicable: false,
+              nextState: ''
+            };
+          }
+        case State.FINAL_RESULTS:
+          if (action === 'END') {
+            return {
+              applicable: true,
+              nextState: 'END'
+            };
+          } else {
+            return {
+              applicable: false,
+              nextState: ''
+            };
+          }
+        case State.END:
+          return {
+            applicable: false,
+            nextState: ''
+          };
+      }
+    }
+  }
+  return true;
+}
+
 export {
   clear, save, read, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, isSameQuizName,
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
@@ -1205,5 +1346,6 @@ export {
   requestQuizQuestionCreate, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid,
   quizAnswerCorrectValid, isQuizInTrash, requestAdminQuizQuestionMove, questionValidCheck, newPositioNotSame, newPositionValidCheck, requestAdminQuizQuestionDuplicate,
   requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate, requestAdminAuthLogout,
-  requestAdminAuthDetailsUpdate, requestAdminQuizSessionStart, quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId
+  requestAdminAuthDetailsUpdate, requestAdminQuizSessionStart, quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId, requestAdminQuizSessionStateUpdate,
+  quizSessionIdValidCheck, isActionApplicable
 };

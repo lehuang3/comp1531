@@ -3,7 +3,7 @@ import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, request
 let token1: string;
 let quiz1: number;
 let autoStartNum: number;
-beforeEach (() => {
+beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
   quiz1 = requestAdminQuizCreate(token1, 'quizhello', 'quiz1number').body.quizId;
