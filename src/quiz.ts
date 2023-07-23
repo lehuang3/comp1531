@@ -2,7 +2,7 @@ import { ErrorObject, Quiz, State } from './interfaces';
 import {
   save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong,
   tokenOwner, questionLengthValid, answerCountValid, newPositioNotSame, newPositionValidCheck, questionValidCheck, durationValid, QuizDurationValid, quizPointsValid,
-  quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash, getColour, isSameQuizName, quizActiveCheck,quizHasQuestion, activeSessions,
+  quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash, getColour, isSameQuizName, quizActiveCheck, quizHasQuestion, activeSessions,
   generateSessionId, quizSessionIdValidCheck, isActionApplicable
 } from './other';
 import { Data, Answer, Action } from './interfaces';
@@ -627,7 +627,7 @@ function adminQuizQuestionDuplicate (quizId:number, questionId:number, token: Er
     quiz.duration += question.duration;
     quiz.timeLastEdited = Math.floor(Date.now() / 1000);
     quiz.numQuestions++;
-    //console.log(data.quizzes[0]);
+    // console.log(data.quizzes[0]);
     save(data);
     return { newQuestionId: newQuestionId };
   }
@@ -850,7 +850,7 @@ function adminQuizSessionStart(token: ErrorObject | string, quizId: number, auto
           averageAnswerTime: 0,
           // default value of percentCorrect
           percentCorrect: 0,
-        }
+        };
       }),
       duration: quiz.duration,
     },
@@ -865,9 +865,8 @@ function adminQuizSessionStart(token: ErrorObject | string, quizId: number, auto
   save(data);
   return {
     sessionId: newSessionId,
-  }
+  };
 }
-
 
 function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number, sessionId: number, action: string) {
   const data: Data = read();
@@ -926,13 +925,13 @@ function adminQuizThumbnailUpdate(token: string| ErrorObject, quizId: number, im
     throw HTTPError(400, 'Url is not an image.');
   }
   const quiz = data.quizzes.filter((quiz) => quiz.quizId === quizId);
-  console.log(quiz);
-  quiz.imgUrl = imgUrl;
-  console.log(quiz);
+  // console.log(quiz);
+  quiz[0].imgUrl = imgUrl;
+  // console.log(quiz);
   save(data);
   return {
 
-  }
+  };
 }
 
 export {

@@ -1,10 +1,10 @@
-import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestAdminQuizThumbnailUpdate, requestAdminAuthLogout } from "./other";
+import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestAdminQuizThumbnailUpdate, requestAdminAuthLogout } from './other';
 
 let token1: any;
 let quiz1: any;
 const imageUrl = {
-  imgUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg' 
-}
+  imgUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
+};
 
 beforeEach(() => {
   requestClear();
@@ -12,7 +12,7 @@ beforeEach(() => {
   quiz1 = requestAdminQuizCreate(token1.body.token, 'quiz', 'quiz1');
 });
 
-describe.only('Passing case', () => {
+describe('Passing case', () => {
   test('User 1 enters correct information', () => {
     expect(requestAdminQuizThumbnailUpdate(token1.body.token, quiz1.body.quizId, imageUrl.imgUrl).body).toStrictEqual({ });
   });
@@ -57,4 +57,3 @@ describe('Invalid session', () => {
     expect(requestAdminQuizThumbnailUpdate(token1.body.token, quiz1.body.quizId, imageUrl.imgUrl).body).toStrictEqual({ error: 'Not a valid session' });
   });
 });
-

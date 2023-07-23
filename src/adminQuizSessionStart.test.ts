@@ -30,7 +30,7 @@ beforeEach(() => {
       thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
     });
   autoStartNum = 1;
-})
+});
 
 test('Check for invalid token structure', () => {
   const token2 = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body.token;
@@ -75,9 +75,9 @@ test('autoStartNum > 50', () => {
 
 test('Success', () => {
   const response = requestAdminQuizSessionStart(token1, quiz1, autoStartNum);
-  expect(response.body).toStrictEqual({ 
+  expect(response.body).toStrictEqual({
     sessionId: expect.any(Number),
-   });
+  });
   expect(response.status).toStrictEqual(200);
 });
 
@@ -96,7 +96,6 @@ test("Create an 11th session that's not in END state", () => {
   expect(response.body).toStrictEqual({ error: 'Exceeded maxinum number of active sessions' });
   expect(response.status).toStrictEqual(400);
 });
-
 
 test('Quiz does not have question', () => {
   const quiz2 = requestAdminQuizCreate(token1, 'quizhello2', 'quiz1number2').body.quizId;

@@ -137,7 +137,7 @@ function clear () {
     tokens: [],
 
     trash: [],
-    
+
     sessions: [],
   };
   save(store);
@@ -227,7 +227,7 @@ function quizValidCheck (quizId: number): boolean {
 }
 
 /**
- * Given a quizId check if it exists within the list of active quizzes, 
+ * Given a quizId check if it exists within the list of active quizzes,
  * returning true if it exists and false if it does not
  *
  * @param {number} quizId
@@ -1328,7 +1328,7 @@ function isActionApplicable(sessionId: number, action: string): any {
             return {
               applicable: true,
               nextState: 'FINAL_RESULTS'
-            }
+            };
           } else {
             return {
               applicable: false,

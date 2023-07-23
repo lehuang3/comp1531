@@ -147,7 +147,7 @@ interface Data {
   users: User[];
   quizzes: Quiz[];
   tokens: Token[];
-  trash:Quiz[];
+  trash: Quiz[];
   sessions: Session[];
 }
 
