@@ -1,6 +1,6 @@
 import { State, Data, ErrorObject, Action } from './interfaces';
 import { save, read, tokenOwner, quizActiveCheck, quizValidOwner, activeSessions, quizHasQuestion, generateSessionId,
-quizSessionIdValidCheck, isActionApplicable
+quizSessionIdValidCheck, isActionApplicable,isSessionInLobby,nameExistinSession,generateRandomName
 } from './other';
 import HTTPError from 'http-errors';
 interface SessionIdReturn {
@@ -111,4 +111,49 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
   return {};
 }
 
-export { adminQuizSessionStart, adminQuizSessionStateUpdate };
+function QuizSessionPlayerJoin(sessionId:number,name:string) {
+  console.log(sessionId)
+  const data: Data = read();
+  if (isSessionInLobby(data.sessions,sessionId)===false) {
+    throw HTTPError(400, 'Session not in lobby');
+  } 
+  if(name.length > 0){
+    if(nameExistinSession(data.sessions,name,sessionId) === true){
+      throw HTTPError(400, 'Name Taken');
+    } 
+  } else {
+    name = generateRandomName();
+  }
+
+  let maxplayerId = 0;
+  
+  //console.log(data.sessions);
+  for (let session of data.sessions) {
+
+    for (let player of session.players) {
+      console.log(player.playerId)
+      if (player.playerId > maxplayerId) {
+        maxplayerId = player.playerId;
+      }
+    }
+  }
+  
+  maxplayerId++;
+  let newPlayer = {
+    playerId: maxplayerId,
+    playerName:name,
+    playerScore:0
+  }
+  let session = data.sessions.find((session:any) => session.quizSessionId === sessionId);
+  
+  session.players.push(newPlayer);
+  if(session.players.length === session.autoStartNum){
+    session.state = State.QUESTION_COUNTDOWN;
+  }
+  console.log(session)
+  save(data);
+  
+  return {playerId:maxplayerId};
+}
+
+export { adminQuizSessionStart, adminQuizSessionStateUpdate,QuizSessionPlayerJoin };
