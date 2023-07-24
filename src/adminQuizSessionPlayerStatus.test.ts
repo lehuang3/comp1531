@@ -1,5 +1,5 @@
 import { Console } from 'console';
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizSessionStart,requestQuizSessionPlayerJoin,requestQuizSessionPlayerStatus } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizSessionStart, requestQuizSessionPlayerJoin, requestQuizSessionPlayerStatus } from './other';
 
 let token1: string;
 let quiz1: number;
@@ -38,26 +38,24 @@ beforeEach(() => {
   autoStartNum = 2;
   sessionId = requestAdminQuizSessionStart(token1, quiz1, autoStartNum).body.sessionId;
   sessionId2 = requestAdminQuizSessionStart(token1, quiz1, autoStartNum).body.sessionId;
-  playerId = requestQuizSessionPlayerJoin(sessionId, "HaydenSmitch").body.playerId;
-  playerId2 = requestQuizSessionPlayerJoin(sessionId2, "HaydenSmitch").body.playerId;
-  playerId3 = requestQuizSessionPlayerJoin(sessionId2, "jeff").body.playerId;
-  
+  playerId = requestQuizSessionPlayerJoin(sessionId, 'HaydenSmitch').body.playerId;
+  playerId2 = requestQuizSessionPlayerJoin(sessionId2, 'HaydenSmitch').body.playerId;
+  playerId3 = requestQuizSessionPlayerJoin(sessionId2, 'jeff').body.playerId;
 });
 
-test('PlaerIDdoesnt exits', () => { 
-	const playerId4 = playerId3 + 1;
-	const response = requestQuizSessionPlayerStatus(playerId4);
+test('PlaerIDdoesnt exits', () => {
+  const playerId4 = playerId3 + 1;
+  const response = requestQuizSessionPlayerStatus(playerId4);
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
 });
 
 test('Succes', () => {
-	const response = requestQuizSessionPlayerStatus(playerId3);
-  expect(response.body).toStrictEqual({ 
-		state:expect.any(String),
-		numQuestions:expect.any(Number),
-		atQuestion:expect.any(Number)
+  const response = requestQuizSessionPlayerStatus(playerId3);
+  expect(response.body).toStrictEqual({
+    state: expect.any(String),
+    numQuestions: expect.any(Number),
+    atQuestion: expect.any(Number)
 	 });
   expect(response.status).toStrictEqual(200);
 });
-

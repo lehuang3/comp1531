@@ -1,5 +1,5 @@
 import { Console } from 'console';
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizSessionStart,requestQuizSessionPlayerJoin } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizSessionStart, requestQuizSessionPlayerJoin } from './other';
 
 let token1: string;
 let quiz1: number;
@@ -37,25 +37,25 @@ beforeEach(() => {
 });
 
 test('Name in use', () => {
-  console.log(sessionId);
-  requestQuizSessionPlayerJoin(sessionId, "HaydenSmitch");
-  const response = requestQuizSessionPlayerJoin(sessionId, "HaydenSmitch");
-    
+  // console.log(sessionId);
+  requestQuizSessionPlayerJoin(sessionId, 'HaydenSmitch');
+  const response = requestQuizSessionPlayerJoin(sessionId, 'HaydenSmitch');
+
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
 });
 
 test('Not in lobbay state', () => {
-  requestQuizSessionPlayerJoin(sessionId, "HaydenSmitch");
-  requestQuizSessionPlayerJoin(sessionId, "Sina Hafezi");
-  const response = requestQuizSessionPlayerJoin(sessionId, "Minh Le");
-    
+  requestQuizSessionPlayerJoin(sessionId, 'HaydenSmitch');
+  requestQuizSessionPlayerJoin(sessionId, 'Sina Hafezi');
+  const response = requestQuizSessionPlayerJoin(sessionId, 'Minh Le');
+
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
 });
 
 test('Success with user inputed name', () => {
-  const response = requestQuizSessionPlayerJoin(sessionId, "HaydenSmitch");
+  const response = requestQuizSessionPlayerJoin(sessionId, 'HaydenSmitch');
   expect(response.body).toStrictEqual({
     playerId: expect.any(Number),
   });
@@ -63,7 +63,7 @@ test('Success with user inputed name', () => {
 });
 
 test('Success without user inputed name', () => {
-  const response = requestQuizSessionPlayerJoin(sessionId, "");
+  const response = requestQuizSessionPlayerJoin(sessionId, '');
   expect(response.body).toStrictEqual({
     playerId: expect.any(Number),
   });
@@ -71,11 +71,11 @@ test('Success without user inputed name', () => {
 });
 
 test('2 Success with same name user inputed name', () => {
-  requestQuizSessionPlayerJoin(sessionId, "HaydenSmitch");
-    
+  requestQuizSessionPlayerJoin(sessionId, 'HaydenSmitch');
+
   const sessionId2 = requestAdminQuizSessionStart(token1, quiz1, autoStartNum).body.sessionId;
-  console.log(sessionId2);
-  const response = requestQuizSessionPlayerJoin(sessionId2, "HaydenSmitch");
+  // console.log(sessionId2);
+  const response = requestQuizSessionPlayerJoin(sessionId2, 'HaydenSmitch');
   expect(response.body).toStrictEqual({
     playerId: expect.any(Number),
   });

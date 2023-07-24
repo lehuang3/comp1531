@@ -1,10 +1,9 @@
-import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestAdminSessionChatSend, requestQuizSessionPlayerJoin, requestAdminQuizSessionStart, requestQuizQuestionCreate,  } from './other';
+import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestAdminSessionChatSend, requestQuizSessionPlayerJoin, requestAdminQuizSessionStart, requestQuizQuestionCreate } from './other';
 
 let token1: any;
 let quiz1: any;
-let player1: any
+let player1: any;
 let session: any;
-
 
 const quizQuestion = {
   questionBody: {
@@ -33,15 +32,15 @@ const sampleMsg = {
   message: {
     messageBody: 'hello'
   }
-}
+};
 
 beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test');
   quiz1 = requestAdminQuizCreate(token1.body.token, 'quiz', 'quiz1');
   requestQuizQuestionCreate(token1.body.token, quiz1.body.quizId, quizQuestion.questionBody);
-  session = requestAdminQuizSessionStart(token1.body.token, quiz1.body.quizId, 3); 
-  player1 = requestQuizSessionPlayerJoin(session.body.sessionId, "Player");
+  session = requestAdminQuizSessionStart(token1.body.token, quiz1.body.quizId, 3);
+  player1 = requestQuizSessionPlayerJoin(session.body.sessionId, 'Player');
 });
 
 describe('Passing case', () => {
