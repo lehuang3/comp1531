@@ -114,25 +114,34 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
 
 function adminSessionChatSend(playerId: number, message: string) {
   const data: Data = read();
-  const playerMatch = data.sessions.filter((session) => {
-    session.players.filter((player) => player.playerId === playerId)
+  const sess = data.sessions.find((session) => {
+    if ((session.players.find((player) => player.playerId === playerId))) {
+      return session;
+    }
+
   })
-  if (playerMatch.length === 0) {
+  if (sess === undefined) {
     throw HTTPError(400, 'Player does not exist.')
   } else if (message.length < 1 || message.length > 100) {
     throw HTTPError(400, 'Message length must be greater than 0 and less than 101.')
   }
 
-  // check this section
+  const player = sess.players.find((player) => {
+    if (player.playerId === playerId) {
+      return player.playerName
+    }
+  })
   const newMessage = {
     playerId: playerId,
     messageBody: message,
-    playerName: 1,
+    playerName: player.playerName,
     timeSent: Math.floor(Date.now() / 1000)
   }
-  //const session = data.sessions.filter((session) => session.players.includes())
+  sess.messages.push(newMessage);
+  save(data);
   return {}
 }
+
 
 function QuizSessionPlayerJoin(sessionId:number,name:string) {
 
@@ -153,7 +162,7 @@ function QuizSessionPlayerJoin(sessionId:number,name:string) {
   for (let session of data.sessions) {
 
     for (let player of session.players) {
-      console.log(player.playerId)
+      // console.log(player.playerId)
       if (player.playerId > maxplayerId) {
         maxplayerId = player.playerId;
       }
@@ -172,7 +181,7 @@ function QuizSessionPlayerJoin(sessionId:number,name:string) {
   if(session.players.length === session.autoStartNum){
     session.state = State.QUESTION_COUNTDOWN;
   }
-  console.log(session)
+  // console.log(session)
   save(data);
   
   return {playerId:maxplayerId};
