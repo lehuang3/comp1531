@@ -16,6 +16,7 @@
 * 11/07: Clarified for `/v1/admin/quiz/trash` that you are viewing the trash "for the logged in user"
 * 17/07: Slight elaborate of what "colours of a question" meant
 * 23/07: Fixed mistake in trash swagger; Replaced "c + 1" with "c" in marking criteria for iter3
+* 24/07: Aligned comments on `tsc` in iteration 3 to match lecture instructions
 
 ## 🫡 0. Aims:
 
@@ -1489,7 +1490,7 @@ If a player does not answer a question, their rank is 0 for that question.
     <td>(Bonus Marks) Typescript</td>
     <td>10%</td>
     <td><ul>
-      <li>Up to 10% extra marks can be gained by ensuring your code is Typescript compliant using <code>npm run tsc</code>.</li>
+      <li>Up to 10% extra marks can be gained by ensuring your code is Typescript compliant using <code>npm run tsc</code>. This includes no use of the `any` keyword and includes no other check disabling keywords (e.g. "ts-nocheck")</li>
     </ul>
   </td>
   </tr>
