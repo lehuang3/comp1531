@@ -1210,6 +1210,31 @@ function requestQuizSessionPlayerJoin(sessionId:number,name:string) {
 }
 
 /**
+ * Send a 'POST' request to the corresponding server route to
+ * create a new session (instance) for a quiz
+ *
+ * @param {string | ErrorObject} token - token
+ * @param {number} - quizId
+ * @param {number} - autoStartNum
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestQuizSessionPlayerStatus(playerId:number) {
+  const res = request(
+    'GET',
+    SERVER_URL + `/v1/player/${playerId}`,
+    {
+      
+      
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
  * Given a quizId, returns true or false depending on
  * whether the questions array of the quiz is empty
  *
@@ -1437,5 +1462,5 @@ export {
   quizAnswerCorrectValid, isQuizInTrash, requestAdminQuizQuestionMove, questionValidCheck, newPositioNotSame, newPositionValidCheck, requestAdminQuizQuestionDuplicate,
   requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate, requestAdminAuthLogout,
   requestAdminAuthDetailsUpdate, requestAdminQuizSessionStart, quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId, requestAdminQuizSessionStateUpdate,
-  quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate,requestQuizSessionPlayerJoin,isSessionInLobby,nameExistinSession,generateRandomName
+  quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate,requestQuizSessionPlayerJoin,isSessionInLobby,nameExistinSession,generateRandomName,requestQuizSessionPlayerStatus
 };

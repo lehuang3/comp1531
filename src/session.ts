@@ -112,7 +112,7 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
 }
 
 function QuizSessionPlayerJoin(sessionId:number,name:string) {
-  console.log(sessionId)
+
   const data: Data = read();
   if (isSessionInLobby(data.sessions,sessionId)===false) {
     throw HTTPError(400, 'Session not in lobby');
@@ -127,7 +127,6 @@ function QuizSessionPlayerJoin(sessionId:number,name:string) {
 
   let maxplayerId = 0;
   
-  //console.log(data.sessions);
   for (let session of data.sessions) {
 
     for (let player of session.players) {
@@ -156,4 +155,19 @@ function QuizSessionPlayerJoin(sessionId:number,name:string) {
   return {playerId:maxplayerId};
 }
 
-export { adminQuizSessionStart, adminQuizSessionStateUpdate,QuizSessionPlayerJoin };
+function QuizSessionPlayerStatus(playerId:Number){
+  const data: Data = read();
+  for (const session of data.sessions) {
+    const player = session.players.find((player) => player.playerId === playerId);
+    if (player) {
+      return {
+        state:session.state,
+        numQuestions:session.metadata.numQuestions,
+        atQuestion:session.atQuestion
+      };
+    }
+  }
+  throw HTTPError(400, 'Player does not exits');
+}
+
+export { adminQuizSessionStart, adminQuizSessionStateUpdate,QuizSessionPlayerJoin,QuizSessionPlayerStatus };
