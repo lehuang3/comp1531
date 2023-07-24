@@ -1,6 +1,6 @@
 import { State, Data, ErrorObject, Action } from './interfaces';
 import { save, read, tokenOwner, quizActiveCheck, quizValidOwner, activeSessions, quizHasQuestion, generateSessionId,
-quizSessionIdValidCheck, isActionApplicable
+quizSessionIdValidCheck, isActionApplicable,isSessionInLobby,nameExistinSession,generateRandomName
 } from './other';
 import HTTPError from 'http-errors';
 interface SessionIdReturn {
@@ -111,6 +111,7 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
   return {};
 }
 
+
 function adminSessionChatSend(playerId: number, message: string) {
   const data: Data = read();
   const playerMatch = data.sessions.filter((session) => {
@@ -133,4 +134,64 @@ function adminSessionChatSend(playerId: number, message: string) {
   return {}
 }
 
-export { adminQuizSessionStart, adminQuizSessionStateUpdate, adminSessionChatSend };
+function QuizSessionPlayerJoin(sessionId:number,name:string) {
+
+  const data: Data = read();
+  if (isSessionInLobby(data.sessions,sessionId)===false) {
+    throw HTTPError(400, 'Session not in lobby');
+  } 
+  if(name.length > 0){
+    if(nameExistinSession(data.sessions,name,sessionId) === true){
+      throw HTTPError(400, 'Name Taken');
+    } 
+  } else {
+    name = generateRandomName();
+  }
+
+  let maxplayerId = 0;
+  
+  for (let session of data.sessions) {
+
+    for (let player of session.players) {
+      console.log(player.playerId)
+      if (player.playerId > maxplayerId) {
+        maxplayerId = player.playerId;
+      }
+    }
+  }
+  
+  maxplayerId++;
+  let newPlayer = {
+    playerId: maxplayerId,
+    playerName:name,
+    playerScore:0
+  }
+  let session = data.sessions.find((session:any) => session.quizSessionId === sessionId);
+  
+  session.players.push(newPlayer);
+  if(session.players.length === session.autoStartNum){
+    session.state = State.QUESTION_COUNTDOWN;
+  }
+  console.log(session)
+  save(data);
+  
+  return {playerId:maxplayerId};
+}
+
+function QuizSessionPlayerStatus(playerId:Number){
+  const data: Data = read();
+  for (const session of data.sessions) {
+    const player = session.players.find((player) => player.playerId === playerId);
+    if (player) {
+      return {
+        state:session.state,
+        numQuestions:session.metadata.numQuestions,
+        atQuestion:session.atQuestion
+      };
+    }
+  }
+  throw HTTPError(400, 'Player does not exits');
+}
+
+export { adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend };
+
