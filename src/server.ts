@@ -13,7 +13,7 @@ import {
   adminQuizTransfer, adminQuizRestore, adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDuplicate, adminQuizQuestionDelete, adminQuizQuestionUpdate,
   adminQuizTrashEmpty, adminQuizThumbnailUpdate
 } from './quiz';
-import { adminQuizSessionStart, adminQuizSessionStateUpdate,QuizSessionPlayerJoin } from './session';
+import { adminQuizSessionStart, adminQuizSessionStateUpdate,QuizSessionPlayerJoin,QuizSessionPlayerStatus } from './session';
 import { clear } from './other';
 
 // Set up web app
@@ -526,6 +526,12 @@ app.post('/v1/admin/quiz/:quizId/session/start', (req: Request, res: Response) =
 app.post('/v1/player/join', (req: Request, res: Response) => {
   const { sessionId,name } = req.body;
   const response = QuizSessionPlayerJoin(sessionId,name);
+  res.json(response);
+});
+
+app.get('/v1/player/:playerId', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerId);
+  const response = QuizSessionPlayerStatus(playerId);
   res.json(response);
 });
 
