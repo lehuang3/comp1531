@@ -111,6 +111,25 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
   return {};
 }
 
+function adminSessionChatView(playerId: number) {
+  const data: Data = read();
+  const sess = data.sessions.find((session) => {
+    if ((session.players.find((player) => player.playerId === playerId))) {
+      return session;
+    }
+  });
+  if (sess === undefined) {
+    throw HTTPError(400, 'Player does not exist.');
+  }
+  const chatLogs: object[] = [];
+  for (const message of sess.messages) {
+    chatLogs.push(message);
+  }
+  return {
+    messages: chatLogs
+  };
+}
+
 function adminSessionChatSend(playerId: number, message: string) {
   const data: Data = read();
   const sess = data.sessions.find((session) => {
@@ -197,4 +216,4 @@ function QuizSessionPlayerStatus(playerId:number) {
   throw HTTPError(400, 'Player does not exits');
 }
 
-export { adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend };
+export { adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView };
