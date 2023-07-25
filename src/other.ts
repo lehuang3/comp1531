@@ -1134,6 +1134,17 @@ function requestAdminQuizThumbnailUpdate(token: ErrorObject | string, quizId: nu
   };
 }
 
+function requestAdminSessionChatView(playerId: number) {
+  const res = request(
+    'GET',
+    SERVER_URL + `/v1/player/${playerId}/chat`
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
 function requestAdminSessionChatSend(playerId: number, message: string) {
   const res = request(
     'POST',
@@ -1476,5 +1487,5 @@ export {
   requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate, requestAdminAuthLogout,
   requestAdminAuthDetailsUpdate, requestAdminQuizSessionStart, quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId, requestAdminQuizSessionStateUpdate,
   quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate, requestQuizSessionPlayerJoin, isSessionInLobby, nameExistinSession, generateRandomName, requestQuizSessionPlayerStatus,
-  requestAdminSessionChatSend
+  requestAdminSessionChatSend, requestAdminSessionChatView
 };

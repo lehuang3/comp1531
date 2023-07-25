@@ -41,12 +41,22 @@ beforeEach(() => {
   requestQuizQuestionCreate(token1.body.token, quiz1.body.quizId, quizQuestion.questionBody);
   session = requestAdminQuizSessionStart(token1.body.token, quiz1.body.quizId, 3);
   player1 = requestQuizSessionPlayerJoin(session.body.sessionId, 'Player');
-  requestAdminSessionChatSend(player1.body.playerId, sampleMsg.message.messageBody)
+  const player2 = requestQuizSessionPlayerJoin(session.body.sessionId, 'Not player');
+  requestAdminSessionChatSend(player1.body.playerId, sampleMsg.message.messageBody);
 });
 
 describe('Passing case', () => {
   test('User 1 enters correct information', () => {
-    expect(requestAdminSessionChatView(player1.body.playerId).body).toStrictEqual({ });
+    expect(requestAdminSessionChatView(player1.body.playerId).body).toStrictEqual({
+      messages: [
+        {
+          messageBody: sampleMsg.message.messageBody,
+          playerId: player1.body.playerId,
+          playerName: 'Player',
+          timeSent: expect.any(Number)
+        }
+      ]
+    });
   });
 });
 
