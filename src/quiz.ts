@@ -9,7 +9,6 @@ import HTTPError from 'http-errors';
 const isUrl = require('is-url');
 const isImageUrl = require('is-image-url');
 
-
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *

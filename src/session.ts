@@ -1,12 +1,14 @@
 import { State, Data, ErrorObject, Action } from './interfaces';
 import { save, read, tokenOwner, quizActiveCheck, quizValidOwner, activeSessions, quizHasQuestion, generateSessionId,
-quizSessionIdValidCheck, isActionApplicable,isSessionInLobby,nameExistinSession,generateRandomName
+quizSessionIdValidCheck, isActionApplicable, isSessionInLobby, nameExistinSession, generateRandomName, findPlayerSession,
+answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect
 } from './other';
 import HTTPError from 'http-errors';
 interface SessionIdReturn {
   sessionId: number;
 }
 
+let questionOpenStart: number;
 
 function adminQuizSessionStart(token: ErrorObject | string, quizId: number, autoStartNum: number): SessionIdReturn {
   const data: Data = read();
@@ -51,11 +53,11 @@ function adminQuizSessionStart(token: ErrorObject | string, quizId: number, auto
           duration: question.duration,
           points: question.points,
           answers: question.answers,
-          questionCorrectBreakdown: [],
           // default value of averageAnswerTime
           averageAnswerTime: 0,
           // default value of percentCorrect
           percentCorrect: 0,
+          attempts: []
         };
       }),
       duration: quiz.duration,
@@ -73,6 +75,7 @@ function adminQuizSessionStart(token: ErrorObject | string, quizId: number, auto
     sessionId: newSessionId,
   };
 }
+
 
 function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number, sessionId: number, action: string) {
   const data: Data = read();
@@ -105,69 +108,205 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
   for (const session of data.sessions) {
     if (session.quizSessionId === sessionId) {
       session.state = nextState;
+      if (session.state === 'QUESTION_COUNTDOWN') {
+        // move state to QUESTION_OPEN immediately until sth's clarified about
+        // whether there's a preset window
+        session.atQuestion = session.atQuestion + 1;
+        session.state = State.QUESTION_OPEN;
+        questionOpenStart = Math.floor(Date.now() / 1000);
+      }
+      if (session.state === 'FINAL_RESULTS' || session.state === 'END') {
+        session.atQuestion = 0;
+      }
     }
   }
   save(data);
   return {};
 }
 
-function QuizSessionPlayerJoin(sessionId:number,name:string) {
-
+function adminSessionChatView(playerId: number) {
   const data: Data = read();
-  if (isSessionInLobby(data.sessions,sessionId)===false) {
+  const sess = data.sessions.find((session) => {
+    if ((session.players.find((player) => player.playerId === playerId))) {
+      return session;
+    }
+  });
+  if (sess === undefined) {
+    throw HTTPError(400, 'Player does not exist.');
+  }
+  const chatLogs: object[] = [];
+  for (const message of sess.messages) {
+    chatLogs.push(message);
+  }
+  return {
+    messages: chatLogs
+  };
+}
+
+function adminSessionChatSend(playerId: number, message: string) {
+  const data: Data = read();
+  const sess = data.sessions.find((session) => {
+    if ((session.players.find((player) => player.playerId === playerId))) {
+      return session;
+    }
+  });
+  if (sess === undefined) {
+    throw HTTPError(400, 'Player does not exist.');
+  } else if (message.length < 1 || message.length > 100) {
+    throw HTTPError(400, 'Message length must be greater than 0 and less than 101.');
+  }
+
+  const player = sess.players.find((player) => {
+    if (player.playerId === playerId) {
+      return player.playerName;
+    }
+  });
+  const newMessage = {
+    playerId: playerId,
+    messageBody: message,
+    playerName: player.playerName,
+    timeSent: Math.floor(Date.now() / 1000)
+  };
+  sess.messages.push(newMessage);
+  save(data);
+  return {};
+}
+
+function QuizSessionPlayerJoin(sessionId:number, name:string) {
+  const data: Data = read();
+  if (isSessionInLobby(data.sessions, sessionId) === false) {
     throw HTTPError(400, 'Session not in lobby');
-  } 
-  if(name.length > 0){
-    if(nameExistinSession(data.sessions,name,sessionId) === true){
+  }
+  if (name.length > 0) {
+    if (nameExistinSession(data.sessions, name, sessionId) === true) {
       throw HTTPError(400, 'Name Taken');
-    } 
+    }
   } else {
     name = generateRandomName();
   }
 
   let maxplayerId = 0;
-  
-  for (let session of data.sessions) {
 
-    for (let player of session.players) {
-      console.log(player.playerId)
+  for (const session of data.sessions) {
+    for (const player of session.players) {
+      // console.log(player.playerId)
       if (player.playerId > maxplayerId) {
         maxplayerId = player.playerId;
       }
     }
   }
-  
+
   maxplayerId++;
-  let newPlayer = {
+  const newPlayer = {
     playerId: maxplayerId,
-    playerName:name,
-    playerScore:0
+    playerName: name,
+    playerScore: 0
   }
   let session = data.sessions.find((session:any) => session.quizSessionId === sessionId);
   
   session.players.push(newPlayer);
-  if(session.players.length === session.autoStartNum){
+  if(session.players.length === session.autoStartNum) {
     session.state = State.QUESTION_COUNTDOWN;
+    session.atQuestion++;
+    questionOpenStart = Math.floor(Date.now() / 1000);
   }
-  console.log(session)
+  //console.log(session)
   save(data);
   
-  return {playerId:maxplayerId};
+  return { playerId: maxplayerId };
 }
 
-function QuizSessionPlayerStatus(playerId:Number){
+function QuizSessionPlayerStatus(playerId: number) {
   const data: Data = read();
   for (const session of data.sessions) {
     const player = session.players.find((player) => player.playerId === playerId);
     if (player) {
       return {
-        state:session.state,
-        numQuestions:session.metadata.numQuestions,
-        atQuestion:session.atQuestion
+        state: session.state,
+        numQuestions: session.metadata.numQuestions,
+        atQuestion: session.atQuestion
       };
     }
   }
   throw HTTPError(400, 'Player does not exits');
 }
 
-export { adminQuizSessionStart, adminQuizSessionStateUpdate,QuizSessionPlayerJoin,QuizSessionPlayerStatus };
+function playerAnswerSubmit(playerId: number, questionposition: number, answerIds: number[]) {
+  const data: Data = read();
+  const playerSession = findPlayerSession(playerId);
+  if (playerSession === undefined) {
+    throw HTTPError(400, 'Player does not exist');
+  }
+  if (questionposition < 0 || questionposition > playerSession.metadata.questions.length) {
+    throw HTTPError(400, 'Question is not valid for this session');
+  }
+  if (playerSession.state !== State.QUESTION_OPEN) {
+    throw HTTPError(400, 'Question is not open');
+  }
+  if (playerSession.atQuestion < questionposition) {
+    throw HTTPError(400, 'Session is not up to this question yet');
+  }
+  if (!answerIdsValidCheck(playerSession, questionposition, answerIds)) {
+    throw HTTPError(400, 'At least 1 answer is invalid');
+  }
+  // set can only contain unique values
+  if (new Set(answerIds).size !== answerIds.length) {
+    throw HTTPError(400, 'Answer(s) has duplicate(s)');
+  }
+  if (answerIds.length < 1) {
+    throw HTTPError(400, 'No answer submitted');
+  }
+
+  for (const session of data.sessions) {
+    if (session.quizSessionId === playerSession.quizSessionId) {
+      const timeTaken = Math.floor(Date.now() / 1000) - questionOpenStart;
+      let points = session.metadata.questions[questionposition - 1].points;
+      const correctAnswers = session.metadata.questions[questionposition - 1].answers.filter(answer => answer.correct === true);
+
+      // if correctAnswers and answerIds have different numbers of values => wrong
+      if (correctAnswers.length !== answerIds.length) {
+        points = 0;
+      }
+      // if correctAnswers has the same number of values as answerIds, but
+      // correctAnswers does not have value(s) of answerIds => wrong
+      for (const answerId of answerIds) {
+        if (correctAnswers.find(answer => answer.answerId === answerId) === undefined) {
+          points = 0;
+        }
+      }
+      const playerName = session.players.filter(player => player.playerId === playerId)[0].playerName;
+      // add player to list of attempts used to calculate average time and percent correct
+      if (!session.metadata.questions[questionposition - 1].attempts.find(attempt => attempt.playerId === playerId)) {
+        session.metadata.questions[questionposition - 1].attempts.push({
+          playerId: playerId,
+          playerName: playerName,
+          answers: answerIds,
+          points: points,
+          timeTaken: timeTaken,
+        });
+        // there is already an entry in the attempts array from the player
+      } else {
+        for (const attempt of session.metadata.questions[questionposition - 1].attempts) {
+          if (attempt.playerId === playerId) {
+            // points and timeTaken need to be updated because a player can change their mind => different
+            // answer at a later time => affects ranking
+            attempt.answers = answerIds;
+            attempt.points = points;
+            attempt.timeTaken = timeTaken;
+          }
+        }
+      }
+      // find averageAnwerTime
+      session.metadata.questions[questionposition - 1].averageAnswerTime = Math.round(getAverageAnswerTime(session, questionposition));
+      // find percentCorrect
+      // if a player is correct, their point is not 0
+      session.metadata.questions[questionposition - 1].percentCorrect = Math.round(getPercentCorrect(session, questionposition));
+      console.log(session.metadata.questions[questionposition - 1].attempts)
+    }
+    save(data);
+  }
+  return {};
+}
+export { adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
+playerAnswerSubmit 
+};
