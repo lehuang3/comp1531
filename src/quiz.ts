@@ -167,6 +167,8 @@ function adminQuizRemove (token: ErrorObject | string, quizId: number) {
 
   if (isValidUser(authUserId) === false) {
     throw HTTPError(400, 'User id not valid');
+  } else if (isQuizInTrash(quizId)) {
+    throw HTTPError(400, 'Quiz is in trash.');
   } else if (quizValidCheck(quizId) === false) {
     throw HTTPError(400, 'quiz id not valid');
   } else if (quizValidOwner(authUserId, quizId) === false) {
@@ -221,6 +223,7 @@ function adminQuizInfo (token: ErrorObject | string, quizId: number) {
       return quiz;
     }
   }
+  // added cause it will cause error in frontend, but may be causing issues.
   for (const quiz of data.trash) {
     if (quiz.quizId === quizId) {
       return quiz;
@@ -256,6 +259,8 @@ function adminQuizNameUpdate (token: ErrorObject | string, quizId: number, name:
     throw HTTPError(400, 'Quiz name already exists.');
   } else if (!quizValidCheck(quizId)) {
     throw HTTPError(400, 'Quiz does not exist.');
+  } else if (isQuizInTrash(quizId)) {
+    throw HTTPError(400, 'Quiz is in trash.');
   } else if (!quizValidOwner(authUserId, quizId)) {
     throw HTTPError(400, 'You do not have access to this quiz.');
   }
@@ -293,6 +298,9 @@ function adminQuizDescriptionUpdate (token: ErrorObject | string, quizId: number
   // check quizId
   if (!quizValidCheck(quizId)) {
     throw HTTPError(400, 'Not a valid quiz');
+  }
+  if (isQuizInTrash(quizId)) {
+    throw HTTPError(400, 'Quiz is in trash.');
   }
   // check ownership of quiz
   if (!quizValidOwner(authUserId, quizId)) {
@@ -496,6 +504,8 @@ function adminQuizQuestionMove (quizId:number, questionId:number, token: ErrorOb
 
   if (quizValidCheck(quizId) === false) {
     throw HTTPError(400, 'quiz id not valid');
+  } else if (isQuizInTrash(quizId)) {
+    throw HTTPError(400, 'Quiz is in trash.');
   } else if (quizValidOwner(authUserId, quizId) === false) {
     throw HTTPError(400, 'Not owner of quiz');
   } else if (questionValidCheck(data, quizId, questionId) === false) {
@@ -543,6 +553,8 @@ function adminQuizTransfer(token: string | ErrorObject, quizId: number, userEmai
   }
   if (!quizValidCheck(quizId)) {
     throw HTTPError(400, 'Quiz does not exist.');
+  } else if (isQuizInTrash(quizId)) {
+    throw HTTPError(400, 'Quiz is in trash.');
   } else if (!quizValidOwner(authUserId, quizId)) {
     throw HTTPError(400, 'You do not have access to this quiz.');
   } else if (users.filter(user => user.email === userEmail).length === 0) {
@@ -592,6 +604,8 @@ function adminQuizQuestionDuplicate (quizId:number, questionId:number, token: Er
 
   if (quizValidCheck(quizId) === false) {
     throw HTTPError(400, 'Quiz does not exits');
+  } else if (isQuizInTrash(quizId)) {
+    throw HTTPError(400, 'Quiz is in trash.');
   } else if (quizValidOwner(authUserId, quizId) === false) {
     throw HTTPError(400, 'Quiz Id is not valid');
   } else if (questionValidCheck(data, quizId, questionId) === false) {
@@ -654,6 +668,8 @@ function adminQuizQuestionDelete(token: ErrorObject | string, quizId: number, qu
   }
   if (!quizValidCheck(quizId)) {
     throw HTTPError(400, 'Quiz does not exist.');
+  } else if (isQuizInTrash(quizId)) {
+    throw HTTPError(400, 'Quiz is in trash.');
   } else if (!quizValidOwner(authUserId, quizId)) {
     throw HTTPError(400, 'You do not have access to this quiz.');
   } else if (!questionValidCheck(data, quizId, questionId)) {
