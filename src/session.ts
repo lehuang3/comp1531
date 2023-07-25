@@ -124,34 +124,80 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
   return {};
 }
 
-function QuizSessionPlayerJoin(sessionId:number,name:string) {
-
+function adminSessionChatView(playerId: number) {
   const data: Data = read();
-  if (isSessionInLobby(data.sessions,sessionId)===false) {
+  const sess = data.sessions.find((session) => {
+    if ((session.players.find((player) => player.playerId === playerId))) {
+      return session;
+    }
+  });
+  if (sess === undefined) {
+    throw HTTPError(400, 'Player does not exist.');
+  }
+  const chatLogs: object[] = [];
+  for (const message of sess.messages) {
+    chatLogs.push(message);
+  }
+  return {
+    messages: chatLogs
+  };
+}
+
+function adminSessionChatSend(playerId: number, message: string) {
+  const data: Data = read();
+  const sess = data.sessions.find((session) => {
+    if ((session.players.find((player) => player.playerId === playerId))) {
+      return session;
+    }
+  });
+  if (sess === undefined) {
+    throw HTTPError(400, 'Player does not exist.');
+  } else if (message.length < 1 || message.length > 100) {
+    throw HTTPError(400, 'Message length must be greater than 0 and less than 101.');
+  }
+
+  const player = sess.players.find((player) => {
+    if (player.playerId === playerId) {
+      return player.playerName;
+    }
+  });
+  const newMessage = {
+    playerId: playerId,
+    messageBody: message,
+    playerName: player.playerName,
+    timeSent: Math.floor(Date.now() / 1000)
+  };
+  sess.messages.push(newMessage);
+  save(data);
+  return {};
+}
+
+function QuizSessionPlayerJoin(sessionId:number, name:string) {
+  const data: Data = read();
+  if (isSessionInLobby(data.sessions, sessionId) === false) {
     throw HTTPError(400, 'Session not in lobby');
-  } 
-  if(name.length > 0){
-    if(nameExistinSession(data.sessions,name,sessionId) === true){
+  }
+  if (name.length > 0) {
+    if (nameExistinSession(data.sessions, name, sessionId) === true) {
       throw HTTPError(400, 'Name Taken');
-    } 
+    }
   } else {
     name = generateRandomName();
   }
 
   let maxplayerId = 0;
-  
-  for (let session of data.sessions) {
 
-    for (let player of session.players) {
-      console.log(player.playerId)
+  for (const session of data.sessions) {
+    for (const player of session.players) {
+      // console.log(player.playerId)
       if (player.playerId > maxplayerId) {
         maxplayerId = player.playerId;
       }
     }
   }
-  
+
   maxplayerId++;
-  let newPlayer = {
+  const newPlayer = {
     playerId: maxplayerId,
     playerName: name,
     playerScore: 0
@@ -261,4 +307,6 @@ function playerAnswerSubmit(playerId: number, questionposition: number, answerId
   }
   return {};
 }
-export { adminQuizSessionStart, adminQuizSessionStateUpdate,QuizSessionPlayerJoin,QuizSessionPlayerStatus, playerAnswerSubmit };
+export { adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
+playerAnswerSubmit 
+};
