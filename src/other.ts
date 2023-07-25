@@ -2,7 +2,10 @@ import fs from 'fs';
 import { Data, Token, State } from './interfaces';
 import request from 'sync-request';
 import { port, url } from './config.json';
-import { ErrorObject } from './interfaces';
+import { ErrorObject, Session } from './interfaces';
+//import { Session } from 'inspector';
+//import arrayShuffle from 'array-shuffle';
+var shuffle = require('shuffle-array');
 const SERVER_URL = `${url}:${port}`;
 
 /**
@@ -1131,6 +1134,33 @@ function requestAdminQuizThumbnailUpdate(token: ErrorObject | string, quizId: nu
   };
 }
 
+function requestAdminSessionChatView(playerId: number) {
+  const res = request(
+    'GET',
+    SERVER_URL + `/v1/player/${playerId}/chat`
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+function requestAdminSessionChatSend(playerId: number, message: string) {
+  const res = request(
+    'POST',
+    SERVER_URL + `/v1/player/${playerId}/chat`,
+    {
+      json: {
+        message
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
 function isSameQuizName(userEmail: string, quizId: number): boolean {
   const data: Data = read();
   const users = data.users;
@@ -1170,6 +1200,58 @@ function requestAdminQuizSessionStart(token: string | ErrorObject, quizId: numbe
       json: {
         autoStartNum,
       }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
+ * Send a 'POST' request to the corresponding server route to
+ * create a new session (instance) for a quiz
+ *
+ * @param {string | ErrorObject} token - token
+ * @param {number} - quizId
+ * @param {number} - autoStartNum
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestQuizSessionPlayerJoin(sessionId:number, name:string) {
+  const res = request(
+    'POST',
+    SERVER_URL + '/v1/player/join',
+    {
+
+      json: {
+        sessionId,
+        name
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
+ * Send a 'POST' request to the corresponding server route to
+ * create a new session (instance) for a quiz
+ *
+ * @param {string | ErrorObject} token - token
+ * @param {number} - quizId
+ * @param {number} - autoStartNum
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestQuizSessionPlayerStatus(playerId:number) {
+  const res = request(
+    'GET',
+    SERVER_URL + `/v1/player/${playerId}`,
+    {
+
     }
   );
   return {
@@ -1311,6 +1393,22 @@ function isActionApplicable(sessionId: number, action: string): any {
             };
           }
         case State.QUESTION_COUNTDOWN:
+          if (action === 'END') {
+            return {
+              applicable: true,
+              nextState: 'END'
+            };
+          } else if (action === 'NEXT_QUESTION') {
+            return {
+              applicable: true,
+              nextState: 'ANSWER_SHOW'
+            };
+          } else {
+            return {
+              applicable: false,
+              nextState: ''
+            };
+          }
         case State.QUESTION_OPEN:
         case State.QUESTION_CLOSE:
         case State.ANSWER_SHOW:
@@ -1358,6 +1456,137 @@ function isActionApplicable(sessionId: number, action: string): any {
   return true;
 }
 
+function isSessionInLobby(sessions: any, sessionId:number) {
+  const session = sessions.find((session:any) => session.quizSessionId === sessionId);
+  if (session.state === State.LOBBY) {
+    return true;
+  }
+
+  return false;
+}
+
+function nameExistinSession(sessions: any, name:string, sessionId:number) {
+  const session = sessions.find((session:any) => session.quizSessionId === sessionId);
+  const foundPlayer = session.players.find((player:any) => player.playerName === name);
+  if (foundPlayer !== undefined) {
+    return true;
+  }
+
+  return false;
+}
+
+function generateRandomName() {
+  const letters = shuffle(
+    ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+      'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+  );
+  const numbers = shuffle(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']);
+  let name = '';
+
+  for (let i = 0; i < 5; i++) {
+    name += letters[i];
+  }
+
+  for (let i = 0; i < 3; i++) {
+    name += numbers[i];
+  }
+  // console.log(name);
+  return name;
+}
+
+/**
+ * Send a 'put' request to the corresponding server route to
+ * create a new session (instance) for a quiz
+ *
+ * @param {string | ErrorObject} token - token
+ * @param {number} - quizId
+ * @param {number} - sessionId
+ * @param {string} - action
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestPlayerAnswerSubmit(playerId: number, questionposition: number, answerIds: number[]) {
+  const res = request(
+    'PUT',
+    SERVER_URL + `/v1/player/${playerId}/question/${questionposition}/answer`,
+    {
+      json: {
+        answerIds
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
+ * Finds in data a session that has playerId passed in,
+ * returns undefined otherwise
+ *
+ * @param {number} - playerId
+ *
+ * @returns {undefined | Session} - session or undefined
+*/
+function findPlayerSession(playerId: number) {
+  const data: Data = read();
+  for (const session of data.sessions) {
+    if (session.players.filter(player => player.playerId === playerId).length !== 0) {
+      return session;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Checks if within answerIds array there is any answer that
+ * does not match the allowed range of answerIds for a question,
+ * returns true or false accordingly
+ *
+ * @param {Session} - session
+ * @param {number} - questionposition
+ * @param {number[]} - answerIds
+ *
+ * @returns {boolean} - true or false
+*/
+function answerIdsValidCheck(session: Session, questionposition: number, answerIds: number[]) {
+  for (const answerId of answerIds) {
+    if (answerId < 0 || answerId >= session.metadata.questions[questionposition - 1].answers.length) {
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+function findScalingFactor(session: Session, timeTaken: number, questionposition: number) {
+  const sortedAttempts = session.metadata.questions[questionposition - 1].attempts.sort((a, b) => a.timeTaken - b.timeTaken);
+  return 1 / (sortedAttempts.indexOf(sortedAttempts.find(attempt => attempt.timeTaken === timeTaken)) + 1);
+}
+
+function getAverageAnswerTime(session: Session, questionposition: number) {
+  const noPlayers = session.metadata.questions[questionposition - 1].attempts.length;
+  const totalTimeTaken = session.metadata.questions[questionposition - 1].attempts.reduce((sum, attempt) => sum + attempt.timeTaken, 0);
+  return totalTimeTaken / noPlayers;
+}
+
+function getPercentCorrect(session: Session, questionposition: number) {
+  const noPlayers = session.metadata.questions[questionposition - 1].attempts.length;
+  const noCorrectPlayers = session.metadata.questions[questionposition - 1].attempts.filter(attempt => attempt.points !== 0).length;
+  return noCorrectPlayers / noPlayers * 100;
+}
+
+function changeState(sessionId: number, state: State) {
+  const data: Data = read();
+  for (const session of data.sessions) {
+    if (session.quizSessionId === sessionId) {
+      session.state = state;
+    }
+  }
+  save(data);
+}
+
 export {
   clear, save, read, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, isSameQuizName,
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
@@ -1366,5 +1595,7 @@ export {
   quizAnswerCorrectValid, isQuizInTrash, requestAdminQuizQuestionMove, questionValidCheck, newPositioNotSame, newPositionValidCheck, requestAdminQuizQuestionDuplicate,
   requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate, requestAdminAuthLogout,
   requestAdminAuthDetailsUpdate, requestAdminQuizSessionStart, quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId, requestAdminQuizSessionStateUpdate,
-  quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate
+  quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate, requestQuizSessionPlayerJoin, isSessionInLobby, nameExistinSession, generateRandomName,
+  requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, findPlayerSession, answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect,
+  changeState, requestAdminSessionChatView, requestAdminSessionChatSend
 };

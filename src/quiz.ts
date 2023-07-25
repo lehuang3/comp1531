@@ -1,18 +1,14 @@
-import { ErrorObject, Quiz, State } from './interfaces';
+import { ErrorObject, Quiz } from './interfaces';
 import {
   save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong,
   tokenOwner, questionLengthValid, answerCountValid, newPositioNotSame, newPositionValidCheck, questionValidCheck, durationValid, QuizDurationValid, quizPointsValid,
-  quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash, getColour, isSameQuizName, quizActiveCheck, quizHasQuestion, activeSessions,
-  generateSessionId, quizSessionIdValidCheck, isActionApplicable
+  quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash, getColour, isSameQuizName
 } from './other';
-import { Data, Answer, Action } from './interfaces';
+import { Data, Answer } from './interfaces';
 import HTTPError from 'http-errors';
 const isUrl = require('is-url');
 const isImageUrl = require('is-image-url');
 
-interface SessionIdReturn {
-  sessionId: number;
-}
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
@@ -818,109 +814,6 @@ function adminQuizTrashEmpty(token: string | ErrorObject, quizIdArr: number[]) {
   return {};
 }
 
-function adminQuizSessionStart(token: ErrorObject | string, quizId: number, autoStartNum: number): SessionIdReturn {
-  const data: Data = read();
-  const authUserId = tokenOwner(token);
-  if (typeof authUserId !== 'number') {
-    if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
-      // invalid session
-    } else {
-      throw HTTPError(403, 'Not a valid session');
-    }
-  }
-  if (!quizActiveCheck(quizId)) {
-    throw HTTPError(400, 'Quiz does not exist');
-  }
-  if (!quizValidOwner(authUserId, quizId)) {
-    throw HTTPError(400, 'You do not have access to this quiz');
-  }
-  if (autoStartNum > 50) {
-    throw HTTPError(400, 'Maximum number of users is 50');
-  }
-  if (activeSessions() >= 10) {
-    throw HTTPError(400, 'Exceeded maxinum number of active sessions');
-  }
-  if (quizHasQuestion(quizId)) {
-    throw HTTPError(400, 'Quiz does not have any question');
-  }
-  const quiz = data.quizzes.filter(quiz => quiz.quizId === quizId)[0];
-  const newSessionId = generateSessionId();
-  data.sessions.push({
-    metadata: {
-      quizId: quizId,
-      name: quiz.name,
-      timeCreated: quiz.timeCreated,
-      timeLastEdited: quiz.timeLastEdited,
-      description: quiz.description,
-      numQuestions: quiz.numQuestions,
-      questions: quiz.questions.map(question => {
-        return {
-          questionId: question.questionId,
-          question: question.question,
-          duration: question.duration,
-          points: question.points,
-          answers: question.answers,
-          questionCorrectBreakdown: [],
-          // default value of averageAnswerTime
-          averageAnswerTime: 0,
-          // default value of percentCorrect
-          percentCorrect: 0,
-        };
-      }),
-      duration: quiz.duration,
-    },
-    quizSessionId: newSessionId,
-    state: State.LOBBY,
-    autoStartNum: autoStartNum,
-    // this value = 0 in LOBBY state
-    atQuestion: 0,
-    messages: [],
-    players: [],
-  });
-  save(data);
-  return {
-    sessionId: newSessionId,
-  };
-}
-
-function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number, sessionId: number, action: string) {
-  const data: Data = read();
-  const authUserId = tokenOwner(token);
-  if (typeof authUserId !== 'number') {
-    if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
-      // invalid session
-    } else {
-      throw HTTPError(403, 'Not a valid session');
-    }
-  }
-  if (!quizActiveCheck(quizId)) {
-    throw HTTPError(400, 'Quiz does not exist');
-  }
-  if (!quizValidOwner(authUserId, quizId)) {
-    throw HTTPError(400, 'You do not have access to this quiz');
-  }
-  if (!quizSessionIdValidCheck(quizId, sessionId)) {
-    throw HTTPError(400, 'Session is not valid');
-  }
-  if (!Object.keys(Action).includes(action)) {
-    throw HTTPError(400, 'Invalid Action enum');
-  }
-  if (!isActionApplicable(sessionId, action).applicable) {
-    throw HTTPError(400, 'Action is not applicable');
-  }
-
-  const nextState = isActionApplicable(sessionId, action).nextState;
-  for (const session of data.sessions) {
-    if (session.quizSessionId === sessionId) {
-      session.state = nextState;
-    }
-  }
-  save(data);
-  return {};
-}
-
 function adminQuizThumbnailUpdate(token: string| ErrorObject, quizId: number, imgUrl: string) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
@@ -952,6 +845,5 @@ function adminQuizThumbnailUpdate(token: string| ErrorObject, quizId: number, im
 
 export {
   adminQuizInfo, adminQuizCreate, adminQuizNameUpdate, adminQuizDescriptionUpdate, adminQuizList, adminQuizRemove, adminQuizTrash, adminQuizTransfer, adminQuizRestore,
-  adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDuplicate, adminQuizQuestionDelete, adminQuizQuestionUpdate, adminQuizTrashEmpty, adminQuizSessionStart,
-  adminQuizSessionStateUpdate, adminQuizThumbnailUpdate
+  adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDuplicate, adminQuizQuestionDelete, adminQuizQuestionUpdate, adminQuizTrashEmpty, adminQuizThumbnailUpdate
 };

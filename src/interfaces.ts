@@ -108,6 +108,15 @@ interface AnswerResult {
   playersCorrect: string[];
 }
 
+// an attempt for 1 question
+interface Attempt {
+  playerId: number;
+  playerName: string;
+  answers: number[];
+  points: number;
+  timeTaken: number;
+}
+
 // QuizQuestion object but with an extra key
 interface QuizQuestionSession {
   questionId:number;
@@ -115,9 +124,9 @@ interface QuizQuestionSession {
   duration: number;
   points: number;
   answers: Answer[];
-  questionCorrectBreakdown: AnswerResult[];
   averageAnswerTime: number;
   percentCorrect: number;
+  attempts: Attempt[];
 }
 
 // Quiz object but with 2 extra keys + modified questions array
