@@ -4,8 +4,8 @@ import request from 'sync-request';
 import { port, url } from './config.json';
 import { ErrorObject } from './interfaces';
 import { Session } from 'inspector';
-//import arrayShuffle from 'array-shuffle';
-var shuffle = require('shuffle-array');
+// import arrayShuffle from 'array-shuffle';
+const shuffle = require('shuffle-array');
 const SERVER_URL = `${url}:${port}`;
 
 /**
@@ -1134,6 +1134,22 @@ function requestAdminQuizThumbnailUpdate(token: ErrorObject | string, quizId: nu
   };
 }
 
+function requestAdminSessionChatSend(playerId: number, message: string) {
+  const res = request(
+    'POST',
+    SERVER_URL + `/v1/player/${playerId}/chat`,
+    {
+      json: {
+        message
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
 function isSameQuizName(userEmail: string, quizId: number): boolean {
   const data: Data = read();
   const users = data.users;
@@ -1191,12 +1207,12 @@ function requestAdminQuizSessionStart(token: string | ErrorObject, quizId: numbe
  *
  * @returns {{object}} - response in javascript
 */
-function requestQuizSessionPlayerJoin(sessionId:number,name:string) {
+function requestQuizSessionPlayerJoin(sessionId:number, name:string) {
   const res = request(
     'POST',
-    SERVER_URL + `/v1/player/join`,
+    SERVER_URL + '/v1/player/join',
     {
-      
+
       json: {
         sessionId,
         name
@@ -1224,8 +1240,7 @@ function requestQuizSessionPlayerStatus(playerId:number) {
     'GET',
     SERVER_URL + `/v1/player/${playerId}`,
     {
-      
-      
+
     }
   );
   return {
@@ -1414,34 +1429,33 @@ function isActionApplicable(sessionId: number, action: string): any {
   return true;
 }
 
-function isSessionInLobby(sessions: any,sessionId:Number) {
+function isSessionInLobby(sessions: any, sessionId:number) {
   const session = sessions.find((session:any) => session.quizSessionId === sessionId);
-  if(session.state===State.LOBBY){
-  
+  if (session.state === State.LOBBY) {
     return true;
   }
 
-  return false
+  return false;
 }
 
-function nameExistinSession(sessions: any,name:String,sessionId:Number) {
-    const session = sessions.find((session:any) => session.quizSessionId === sessionId);
-    const foundPlayer = session.players.find((player:any) => player.playerName === name);
-    if (foundPlayer !== undefined) {
-      return true;
-    }
+function nameExistinSession(sessions: any, name:string, sessionId:number) {
+  const session = sessions.find((session:any) => session.quizSessionId === sessionId);
+  const foundPlayer = session.players.find((player:any) => player.playerName === name);
+  if (foundPlayer !== undefined) {
+    return true;
+  }
 
   return false;
 }
 
 function generateRandomName() {
-  let letters = shuffle(
-  ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 
-  'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+  const letters = shuffle(
+    ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+      'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
   );
-  let numbers = shuffle(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']);
+  const numbers = shuffle(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']);
   let name = '';
-   
+
   for (let i = 0; i < 5; i++) {
     name += letters[i];
   }
@@ -1449,9 +1463,8 @@ function generateRandomName() {
   for (let i = 0; i < 3; i++) {
     name += numbers[i];
   }
-  console.log(name);
+  // console.log(name);
   return name;
-
 }
 
 export {
@@ -1462,5 +1475,6 @@ export {
   quizAnswerCorrectValid, isQuizInTrash, requestAdminQuizQuestionMove, questionValidCheck, newPositioNotSame, newPositionValidCheck, requestAdminQuizQuestionDuplicate,
   requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty, getColour, requestAdminAuthPasswordUpdate, requestAdminAuthLogout,
   requestAdminAuthDetailsUpdate, requestAdminQuizSessionStart, quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId, requestAdminQuizSessionStateUpdate,
-  quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate,requestQuizSessionPlayerJoin,isSessionInLobby,nameExistinSession,generateRandomName,requestQuizSessionPlayerStatus
+  quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate, requestQuizSessionPlayerJoin, isSessionInLobby, nameExistinSession, generateRandomName, requestQuizSessionPlayerStatus,
+  requestAdminSessionChatSend
 };
