@@ -47,7 +47,7 @@ interface Answer {
   answer: string;
   correct: boolean;
   answerId:number;
-  colour: string;
+  color: string;
 }
 
 interface QuizQuestion {
@@ -124,6 +124,7 @@ interface QuizQuestionSession {
   duration: number;
   points: number;
   answers: Answer[];
+  thumbnailUrl: string;
   averageAnswerTime: number;
   percentCorrect: number;
   attempts: Attempt[];
