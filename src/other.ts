@@ -3,9 +3,9 @@ import { Data, Token, State } from './interfaces';
 import request from 'sync-request';
 import { port, url } from './config.json';
 import { ErrorObject, Session } from './interfaces';
-//import { Session } from 'inspector';
-//import arrayShuffle from 'array-shuffle';
-var shuffle = require('shuffle-array');
+// import { Session } from 'inspector';
+// import arrayShuffle from 'array-shuffle';
+const shuffle = require('shuffle-array');
 const SERVER_URL = `${url}:${port}`;
 
 /**
@@ -1556,7 +1556,7 @@ function answerIdsValidCheck(session: Session, questionposition: number, answerI
       return false;
     }
   }
-  
+
   return true;
 }
 

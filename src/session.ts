@@ -1,7 +1,8 @@
 import { State, Data, ErrorObject, Action } from './interfaces';
-import { save, read, tokenOwner, quizActiveCheck, quizValidOwner, activeSessions, quizHasQuestion, generateSessionId,
-quizSessionIdValidCheck, isActionApplicable, isSessionInLobby, nameExistinSession, generateRandomName, findPlayerSession,
-answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect
+import {
+  save, read, tokenOwner, quizActiveCheck, quizValidOwner, activeSessions, quizHasQuestion, generateSessionId,
+  quizSessionIdValidCheck, isActionApplicable, isSessionInLobby, nameExistinSession, generateRandomName, findPlayerSession,
+  answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect
 } from './other';
 import HTTPError from 'http-errors';
 interface SessionIdReturn {
@@ -75,7 +76,6 @@ function adminQuizSessionStart(token: ErrorObject | string, quizId: number, auto
     sessionId: newSessionId,
   };
 }
-
 
 function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number, sessionId: number, action: string) {
   const data: Data = read();
@@ -201,18 +201,18 @@ function QuizSessionPlayerJoin(sessionId:number, name:string) {
     playerId: maxplayerId,
     playerName: name,
     playerScore: 0
-  }
-  let session = data.sessions.find((session:any) => session.quizSessionId === sessionId);
-  
+  };
+  const session = data.sessions.find((session:any) => session.quizSessionId === sessionId);
+
   session.players.push(newPlayer);
-  if(session.players.length === session.autoStartNum) {
+  if (session.players.length === session.autoStartNum) {
     session.state = State.QUESTION_COUNTDOWN;
     session.atQuestion++;
     questionOpenStart = Math.floor(Date.now() / 1000);
   }
-  //console.log(session)
+  // console.log(session)
   save(data);
-  
+
   return { playerId: maxplayerId };
 }
 
@@ -301,12 +301,13 @@ function playerAnswerSubmit(playerId: number, questionposition: number, answerId
       // find percentCorrect
       // if a player is correct, their point is not 0
       session.metadata.questions[questionposition - 1].percentCorrect = Math.round(getPercentCorrect(session, questionposition));
-      console.log(session.metadata.questions[questionposition - 1].attempts)
+      console.log(session.metadata.questions[questionposition - 1].attempts);
     }
     save(data);
   }
   return {};
 }
-export { adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
-playerAnswerSubmit 
+export {
+  adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
+  playerAnswerSubmit
 };
