@@ -13,7 +13,9 @@ import {
   adminQuizTransfer, adminQuizRestore, adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDuplicate, adminQuizQuestionDelete, adminQuizQuestionUpdate,
   adminQuizTrashEmpty, adminQuizThumbnailUpdate
 } from './quiz';
-import { adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView, playerAnswerSubmit } from './session';
+import { adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
+playerAnswerSubmit, playerQuestionInfo
+} from './session';
 import { clear } from './other';
 
 // Set up web app
@@ -570,6 +572,13 @@ app.post('/v1/player/:playerId/chat', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerId);
   const message = req.body.message;
   const response = adminSessionChatSend(playerId, message);
+  res.json(response);
+});
+
+app.get('/v1/player/:playerId/question/:questionposition', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerId);
+  const questionposition = parseInt(req.params.questionposition);
+  const response = playerQuestionInfo(playerId, questionposition);
   res.json(response);
 });
 

@@ -53,6 +53,7 @@ function adminQuizSessionStart(token: ErrorObject | string, quizId: number, auto
           question: question.question,
           duration: question.duration,
           points: question.points,
+          thumbnailUrl: question.thumbnailUrl,
           answers: question.answers,
           // default value of averageAnswerTime
           averageAnswerTime: 0,
@@ -237,7 +238,7 @@ function playerAnswerSubmit(playerId: number, questionposition: number, answerId
   if (playerSession === undefined) {
     throw HTTPError(400, 'Player does not exist');
   }
-  if (questionposition < 0 || questionposition > playerSession.metadata.questions.length) {
+  if (questionposition <= 0 || questionposition > playerSession.metadata.questions.length) {
     throw HTTPError(400, 'Question is not valid for this session');
   }
   if (playerSession.state !== State.QUESTION_OPEN) {
@@ -307,7 +308,39 @@ function playerAnswerSubmit(playerId: number, questionposition: number, answerId
   }
   return {};
 }
+
+function playerQuestionInfo(playerId: number, questionposition: number) {
+  const playerSession = findPlayerSession(playerId);
+  if (playerSession === undefined) {
+    throw HTTPError(400, 'Player does not exist');
+  }
+  if (questionposition <= 0 || questionposition > playerSession.metadata.questions.length) {
+    throw HTTPError(400, 'Question is not valid for this session');
+  }
+  if (playerSession.atQuestion !== questionposition) {
+    throw HTTPError(400, 'Session is not currently on this question');
+  }
+  if (playerSession.state === State.END || playerSession.state === State.LOBBY) {
+    throw HTTPError(400, 'Session is in LOBBY or END state');
+  }
+  const question = playerSession.metadata.questions[questionposition - 1];
+  return {
+    questionId: question.questionId,
+    question: question.question,
+    duration: question.duration,
+    thumbnailUrl: question.thumbnailUrl,
+    points: question.points,
+    answers: question.answers.map(answer => {
+      return {
+        answerId: answer.answerId,
+        answer: answer.answer,
+        color: answer.color
+      };
+    })
+  };
+}
+
 export {
   adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
-  playerAnswerSubmit
+  playerAnswerSubmit, playerQuestionInfo
 };
