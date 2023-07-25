@@ -53,7 +53,6 @@ function adminQuizSessionStart(token: ErrorObject | string, quizId: number, auto
           duration: question.duration,
           points: question.points,
           answers: question.answers,
-          questionCorrectBreakdown: [],
           // default value of averageAnswerTime
           averageAnswerTime: 0,
           // default value of percentCorrect

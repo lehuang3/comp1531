@@ -124,7 +124,6 @@ interface QuizQuestionSession {
   duration: number;
   points: number;
   answers: Answer[];
-  questionCorrectBreakdown: AnswerResult[];
   averageAnswerTime: number;
   percentCorrect: number;
   attempts: Attempt[];
