@@ -63,6 +63,7 @@ function adminQuizSessionStart(token: ErrorObject | string, quizId: number, auto
         };
       }),
       duration: quiz.duration,
+      thumbnailUrl: quiz.thumbnailUrl
     },
     quizSessionId: newSessionId,
     state: State.LOBBY,
@@ -71,6 +72,7 @@ function adminQuizSessionStart(token: ErrorObject | string, quizId: number, auto
     atQuestion: 0,
     messages: [],
     players: [],
+    
   });
   save(data);
   return {
@@ -217,6 +219,49 @@ function QuizSessionPlayerJoin(sessionId:number, name:string) {
   return { playerId: maxplayerId };
 }
 
+function adminQuizSessionState(token: ErrorObject | string, quizId: number, sessionId: number) {
+  const data: Data = read();
+  const authUserId = tokenOwner(token);
+  if (typeof authUserId !== 'number') {
+    if (authUserId.error === 'Invalid token structure') {
+      throw HTTPError(401, 'Invalid token structure');
+      // invalid session
+    } else {
+      throw HTTPError(403, 'Not a valid session');
+    }
+  }
+  if (!quizActiveCheck(quizId)) {
+    throw HTTPError(400, 'Quiz does not exist');
+  }
+  if (!quizValidOwner(authUserId, quizId)) {
+    throw HTTPError(400, 'You do not have access to this quiz');
+  }
+  if (!quizSessionIdValidCheck(quizId, sessionId)) {
+    throw HTTPError(400, 'Session is not valid');
+  }
+
+  const session = data.sessions.find((session:any) => session.quizSessionId === sessionId);
+  
+  let sessionStatus = {
+    state: session.state,
+		atQuestion: session.atQuestion,
+		players: session.players.map(player => player.playerName),
+		metadata: {
+				quizId: session.metadata.quizId,
+				name: session.metadata.name,
+				timeCreated: session.metadata.timeCreated,
+				timeLastEdited: session.metadata.timeLastEdited,
+				description: session.metadata.description,
+				numQuestions: session.metadata.numQuestions,
+				questions: session.metadata.questions,
+				duration: session.metadata.duration,
+				thumbnailUrl: session.metadata.thumbnailUrl
+			}
+  }
+  console.log(sessionStatus);
+  return sessionStatus
+}
+
 function QuizSessionPlayerStatus(playerId: number) {
   const data: Data = read();
   for (const session of data.sessions) {
@@ -342,5 +387,5 @@ function playerQuestionInfo(playerId: number, questionposition: number) {
 
 export {
   adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
-  playerAnswerSubmit, playerQuestionInfo
+  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState
 };

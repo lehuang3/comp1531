@@ -14,7 +14,7 @@ import {
   adminQuizTrashEmpty, adminQuizThumbnailUpdate
 } from './quiz';
 import { adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
-playerAnswerSubmit, playerQuestionInfo
+playerAnswerSubmit, playerQuestionInfo,adminQuizSessionState
 } from './session';
 import { clear } from './other';
 
@@ -114,6 +114,14 @@ app.post('/v2/admin/quiz', (req: Request, res: Response) => {
   const { name, description } = req.body;
   const token = req.header('token');
   const response = adminQuizCreate(token, name, description);
+  res.json(response);
+});
+
+app.get('/v1/admin/quiz/:quizId/session/:sessionId', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const sessionId = parseInt(req.params.sessionId);
+  const token = req.header('token');
+  const response = adminQuizSessionState(token, quizId, sessionId);
   res.json(response);
 });
 
