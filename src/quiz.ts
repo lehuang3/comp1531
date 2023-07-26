@@ -126,7 +126,7 @@ function adminQuizCreate (token: ErrorObject | string, name: string, description
       numQuestions: 0,
       questions: [],
       duration: 0,
-      imgUrl: ''
+      thumbnailUrl: ''
     };
 
     data.quizzes.push(newQuiz);
@@ -835,7 +835,7 @@ function adminQuizThumbnailUpdate(token: string| ErrorObject, quizId: number, im
   }
   const quiz = data.quizzes.filter((quiz) => quiz.quizId === quizId);
   // console.log(quiz);
-  quiz[0].imgUrl = imgUrl;
+  quiz[0].thumbnailUrl = imgUrl;
   // console.log(quiz);
   save(data);
   return {

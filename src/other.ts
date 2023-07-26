@@ -1261,6 +1261,32 @@ function requestQuizSessionPlayerStatus(playerId:number) {
 }
 
 /**
+ * Send a 'POST' request to the corresponding server route to
+ * create a new session (instance) for a quiz
+ *
+ * @param {string | ErrorObject} token - token
+ * @param {number} - quizId
+ * @param {number} - autoStartNum
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminQuizSessionState(token:string | ErrorObject, quizId:number, sessionId:number) {
+  const res = request(
+    'GET',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/session/${sessionId}`,
+    {
+      headers: {
+        token: token as string
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
  * Given a quizId, returns true or false depending on
  * whether the questions array of the quiz is empty
  *
@@ -1622,5 +1648,5 @@ export {
   requestAdminAuthDetailsUpdate, requestAdminQuizSessionStart, quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId, requestAdminQuizSessionStateUpdate,
   quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate, requestQuizSessionPlayerJoin, isSessionInLobby, nameExistinSession, generateRandomName,
   requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, findPlayerSession, answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect,
-  changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo
+  changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo,requestAdminQuizSessionState
 };

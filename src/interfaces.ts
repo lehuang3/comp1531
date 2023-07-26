@@ -69,7 +69,7 @@ interface Quiz {
   numQuestions: number;
   questions: QuizQuestion[];
   duration:number;
-  imgUrl: string;
+  thumbnailUrl: string;
 }
 
 // different states of a session
