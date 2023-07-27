@@ -3,6 +3,7 @@ import validator from 'validator';
 import { read, save, tokenOwner } from './other';
 import { AdminAuthLoginReturn, AdminAuthRegisterReturn, AdminUserDetailsReturn, ErrorObject } from './interfaces';
 import HTTPError from 'http-errors';
+import crypto from 'crypto';
 let counterSession = 0;
 
 /**
@@ -67,7 +68,7 @@ function User (email: string, password: string, nameFirst: string, nameLast: str
   const store = read();
   this.authUserId = store.users.length;
   this.email = email;
-  this.password = password;
+  this.password = crypto.createHash('sha256').update(password).digest('hex');
   this.name = nameFirst + ' ' + nameLast;
   this.numSuccessfulLogins = 1;
   this.numFailedPasswordsSinceLastLogin = 0;
@@ -141,15 +142,16 @@ function adminAuthRegister (email: string, password: string, nameFirst: string, 
   if (store.users.length === 0) {
     counterSession = 0;
   }
+  const sessionIdHash = crypto.createHash('sha256').update(counterSession.toString()).digest('hex');
   store.users.push(new (User as any)(email, password, nameFirst, nameLast));
   store.tokens.push({
     authUserId: iD,
-    sessionId: counterSession,
+    sessionId: sessionIdHash,
   });
   counterSession++;
   save(store);
   return {
-    token: (counterSession - 1).toString(),
+    token: sessionIdHash,
   };
 }
 
@@ -173,19 +175,19 @@ function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn 
   }
 
   const user = store.users[iD];
-
-  if (password === user.password) {
+  if (crypto.createHash('sha256').update(password).digest('hex') === user.password) {
     user.numFailedPasswordsSinceLastLogin = 0;
     user.numSuccessfulLogins++;
     // add new token to tokens array
+    const sessionIdHash = crypto.createHash('sha256').update(counterSession.toString()).digest('hex');
     store.tokens.push({
       authUserId: iD,
-      sessionId: counterSession,
+      sessionId: sessionIdHash,
     });
     save(store);
     counterSession++;
     return {
-      token: (counterSession - 1).toString(),
+      token: sessionIdHash,
     };
     // failed login attempt
   } else {
@@ -257,13 +259,13 @@ function adminAuthPasswordUpdate (token: ErrorObject | string, oldPassword: stri
     throw HTTPError(400, 'New password is invalid');
   }
   const user = data.users.find((userID) => userID.authUserId === authUserId);
-  if (oldPassword !== user.password) {
+  if (crypto.createHash('sha256').update(oldPassword).digest('hex') !== user.password) {
     throw HTTPError(400, 'Old password is incorrect');
-  } else if (user.usedPasswords.includes(newPassword)) {
+  } else if (user.usedPasswords.includes(crypto.createHash('sha256').update(newPassword).digest('hex'))) {
     throw HTTPError(400, 'Password has been used before');
   }
-  user.usedPasswords.push(oldPassword);
-  user.password = newPassword;
+  user.usedPasswords.push(crypto.createHash('sha256').update(oldPassword).digest('hex'));
+  user.password = crypto.createHash('sha256').update(newPassword).digest('hex');
   save(data);
   return {
 
@@ -288,9 +290,8 @@ function adminAuthLogout (token: ErrorObject | string) {
       throw HTTPError(403, 'Not a valid session');
     }
   }
-  const sessionId = parseInt(token as string);
   // removes token from active tokens array
-  data.tokens = data.tokens.filter((user) => user.sessionId !== sessionId);
+  data.tokens = data.tokens.filter((user) => user.sessionId !== token);
   save(data);
   return {
 
