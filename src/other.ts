@@ -3,9 +3,9 @@ import { Data, Token, State } from './interfaces';
 import request from 'sync-request';
 import { port, url } from './config.json';
 import { ErrorObject, Session } from './interfaces';
-//import { Session } from 'inspector';
-//import arrayShuffle from 'array-shuffle';
-var shuffle = require('shuffle-array');
+// import { Session } from 'inspector';
+// import arrayShuffle from 'array-shuffle';
+const shuffle = require('shuffle-array');
 const SERVER_URL = `${url}:${port}`;
 
 /**
@@ -84,7 +84,7 @@ function isSessionValid(token: string | ErrorObject): boolean {
   const data: Data = read();
   let matchingToken: Token;
   if (typeof token === 'string') {
-    matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token));
+    matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === token);
   }
   if (matchingToken === undefined) {
     // error if no corresponding token found
@@ -115,7 +115,7 @@ function tokenOwner(token: string | ErrorObject) {
     };
   } else {
     if (typeof token === 'string') {
-      return data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token)).authUserId;
+      return data.tokens.find((existingToken) => existingToken.sessionId === token).authUserId;
     }
   }
 }
@@ -1261,6 +1261,32 @@ function requestQuizSessionPlayerStatus(playerId:number) {
 }
 
 /**
+ * Send a 'POST' request to the corresponding server route to
+ * create a new session (instance) for a quiz
+ *
+ * @param {string | ErrorObject} token - token
+ * @param {number} - quizId
+ * @param {number} - autoStartNum
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminQuizSessionState(token:string | ErrorObject, quizId:number, sessionId:number) {
+  const res = request(
+    'GET',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/session/${sessionId}`,
+    {
+      headers: {
+        token: token as string
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
  * Given a quizId, returns true or false depending on
  * whether the questions array of the quiz is empty
  *
@@ -1556,7 +1582,7 @@ function answerIdsValidCheck(session: Session, questionposition: number, answerI
       return false;
     }
   }
-  
+
   return true;
 }
 
@@ -1587,6 +1613,31 @@ function changeState(sessionId: number, state: State) {
   save(data);
 }
 
+/**
+ * Send a 'get' request to the corresponding server route to
+ * fetch details of a question for given player
+ *
+ * @param {number} - playerId
+ * @param {number} - questionposition
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestPlayerQuestionInfo(playerId: number, questionposition: number) {
+  const res = request(
+    'GET',
+    SERVER_URL + `/v1/player/${playerId}/question/${questionposition}`,
+    {
+      qs: {
+      }
+    }
+  );
+  // console.log(JSON.parse(res.body.toString()));
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
 export {
   clear, save, read, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, isSameQuizName,
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
@@ -1597,5 +1648,5 @@ export {
   requestAdminAuthDetailsUpdate, requestAdminQuizSessionStart, quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId, requestAdminQuizSessionStateUpdate,
   quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate, requestQuizSessionPlayerJoin, isSessionInLobby, nameExistinSession, generateRandomName,
   requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, findPlayerSession, answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect,
-  changeState, requestAdminSessionChatView, requestAdminSessionChatSend
+  changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo,requestAdminQuizSessionState
 };

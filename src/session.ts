@@ -1,7 +1,8 @@
 import { State, Data, ErrorObject, Action } from './interfaces';
-import { save, read, tokenOwner, quizActiveCheck, quizValidOwner, activeSessions, quizHasQuestion, generateSessionId,
-quizSessionIdValidCheck, isActionApplicable, isSessionInLobby, nameExistinSession, generateRandomName, findPlayerSession,
-answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect
+import {
+  save, read, tokenOwner, quizActiveCheck, quizValidOwner, activeSessions, quizHasQuestion, generateSessionId,
+  quizSessionIdValidCheck, isActionApplicable, isSessionInLobby, nameExistinSession, generateRandomName, findPlayerSession,
+  answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect
 } from './other';
 import HTTPError from 'http-errors';
 interface SessionIdReturn {
@@ -52,6 +53,7 @@ function adminQuizSessionStart(token: ErrorObject | string, quizId: number, auto
           question: question.question,
           duration: question.duration,
           points: question.points,
+          thumbnailUrl: question.thumbnailUrl,
           answers: question.answers,
           // default value of averageAnswerTime
           averageAnswerTime: 0,
@@ -61,6 +63,7 @@ function adminQuizSessionStart(token: ErrorObject | string, quizId: number, auto
         };
       }),
       duration: quiz.duration,
+      thumbnailUrl: quiz.thumbnailUrl
     },
     quizSessionId: newSessionId,
     state: State.LOBBY,
@@ -68,14 +71,13 @@ function adminQuizSessionStart(token: ErrorObject | string, quizId: number, auto
     // this value = 0 in LOBBY state
     atQuestion: 0,
     messages: [],
-    players: [],
+    players: []
   });
   save(data);
   return {
     sessionId: newSessionId,
   };
 }
-
 
 function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number, sessionId: number, action: string) {
   const data: Data = read();
@@ -201,19 +203,62 @@ function QuizSessionPlayerJoin(sessionId:number, name:string) {
     playerId: maxplayerId,
     playerName: name,
     playerScore: 0
-  }
-  let session = data.sessions.find((session:any) => session.quizSessionId === sessionId);
-  
+  };
+  const session = data.sessions.find((session:any) => session.quizSessionId === sessionId);
+
   session.players.push(newPlayer);
-  if(session.players.length === session.autoStartNum) {
+  if (session.players.length === session.autoStartNum) {
     session.state = State.QUESTION_COUNTDOWN;
     session.atQuestion++;
     questionOpenStart = Math.floor(Date.now() / 1000);
   }
-  //console.log(session)
+  // console.log(session)
   save(data);
-  
+
   return { playerId: maxplayerId };
+}
+
+function adminQuizSessionState(token: ErrorObject | string, quizId: number, sessionId: number) {
+  const data: Data = read();
+  const authUserId = tokenOwner(token);
+  if (typeof authUserId !== 'number') {
+    if (authUserId.error === 'Invalid token structure') {
+      throw HTTPError(401, 'Invalid token structure');
+      // invalid session
+    } else {
+      throw HTTPError(403, 'Not a valid session');
+    }
+  }
+  if (!quizActiveCheck(quizId)) {
+    throw HTTPError(400, 'Quiz does not exist');
+  }
+  if (!quizValidOwner(authUserId, quizId)) {
+    throw HTTPError(400, 'You do not have access to this quiz');
+  }
+  if (!quizSessionIdValidCheck(quizId, sessionId)) {
+    throw HTTPError(400, 'Session is not valid');
+  }
+
+  const session = data.sessions.find((session:any) => session.quizSessionId === sessionId);
+  
+  let sessionStatus = {
+    state: session.state,
+		atQuestion: session.atQuestion,
+		players: session.players.map(player => player.playerName),
+		metadata: {
+				quizId: session.metadata.quizId,
+				name: session.metadata.name,
+				timeCreated: session.metadata.timeCreated,
+				timeLastEdited: session.metadata.timeLastEdited,
+				description: session.metadata.description,
+				numQuestions: session.metadata.numQuestions,
+				questions: session.metadata.questions,
+				duration: session.metadata.duration,
+				thumbnailUrl: session.metadata.thumbnailUrl
+			}
+  }
+  console.log(sessionStatus);
+  return sessionStatus
 }
 
 function QuizSessionPlayerStatus(playerId: number) {
@@ -237,7 +282,7 @@ function playerAnswerSubmit(playerId: number, questionposition: number, answerId
   if (playerSession === undefined) {
     throw HTTPError(400, 'Player does not exist');
   }
-  if (questionposition < 0 || questionposition > playerSession.metadata.questions.length) {
+  if (questionposition <= 0 || questionposition > playerSession.metadata.questions.length) {
     throw HTTPError(400, 'Question is not valid for this session');
   }
   if (playerSession.state !== State.QUESTION_OPEN) {
@@ -301,12 +346,45 @@ function playerAnswerSubmit(playerId: number, questionposition: number, answerId
       // find percentCorrect
       // if a player is correct, their point is not 0
       session.metadata.questions[questionposition - 1].percentCorrect = Math.round(getPercentCorrect(session, questionposition));
-      console.log(session.metadata.questions[questionposition - 1].attempts)
+      console.log(session.metadata.questions[questionposition - 1].attempts);
     }
     save(data);
   }
   return {};
 }
-export { adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
-playerAnswerSubmit 
+
+function playerQuestionInfo(playerId: number, questionposition: number) {
+  const playerSession = findPlayerSession(playerId);
+  if (playerSession === undefined) {
+    throw HTTPError(400, 'Player does not exist');
+  }
+  if (questionposition <= 0 || questionposition > playerSession.metadata.questions.length) {
+    throw HTTPError(400, 'Question is not valid for this session');
+  }
+  if (playerSession.atQuestion !== questionposition) {
+    throw HTTPError(400, 'Session is not currently on this question');
+  }
+  if (playerSession.state === State.END || playerSession.state === State.LOBBY) {
+    throw HTTPError(400, 'Session is in LOBBY or END state');
+  }
+  const question = playerSession.metadata.questions[questionposition - 1];
+  return {
+    questionId: question.questionId,
+    question: question.question,
+    duration: question.duration,
+    thumbnailUrl: question.thumbnailUrl,
+    points: question.points,
+    answers: question.answers.map(answer => {
+      return {
+        answerId: answer.answerId,
+        answer: answer.answer,
+        color: answer.color
+      };
+    })
+  };
+}
+
+export {
+  adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
+  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState
 };

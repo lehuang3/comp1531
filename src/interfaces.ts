@@ -28,7 +28,7 @@ interface ErrorObject {
 // type of a token object in the tokens array
 interface Token {
   authUserId: number;
-  sessionId: number;
+  sessionId: string;
 }
 
 // type of a user in the users array
@@ -47,7 +47,7 @@ interface Answer {
   answer: string;
   correct: boolean;
   answerId:number;
-  colour: string;
+  color: string;
 }
 
 interface QuizQuestion {
@@ -69,7 +69,7 @@ interface Quiz {
   numQuestions: number;
   questions: QuizQuestion[];
   duration:number;
-  imgUrl: string;
+  thumbnailUrl: string;
 }
 
 // different states of a session
@@ -124,6 +124,7 @@ interface QuizQuestionSession {
   duration: number;
   points: number;
   answers: Answer[];
+  thumbnailUrl: string;
   averageAnswerTime: number;
   percentCorrect: number;
   attempts: Attempt[];
@@ -139,6 +140,7 @@ interface QuizSession {
   numQuestions: number;
   questions: QuizQuestionSession[];
   duration:number;
+  thumbnailUrl: string;
 }
 
 interface Session {

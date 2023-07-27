@@ -13,7 +13,9 @@ import {
   adminQuizTransfer, adminQuizRestore, adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDuplicate, adminQuizQuestionDelete, adminQuizQuestionUpdate,
   adminQuizTrashEmpty, adminQuizThumbnailUpdate
 } from './quiz';
-import { adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView, playerAnswerSubmit } from './session';
+import { adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
+playerAnswerSubmit, playerQuestionInfo,adminQuizSessionState
+} from './session';
 import { clear } from './other';
 
 // Set up web app
@@ -112,6 +114,14 @@ app.post('/v2/admin/quiz', (req: Request, res: Response) => {
   const { name, description } = req.body;
   const token = req.header('token');
   const response = adminQuizCreate(token, name, description);
+  res.json(response);
+});
+
+app.get('/v1/admin/quiz/:quizId/session/:sessionId', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const sessionId = parseInt(req.params.sessionId);
+  const token = req.header('token');
+  const response = adminQuizSessionState(token, quizId, sessionId);
   res.json(response);
 });
 
@@ -570,6 +580,13 @@ app.post('/v1/player/:playerId/chat', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerId);
   const message = req.body.message;
   const response = adminSessionChatSend(playerId, message);
+  res.json(response);
+});
+
+app.get('/v1/player/:playerId/question/:questionposition', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerId);
+  const questionposition = parseInt(req.params.questionposition);
+  const response = playerQuestionInfo(playerId, questionposition);
   res.json(response);
 });
 
