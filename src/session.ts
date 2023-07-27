@@ -1,4 +1,4 @@
-import { State, Data, ErrorObject, Action } from './interfaces';
+import { State, Data, ErrorObject, Action, AnswerResult, Answer } from './interfaces';
 import {
   save, read, tokenOwner, quizActiveCheck, quizValidOwner, activeSessions, quizHasQuestion, generateSessionId,
   quizSessionIdValidCheck, isActionApplicable, isSessionInLobby, nameExistinSession, generateRandomName, findPlayerSession,
@@ -137,9 +137,11 @@ function adminSessionChatView(playerId: number) {
     throw HTTPError(400, 'Player does not exist.');
   }
   const chatLogs: object[] = [];
+  // console.log(sess)
   for (const message of sess.messages) {
     chatLogs.push(message);
   }
+  // console.log(chatLogs)
   return {
     messages: chatLogs
   };
@@ -257,7 +259,7 @@ function adminQuizSessionState(token: ErrorObject | string, quizId: number, sess
 				thumbnailUrl: session.metadata.thumbnailUrl
 			}
   }
-  console.log(sessionStatus);
+  // console.log(sessionStatus);
   return sessionStatus
 }
 
@@ -346,7 +348,7 @@ function playerAnswerSubmit(playerId: number, questionposition: number, answerId
       // find percentCorrect
       // if a player is correct, their point is not 0
       session.metadata.questions[questionposition - 1].percentCorrect = Math.round(getPercentCorrect(session, questionposition));
-      console.log(session.metadata.questions[questionposition - 1].attempts);
+      // console.log(session.metadata.questions[questionposition - 1].attempts);
     }
     save(data);
   }
@@ -384,7 +386,72 @@ function playerQuestionInfo(playerId: number, questionposition: number) {
   };
 }
 
+function adminSessionQuestionResult(playerId: number, questionposition: number) {
+  const data: Data = read();
+  const sess = data.sessions.find((session) => {
+    if ((session.players.find((player) => player.playerId === playerId))) {
+      return session;
+    }
+  });
+  if (sess === undefined) {
+    throw HTTPError(400, 'Player does not exist.');
+  } else if (questionposition > sess.metadata.numQuestions || questionposition < 1) {
+    throw HTTPError(400, 'Question does not exist.')
+  } else if (sess.state !== 'ANSWER_SHOW') {
+    throw HTTPError(400, 'Answers cannot be shown right now.');
+  } else if (sess.atQuestion < questionposition) {
+    throw HTTPError(400, 'Session is not up to question yet.');
+  }
+  // any for time being
+  let correctAnswerIds: number[] = [];
+  const correctPlayers: AnswerResult[] = [];
+  // finds all the correct answerids which exist
+  for (const quiz of data.quizzes) {
+    for (const question of quiz.questions) {
+      for (const correctAnswer of question.answers) {
+        if (correctAnswer.correct === true && !correctAnswerIds.includes(correctAnswer.answerId)) {
+          correctAnswerIds.push(correctAnswer.answerId);
+        }
+      }
+    }
+  }
+
+  let answerObject: AnswerResult = {
+    answerId: null,
+    playersCorrect: []
+  }
+
+  // loop through all the possible answers in this question and look for the ones that are correct, then for that answer check who picked it and add to array players correct
+  for (const answer of sess.metadata.questions[questionposition - 1].answers) {
+    if (correctAnswerIds.includes(answer.answerId)) {
+      answerObject.answerId = answer.answerId;
+      answerObject.playersCorrect = [];
+      correctAnswerIds = correctAnswerIds.filter((value) => value !== answer.answerId)
+      for (const player of sess.metadata.questions[questionposition - 1].attempts) {
+        if (player.answers.includes(answerObject.answerId) && !answerObject.playersCorrect.includes(player.playerName)) {
+          answerObject.playersCorrect.push(player.playerName)
+        }
+      }
+      correctPlayers.push(answerObject);
+    }
+  }
+
+  // const answer = {
+  //   questionId: sess.metadata.questions[questionposition - 1].questionId,
+  //   questionCorrectBreakdown: correctPlayers,
+  //   averageAnswerTime: getAverageAnswerTime(sess, questionposition),
+  //   percentCorrect: getPercentCorrect(sess, questionposition)
+  // }
+  // console.log(answer)
+  return {
+      questionId: sess.metadata.questions[questionposition - 1].questionId,
+      questionCorrectBreakdown: correctPlayers,
+      averageAnswerTime: getAverageAnswerTime(sess, questionposition),
+      percentCorrect: getPercentCorrect(sess, questionposition)
+    }
+}
+
 export {
   adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
-  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState
+  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState, adminSessionQuestionResult
 };

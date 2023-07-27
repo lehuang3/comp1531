@@ -14,7 +14,7 @@ import {
   adminQuizTrashEmpty, adminQuizThumbnailUpdate
 } from './quiz';
 import { adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
-playerAnswerSubmit, playerQuestionInfo,adminQuizSessionState
+playerAnswerSubmit, playerQuestionInfo,adminQuizSessionState, adminSessionQuestionResult
 } from './session';
 import { clear } from './other';
 
@@ -587,6 +587,13 @@ app.get('/v1/player/:playerId/question/:questionposition', (req: Request, res: R
   const playerId = parseInt(req.params.playerId);
   const questionposition = parseInt(req.params.questionposition);
   const response = playerQuestionInfo(playerId, questionposition);
+  res.json(response);
+});
+
+app.get('/v1/player/:playerId/question/:questionposition/results', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerId);
+  const questionposition = parseInt(req.params.questionposition);
+  const response = adminSessionQuestionResult(playerId, questionposition);
   res.json(response);
 });
 
