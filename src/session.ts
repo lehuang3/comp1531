@@ -463,10 +463,17 @@ function adminSessionFinalResult(playerId: number) {
   } else if (sess.state !== 'FINAL_RESULTS') {
     throw HTTPError(400, 'Answers cannot be shown right now.');
   }
-
-  
-
-  return
+  let ranking = 1;
+  let questionResult = [];
+  for (let i = 1; i <= sess.metadata.numQuestions; i++) {
+    questionResult.push(adminSessionQuestionResult(playerId, i))
+  }
+  let answer = {
+    usersRankedByscore: ranking,
+    questionResults: questionResult
+  }
+  console.log(answer)
+  return answer
 }
 
 export {
