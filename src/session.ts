@@ -444,14 +444,32 @@ function adminSessionQuestionResult(playerId: number, questionposition: number) 
   // }
   // console.log(answer)
   return {
-      questionId: sess.metadata.questions[questionposition - 1].questionId,
-      questionCorrectBreakdown: correctPlayers,
-      averageAnswerTime: getAverageAnswerTime(sess, questionposition),
-      percentCorrect: getPercentCorrect(sess, questionposition)
+    questionId: sess.metadata.questions[questionposition - 1].questionId,
+    questionCorrectBreakdown: correctPlayers,
+    averageAnswerTime: getAverageAnswerTime(sess, questionposition),
+    percentCorrect: getPercentCorrect(sess, questionposition)
+  }
+}
+
+function adminSessionFinalResult(playerId: number) {
+  const data: Data = read();
+  const sess = data.sessions.find((session) => {
+    if ((session.players.find((player) => player.playerId === playerId))) {
+      return session;
     }
+  });
+  if (sess === undefined) {
+    throw HTTPError(400, 'Player does not exist.');
+  } else if (sess.state !== 'FINAL_RESULTS') {
+    throw HTTPError(400, 'Answers cannot be shown right now.');
+  }
+
+  
+
+  return
 }
 
 export {
   adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
-  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState, adminSessionQuestionResult
+  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState, adminSessionQuestionResult, adminSessionFinalResult
 };

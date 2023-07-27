@@ -1558,6 +1558,17 @@ function requestAdminSessioQuestionResult(playerId: number, questionposition: nu
   };
 }
 
+function requestAdminSessionFinalResult(playerId: number) {
+  const res = request(
+    'GET',
+    SERVER_URL + `/v1/player/${playerId}/results`,
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
 /**
  * Finds in data a session that has playerId passed in,
  * returns undefined otherwise
@@ -1659,5 +1670,5 @@ export {
   requestAdminAuthDetailsUpdate, requestAdminQuizSessionStart, quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId, requestAdminQuizSessionStateUpdate,
   quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate, requestQuizSessionPlayerJoin, isSessionInLobby, nameExistinSession, generateRandomName,
   requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, findPlayerSession, answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect,
-  changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo,requestAdminQuizSessionState, requestAdminSessioQuestionResult
+  changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo,requestAdminQuizSessionState, requestAdminSessioQuestionResult, requestAdminSessionFinalResult
 };
