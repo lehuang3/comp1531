@@ -71,8 +71,7 @@ function adminQuizSessionStart(token: ErrorObject | string, quizId: number, auto
     // this value = 0 in LOBBY state
     atQuestion: 0,
     messages: [],
-    players: [],
-    
+    players: []
   });
   save(data);
   return {

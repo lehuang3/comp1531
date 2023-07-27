@@ -84,7 +84,7 @@ function isSessionValid(token: string | ErrorObject): boolean {
   const data: Data = read();
   let matchingToken: Token;
   if (typeof token === 'string') {
-    matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token));
+    matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === token);
   }
   if (matchingToken === undefined) {
     // error if no corresponding token found
@@ -115,7 +115,7 @@ function tokenOwner(token: string | ErrorObject) {
     };
   } else {
     if (typeof token === 'string') {
-      return data.tokens.find((existingToken) => existingToken.sessionId === parseInt(token)).authUserId;
+      return data.tokens.find((existingToken) => existingToken.sessionId === token).authUserId;
     }
   }
 }

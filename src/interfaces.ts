@@ -28,7 +28,7 @@ interface ErrorObject {
 // type of a token object in the tokens array
 interface Token {
   authUserId: number;
-  sessionId: number;
+  sessionId: string;
 }
 
 // type of a user in the users array
@@ -140,6 +140,7 @@ interface QuizSession {
   numQuestions: number;
   questions: QuizQuestionSession[];
   duration:number;
+  thumbnailUrl: string;
 }
 
 interface Session {
