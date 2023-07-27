@@ -1,4 +1,4 @@
-import { State, Data, ErrorObject, Action } from './interfaces';
+import { State, Data, ErrorObject, Action, AnswerResult, Answer } from './interfaces';
 import {
   save, read, tokenOwner, quizActiveCheck, quizValidOwner, activeSessions, quizHasQuestion, generateSessionId,
   quizSessionIdValidCheck, isActionApplicable, isSessionInLobby, nameExistinSession, generateRandomName, findPlayerSession,
@@ -128,16 +128,20 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
 
 function adminSessionChatView(playerId: number) {
   const data: Data = read();
-  const sess = findPlayerSession(playerId)
+  const sess = data.sessions.find((session) => {
+    if ((session.players.find((player) => player.playerId === playerId))) {
+      return session;
+    }
+  });
   if (sess === undefined) {
     throw HTTPError(400, 'Player does not exist.');
   }
   const chatLogs: object[] = [];
-  console.log(sess)
+  // console.log(sess)
   for (const message of sess.messages) {
     chatLogs.push(message);
   }
-  console.log(chatLogs)
+  // console.log(chatLogs)
   return {
     messages: chatLogs
   };
@@ -145,7 +149,11 @@ function adminSessionChatView(playerId: number) {
 
 function adminSessionChatSend(playerId: number, message: string) {
   const data: Data = read();
-  const sess = findPlayerSession(playerId)
+  const sess = data.sessions.find((session) => {
+    if ((session.players.find((player) => player.playerId === playerId))) {
+      return session;
+    }
+  });
   if (sess === undefined) {
     throw HTTPError(400, 'Player does not exist.');
   } else if (message.length < 1 || message.length > 100) {
@@ -251,7 +259,7 @@ function adminQuizSessionState(token: ErrorObject | string, quizId: number, sess
 				thumbnailUrl: session.metadata.thumbnailUrl
 			}
   }
-  console.log(sessionStatus);
+  // console.log(sessionStatus);
   return sessionStatus
 }
 
@@ -340,7 +348,7 @@ function playerAnswerSubmit(playerId: number, questionposition: number, answerId
       // find percentCorrect
       // if a player is correct, their point is not 0
       session.metadata.questions[questionposition - 1].percentCorrect = Math.round(getPercentCorrect(session, questionposition));
-      console.log(session.metadata.questions[questionposition - 1].attempts);
+      // console.log(session.metadata.questions[questionposition - 1].attempts);
     }
     save(data);
   }
@@ -380,17 +388,51 @@ function playerQuestionInfo(playerId: number, questionposition: number) {
 
 function adminSessionQuestionResult(playerId: number, questionposition: number) {
   const data: Data = read();
-  const sess = findPlayerSession(playerId);
+  const sess = data.sessions.find((session) => {
+    if ((session.players.find((player) => player.playerId === playerId))) {
+      return session;
+    }
+  });
   if (sess === undefined) {
     throw HTTPError(400, 'Player does not exist.');
-  } else if (questionposition > sess.metadata.numQuestions) {
+  } else if (questionposition > sess.metadata.numQuestions || questionposition < 1) {
     throw HTTPError(400, 'Question does not exist.')
   } else if (sess.state !== 'ANSWER_SHOW') {
     throw HTTPError(400, 'Answers cannot be shown right now.');
-  } else if (sess.atQuestion !== questionposition) {
+  } else if (sess.atQuestion < questionposition) {
     throw HTTPError(400, 'Session is not up to question yet.');
   }
-  return {}
+  // any for time being
+  const correctPlayers: AnswerResult[] = [];
+  for (const answer of sess.metadata.questions[questionposition - 1].answers) {
+    for (const quiz of data.quizzes) {
+      for (const question of quiz.questions) {
+        for (const correctAnswer of question.answers) {
+          if (correctAnswer.correct === true && correctAnswer.answerId === answer.answerId) {
+            const answerObject: AnswerResult = {
+              answerId: answer.answerId,
+              playersCorrect: []
+            }
+          }
+        }
+      }
+    }
+    for (const player of sess.metadata.questions[questionposition - 1].attempts) {
+      if (player.answers.includes(answerObject.answerId)) {
+        answerObject.playersCorrect.push(player.playerName)
+      }
+    }
+    correctPlayers.push(answerObject);
+  }
+  
+  const answer = {
+    questionId: sess.metadata.questions[questionposition - 1].questionId,
+    questionCorrectBreakdown: correctPlayers,
+    averageAnswerTime: getAverageAnswerTime(sess, questionposition),
+    percentCorrect: getPercentCorrect(sess, questionposition)
+  }
+  console.log(answer)
+  return answer
 }
 
 export {
