@@ -128,11 +128,7 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
 
 function adminSessionChatView(playerId: number) {
   const data: Data = read();
-  const sess = data.sessions.find((session) => {
-    if ((session.players.find((player) => player.playerId === playerId))) {
-      return session;
-    }
-  });
+  const sess = findPlayerSession(playerId)
   if (sess === undefined) {
     throw HTTPError(400, 'Player does not exist.');
   }
@@ -147,11 +143,7 @@ function adminSessionChatView(playerId: number) {
 
 function adminSessionChatSend(playerId: number, message: string) {
   const data: Data = read();
-  const sess = data.sessions.find((session) => {
-    if ((session.players.find((player) => player.playerId === playerId))) {
-      return session;
-    }
-  });
+  const sess = findPlayerSession(playerId)
   if (sess === undefined) {
     throw HTTPError(400, 'Player does not exist.');
   } else if (message.length < 1 || message.length > 100) {
@@ -384,7 +376,22 @@ function playerQuestionInfo(playerId: number, questionposition: number) {
   };
 }
 
+function adminSessionQuestionResult(playerId: number, questionposition: number) {
+  const data: Data = read();
+  const sess = findPlayerSession(playerId);
+  if (sess === undefined) {
+    throw HTTPError(400, 'Player does not exist.');
+  } else if (questionposition > sess.metadata.numQuestions) {
+    throw HTTPError(400, 'Question does not exist.')
+  } else if (sess.state !== 'ANSWER_SHOW') {
+    throw HTTPError(400, 'Answers cannot be shown right now.');
+  } else if (sess.atQuestion !== questionposition) {
+    throw HTTPError(400, 'Session is not up to question yet.');
+  }
+  return {}
+}
+
 export {
   adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
-  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState
+  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState, adminSessionQuestionResult
 };
