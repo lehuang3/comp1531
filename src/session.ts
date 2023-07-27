@@ -128,11 +128,7 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
 
 function adminSessionChatView(playerId: number) {
   const data: Data = read();
-  const sess = data.sessions.find((session) => {
-    if ((session.players.find((player) => player.playerId === playerId))) {
-      return session;
-    }
-  });
+  const sess = findPlayerSession(playerId)
   if (sess === undefined) {
     throw HTTPError(400, 'Player does not exist.');
   }
