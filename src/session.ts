@@ -133,9 +133,11 @@ function adminSessionChatView(playerId: number) {
     throw HTTPError(400, 'Player does not exist.');
   }
   const chatLogs: object[] = [];
+  console.log(sess)
   for (const message of sess.messages) {
     chatLogs.push(message);
   }
+  console.log(chatLogs)
   return {
     messages: chatLogs
   };
