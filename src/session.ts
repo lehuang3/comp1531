@@ -403,36 +403,52 @@ function adminSessionQuestionResult(playerId: number, questionposition: number) 
     throw HTTPError(400, 'Session is not up to question yet.');
   }
   // any for time being
+  let correctAnswerIds: number[] = [];
   const correctPlayers: AnswerResult[] = [];
-  for (const answer of sess.metadata.questions[questionposition - 1].answers) {
-    for (const quiz of data.quizzes) {
-      for (const question of quiz.questions) {
-        for (const correctAnswer of question.answers) {
-          if (correctAnswer.correct === true && correctAnswer.answerId === answer.answerId) {
-            const answerObject: AnswerResult = {
-              answerId: answer.answerId,
-              playersCorrect: []
-            }
-          }
+  // finds all the correct answerids which exist
+  for (const quiz of data.quizzes) {
+    for (const question of quiz.questions) {
+      for (const correctAnswer of question.answers) {
+        if (correctAnswer.correct === true && !correctAnswerIds.includes(correctAnswer.answerId)) {
+          correctAnswerIds.push(correctAnswer.answerId);
         }
       }
     }
-    for (const player of sess.metadata.questions[questionposition - 1].attempts) {
-      if (player.answers.includes(answerObject.answerId)) {
-        answerObject.playersCorrect.push(player.playerName)
+  }
+
+  let answerObject: AnswerResult = {
+    answerId: null,
+    playersCorrect: []
+  }
+
+  // loop through all the possible answers in this question and look for the ones that are correct, then for that answer check who picked it and add to array players correct
+  for (const answer of sess.metadata.questions[questionposition - 1].answers) {
+    if (correctAnswerIds.includes(answer.answerId)) {
+      answerObject.answerId = answer.answerId;
+      answerObject.playersCorrect = [];
+      correctAnswerIds = correctAnswerIds.filter((value) => value !== answer.answerId)
+      for (const player of sess.metadata.questions[questionposition - 1].attempts) {
+        if (player.answers.includes(answerObject.answerId) && !answerObject.playersCorrect.includes(player.playerName)) {
+          answerObject.playersCorrect.push(player.playerName)
+        }
       }
+      correctPlayers.push(answerObject);
     }
-    correctPlayers.push(answerObject);
   }
-  
-  const answer = {
-    questionId: sess.metadata.questions[questionposition - 1].questionId,
-    questionCorrectBreakdown: correctPlayers,
-    averageAnswerTime: getAverageAnswerTime(sess, questionposition),
-    percentCorrect: getPercentCorrect(sess, questionposition)
-  }
-  console.log(answer)
-  return answer
+
+  // const answer = {
+  //   questionId: sess.metadata.questions[questionposition - 1].questionId,
+  //   questionCorrectBreakdown: correctPlayers,
+  //   averageAnswerTime: getAverageAnswerTime(sess, questionposition),
+  //   percentCorrect: getPercentCorrect(sess, questionposition)
+  // }
+  // console.log(answer)
+  return {
+      questionId: sess.metadata.questions[questionposition - 1].questionId,
+      questionCorrectBreakdown: correctPlayers,
+      averageAnswerTime: getAverageAnswerTime(sess, questionposition),
+      percentCorrect: getPercentCorrect(sess, questionposition)
+    }
 }
 
 export {
