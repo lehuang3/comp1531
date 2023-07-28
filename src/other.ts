@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { Data, Token, State } from './interfaces';
+import { Data, Token, State, AnswerResult } from './interfaces';
 import request from 'sync-request';
 import { port, url } from './config.json';
 import { ErrorObject, Session } from './interfaces';
@@ -1660,6 +1660,62 @@ function requestPlayerQuestionInfo(playerId: number, questionposition: number) {
   };
 }
 
+
+
+function getQuestionResults(data: Data, sess: Session, questionposition: number) {
+  // any for time being
+  let correctAnswerIds: number[] = [];
+  const correctPlayers: AnswerResult[] = [];
+  // finds all the correct answerids which exist
+  for (const quiz of data.quizzes) {
+    for (const question of quiz.questions) {
+      for (const correctAnswer of question.answers) {
+        if (correctAnswer.correct === true && !correctAnswerIds.includes(correctAnswer.answerId)) {
+          correctAnswerIds.push(correctAnswer.answerId);
+        }
+      }
+    }
+  }
+
+  let answerObject: AnswerResult = {
+    answerId: null,
+    playersCorrect: []
+  }
+
+  // loop through all the possible answers in this question and look for the ones that are correct, then for that answer check who picked it and add to array players correct
+  for (const answer of sess.metadata.questions[questionposition - 1].answers) {
+    if (correctAnswerIds.includes(answer.answerId)) {
+      answerObject.answerId = answer.answerId;
+      answerObject.playersCorrect = [];
+      correctAnswerIds = correctAnswerIds.filter((value) => value !== answer.answerId)
+      for (const player of sess.metadata.questions[questionposition - 1].attempts) {
+        if (player.answers.includes(answerObject.answerId) && !answerObject.playersCorrect.includes(player.playerName)) {
+          answerObject.playersCorrect.push(player.playerName)
+        }
+      }
+      correctPlayers.push(answerObject);
+    }
+  }
+
+  // const answer = {
+  //   questionId: sess.metadata.questions[questionposition - 1].questionId,
+  //   questionCorrectBreakdown: correctPlayers,
+  //   averageAnswerTime: getAverageAnswerTime(sess, questionposition),
+  //   percentCorrect: getPercentCorrect(sess, questionposition)
+  // }
+  // console.log(answer)
+  return {
+    questionId: sess.metadata.questions[questionposition - 1].questionId,
+    questionCorrectBreakdown: correctPlayers,
+    averageAnswerTime: getAverageAnswerTime(sess, questionposition),
+    percentCorrect: getPercentCorrect(sess, questionposition)
+  }
+}
+
+
+
+
+
 export {
   clear, save, read, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, isSameQuizName,
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
@@ -1670,5 +1726,5 @@ export {
   requestAdminAuthDetailsUpdate, requestAdminQuizSessionStart, quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId, requestAdminQuizSessionStateUpdate,
   quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate, requestQuizSessionPlayerJoin, isSessionInLobby, nameExistinSession, generateRandomName,
   requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, findPlayerSession, answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect,
-  changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo,requestAdminQuizSessionState, requestAdminSessioQuestionResult, requestAdminSessionFinalResult
+  changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo,requestAdminQuizSessionState, getQuestionResults, requestAdminSessioQuestionResult, requestAdminSessionFinalResult
 };

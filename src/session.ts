@@ -2,7 +2,7 @@ import { State, Data, ErrorObject, Action, AnswerResult, Answer } from './interf
 import {
   save, read, tokenOwner, quizActiveCheck, quizValidOwner, activeSessions, quizHasQuestion, generateSessionId,
   quizSessionIdValidCheck, isActionApplicable, isSessionInLobby, nameExistinSession, generateRandomName, findPlayerSession,
-  answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect
+  answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect, getQuestionResults
 } from './other';
 import HTTPError from 'http-errors';
 interface SessionIdReturn {
@@ -403,52 +403,8 @@ function adminSessionQuestionResult(playerId: number, questionposition: number) 
     throw HTTPError(400, 'Session is not up to question yet.');
   }
   // any for time being
-  let correctAnswerIds: number[] = [];
-  const correctPlayers: AnswerResult[] = [];
-  // finds all the correct answerids which exist
-  for (const quiz of data.quizzes) {
-    for (const question of quiz.questions) {
-      for (const correctAnswer of question.answers) {
-        if (correctAnswer.correct === true && !correctAnswerIds.includes(correctAnswer.answerId)) {
-          correctAnswerIds.push(correctAnswer.answerId);
-        }
-      }
-    }
-  }
-
-  let answerObject: AnswerResult = {
-    answerId: null,
-    playersCorrect: []
-  }
-
-  // loop through all the possible answers in this question and look for the ones that are correct, then for that answer check who picked it and add to array players correct
-  for (const answer of sess.metadata.questions[questionposition - 1].answers) {
-    if (correctAnswerIds.includes(answer.answerId)) {
-      answerObject.answerId = answer.answerId;
-      answerObject.playersCorrect = [];
-      correctAnswerIds = correctAnswerIds.filter((value) => value !== answer.answerId)
-      for (const player of sess.metadata.questions[questionposition - 1].attempts) {
-        if (player.answers.includes(answerObject.answerId) && !answerObject.playersCorrect.includes(player.playerName)) {
-          answerObject.playersCorrect.push(player.playerName)
-        }
-      }
-      correctPlayers.push(answerObject);
-    }
-  }
-
-  // const answer = {
-  //   questionId: sess.metadata.questions[questionposition - 1].questionId,
-  //   questionCorrectBreakdown: correctPlayers,
-  //   averageAnswerTime: getAverageAnswerTime(sess, questionposition),
-  //   percentCorrect: getPercentCorrect(sess, questionposition)
-  // }
-  // console.log(answer)
-  return {
-    questionId: sess.metadata.questions[questionposition - 1].questionId,
-    questionCorrectBreakdown: correctPlayers,
-    averageAnswerTime: getAverageAnswerTime(sess, questionposition),
-    percentCorrect: getPercentCorrect(sess, questionposition)
-  }
+  console.log(getQuestionResults(data, sess, questionposition))
+  return getQuestionResults(data, sess, questionposition);
 }
 
 function adminSessionFinalResult(playerId: number) {
@@ -463,16 +419,27 @@ function adminSessionFinalResult(playerId: number) {
   } else if (sess.state !== 'FINAL_RESULTS') {
     throw HTTPError(400, 'Answers cannot be shown right now.');
   }
-  let ranking = 1;
+  let ranking: object[]= [];
   let questionResult = [];
   for (let i = 1; i <= sess.metadata.numQuestions; i++) {
-    questionResult.push(adminSessionQuestionResult(playerId, i))
+    questionResult.push(getQuestionResults(data, sess, i))
   }
+  // find the rankings
+  // loop through all the questions
+  for (let i = 1; i <= sess.metadata.numQuestions; i++) {
+  // first need to find who actually gets points for the question, need to check for a question which answerids must be selected
+    // find which answerids must be selected and put it into an array
+    const 
+  }
+  
+
+
+
   let answer = {
     usersRankedByscore: ranking,
     questionResults: questionResult
   }
-  console.log(answer)
+  console.log(answer.questionResults[1].questionCorrectBreakdown)
   return answer
 }
 
