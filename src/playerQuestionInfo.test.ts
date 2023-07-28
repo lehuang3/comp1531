@@ -125,17 +125,17 @@ test('success', () => {
       {
         answerId: expect.any(Number),
         answer: 'sydney',
-        color: expect.any(String),
+        colour: expect.any(String),
       },
       {
         answerId: expect.any(Number),
         answer: 'Melbourne',
-        color: expect.any(String),
+        colour: expect.any(String),
       },
       {
         answerId: expect.any(Number),
         answer: 'Camberra',
-        color: expect.any(String),
+        colour: expect.any(String),
       }
     ],
   });
@@ -155,12 +155,12 @@ test('success', () => {
       {
         answerId: expect.any(Number),
         answer: 'dogs',
-        color: expect.any(String),
+        colour: expect.any(String),
       },
       {
         answerId: expect.any(Number),
         answer: 'cats',
-        color: expect.any(String),
+        colour: expect.any(String),
       }
     ],
   });
