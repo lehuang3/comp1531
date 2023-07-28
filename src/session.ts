@@ -380,7 +380,7 @@ function playerQuestionInfo(playerId: number, questionposition: number) {
       return {
         answerId: answer.answerId,
         answer: answer.answer,
-        color: answer.color
+        colour: answer.colour
       };
     })
   };

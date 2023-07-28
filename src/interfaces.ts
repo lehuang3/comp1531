@@ -47,7 +47,7 @@ interface Answer {
   answer: string;
   correct: boolean;
   answerId:number;
-  color: string;
+  colour: string;
 }
 
 interface QuizQuestion {
