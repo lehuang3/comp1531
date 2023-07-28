@@ -414,6 +414,7 @@ function adminSessionFinalResult(playerId: number) {
       return session;
     }
   });
+  // console.log(sess.players)
   if (sess === undefined) {
     throw HTTPError(400, 'Player does not exist.');
   } else if (sess.state !== 'FINAL_RESULTS') {
@@ -477,8 +478,8 @@ function adminSessionFinalResult(playerId: number) {
     usersRankedByScore: ranking,
     questionResults: questionResult
   }
-  //console.log(answer.questionResults[0].questionCorrectBreakdown)
-  console.log(answer)
+  // console.log(answer.questionResults[0].questionCorrectBreakdown)
+  // console.log(answer)
   return answer
 }
 
