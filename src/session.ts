@@ -403,7 +403,7 @@ function adminSessionQuestionResult(playerId: number, questionposition: number) 
     throw HTTPError(400, 'Session is not up to question yet.');
   }
   // any for time being
-   console.log(sess.metadata.questions[0].attempts)
+  // console.log(sess.metadata.questions[0].attempts)
   return getQuestionResults(data, sess, questionposition);
 }
 
