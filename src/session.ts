@@ -403,7 +403,7 @@ function adminSessionQuestionResult(playerId: number, questionposition: number) 
     throw HTTPError(400, 'Session is not up to question yet.');
   }
   // any for time being
-  console.log(getQuestionResults(data, sess, questionposition))
+   console.log(sess.metadata.questions[0].attempts)
   return getQuestionResults(data, sess, questionposition);
 }
 
@@ -419,27 +419,66 @@ function adminSessionFinalResult(playerId: number) {
   } else if (sess.state !== 'FINAL_RESULTS') {
     throw HTTPError(400, 'Answers cannot be shown right now.');
   }
-  let ranking: object[]= [];
-  let questionResult = [];
+  const ranking: object[]= [];
+  const questionResult = [];
   for (let i = 1; i <= sess.metadata.numQuestions; i++) {
     questionResult.push(getQuestionResults(data, sess, i))
   }
+
   // find the rankings
   // loop through all the questions
   for (let i = 1; i <= sess.metadata.numQuestions; i++) {
   // first need to find who actually gets points for the question, need to check for a question which answerids must be selected
+    
     // find which answerids must be selected and put it into an array
-    const 
-  }
-  
+    const answersNeeded = sess.metadata.questions[i - 1].answers.filter((answer) => answer.correct === true)
+    const answersNeededIds = [];
+    for (const answer of answersNeeded) {
+      answersNeededIds.push(answer.answerId)
+    }
 
+    // now find all players who selected everything in the answersNeededIds array
+    let correctPlayers = []
+    for (const attempt of sess.metadata.questions[i - 1].attempts) {
+      // if the answers array of player === answersNeededIds array then push to correct players
+      // JSON.stringify the sorted values to check for array equality
+      if (JSON.stringify(attempt.answers.sort((a, b) => a - b)) === JSON.stringify(answersNeededIds.sort((a, b) => a - b))) {
+        //correctPlayers.push(attempt.playerName)
+        correctPlayers.push(attempt)
+        // console.log(correctPlayers)
+      }
+    }
+    // console.log(i)
+    // console.log(correctPlayers)
+    // if there are no correct players for this question move onto the next question
+    if (correctPlayers.length === 0) {
+      continue
+    }
+    // get the attempts timetaken and sort the players based on fastest to slowest
+    correctPlayers.sort((a, b) => a.timeTaken - b.timeTaken)
+    // get the scaling factor and the score and add to the players points
+    for (const player of correctPlayers) {
+      sess.players.find((player) => player.playerId === player.playerId).playerScore += player.points * findScalingFactor(sess, player.timeTaken, i);
+    }
+    // console.log(sess.players)
+  }
+  // sort the players by score
+  sess.players.sort((a, b) => b.playerScore - a.playerScore);
+  for (const player of sess.players) {
+    const playerFinalResult = {
+      name: player.playerName,
+      score: player.playerScore
+    }
+    ranking.push(playerFinalResult)
+  }
 
 
   let answer = {
-    usersRankedByscore: ranking,
+    usersRankedByScore: ranking,
     questionResults: questionResult
   }
-  console.log(answer.questionResults[1].questionCorrectBreakdown)
+  //console.log(answer.questionResults[0].questionCorrectBreakdown)
+  console.log(answer)
   return answer
 }
 
