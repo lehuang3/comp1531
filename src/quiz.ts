@@ -462,7 +462,7 @@ function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, qu
         answerId: length,
         answer: answer.answer,
         correct: answer.correct,
-        color: getColour()
+        colour: getColour()
       })),
       thumbnailUrl: questionBody.thumbnailUrl
     };
@@ -749,7 +749,7 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
         answerId: index,
         answer: answer.answer,
         correct: answer.correct,
-        color: getColour()
+        colour: getColour()
       }));
       const updatedQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
       updatedQuiz.timeLastEdited = Math.floor(Date.now() / 1000);
