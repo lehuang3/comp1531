@@ -14,7 +14,7 @@ import {
   adminQuizTrashEmpty, adminQuizThumbnailUpdate
 } from './quiz';
 import { adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
-playerAnswerSubmit, playerQuestionInfo,adminQuizSessionState, adminSessionQuestionResult
+playerAnswerSubmit, playerQuestionInfo,adminQuizSessionState, adminSessionQuestionResult, adminSessionFinalResult
 } from './session';
 import { clear } from './other';
 
@@ -597,6 +597,11 @@ app.get('/v1/player/:playerId/question/:questionposition/results', (req: Request
   res.json(response);
 });
 
+app.get('/v1/player/:playerId/results', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerId);
+  const response = adminSessionFinalResult(playerId);
+  res.json(response);
+});
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
