@@ -1362,6 +1362,7 @@ function requestAdminQuizSessionStateUpdate(token: string | ErrorObject, quizId:
       }
     }
   );
+  // console.log(JSON.parse(res.body.toString()))
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,

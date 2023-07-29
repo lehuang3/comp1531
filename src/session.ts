@@ -106,6 +106,7 @@ function questionCountdownHandler(sessionId: number) {
   }
 }
 
+
 function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number, sessionId: number, action: string) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
@@ -137,9 +138,8 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
   for (const session of data.sessions) {
     if (session.quizSessionId === sessionId) {
       session.state = nextState;
+      console.log(data.sessions)
       if (session.state === 'QUESTION_COUNTDOWN') {
-        // move state to QUESTION_OPEN immediately until sth's clarified about
-        // whether there's a preset window
         session.atQuestion = session.atQuestion + 1;
         save(data);
         questionCountdownHandler(session.quizSessionId);
@@ -147,6 +147,7 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
       if (session.state === 'FINAL_RESULTS' || session.state === 'END') {
         session.atQuestion = 0;
       }
+      console.log(session.state)
     }
   }
   save(data);

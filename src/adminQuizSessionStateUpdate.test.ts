@@ -1,12 +1,14 @@
 import {
   requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizSessionStart,
-  requestAdminQuizSessionStateUpdate
+  requestAdminQuizSessionStateUpdate, requestQuizSessionPlayerJoin, changeState
 } from './other';
+import { State } from './interfaces';
 
 let token1: string;
 let quiz1: number;
 let autoStartNum: number;
 let session1: any;
+let player1: any;
 beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
