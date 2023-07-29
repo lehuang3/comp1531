@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { Data, Token, State, AnswerResult } from './interfaces';
+import {clearTimeouts} from './session'
 import request from 'sync-request';
 import { port, url } from './config.json';
 import { ErrorObject, Session } from './interfaces';
@@ -129,6 +130,7 @@ function tokenOwner(token: string | ErrorObject) {
 */
 function clear () {
   let store = read();
+  clearTimeouts();
   store = {
 
     // User Data
@@ -142,6 +144,7 @@ function clear () {
     trash: [],
 
     sessions: [],
+
   };
   save(store);
   return {
@@ -1436,7 +1439,44 @@ function isActionApplicable(sessionId: number, action: string): any {
             };
           }
         case State.QUESTION_OPEN:
+          if (action === 'END') {
+            return {
+              applicable: true,
+              nextState: 'END'
+            };
+          } else if (action === 'GO_TO_ANSWER') {
+            return {
+              applicable: true,
+              nextState: 'ANSWER_SHOW'
+            };
+          } else {
+            return {
+              applicable: false,
+              nextState: ''
+            };
+          }
         case State.QUESTION_CLOSE:
+          if (action === 'END') {
+            return {
+              applicable: true,
+              nextState: 'END'
+            };
+          } else if (action === 'GO_TO_ANSWER') {
+            return {
+              applicable: true,
+              nextState: 'ANSWER_SHOW'
+            };
+          } else if (action === 'GO_TO_FINAL_RESULTS') {
+            return {
+              applicable: true,
+              nextState: 'FINAL_RESULTS'
+            };
+          } else {
+            return {
+              applicable: true,
+              nextState: 'QUESTION_COUNTDOWN'
+            };
+          }
         case State.ANSWER_SHOW:
           if (action === 'NEXT_QUESTION') {
             return {
