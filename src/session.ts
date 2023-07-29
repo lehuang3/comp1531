@@ -79,8 +79,26 @@ function adminQuizSessionStart(token: ErrorObject | string, quizId: number, auto
   };
 }
 
-function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number, sessionId: number, action: string) {
+async function questionCountdownHandler(sessionId: number) {
   const data: Data = read();
+  for (const session of data.sessions) {
+    if (session.quizSessionId === sessionId) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('questionOpenStart')
+      questionOpenStart = Math.floor(Date.now() / 1000);
+      session.state = State.QUESTION_OPEN;
+      save(data);
+      await new Promise(resolve => setTimeout(resolve, 1000 * session.metadata.questions[session.atQuestion - 1].duration));
+      session.state = State.QUESTION_CLOSE;
+      save(data);
+    }
+  }
+}
+
+async function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number, sessionId: number, action: string) {
+  const data: Data = read();
+  console.log(data.sessions)
+  console.log('called')
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
@@ -103,6 +121,7 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
     throw HTTPError(400, 'Invalid Action enum');
   }
   if (!isActionApplicable(sessionId, action).applicable) {
+    console.log(action)
     throw HTTPError(400, 'Action is not applicable');
   }
 
@@ -110,16 +129,39 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
   for (const session of data.sessions) {
     if (session.quizSessionId === sessionId) {
       session.state = nextState;
+      console.log(data.sessions)
+      // if (session.state === 'QUESTION_COUNTDOWN') {
+      //   session.atQuestion = session.atQuestion + 1;
+      //   let countdownDone = false;
+      //   let durationDone = false;
+      //   setTimeout(() => {
+      //     session.state = State.QUESTION_OPEN;
+      //     questionOpenStart = Math.floor(Date.now() / 1000);
+      //     countdownDone = true;
+      //     console.log('countdown done')
+      //   }, 1000);
+      //   setTimeout(() => {
+      //     session.state = State.QUESTION_CLOSE;
+      //     durationDone = true;
+      //     console.log('duration done')
+      //   }, 1000 + 1000 * session.metadata.questions[session.atQuestion - 1].duration);
+      //   while (countdownDone === false || durationDone === false) {
+      //   }
+      // }
       if (session.state === 'QUESTION_COUNTDOWN') {
-        // move state to QUESTION_OPEN immediately until sth's clarified about
-        // whether there's a preset window
         session.atQuestion = session.atQuestion + 1;
-        session.state = State.QUESTION_OPEN;
-        questionOpenStart = Math.floor(Date.now() / 1000);
+        save(data);
+        questionCountdownHandler(session.quizSessionId);
       }
+
+      // if (session.state === 'QUESTION_OPEN') {
+      //   await new Promise(resolve => setTimeout(resolve, 1000 * session.metadata.questions[session.atQuestion - 1].duration));
+      //   session.state = State.QUESTION_CLOSE;
+      // }
       if (session.state === 'FINAL_RESULTS' || session.state === 'END') {
         session.atQuestion = 0;
       }
+      console.log(session.state)
     }
   }
   save(data);

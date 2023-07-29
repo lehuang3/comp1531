@@ -1359,6 +1359,7 @@ function requestAdminQuizSessionStateUpdate(token: string | ErrorObject, quizId:
       }
     }
   );
+  console.log(JSON.parse(res.body.toString()))
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -1436,7 +1437,44 @@ function isActionApplicable(sessionId: number, action: string): any {
             };
           }
         case State.QUESTION_OPEN:
+          if (action === 'END') {
+            return {
+              applicable: true,
+              nextState: 'END'
+            };
+          } else if (action === 'GO_TO_ANSWER') {
+            return {
+              applicable: true,
+              nextState: 'ANSWER_SHOW'
+            };
+          } else {
+            return {
+              applicable: false,
+              nextState: ''
+            };
+          }
         case State.QUESTION_CLOSE:
+          if (action === 'END') {
+            return {
+              applicable: true,
+              nextState: 'END'
+            };
+          } else if (action === 'GO_TO_FINAL_RESULTS') {
+            return {
+              applicable: true,
+              nextState: 'FINAL_RESULTS'
+            };
+          } else if (action === 'GO_TO_ANSWER') {
+            return {
+              applicable: true,
+              nextState: 'ANSWER_SHOW'
+            };
+          } else {
+            return {
+              applicable: true,
+              nextState: 'QUESTION_COUNTDOWN'
+            };
+          }
         case State.ANSWER_SHOW:
           if (action === 'NEXT_QUESTION') {
             return {
