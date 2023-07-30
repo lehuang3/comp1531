@@ -330,10 +330,11 @@ function adminQuizDescriptionUpdate (token: ErrorObject | string, quizId: number
  *
  * @returns {{}} empty object on success and error msg on fail
  */
-function adminQuizTrash(token: string) {
+function adminQuizTrash(token: string | ErrorObject) {
   const quizzes: { quizId: number; name: string; }[] = [];
   const data: Data = read();
   const authUserId = tokenOwner(token);
+  console.log(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
       throw HTTPError(401, 'Invalid token structure');
