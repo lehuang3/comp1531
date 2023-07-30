@@ -1027,11 +1027,11 @@ function requestAdminQuizQuestionUpdate(token: ErrorObject | string, quizId: num
  * delete quiz/quizzes from the trash
  *
  * @param {string | ErrorObject} token - token
- * @param {number[]} quizIdArr - quizIds array
+ * @param {number[]} quizIds - quizIds array
  *
  * @returns {{object}} - response in javascript
 */
-function requestAdminQuizTrashEmpty(token: ErrorObject | string, quizIdArr: string) {
+function requestAdminQuizTrashEmpty(token: ErrorObject | string, quizIds: string) {
   const res = request(
     'DELETE',
     SERVER_URL + '/v2/admin/quiz/trash/empty',
@@ -1040,7 +1040,7 @@ function requestAdminQuizTrashEmpty(token: ErrorObject | string, quizIdArr: stri
         token: token as string,
       },
       qs: {
-        quizIdArr
+        quizIds
       }
     }
   );
