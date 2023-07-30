@@ -401,7 +401,7 @@ app.put('/v1/admin/quiz/:quizId/question/:questionId', (req: Request, res: Respo
 });
 
 app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
-  const quizIdArr = JSON.parse(req.query.quizIdArr as string);
+  const quizIdArr = JSON.parse(req.query.quizIds as string);
   const token = req.query.token as string;
   const response = adminQuizTrashEmpty(token, quizIdArr);
   if ('error' in response) {
@@ -417,7 +417,7 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
 });
 
 app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
-  const quizIdArr = JSON.parse(req.query.quizIdArr as string);
+  const quizIdArr = JSON.parse(req.query.quizIds as string);
   const token = req.headers.token as string;
   const response = adminQuizTrashEmpty(token, quizIdArr);
   res.json(response);
