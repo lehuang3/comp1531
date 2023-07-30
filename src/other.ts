@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { Data, Token, State, AnswerResult } from './interfaces';
+import {clearTimeouts} from './session'
 import request from 'sync-request';
 import { port, url } from './config.json';
 import { ErrorObject, Session } from './interfaces';
@@ -129,6 +130,7 @@ function tokenOwner(token: string | ErrorObject) {
 */
 function clear () {
   let store = read();
+  clearTimeouts();
   store = {
 
     // User Data
@@ -142,6 +144,7 @@ function clear () {
     trash: [],
 
     sessions: [],
+
   };
   save(store);
   return {
@@ -1359,6 +1362,7 @@ function requestAdminQuizSessionStateUpdate(token: string | ErrorObject, quizId:
       }
     }
   );
+  // console.log(JSON.parse(res.body.toString()))
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
@@ -1436,7 +1440,44 @@ function isActionApplicable(sessionId: number, action: string): any {
             };
           }
         case State.QUESTION_OPEN:
+          if (action === 'END') {
+            return {
+              applicable: true,
+              nextState: 'END'
+            };
+          } else if (action === 'GO_TO_ANSWER') {
+            return {
+              applicable: true,
+              nextState: 'ANSWER_SHOW'
+            };
+          } else {
+            return {
+              applicable: false,
+              nextState: ''
+            };
+          }
         case State.QUESTION_CLOSE:
+          if (action === 'END') {
+            return {
+              applicable: true,
+              nextState: 'END'
+            };
+          } else if (action === 'GO_TO_ANSWER') {
+            return {
+              applicable: true,
+              nextState: 'ANSWER_SHOW'
+            };
+          } else if (action === 'GO_TO_FINAL_RESULTS') {
+            return {
+              applicable: true,
+              nextState: 'FINAL_RESULTS'
+            };
+          } else {
+            return {
+              applicable: true,
+              nextState: 'QUESTION_COUNTDOWN'
+            };
+          }
         case State.ANSWER_SHOW:
           if (action === 'NEXT_QUESTION') {
             return {
@@ -1635,6 +1676,28 @@ function changeState(sessionId: number, state: State) {
   save(data);
 }
 
+function isSessionAtLastQuestion(sessionId: number) {
+  const data: Data = read();
+  for (const session of data.sessions) {
+    if (session.quizSessionId === sessionId) {
+      const questionsLength = session.metadata.questions.length;
+      if (session.atQuestion === questionsLength) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function getSessionState(sessionId: number) {
+  const data: Data = read();
+  for (const session of data.sessions) {
+    if (session.quizSessionId === sessionId) {
+      return session.state;
+    }
+  }
+}
+
 /**
  * Send a 'get' request to the corresponding server route to
  * fetch details of a question for given player
@@ -1726,5 +1789,6 @@ export {
   requestAdminAuthDetailsUpdate, requestAdminQuizSessionStart, quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId, requestAdminQuizSessionStateUpdate,
   quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate, requestQuizSessionPlayerJoin, isSessionInLobby, nameExistinSession, generateRandomName,
   requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, findPlayerSession, answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect,
-  changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo,requestAdminQuizSessionState, getQuestionResults, requestAdminSessioQuestionResult, requestAdminSessionFinalResult
+  changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo,requestAdminQuizSessionState, getQuestionResults,
+  requestAdminSessioQuestionResult, requestAdminSessionFinalResult, isSessionAtLastQuestion, getSessionState
 };

@@ -2,7 +2,8 @@ import { State, Data, ErrorObject, Action, AnswerResult, Answer } from './interf
 import {
   save, read, tokenOwner, quizActiveCheck, quizValidOwner, activeSessions, quizHasQuestion, generateSessionId,
   quizSessionIdValidCheck, isActionApplicable, isSessionInLobby, nameExistinSession, generateRandomName, findPlayerSession,
-  answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect, getQuestionResults
+  answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect, getQuestionResults, isSessionAtLastQuestion,
+  getSessionState
 } from './other';
 import HTTPError from 'http-errors';
 interface SessionIdReturn {
@@ -10,6 +11,14 @@ interface SessionIdReturn {
 }
 
 let questionOpenStart: number;
+let timeoutIds: NodeJS.Timeout[] = [];
+
+export function clearTimeouts() {
+  for (const timeoutId of timeoutIds) {
+    clearTimeout(timeoutId);
+  }
+  timeoutIds = [];
+}
 
 function adminQuizSessionStart(token: ErrorObject | string, quizId: number, autoStartNum: number): SessionIdReturn {
   const data: Data = read();
@@ -79,6 +88,26 @@ function adminQuizSessionStart(token: ErrorObject | string, quizId: number, auto
   };
 }
 
+function questionCountdownHandler(sessionId: number) {
+  const data: Data = read();
+  for (const session of data.sessions) {
+    if (session.quizSessionId === sessionId) {
+      timeoutIds.push(setTimeout(() => {
+        session.state = State.QUESTION_OPEN;
+        // console.log('question open')
+        save(data);
+        questionOpenStart = Math.floor(Date.now() / 1000);
+        timeoutIds.push(setTimeout(() => {
+          session.state = State.QUESTION_CLOSE;
+          save(data);
+        }, session.metadata.questions[session.atQuestion - 1].duration * 1000));
+      }, 1000));
+      save(data);
+    }
+  }
+}
+
+
 function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number, sessionId: number, action: string) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
@@ -99,7 +128,8 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
   if (!quizSessionIdValidCheck(quizId, sessionId)) {
     throw HTTPError(400, 'Session is not valid');
   }
-  if (!Object.keys(Action).includes(action)) {
+  if (!Object.keys(Action).includes(action) || 
+     (isSessionAtLastQuestion(sessionId) && getSessionState(sessionId) === 'ANSWER_SHOW' || getSessionState(sessionId) === 'QUESTION_CLOSE')) {
     throw HTTPError(400, 'Invalid Action enum');
   }
   if (!isActionApplicable(sessionId, action).applicable) {
@@ -111,11 +141,9 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
     if (session.quizSessionId === sessionId) {
       session.state = nextState;
       if (session.state === 'QUESTION_COUNTDOWN') {
-        // move state to QUESTION_OPEN immediately until sth's clarified about
-        // whether there's a preset window
         session.atQuestion = session.atQuestion + 1;
-        session.state = State.QUESTION_OPEN;
-        questionOpenStart = Math.floor(Date.now() / 1000);
+        save(data);
+        questionCountdownHandler(session.quizSessionId);
       }
       if (session.state === 'FINAL_RESULTS' || session.state === 'END') {
         session.atQuestion = 0;
@@ -212,7 +240,8 @@ function QuizSessionPlayerJoin(sessionId:number, name:string) {
   if (session.players.length === session.autoStartNum) {
     session.state = State.QUESTION_COUNTDOWN;
     session.atQuestion++;
-    questionOpenStart = Math.floor(Date.now() / 1000);
+    save(data);
+    questionCountdownHandler(session.quizSessionId);
   }
   // console.log(session)
   save(data);
@@ -343,6 +372,7 @@ function playerAnswerSubmit(playerId: number, questionposition: number, answerId
           }
         }
       }
+      console.log(session.metadata.questions[questionposition - 1].attempts)
       // find averageAnwerTime
       session.metadata.questions[questionposition - 1].averageAnswerTime = Math.round(getAverageAnswerTime(session, questionposition));
       // find percentCorrect

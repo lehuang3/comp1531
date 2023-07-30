@@ -1,12 +1,14 @@
 import {
   requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizSessionStart,
-  requestAdminQuizSessionStateUpdate
+  requestAdminQuizSessionStateUpdate, requestQuizSessionPlayerJoin, changeState
 } from './other';
+import { State } from './interfaces';
 
 let token1: string;
 let quiz1: number;
 let autoStartNum: number;
 let session1: any;
+let player1: any;
 beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
@@ -14,7 +16,7 @@ beforeEach(() => {
   requestQuizQuestionCreate(token1, quiz1,
     {
       question: 'What is capital of sydney?',
-      duration: 5,
+      duration: 2,
       points: 5,
       answers: [
         {
@@ -114,6 +116,14 @@ test('Invalid Action enum', () => {
   expect(response.status).toStrictEqual(400);
 });
 
+test.only('Invalid Action enum - last question', () => {
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
+  const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
+  expect(response.body).toStrictEqual({ error: 'Invalid Action enum' });
+  expect(response.status).toStrictEqual(400);
+});
+
 describe('LOBBY', () => {
   test('GO_TO_FINAL_RESULTS', () => {
     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_FINAL_RESULTS');
@@ -137,86 +147,91 @@ describe('LOBBY', () => {
   });
 });
 
-// describe('QUESTION_COUNTDOWN', () => {
-//   // set the state for session to be QUESTION_COUNTDOWN
-//   beforeEach(() => {
-//     requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
-//   });
-//   test('GO_TO_FINAL_RESULTS', () => {
-//     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_FINAL_RESULTS');
-//     expect(response.body).toStrictEqual({ error: 'Action is not applicable' });
-//     expect(response.status).toStrictEqual(400);
-//   });
-//   test('GO_TO_ANSWER', () => {
-//     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_ANSWER');
-//     expect(response.body).toStrictEqual({ error: 'Action is not applicable' });
-//     expect(response.status).toStrictEqual(400);
-//   });
-//   test('NEXT_QUESTION', () => {
-//     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
-//     expect(response.body).toStrictEqual({});
-//     expect(response.status).toStrictEqual(200);
-//   });
-//   test('END', () => {
-//     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'END');
-//     expect(response.body).toStrictEqual({});
-//     expect(response.status).toStrictEqual(200);
-//   });
-// });
+describe('QUESTION_COUNTDOWN', () => {
+  // set the state for session to be QUESTION_COUNTDOWN
+  beforeEach(() => {
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
+  });
+  test('GO_TO_FINAL_RESULTS', () => {
+    const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_FINAL_RESULTS');
+    expect(response.body).toStrictEqual({ error: 'Action is not applicable' });
+    expect(response.status).toStrictEqual(400);
+  });
+  test('GO_TO_ANSWER', () => {
+    const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_ANSWER');
+    expect(response.body).toStrictEqual({ error: 'Action is not applicable' });
+    expect(response.status).toStrictEqual(400);
+  });
+  test('NEXT_QUESTION', () => {
+    const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
+    expect(response.body).toStrictEqual({});
+    expect(response.status).toStrictEqual(200);
+  });
+  test('END', () => {
+    const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'END');
+    expect(response.body).toStrictEqual({});
+    expect(response.status).toStrictEqual(200);
+  });
+});
 
-// describe('QUESTION_OPEN', () => {
-//   beforeEach(() => {
-//     requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
-//   });
-//   test('GO_TO_FINAL_RESULTS', () => {
-//     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_FINAL_RESULTS');
-//     expect(response.body).toStrictEqual({ error: 'Action is not applicable' });
-//     expect(response.status).toStrictEqual(400);
-//   });
-//   test('GO_TO_ANSWER', () => {
-//     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_ANSWER');
-//     expect(response.body).toStrictEqual({});
-//     expect(response.status).toStrictEqual(200);
-//   });
-//   test('NEXT_QUESTION', () => {
-//     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
-//     expect(response.body).toStrictEqual({ error: 'Action is not applicable' });
-//     expect(response.status).toStrictEqual(400);
-//   });
-//   test('END', () => {
-//     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'END');
-//     expect(response.body).toStrictEqual({});
-//     expect(response.status).toStrictEqual(200);
-//   });
-// });
+describe('QUESTION_OPEN', () => {
+  beforeEach(async () => {
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+  });
+  test('GO_TO_FINAL_RESULTS', () => {
+    const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_FINAL_RESULTS');
+    expect(response.body).toStrictEqual({ error: 'Action is not applicable' });
+    expect(response.status).toStrictEqual(400);
+  });
+  test('GO_TO_ANSWER', () => {
+    const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_ANSWER');
+    expect(response.body).toStrictEqual({});
+    expect(response.status).toStrictEqual(200);
+  });
+  test('NEXT_QUESTION', () => {
+    const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
+    expect(response.body).toStrictEqual({ error: 'Action is not applicable' });
+    expect(response.status).toStrictEqual(400);
+  });
+  test('END', () => {
+    const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'END');
+    expect(response.body).toStrictEqual({});
+    expect(response.status).toStrictEqual(200);
+  });
+});
 
-// describe('QUESTION_CLOSE', () => {
-//   test('GO_TO_FINAL_RESULTS', () => {
-//     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_FINAL_RESULTS');
-//     expect(response.body).toStrictEqual({});
-//     expect(response.status).toStrictEqual(200);
-//   });
-//   test('GO_TO_ANSWER', () => {
-//     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_ANSWER');
-//     expect(response.body).toStrictEqual({});
-//     expect(response.status).toStrictEqual(200);
-//   });
-//   test('NEXT_QUESTION', () => {
-//     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
-//     expect(response.body).toStrictEqual({});
-//     expect(response.status).toStrictEqual(200);
-//   });
-//   test('END', () => {
-//     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'END');
-//     expect(response.body).toStrictEqual({});
-//     expect(response.status).toStrictEqual(200);
-//   });
-// });
+describe('QUESTION_CLOSE', () => {
+  beforeEach(async() => {
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+  })
+  test('GO_TO_FINAL_RESULTS', () => {
+    const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_FINAL_RESULTS');
+    expect(response.body).toStrictEqual({});
+    expect(response.status).toStrictEqual(200);
+  });
+  test('GO_TO_ANSWER', () => {
+    const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_ANSWER');
+    expect(response.body).toStrictEqual({});
+    expect(response.status).toStrictEqual(200);
+  });
+  test('NEXT_QUESTION', () => {
+    const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
+    expect(response.body).toStrictEqual({});
+    expect(response.status).toStrictEqual(200);
+  });
+  test('END', () => {
+    const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'END');
+    expect(response.body).toStrictEqual({});
+    expect(response.status).toStrictEqual(200);
+  });
+});
 
 describe('FINAL_RESULTS', () => {
   beforeEach(() => {
     requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
-    requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'ANSWER_SHOW');
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
     requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_FINAL_RESULTS');
   });
   test('GO_TO_FINAL_RESULTS', () => {
@@ -244,7 +259,7 @@ describe('FINAL_RESULTS', () => {
 describe('ANSWER_SHOW', () => {
   beforeEach(() => {
     requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
-    requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'ANSWER_SHOW');
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
   });
   test('GO_TO_FINAL_RESULTS', () => {
     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_FINAL_RESULTS');
