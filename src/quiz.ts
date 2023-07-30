@@ -841,7 +841,10 @@ function adminQuizThumbnailUpdate(token: string| ErrorObject, quizId: number, im
     //`${imgUrl}`
     'https://upload.wikimedia.org/wikipedia/en/5/51/Minecraft_cover.png'
   );
-  fs.writeFileSync(`static/hello.jpg`, res.getBody(), { flag: 'w' })
+  let i = 2;
+  const fileName = `static/${i}.jpg`;
+
+  fs.writeFileSync(fileName, res.getBody(), { flag: 'w' })
   const quiz = data.quizzes.find((quiz) => quiz.quizId === quizId);
   // console.log(quiz);
   //quiz.thumbnailUrl = fs.readFileSync(`static/hello.jpg`);
