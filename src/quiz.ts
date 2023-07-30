@@ -8,8 +8,9 @@ import { Data, Answer } from './interfaces';
 import HTTPError from 'http-errors';
 const isUrl = require('is-url');
 const isImageUrl = require('is-image-url');
-import fs from 'fs'
+import fs, { existsSync } from 'fs'
 import request from 'sync-request'
+import config from './config.json';
 
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -839,15 +840,21 @@ function adminQuizThumbnailUpdate(token: string| ErrorObject, quizId: number, im
   const res = request(
     'GET',
     //`${imgUrl}`
-    'https://upload.wikimedia.org/wikipedia/en/5/51/Minecraft_cover.png'
+    'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png'
   );
-  let i = 2;
-  const fileName = `static/${i}.jpg`;
+  let i = 0;
+  let fileName = `static/${i}.jpg`;
+  while (fs.existsSync(fileName)) {
+    i ++;
+    fileName = `static/${i}.jpg`;
+  }
 
   fs.writeFileSync(fileName, res.getBody(), { flag: 'w' })
   const quiz = data.quizzes.find((quiz) => quiz.quizId === quizId);
   // console.log(quiz);
-  //quiz.thumbnailUrl = fs.readFileSync(`static/hello.jpg`);
+  const PORT: number = parseInt(process.env.PORT || config.port);
+  quiz.thumbnailUrl = `localhost:${PORT}/${fileName}`
+  // console.log(quiz.thumbnailUrl)
   // console.log(quiz);
   save(data);
   return {
