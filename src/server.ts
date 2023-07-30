@@ -171,7 +171,7 @@ app.get('/v2/admin/quiz/list', (req: Request, res: Response) => {
 });
 
 app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
-  const token = req.headers.token as string;
+  const token = req.query.token as string;
   const response = adminQuizTrash(token);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
