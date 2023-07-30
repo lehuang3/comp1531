@@ -155,7 +155,7 @@ test.each([
   expect(response.body).toStrictEqual({});
   expect(response.status).toStrictEqual(200);
 });
-test.each([
+test.only.each([
   [2, [0]], // incorrect
   [2, [1]], // incorrect
   [2, [0, 1]], // correct

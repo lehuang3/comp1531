@@ -2,7 +2,8 @@ import { State, Data, ErrorObject, Action, AnswerResult, Answer } from './interf
 import {
   save, read, tokenOwner, quizActiveCheck, quizValidOwner, activeSessions, quizHasQuestion, generateSessionId,
   quizSessionIdValidCheck, isActionApplicable, isSessionInLobby, nameExistinSession, generateRandomName, findPlayerSession,
-  answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect, getQuestionResults
+  answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect, getQuestionResults, isSessionAtLastQuestion,
+  getSessionState
 } from './other';
 import HTTPError from 'http-errors';
 interface SessionIdReturn {
@@ -127,7 +128,8 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
   if (!quizSessionIdValidCheck(quizId, sessionId)) {
     throw HTTPError(400, 'Session is not valid');
   }
-  if (!Object.keys(Action).includes(action)) {
+  if (!Object.keys(Action).includes(action) || 
+     (isSessionAtLastQuestion(sessionId) && getSessionState(sessionId) === 'ANSWER_SHOW' || getSessionState(sessionId) === 'QUESTION_CLOSE')) {
     throw HTTPError(400, 'Invalid Action enum');
   }
   if (!isActionApplicable(sessionId, action).applicable) {
@@ -138,7 +140,6 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
   for (const session of data.sessions) {
     if (session.quizSessionId === sessionId) {
       session.state = nextState;
-      console.log(data.sessions)
       if (session.state === 'QUESTION_COUNTDOWN') {
         session.atQuestion = session.atQuestion + 1;
         save(data);
@@ -147,7 +148,6 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
       if (session.state === 'FINAL_RESULTS' || session.state === 'END') {
         session.atQuestion = 0;
       }
-      console.log(session.state)
     }
   }
   save(data);
@@ -372,6 +372,7 @@ function playerAnswerSubmit(playerId: number, questionposition: number, answerId
           }
         }
       }
+      console.log(session.metadata.questions[questionposition - 1].attempts)
       // find averageAnwerTime
       session.metadata.questions[questionposition - 1].averageAnswerTime = Math.round(getAverageAnswerTime(session, questionposition));
       // find percentCorrect

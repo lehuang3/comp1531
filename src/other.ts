@@ -1676,6 +1676,28 @@ function changeState(sessionId: number, state: State) {
   save(data);
 }
 
+function isSessionAtLastQuestion(sessionId: number) {
+  const data: Data = read();
+  for (const session of data.sessions) {
+    if (session.quizSessionId === sessionId) {
+      const questionsLength = session.metadata.questions.length;
+      if (session.atQuestion === questionsLength) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function getSessionState(sessionId: number) {
+  const data: Data = read();
+  for (const session of data.sessions) {
+    if (session.quizSessionId === sessionId) {
+      return session.state;
+    }
+  }
+}
+
 /**
  * Send a 'get' request to the corresponding server route to
  * fetch details of a question for given player
@@ -1767,5 +1789,6 @@ export {
   requestAdminAuthDetailsUpdate, requestAdminQuizSessionStart, quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId, requestAdminQuizSessionStateUpdate,
   quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate, requestQuizSessionPlayerJoin, isSessionInLobby, nameExistinSession, generateRandomName,
   requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, findPlayerSession, answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect,
-  changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo,requestAdminQuizSessionState, getQuestionResults, requestAdminSessioQuestionResult, requestAdminSessionFinalResult
+  changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo,requestAdminQuizSessionState, getQuestionResults,
+  requestAdminSessioQuestionResult, requestAdminSessionFinalResult, isSessionAtLastQuestion, getSessionState
 };

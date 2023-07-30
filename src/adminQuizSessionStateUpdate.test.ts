@@ -116,6 +116,14 @@ test('Invalid Action enum', () => {
   expect(response.status).toStrictEqual(400);
 });
 
+test.only('Invalid Action enum - last question', () => {
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
+  const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
+  expect(response.body).toStrictEqual({ error: 'Invalid Action enum' });
+  expect(response.status).toStrictEqual(400);
+});
+
 describe('LOBBY', () => {
   test('GO_TO_FINAL_RESULTS', () => {
     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_FINAL_RESULTS');
