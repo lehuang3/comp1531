@@ -2,7 +2,7 @@ import { ErrorObject, Quiz } from './interfaces';
 import {
   save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong,
   tokenOwner, questionLengthValid, answerCountValid, newPositioNotSame, newPositionValidCheck, questionValidCheck, durationValid, QuizDurationValid, quizPointsValid,
-  quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash, getColour, isSameQuizName
+  quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash, getColour, isSameQuizName, saveImg
 } from './other';
 import { Data, Answer } from './interfaces';
 import HTTPError from 'http-errors';
@@ -11,6 +11,8 @@ const isImageUrl = require('is-image-url');
 import fs, { existsSync } from 'fs'
 import request from 'sync-request'
 import config from './config.json';
+
+const PORT: number = parseInt(process.env.PORT || config.port);
 
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -334,7 +336,7 @@ function adminQuizTrash(token: string | ErrorObject) {
   const quizzes: { quizId: number; name: string; }[] = [];
   const data: Data = read();
   const authUserId = tokenOwner(token);
-  console.log(token);
+  // console.log(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
       throw HTTPError(401, 'Invalid token structure');
@@ -440,6 +442,7 @@ function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, qu
   } else if (isImageUrl(questionBody.thumbnailUrl) === false) {
     throw HTTPError(400, 'Image not valid');
   } else {
+    const fileName = saveImg(questionBody.thumbnailUrl);
     const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
 
     let newQuestionId = 0;
@@ -468,7 +471,7 @@ function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, qu
         correct: answer.correct,
         colour: getColour()
       })),
-      thumbnailUrl: questionBody.thumbnailUrl
+      thumbnailUrl: `http://localhost:${PORT}/${fileName}`
     };
 
     quiz.questions.push(newQuestion);
@@ -740,7 +743,7 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
   } else if (!isImageUrl(questionBody.thumbnailUrl)) {
     throw HTTPError(400, 'Url is not an image.');
   }
-
+  const fileName = saveImg(questionBody.thumbnailUrl);
   // find the quiz in data.quizzes by matching quizId to data.quizzes.quizId, find the quiz question in data.quizzes.quiz.question, splice out the question.
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
   // found the quiz which contains the question
@@ -755,6 +758,7 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
         correct: answer.correct,
         colour: getColour()
       }));
+      question.thumbnailUrl = `http://localhost:${PORT}/${fileName}`
       const updatedQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
       updatedQuiz.timeLastEdited = Math.floor(Date.now() / 1000);
       save(data);
@@ -838,23 +842,11 @@ function adminQuizThumbnailUpdate(token: string| ErrorObject, quizId: number, im
     throw HTTPError(400, 'Url is not an image.');
   }
   // save to static folder the url as an image
-  const res = request(
-    'GET',
-    //`${imgUrl}`
-    'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png'
-  );
-  let i = 0;
-  let fileName = `static/${i}.jpg`;
-  while (fs.existsSync(fileName)) {
-    i ++;
-    fileName = `static/${i}.jpg`;
-  }
-
-  fs.writeFileSync(fileName, res.getBody(), { flag: 'w' })
+  const fileName = saveImg(imgUrl);
   const quiz = data.quizzes.find((quiz) => quiz.quizId === quizId);
   // console.log(quiz);
-  const PORT: number = parseInt(process.env.PORT || config.port);
-  quiz.thumbnailUrl = `localhost:${PORT}/${fileName}`
+
+  quiz.thumbnailUrl = `http://localhost:${PORT}/${fileName}`
   // console.log(quiz.thumbnailUrl)
   // console.log(quiz);
   save(data);

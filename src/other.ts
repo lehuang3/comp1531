@@ -1775,8 +1775,21 @@ function getQuestionResults(data: Data, sess: Session, questionposition: number)
   }
 }
 
+function saveImg(imgUrl: string) {
+  const res = request(
+    'GET',
+    `${imgUrl}`
+  );
+  let i = 0;
+  let fileName = `static/${i}.jpg`;
+  while (fs.existsSync(fileName)) {
+    i ++;
+    fileName = `static/${i}.jpg`;
+  }
 
-
+  fs.writeFileSync(fileName, res.getBody(), { flag: 'w' })
+  return fileName
+}
 
 
 export {
@@ -1790,5 +1803,5 @@ export {
   quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate, requestQuizSessionPlayerJoin, isSessionInLobby, nameExistinSession, generateRandomName,
   requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, findPlayerSession, answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect,
   changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo,requestAdminQuizSessionState, getQuestionResults,
-  requestAdminSessioQuestionResult, requestAdminSessionFinalResult, isSessionAtLastQuestion, getSessionState
+  requestAdminSessioQuestionResult, requestAdminSessionFinalResult, isSessionAtLastQuestion, getSessionState, saveImg
 };
