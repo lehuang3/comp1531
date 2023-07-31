@@ -79,7 +79,6 @@ test('session not in any quiz', () => {
 
 test('Not FINAL_RESULTS state', async() => {
 	await new Promise((resolve) => setTimeout(resolve, 1200));
-	console.log(player1)
 	requestPlayerAnswerSubmit(player1, 1, [0])
 	requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'QUESTION_CLOSE')
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_FINAL_RESULTS')

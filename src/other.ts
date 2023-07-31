@@ -146,6 +146,15 @@ function clear () {
     sessions: [],
 
   };
+  // Deletes all the pictures but broke all the tests so left as comments for the time being
+
+  // const files = fs.readdirSync('./static');
+  // files.forEach((file) => {
+  //   const fileName = `/static/${file}`;
+  //   fs.unlink(fileName, (err) => {
+  //     if (err) throw err
+  //   })
+  // })
   save(store);
   return {
 

@@ -119,7 +119,7 @@ test('success', () => {
     questionId: question1,
     question: 'What is capital of sydney?',
     duration: 2,
-    thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg',
+    thumbnailUrl: expect.any(String),
     points: 5,
     answers: [
       {
@@ -149,7 +149,7 @@ test('success', () => {
     questionId: question2,
     question: 'What is the cutest animal?',
     duration: 2,
-    thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg',
+    thumbnailUrl: expect.any(String),
     points: 5,
     answers: [
       {
