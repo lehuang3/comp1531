@@ -36,22 +36,22 @@ const sampleMsg = {
 
 beforeEach(() => {
   requestClear();
-  token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test');
-  quiz1 = requestAdminQuizCreate(token1.body.token, 'quiz', 'quiz1');
-  requestQuizQuestionCreate(token1.body.token, quiz1.body.quizId, quizQuestion.questionBody);
-  session = requestAdminQuizSessionStart(token1.body.token, quiz1.body.quizId, 3);
-  player1 = requestQuizSessionPlayerJoin(session.body.sessionId, 'Player');
-  const player2 = requestQuizSessionPlayerJoin(session.body.sessionId, 'Not player');
-  requestAdminSessionChatSend(player1.body.playerId, sampleMsg.message.messageBody);
+  token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test').body.token;
+  quiz1 = requestAdminQuizCreate(token1, 'quiz', 'quiz1').body.quizId;
+  requestQuizQuestionCreate(token1, quiz1, quizQuestion.questionBody);
+  session = requestAdminQuizSessionStart(token1, quiz1, 3).body.sessionId;
+  player1 = requestQuizSessionPlayerJoin(session, 'Player').body.playerId;
+  const player2 = requestQuizSessionPlayerJoin(session, 'Not player');
+  requestAdminSessionChatSend(player1, sampleMsg.message.messageBody);
 });
 
 describe('Passing case', () => {
   test('User 1 enters correct information', () => {
-    expect(requestAdminSessionChatView(player1.body.playerId).body).toStrictEqual({
+    expect(requestAdminSessionChatView(player1).body).toStrictEqual({
       messages: [
         {
           messageBody: sampleMsg.message.messageBody,
-          playerId: player1.body.playerId,
+          playerId: player1,
           playerName: 'Player',
           timeSent: expect.any(Number)
         }
