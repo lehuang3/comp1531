@@ -619,3 +619,6 @@ const server = app.listen(PORT, HOST, () => {
 process.on('SIGINT', () => {
   server.close(() => console.log('Shutting down server gracefully.'));
 });
+
+// For retrieving images
+app.use('/static', express.static('static'));

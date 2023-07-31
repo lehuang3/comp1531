@@ -8,6 +8,9 @@ import { Data, Answer } from './interfaces';
 import HTTPError from 'http-errors';
 const isUrl = require('is-url');
 const isImageUrl = require('is-image-url');
+import fs, { existsSync } from 'fs'
+import request from 'sync-request'
+import config from './config.json';
 
 /**
  * Provide a list of all quizzes that are owned by the currently logged in user.
@@ -834,9 +837,25 @@ function adminQuizThumbnailUpdate(token: string| ErrorObject, quizId: number, im
   } else if (!isImageUrl(imgUrl)) {
     throw HTTPError(400, 'Url is not an image.');
   }
-  const quiz = data.quizzes.filter((quiz) => quiz.quizId === quizId);
+  // save to static folder the url as an image
+  const res = request(
+    'GET',
+    //`${imgUrl}`
+    'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png'
+  );
+  let i = 0;
+  let fileName = `static/${i}.jpg`;
+  while (fs.existsSync(fileName)) {
+    i ++;
+    fileName = `static/${i}.jpg`;
+  }
+
+  fs.writeFileSync(fileName, res.getBody(), { flag: 'w' })
+  const quiz = data.quizzes.find((quiz) => quiz.quizId === quizId);
   // console.log(quiz);
-  quiz[0].thumbnailUrl = imgUrl;
+  const PORT: number = parseInt(process.env.PORT || config.port);
+  quiz.thumbnailUrl = `localhost:${PORT}/${fileName}`
+  // console.log(quiz.thumbnailUrl)
   // console.log(quiz);
   save(data);
   return {
