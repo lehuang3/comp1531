@@ -146,6 +146,15 @@ function clear () {
     sessions: [],
 
   };
+  // Deletes all the pictures but broke all the tests so left as comments for the time being
+
+  // const files = fs.readdirSync('./static');
+  // files.forEach((file) => {
+  //   const fileName = `/static/${file}`;
+  //   fs.unlink(fileName, (err) => {
+  //     if (err) throw err
+  //   })
+  // })
   save(store);
   return {
 
@@ -1799,6 +1808,21 @@ function isSessionInFinal(sessionArray:any,sessionId:number){
   return false;
 }
   
+function saveImg(imgUrl: string) {
+  const res = request(
+    'GET',
+    `${imgUrl}`
+  );
+  let i = 0;
+  let fileName = `static/${i}.jpg`;
+  while (fs.existsSync(fileName)) {
+    i ++;
+    fileName = `static/${i}.jpg`;
+  }
+
+  fs.writeFileSync(fileName, res.getBody(), { flag: 'w' })
+  return fileName
+}
 
 export {
   clear, save, read, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, isSameQuizName,
@@ -1811,5 +1835,5 @@ export {
   quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate, requestQuizSessionPlayerJoin, isSessionInLobby, nameExistinSession, generateRandomName,
   requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, findPlayerSession, answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect,
   changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo,requestAdminQuizSessionState, getQuestionResults,
-  requestAdminSessioQuestionResult, requestAdminSessionFinalResult, isSessionAtLastQuestion, getSessionState, requestAdminQuizSessionFinal,isSessionInFinal
+  requestAdminSessioQuestionResult, requestAdminSessionFinalResult, isSessionAtLastQuestion, getSessionState, saveImg, requestAdminQuizSessionFinal, isSessionInFinal
 };
