@@ -113,7 +113,7 @@ describe('PlayerId not valid', () => {
 
 describe('Session not in FINAL_RESULTS state', () => {
   test('Not FINAL_RESULTS state', () => {
-    changeState(session.body.sessionId, State.QUESTION_OPEN)
+
     requestPlayerAnswerSubmit(player1.body.playerId, 1, [0])
     requestAdminQuizSessionStateUpdate(token1.body.token, quiz1.body.quizId, session.body.sessionId, 'NEXT_QUESTION')
     expect(requestAdminSessionFinalResult(player1.body.playerId).body).toStrictEqual({ error: 'Answers cannot be shown right now.' });

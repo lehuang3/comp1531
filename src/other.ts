@@ -1775,6 +1775,30 @@ function getQuestionResults(data: Data, sess: Session, questionposition: number)
   }
 }
 
+function requestAdminQuizSessionFinal(token:string | ErrorObject, quizId:number, sessionId:number) {
+  const res = request(
+    'GET',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/session/${sessionId}/results`,
+    {
+      headers: {
+        token: token as string
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+function isSessionInFinal(sessionArray:any,sessionId:number){
+  const session = sessionArray.find((session: { quizSessionId: number; }) => session.quizSessionId === sessionId);
+  if (session.state === State.FINAL_RESULTS) {
+    return true
+  }
+  return false;
+}
+  
 function saveImg(imgUrl: string) {
   const res = request(
     'GET',
@@ -1791,7 +1815,6 @@ function saveImg(imgUrl: string) {
   return fileName
 }
 
-
 export {
   clear, save, read, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, isSameQuizName,
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
@@ -1803,5 +1826,5 @@ export {
   quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate, requestQuizSessionPlayerJoin, isSessionInLobby, nameExistinSession, generateRandomName,
   requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, findPlayerSession, answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect,
   changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo,requestAdminQuizSessionState, getQuestionResults,
-  requestAdminSessioQuestionResult, requestAdminSessionFinalResult, isSessionAtLastQuestion, getSessionState, saveImg
+  requestAdminSessioQuestionResult, requestAdminSessionFinalResult, isSessionAtLastQuestion, getSessionState, saveImg, requestAdminQuizSessionFinal, isSessionInFinal
 };
