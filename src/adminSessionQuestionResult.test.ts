@@ -1,4 +1,4 @@
-import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate,requestAdminSessioQuestionResult, requestAdminQuizSessionStart, requestQuizQuestionCreate, getAverageAnswerTime, changeState } from './other';
+import { read, requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate,requestAdminSessioQuestionResult, requestAdminQuizSessionStart, requestQuizQuestionCreate, getAverageAnswerTime, changeState } from './other';
 import  { State } from './interfaces'
 let token1: any;
 let quiz1: any;
@@ -68,13 +68,19 @@ beforeEach(() => {
 });
 
 describe('Passing cases', () => {
-  test('User 1 enters correct information', () => {
-    changeState(session, State.QUESTION_OPEN)
+  test('User 1 enters correct information', async() => {
+    // const data = read()
+    // console.log(data.sessions[0].state)
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     requestPlayerAnswerSubmit(player1, 1, [0])
     requestPlayerAnswerSubmit(player2, 1, [0])
     //requestPlayerAnswerSubmit(player3.body.playerId, 1, [0,1,2])
-    // requestAdminQuizSessionStateUpdate(token1.body.token, quiz1.body.quizId, session.body.sessionId, 'GO_TO_ANSWER')
-    changeState(session, State.ANSWER_SHOW)
+        const data = read()
+    console.log(data.sessions[0].state)
+    //requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER')
+
+    console.log(data.sessions[0].state)
+    //changeState(session, State.ANSWER_SHOW)
     expect(requestAdminSessioQuestionResult(player1, 1).body).toStrictEqual({ 
       questionId: expect.any(Number),
       questionCorrectBreakdown: [
