@@ -14,7 +14,7 @@ import {
   adminQuizTrashEmpty, adminQuizThumbnailUpdate
 } from './quiz';
 import { adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
-playerAnswerSubmit, playerQuestionInfo,adminQuizSessionState, adminSessionQuestionResult, adminSessionFinalResult
+playerAnswerSubmit, playerQuestionInfo,adminQuizSessionState, adminSessionQuestionResult, adminSessionFinalResult,adminQuizSessionStateFinal
 } from './session';
 import { clear } from './other';
 
@@ -122,6 +122,14 @@ app.get('/v1/admin/quiz/:quizId/session/:sessionId', (req: Request, res: Respons
   const sessionId = parseInt(req.params.sessionId);
   const token = req.header('token');
   const response = adminQuizSessionState(token, quizId, sessionId);
+  res.json(response);
+});
+
+app.get('/v1/admin/quiz/:quizId/session/:sessionId/results', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const sessionId = parseInt(req.params.sessionId);
+  const token = req.header('token');
+  const response = adminQuizSessionStateFinal(token, quizId, sessionId);
   res.json(response);
 });
 
