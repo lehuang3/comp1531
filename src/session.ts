@@ -128,11 +128,13 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
   if (!quizSessionIdValidCheck(quizId, sessionId)) {
     throw HTTPError(400, 'Session is not valid');
   }
-  if (!Object.keys(Action).includes(action) || 
-     (isSessionAtLastQuestion(sessionId) && getSessionState(sessionId) === 'ANSWER_SHOW' || getSessionState(sessionId) === 'QUESTION_CLOSE')) {
+  if (!Object.keys(Action).includes(action)) {
     throw HTTPError(400, 'Invalid Action enum');
   }
-  if (!isActionApplicable(sessionId, action).applicable) {
+  if (!isActionApplicable(sessionId, action).applicable ||
+     (isSessionAtLastQuestion(sessionId) &&
+     (getSessionState(sessionId) === 'ANSWER_SHOW' || getSessionState(sessionId) === 'QUESTION_CLOSE') &&
+     (action === 'NEXT_QUESTION'))) {
     throw HTTPError(400, 'Action is not applicable');
   }
 

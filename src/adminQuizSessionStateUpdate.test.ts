@@ -116,11 +116,11 @@ test('Invalid Action enum', () => {
   expect(response.status).toStrictEqual(400);
 });
 
-test.only('Invalid Action enum - last question', () => {
+test('Action not applicable - last question', () => {
   requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
   requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
   const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
-  expect(response.body).toStrictEqual({ error: 'Invalid Action enum' });
+  expect(response.body).toStrictEqual({ error: 'Action is not applicable' });
   expect(response.status).toStrictEqual(400);
 });
 
@@ -218,8 +218,8 @@ describe('QUESTION_CLOSE', () => {
   });
   test('NEXT_QUESTION', () => {
     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
-    expect(response.body).toStrictEqual({});
-    expect(response.status).toStrictEqual(200);
+    expect(response.body).toStrictEqual({ error: 'Action is not applicable' });
+    expect(response.status).toStrictEqual(400);
   });
   test('END', () => {
     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'END');
@@ -273,8 +273,8 @@ describe('ANSWER_SHOW', () => {
   });
   test('NEXT_QUESTION', () => {
     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
-    expect(response.body).toStrictEqual({});
-    expect(response.status).toStrictEqual(200);
+    expect(response.body).toStrictEqual({ error: 'Action is not applicable' });
+    expect(response.status).toStrictEqual(400);
   });
   test('END', () => {
     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'END');
