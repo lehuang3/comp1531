@@ -636,26 +636,77 @@ function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, ses
   }
 
   let header = ["Player"];
-  let playersData = [];
+  let playersData: any[] =[];
 
-  const dataArrays = [
-    [1, 'Mark', 'Otto', '@mdo'],
-    [2, 'Jacob', 'Thornton', '@fat'],
-    [3, 'Larry', 'the Bird', '@twitter'],
-  ];
+  let listOfPlayers = []
+
+  for(let player of session.players){
+    listOfPlayers.push(player.playerName)
+  }
+  listOfPlayers.sort();
+  console.log(listOfPlayers)
+
+  const ranking: object[]= [];
+
+  // find the rankings
+  // loop through all the questions
+  for (let i = 1; i <= session.metadata.numQuestions; i++) {
+    // first need to find who actually gets points for the question, need to check for a question which answerids must be selected
+    console.log("numquestions")
+    console.log( session.metadata.numQuestions)
+      // find which answerids must be selected and put it into an array
+      const answersNeeded = session.metadata.questions[i - 1].answers.filter((answer) => answer.correct === true)
+      const answersNeededIds = [];
+      for (const answer of answersNeeded) {
+        answersNeededIds.push(answer.answerId)
+      }
+  
+      
+      let correctPlayers = []
+      for (let attempt of session.metadata.questions[i - 1].attempts) {
+        correctPlayers.push(attempt)
+      }
+       console.log(i)
+       console.log(correctPlayers)
+      // if there are no correct players for this question move onto the next question
+      if (correctPlayers.length === 0) {
+        continue
+      }
+      // get the attempts timetaken and sort the players based on fastest to slowest
+      correctPlayers.sort((a, b) => a.timeTaken - b.timeTaken)
+      // get the scaling factor and the score and add to the players points
+      let rank = 1;
+      for (const player of correctPlayers) {
+        let scalingFactor = findScalingFactor(session, player.timeTaken, i); 
+        let scoreForQuestion = player.points * scalingFactor;
+        let playerResult = {
+          name: player.playerName,
+          score: scoreForQuestion,
+          rank: rank
+        }
+        rank++;
+        ranking.push(playerResult)
+
+      }
+      console.log("ranking")
+      console.log(1)
+      console.log(ranking)
+    }
+    // sort the players by score
+    
 
   for (let i = 1; i <= session.metadata.numQuestions; i++) {
     header.push(`question${i}score`, `question${i}rank`);
   }
 
-  const csvFromArrayOfArrays = convertArrayToCSV(dataArrays, {
+  const csvFromArrayOfArrays = convertArrayToCSV(playersData, {
     header,
     separator: ','
   });
 
   console.log(csvFromArrayOfArrays)
   let csvname = session.quizSessionId
-  const filename = `../Csv/${csvname}.csv`;
+  const filename = `./Csv/${csvname}.csv`;
 
   fs.writeFile(filename, csvFromArrayOfArrays, (err:any) => {
     if (err) {
