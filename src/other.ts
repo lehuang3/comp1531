@@ -150,18 +150,18 @@ function clear () {
 
   save(store);
 
-  const currentDir = __dirname;
-  const folderPath = path.join(currentDir, '..', 'static');
+  // const currentDir = __dirname;
+  // const folderPath = path.join(currentDir, '..', 'static');
 
-  fs.readdirSync(folderPath).forEach((file) => {
-    const filePath = path.join(folderPath, file);
-    const fileExtension = path.extname(file).toLowerCase();
+  // fs.readdirSync(folderPath).forEach((file) => {
+  //   const filePath = path.join(folderPath, file);
+  //   const fileExtension = path.extname(file).toLowerCase();
 
-    if (fileExtension === '.jpg' || fileExtension === '.png') {
-      fs.unlinkSync(filePath);
-      console.log('Deleted:', filePath);
-    }
-  });
+  //   if (fileExtension === '.jpg' || fileExtension === '.png') {
+  //     fs.unlinkSync(filePath);
+  //     console.log('Deleted:', filePath);
+  //   }
+  // });
 
   return {
 
