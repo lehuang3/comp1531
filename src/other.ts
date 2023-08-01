@@ -162,26 +162,14 @@ function clear () {
   const currentDir = __dirname;
   const folderPath = path.join(currentDir, '..', 'static');
 
-  fs.readdir(folderPath, (err, files) => {
-    if (err) {
-      console.error('Error reading directory:', err);
-      return;
+  fs.readdirSync(folderPath).forEach((file) => {
+    const filePath = path.join(folderPath, file);
+    const fileExtension = path.extname(file).toLowerCase();
+
+    if (fileExtension === '.jpg' || fileExtension === '.png') {
+      fs.unlinkSync(filePath);
+      console.log('Deleted:', filePath);
     }
-
-    files.forEach((file) => {
-      const filePath = path.join(folderPath, file);
-      const fileExtension = path.extname(file).toLowerCase();
-
-      if (fileExtension === '.jpg' || fileExtension === '.png') {
-        fs.unlink(filePath, (err) => {
-          if (err) {
-            console.error('Error deleting file:', filePath, err);
-          } else {
-            console.log('Deleted:', filePath);
-          }
-        });
-      }
-    });
   });
 
   return {
