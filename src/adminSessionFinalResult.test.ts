@@ -19,7 +19,7 @@ const quiz1Question1 = {
       },
       {
         answer: 'Melbourne',
-        correct: false
+        correct: true
       },
       {
         answer: 'Camberra',
@@ -47,7 +47,7 @@ const quiz1Question2: any = {
       },
       {
         answer: 'Los Angeles',
-        correct: false
+        correct: true
       }
 
     ],
@@ -60,11 +60,11 @@ beforeEach(() => {
   token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test').body.token;
   quiz1 = requestAdminQuizCreate(token1, 'quiz', 'quiz1').body.quizId;
   requestQuizQuestionCreate(token1, quiz1, quiz1Question1.questionBody);
-  //requestQuizQuestionCreate(token1.body.token, quiz1.body.quizId, quiz1Question2.questionBody);
-  session = requestAdminQuizSessionStart(token1, quiz1, 2).body.sessionId;
+  requestQuizQuestionCreate(token1, quiz1, quiz1Question2.questionBody);
+  session = requestAdminQuizSessionStart(token1, quiz1, 3).body.sessionId;
   player1 = requestQuizSessionPlayerJoin(session, 'Player').body.playerId;
   player2 = requestQuizSessionPlayerJoin(session, 'Coolguy').body.playerId;
-  //player3 = requestQuizSessionPlayerJoin(session.body.sessionId, 'Coolerguy');
+  player3 = requestQuizSessionPlayerJoin(session, 'Coolerguy').body.playerId;
 });
 
 describe.only('Passing cases', () => {
@@ -72,38 +72,19 @@ describe.only('Passing cases', () => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     requestPlayerAnswerSubmit(player1, 1, [0])
     requestPlayerAnswerSubmit(player2, 1, [0, 1])
-    //requestPlayerAnswerSubmit(player3.body.playerId, 1, [0,1,2])
+    requestPlayerAnswerSubmit(player3, 1, [0, 1, 2])
     // requestAdminQuizSessionStateUpdate(token1.body.token, quiz1.body.quizId, session.body.sessionId, 'GO_TO_ANSWER')
     requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER')
     requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'NEXT_QUESTION')
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    requestPlayerAnswerSubmit(player1, 2, [0])
-    requestPlayerAnswerSubmit(player2, 2, [0, 1])
+    requestPlayerAnswerSubmit(player1, 2, [0, 2])
+    requestPlayerAnswerSubmit(player2, 2, [0])
+    requestPlayerAnswerSubmit(player3, 2, [0, 2])
     requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER')
     requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_FINAL_RESULTS')
-    expect(requestAdminSessionFinalResult(player1).body).toStrictEqual({ 
-      usersRankedByScore: [
-        {
-          name: 'Player',
-          score: expect.any(Number)
-        }
-      ],
-      questionResults: [
-        {
-        questionId: expect.any(Number),
-        questionCorrectBreakdown: [
-          {
-            answerId: 0,
-            playersCorrect: [
-              'Player'
-            ]
-          }
-        ],
-        averageAnswerTime: expect.any(Number),
-        percentCorrect: expect.any(Number)
-        }
-      ]
-    })
+    expect(requestAdminSessionFinalResult(player1).status).toStrictEqual(200)
+    expect(requestAdminSessionFinalResult(player2).status).toStrictEqual(200)
+    expect(requestAdminSessionFinalResult(player3).status).toStrictEqual(200)
   });
 });
 

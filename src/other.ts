@@ -3,7 +3,7 @@ import { Data, Token, State, AnswerResult } from './interfaces';
 import {clearTimeouts} from './session'
 import request from 'sync-request';
 import { port, url } from './config.json';
-import { ErrorObject, Session } from './interfaces';
+import { ErrorObject, Session, Attempt } from './interfaces';
 // import { Session } from 'inspector';
 // import arrayShuffle from 'array-shuffle';
 const shuffle = require('shuffle-array');
@@ -1658,9 +1658,8 @@ function answerIdsValidCheck(session: Session, questionposition: number, answerI
   return true;
 }
 
-function findScalingFactor(session: Session, timeTaken: number, questionposition: number) {
-  const sortedAttempts = session.metadata.questions[questionposition - 1].attempts.sort((a, b) => a.timeTaken - b.timeTaken);
-  return 1 / (sortedAttempts.indexOf(sortedAttempts.find(attempt => attempt.timeTaken === timeTaken)) + 1);
+function findScalingFactor(session: Session, timeTaken: number, correctPlayers: Attempt[]) {
+  return 1 / (correctPlayers.indexOf(correctPlayers.find(attempt => attempt.timeTaken === timeTaken)) + 1);
 }
 
 function getAverageAnswerTime(session: Session, questionposition: number) {

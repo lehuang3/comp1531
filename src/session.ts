@@ -489,9 +489,12 @@ function adminSessionFinalResult(playerId: number) {
     }
     // get the attempts timetaken and sort the players based on fastest to slowest
     correctPlayers.sort((a, b) => a.timeTaken - b.timeTaken)
+    console.log(i)
+    console.log(correctPlayers)
     // get the scaling factor and the score and add to the players points
-    for (const player of correctPlayers) {
-      sess.players.find((player) => player.playerId === player.playerId).playerScore += player.points * findScalingFactor(sess, player.timeTaken, i);
+    //console.log(correctPlayers)
+    for (const correctPlayer of correctPlayers) {
+      sess.players.find((player) => player.playerId === correctPlayer.playerId).playerScore += correctPlayer.points * findScalingFactor(sess, correctPlayer.timeTaken, correctPlayers);
     }
     // console.log(sess.players)
   }
@@ -510,8 +513,7 @@ function adminSessionFinalResult(playerId: number) {
     usersRankedByScore: ranking,
     questionResults: questionResult
   }
-  // console.log(answer.questionResults[0].questionCorrectBreakdown)
-  // console.log(answer)
+  console.log(answer)
   return answer
 }
 
@@ -580,7 +582,7 @@ function adminQuizSessionStateFinal(token:string | ErrorObject, quizId:number, s
     correctPlayers.sort((a, b) => a.timeTaken - b.timeTaken)
     // get the scaling factor and the score and add to the players points
     for (const player of correctPlayers) {
-      sess.players.find((player) => player.playerId === player.playerId).playerScore += player.points * findScalingFactor(sess, player.timeTaken, i);
+      sess.players.find((player) => player.playerId === player.playerId).playerScore += player.points * findScalingFactor(sess, player.timeTaken, correctPlayers);
     }
     // console.log(sess.players)
   }
@@ -601,7 +603,6 @@ function adminQuizSessionStateFinal(token:string | ErrorObject, quizId:number, s
   }
   // console.log(answer.questionResults[0].questionCorrectBreakdown)
   // console.log(answer)
-  console.log(answer)
   return answer
 
 }
