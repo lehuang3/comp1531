@@ -9,6 +9,10 @@ import HTTPError from 'http-errors';
 interface SessionIdReturn {
   sessionId: number;
 }
+const { convertArrayToCSV } = require('convert-array-to-csv');
+const converter = require('convert-array-to-csv');
+const fs = require('fs');
+const path = require('path');
 
 let questionOpenStart: number;
 let timeoutIds: NodeJS.Timeout[] = [];
@@ -607,7 +611,7 @@ function adminQuizSessionFinal(token:string | ErrorObject, quizId:number, sessio
 
 function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, sessionId:number) {
   const data: Data = read();
-  const sess = data.sessions.find((session: { quizSessionId: number; }) => session.quizSessionId === sessionId);
+  const session = data.sessions.find((session: { quizSessionId: number; }) => session.quizSessionId === sessionId);
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
@@ -631,6 +635,35 @@ function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, ses
     throw HTTPError(400, 'Session has not ended');
   }
 
+  let header = ["Player"];
+  let playersData = [];
+
+  const dataArrays = [
+    [1, 'Mark', 'Otto', '@mdo'],
+    [2, 'Jacob', 'Thornton', '@fat'],
+    [3, 'Larry', 'the Bird', '@twitter'],
+  ];
+
+  for (let i = 1; i <= session.metadata.numQuestions; i++) {
+    header.push(`question${i}score`, `question${i}rank`);
+  }
+
+  const csvFromArrayOfArrays = convertArrayToCSV(dataArrays, {
+    header,
+    separator: ','
+  });
+
+  console.log(csvFromArrayOfArrays)
+  let csvname = session.quizSessionId
+  const filename = `../Csv/${csvname}.csv`;
+
+  fs.writeFile(filename, csvFromArrayOfArrays, (err:any) => {
+    if (err) {
+      console.error('Error creating the file:', err);
+    } else {
+      console.log('File created successfully!');
+    }
+  });
   return {}
 }
 export {

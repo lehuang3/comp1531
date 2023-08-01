@@ -31,12 +31,37 @@ const quiz1Question1 = {
   }
 };
 
+const quiz1Question2 = {
+    questionBody: {
+      question: 'What is capital of sydney?',
+      duration: 5,
+      points: 5,
+      answers: [
+        {
+          answer: 'sydney',
+          correct: true
+        },
+        {
+          answer: 'Melbourne',
+          correct: false
+        },
+        {
+          answer: 'Camberra',
+          correct: false
+        }
+  
+      ],
+      thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
+    }
+  };
+
 beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test').body.token;
   quiz1 = requestAdminQuizCreate(token1, 'quiz', 'quiz1').body.quizId;
-  requestQuizQuestionCreate(token1, quiz1, quiz1Question1.questionBody);
-  //requestQuizQuestionCreate(token1.body.token, quiz1.body.quizId, quiz1Question2.questionBody);
+
+  requestQuizQuestionCreate(token1, quiz1, quiz1Question2.questionBody);
+  requestQuizQuestionCreate(token1, quiz1, quiz1Question2.questionBody);
   session = requestAdminQuizSessionStart(token1, quiz1, 1).body.sessionId;
   player1 = requestQuizSessionPlayerJoin(session, 'Player').body.playerId;
   // player2 = requestQuizSessionPlayerJoin(session.body.sessionId, 'Coolguy');
