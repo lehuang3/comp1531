@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import { Data, Token, State, AnswerResult } from './interfaces';
 import {clearTimeouts} from './session'
 import request from 'sync-request';
@@ -156,6 +157,21 @@ function clear () {
   //   })
   // })
   save(store);
+
+ 
+  const currentDir = __dirname;
+  const folderPath = path.join(currentDir, '..', 'static');
+
+  fs.readdirSync(folderPath).forEach((file) => {
+    const filePath = path.join(folderPath, file);
+    const fileExtension = path.extname(file).toLowerCase();
+
+    if (fileExtension === '.jpg' || fileExtension === '.png') {
+      fs.unlinkSync(filePath);
+      console.log('Deleted:', filePath);
+    }
+  });
+
   return {
 
   };
@@ -1619,6 +1635,8 @@ function requestAdminSessionFinalResult(playerId: number) {
   };
 }
 
+
+
 /**
  * Finds in data a session that has playerId passed in,
  * returns undefined otherwise
@@ -1800,6 +1818,22 @@ function requestAdminQuizSessionFinal(token:string | ErrorObject, quizId:number,
   };
 }
 
+function requestAdminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, sessionId:number) {
+  const res = request(
+    'GET',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/session/${sessionId}/results/csv`,
+    {
+      headers: {
+        token: token as string
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
 function isSessionInFinal(sessionArray:any,sessionId:number){
   const session = sessionArray.find((session: { quizSessionId: number; }) => session.quizSessionId === sessionId);
   if (session.state === State.FINAL_RESULTS) {
@@ -1835,5 +1869,5 @@ export {
   quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate, requestQuizSessionPlayerJoin, isSessionInLobby, nameExistinSession, generateRandomName,
   requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, findPlayerSession, answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect,
   changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo,requestAdminQuizSessionState, getQuestionResults,
-  requestAdminSessioQuestionResult, requestAdminSessionFinalResult, isSessionAtLastQuestion, getSessionState, saveImg, requestAdminQuizSessionFinal, isSessionInFinal
+  requestAdminSessioQuestionResult, requestAdminSessionFinalResult, isSessionAtLastQuestion, getSessionState, saveImg, requestAdminQuizSessionFinal, isSessionInFinal,requestAdminQuizSessionFinalCsv
 };

@@ -515,7 +515,7 @@ function adminSessionFinalResult(playerId: number) {
   return answer
 }
 
-function adminQuizSessionStateFinal(token:string | ErrorObject, quizId:number, sessionId:number) {
+function adminQuizSessionFinal(token:string | ErrorObject, quizId:number, sessionId:number) {
   const data: Data = read();
   const sess = data.sessions.find((session: { quizSessionId: number; }) => session.quizSessionId === sessionId);
   const authUserId = tokenOwner(token);
@@ -605,7 +605,35 @@ function adminQuizSessionStateFinal(token:string | ErrorObject, quizId:number, s
 
 }
 
+function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, sessionId:number) {
+  const data: Data = read();
+  const sess = data.sessions.find((session: { quizSessionId: number; }) => session.quizSessionId === sessionId);
+  const authUserId = tokenOwner(token);
+  if (typeof authUserId !== 'number') {
+    if (authUserId.error === 'Invalid token structure') {
+      throw HTTPError(401, 'Invalid token structure');
+      // invalid session
+    } else {
+      throw HTTPError(403, 'Not a valid session');
+    }
+  }
+  if (!quizActiveCheck(quizId)) {
+    throw HTTPError(400, 'Quiz does not exist');
+  }
+  if (!quizValidOwner(authUserId, quizId)) {
+    throw HTTPError(400, 'You do not have access to this quiz');
+  }
+  if (!quizSessionIdValidCheck(quizId, sessionId)) {
+    throw HTTPError(400, 'Session is not valid');
+  }
+
+  if(isSessionInFinal(data.sessions,sessionId) === false){
+    throw HTTPError(400, 'Session has not ended');
+  }
+
+  return {}
+}
 export {
   adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
-  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState, adminSessionQuestionResult, adminSessionFinalResult,adminQuizSessionStateFinal
+  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState, adminSessionQuestionResult, adminSessionFinalResult,adminQuizSessionFinal,adminQuizSessionFinalCsv
 };
