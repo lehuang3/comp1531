@@ -205,7 +205,7 @@ describe('QUESTION_CLOSE', () => {
   beforeEach(async() => {
     requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
     await new Promise((resolve) => setTimeout(resolve, 3000));
-  })
+  });
   test('GO_TO_FINAL_RESULTS', () => {
     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_FINAL_RESULTS');
     expect(response.body).toStrictEqual({});

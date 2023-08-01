@@ -1,5 +1,5 @@
 import { Console } from 'console';
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizSessionStart, requestQuizSessionPlayerJoin,requestAdminQuizSessionState } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizSessionStart, requestQuizSessionPlayerJoin, requestAdminQuizSessionState } from './other';
 import { string } from 'yaml/dist/schema/common/string';
 
 let token1: string;
@@ -35,18 +35,18 @@ beforeEach(() => {
     });
   autoStartNum = 2;
   sessionId = requestAdminQuizSessionStart(token1, quiz1, autoStartNum).body.sessionId;
-	requestQuizSessionPlayerJoin(sessionId, '');
+  requestQuizSessionPlayerJoin(sessionId, '');
 });
 
 test('Not valid quiz', () => {
-  const response = requestAdminQuizSessionState(token1, quiz1+1, sessionId);
+  const response = requestAdminQuizSessionState(token1, quiz1 + 1, sessionId);
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
 });
 
 test('not a quiz that user owns', () => {
-	let token2 = requestAdminAuthRegister('Sinahafezimasoomi@gmail.com', 'Sydneyun2004!', 'Sina', 'Hafezi').body.token;
-  let quiz2 = requestAdminQuizCreate(token2, 'quizhello', 'quiz1number').body.quizId;
+  const token2 = requestAdminAuthRegister('Sinahafezimasoomi@gmail.com', 'Sydneyun2004!', 'Sina', 'Hafezi').body.token;
+  const quiz2 = requestAdminQuizCreate(token2, 'quizhello', 'quiz1number').body.quizId;
   const response = requestAdminQuizSessionState(token1, quiz2, sessionId);
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -61,12 +61,12 @@ test('session not in any quiz', () => {
 test('Success', () => {
   const response = requestAdminQuizSessionState(token1, quiz1, sessionId);
   expect(response.body).toEqual(
-		{
-			state: expect.any(String),
-			atQuestion: expect.any(Number),
-			players: expect.any(Array),
-			metadata: expect.anything()
-		}
-	);
+    {
+      state: expect.any(String),
+      atQuestion: expect.any(Number),
+      players: expect.any(Array),
+      metadata: expect.anything()
+    }
+  );
   expect(response.status).toStrictEqual(200);
 });

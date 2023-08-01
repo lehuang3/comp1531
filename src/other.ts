@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { Data, Token, State, AnswerResult } from './interfaces';
-import {clearTimeouts} from './session'
+import { clearTimeouts } from './session';
 import request from 'sync-request';
 import { port, url } from './config.json';
 import { ErrorObject, Session, Attempt } from './interfaces';
@@ -1600,7 +1600,7 @@ function requestPlayerAnswerSubmit(playerId: number, questionposition: number, a
 function requestAdminSessioQuestionResult(playerId: number, questionposition: number) {
   const res = request(
     'GET',
-    SERVER_URL + `/v1/player/${playerId}/question/${questionposition}/results`,
+    SERVER_URL + `/v1/player/${playerId}/question/${questionposition}/results`
   );
   return {
     body: JSON.parse(res.body.toString()),
@@ -1611,7 +1611,7 @@ function requestAdminSessioQuestionResult(playerId: number, questionposition: nu
 function requestAdminSessionFinalResult(playerId: number) {
   const res = request(
     'GET',
-    SERVER_URL + `/v1/player/${playerId}/results`,
+    SERVER_URL + `/v1/player/${playerId}/results`
   );
   return {
     body: JSON.parse(res.body.toString()),
@@ -1731,8 +1731,6 @@ function requestPlayerQuestionInfo(playerId: number, questionposition: number) {
   };
 }
 
-
-
 function getQuestionResults(data: Data, sess: Session, questionposition: number) {
   // any for time being
   let correctAnswerIds: number[] = [];
@@ -1748,20 +1746,20 @@ function getQuestionResults(data: Data, sess: Session, questionposition: number)
     }
   }
 
-  let answerObject: AnswerResult = {
+  const answerObject: AnswerResult = {
     answerId: null,
     playersCorrect: []
-  }
+  };
 
   // loop through all the possible answers in this question and look for the ones that are correct, then for that answer check who picked it and add to array players correct
   for (const answer of sess.metadata.questions[questionposition - 1].answers) {
     if (correctAnswerIds.includes(answer.answerId)) {
       answerObject.answerId = answer.answerId;
       answerObject.playersCorrect = [];
-      correctAnswerIds = correctAnswerIds.filter((value) => value !== answer.answerId)
+      correctAnswerIds = correctAnswerIds.filter((value) => value !== answer.answerId);
       for (const player of sess.metadata.questions[questionposition - 1].attempts) {
         if (player.answers.includes(answerObject.answerId) && !answerObject.playersCorrect.includes(player.playerName)) {
-          answerObject.playersCorrect.push(player.playerName)
+          answerObject.playersCorrect.push(player.playerName);
         }
       }
       correctPlayers.push(answerObject);
@@ -1780,7 +1778,7 @@ function getQuestionResults(data: Data, sess: Session, questionposition: number)
     questionCorrectBreakdown: correctPlayers,
     averageAnswerTime: getAverageAnswerTime(sess, questionposition),
     percentCorrect: getPercentCorrect(sess, questionposition)
-  }
+  };
 }
 
 function requestAdminQuizSessionFinal(token:string | ErrorObject, quizId:number, sessionId:number) {
@@ -1799,14 +1797,14 @@ function requestAdminQuizSessionFinal(token:string | ErrorObject, quizId:number,
   };
 }
 
-function isSessionInFinal(sessionArray:any,sessionId:number){
+function isSessionInFinal(sessionArray:any, sessionId:number) {
   const session = sessionArray.find((session: { quizSessionId: number; }) => session.quizSessionId === sessionId);
   if (session.state === State.FINAL_RESULTS) {
-    return true
+    return true;
   }
   return false;
 }
-  
+
 function saveImg(imgUrl: string) {
   const res = request(
     'GET',
@@ -1815,12 +1813,12 @@ function saveImg(imgUrl: string) {
   let i = 0;
   let fileName = `static/${i}.jpg`;
   while (fs.existsSync(fileName)) {
-    i ++;
+    i++;
     fileName = `static/${i}.jpg`;
   }
 
-  fs.writeFileSync(fileName, res.getBody(), { flag: 'w' })
-  return fileName
+  fs.writeFileSync(fileName, res.getBody(), { flag: 'w' });
+  return fileName;
 }
 
 export {
@@ -1833,6 +1831,6 @@ export {
   requestAdminAuthDetailsUpdate, requestAdminQuizSessionStart, quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId, requestAdminQuizSessionStateUpdate,
   quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate, requestQuizSessionPlayerJoin, isSessionInLobby, nameExistinSession, generateRandomName,
   requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, findPlayerSession, answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect,
-  changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo,requestAdminQuizSessionState, getQuestionResults,
+  changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo, requestAdminQuizSessionState, getQuestionResults,
   requestAdminSessioQuestionResult, requestAdminSessionFinalResult, isSessionAtLastQuestion, getSessionState, saveImg, requestAdminQuizSessionFinal, isSessionInFinal
 };
