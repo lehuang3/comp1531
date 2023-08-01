@@ -1658,7 +1658,7 @@ function answerIdsValidCheck(session: Session, questionposition: number, answerI
   return true;
 }
 
-function findScalingFactor(session: Session, timeTaken: number, correctPlayers: Attempt[]) {
+function findScalingFactor(timeTaken: number, correctPlayers: Attempt[]) {
   return 1 / (correctPlayers.indexOf(correctPlayers.find(attempt => attempt.timeTaken === timeTaken)) + 1);
 }
 

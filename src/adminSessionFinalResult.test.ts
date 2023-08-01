@@ -67,13 +67,12 @@ beforeEach(() => {
   player3 = requestQuizSessionPlayerJoin(session, 'Coolerguy').body.playerId;
 });
 
-describe.only('Passing cases', () => {
+describe('Passing cases', () => {
   test('User 1 enters correct information', async() => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     requestPlayerAnswerSubmit(player1, 1, [0])
     requestPlayerAnswerSubmit(player2, 1, [0, 1])
     requestPlayerAnswerSubmit(player3, 1, [0, 1, 2])
-    // requestAdminQuizSessionStateUpdate(token1.body.token, quiz1.body.quizId, session.body.sessionId, 'GO_TO_ANSWER')
     requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER')
     requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'NEXT_QUESTION')
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -92,7 +91,6 @@ describe('PlayerId not valid', () => {
   test('Negative playerId', () => {
     changeState(session, State.FINAL_RESULTS)
     requestPlayerAnswerSubmit(player1, 1, [0])
-    // requestAdminQuizSessionStateUpdate(token1.body.token, quiz1.body.quizId, session.body.sessionId, 'GO_TO_ANSWER')
     changeState(session, State.ANSWER_SHOW)
     expect(requestAdminSessionFinalResult(-1).body).toStrictEqual({ error: 'Player does not exist.' });
   });
