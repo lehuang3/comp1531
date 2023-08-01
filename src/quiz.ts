@@ -8,8 +8,8 @@ import { Data, Answer } from './interfaces';
 import HTTPError from 'http-errors';
 const isUrl = require('is-url');
 const isImageUrl = require('is-image-url');
-import fs, { existsSync } from 'fs'
-import request from 'sync-request'
+import fs, { existsSync } from 'fs';
+import request from 'sync-request';
 import config from './config.json';
 
 const PORT: number = parseInt(process.env.PORT || config.port);
@@ -758,7 +758,7 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
         correct: answer.correct,
         colour: getColour()
       }));
-      question.thumbnailUrl = `http://localhost:${PORT}/${fileName}`
+      question.thumbnailUrl = `http://localhost:${PORT}/${fileName}`;
       const updatedQuiz = data.quizzes.find(quiz => quiz.quizId === quizId);
       updatedQuiz.timeLastEdited = Math.floor(Date.now() / 1000);
       save(data);
@@ -846,7 +846,7 @@ function adminQuizThumbnailUpdate(token: string| ErrorObject, quizId: number, im
   const quiz = data.quizzes.find((quiz) => quiz.quizId === quizId);
   // console.log(quiz);
 
-  quiz.thumbnailUrl = `http://localhost:${PORT}/${fileName}`
+  quiz.thumbnailUrl = `http://localhost:${PORT}/${fileName}`;
   // console.log(quiz.thumbnailUrl)
   // console.log(quiz);
   save(data);

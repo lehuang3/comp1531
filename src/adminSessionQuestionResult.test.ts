@@ -1,10 +1,9 @@
-import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate,requestAdminSessioQuestionResult, requestAdminQuizSessionStart, requestQuizQuestionCreate, getAverageAnswerTime, changeState } from './other';
-import  { State } from './interfaces'
+import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate, requestAdminSessioQuestionResult, requestAdminQuizSessionStart, requestQuizQuestionCreate } from './other';
+
 let token1: any;
 let quiz1: any;
 let player1: any;
 let player2: any;
-let player3: any;
 let session: any;
 
 const quiz1Question1 = {
@@ -64,18 +63,18 @@ beforeEach(() => {
   session = requestAdminQuizSessionStart(token1, quiz1, 2).body.sessionId;
   player1 = requestQuizSessionPlayerJoin(session, 'Player').body.playerId;
   player2 = requestQuizSessionPlayerJoin(session, 'Coolguy').body.playerId;
-  //player3 = requestQuizSessionPlayerJoin(session.body.sessionId, 'Coolerguy');
+  // player3 = requestQuizSessionPlayerJoin(session.body.sessionId, 'Coolerguy');
 });
 
 describe('Passing cases', () => {
-  test('User 1 enters correct information', () => {
-    changeState(session, State.QUESTION_OPEN)
-    requestPlayerAnswerSubmit(player1, 1, [0])
-    requestPlayerAnswerSubmit(player2, 1, [0])
-    //requestPlayerAnswerSubmit(player3.body.playerId, 1, [0,1,2])
-    // requestAdminQuizSessionStateUpdate(token1.body.token, quiz1.body.quizId, session.body.sessionId, 'GO_TO_ANSWER')
-    changeState(session, State.ANSWER_SHOW)
-    expect(requestAdminSessioQuestionResult(player1, 1).body).toStrictEqual({ 
+  test('User 1 enters correct information', async() => {
+    // const data = read()
+    // console.log(data.sessions[0].state)
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    requestPlayerAnswerSubmit(player1, 1, [0]);
+    requestPlayerAnswerSubmit(player2, 1, [0]);
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
+    expect(requestAdminSessioQuestionResult(player1, 1).body).toStrictEqual({
       questionId: expect.any(Number),
       questionCorrectBreakdown: [
         {
@@ -93,47 +92,42 @@ describe('Passing cases', () => {
 });
 
 describe('PlayerId not valid', () => {
-  test('Negative playerId', () => {
-    changeState(session, State.QUESTION_OPEN)
-    requestPlayerAnswerSubmit(player1, 1, [0])
-    // requestAdminQuizSessionStateUpdate(token1.body.token, quiz1.body.quizId, session.body.sessionId, 'GO_TO_ANSWER')
-    changeState(session, State.ANSWER_SHOW)
+  test('Negative playerId', async() => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    requestPlayerAnswerSubmit(player1, 1, [0]);
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
     expect(requestAdminSessioQuestionResult(-1, 1).body).toStrictEqual({ error: 'Player does not exist.' });
   });
 });
 
 describe('Question position not valid', () => {
-  test('Negative question position', () => {
-    changeState(session, State.QUESTION_OPEN)
-    requestPlayerAnswerSubmit(player1, 1, [0])
-    // requestAdminQuizSessionStateUpdate(token1.body.token, quiz1.body.quizId, session.body.sessionId, 'GO_TO_ANSWER')
-    changeState(session, State.ANSWER_SHOW)
+  test('Negative question position', async() => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    requestPlayerAnswerSubmit(player1, 1, [0]);
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
     expect(requestAdminSessioQuestionResult(player1, -1).body).toStrictEqual({ error: 'Question does not exist.' });
   });
-  test('Question position greater than num of qs', () => {
-    changeState(session, State.QUESTION_OPEN)
-    requestPlayerAnswerSubmit(player1, 10, [0])
-    //requestAdminQuizSessionStateUpdate(token1.body.token, quiz1.body.quizId, session.body.sessionId, 'GO_TO_ANSWER')
-    changeState(session, State.ANSWER_SHOW)
+  test('Question position greater than num of qs', async() => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    requestPlayerAnswerSubmit(player1, 10, [0]);
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
     expect(requestAdminSessioQuestionResult(player1, -1).body).toStrictEqual({ error: 'Question does not exist.' });
   });
 });
 
 describe('Session not in ANSWER_SHOW state', () => {
-  test('Not ANSWER_SHOW state', () => {
-    changeState(session, State.QUESTION_OPEN)
-    requestPlayerAnswerSubmit(player1, 1, [0])
-    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'NEXT_QUESTION')
+  test('Not ANSWER_SHOW state', async() => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    requestPlayerAnswerSubmit(player1, 1, [0]);
     expect(requestAdminSessioQuestionResult(player1, 1).body).toStrictEqual({ error: 'Answers cannot be shown right now.' });
   });
 });
 
 describe('Session is not up to question position', () => {
-  test('In question 1 trying to access question 2', () => {
-    changeState(session, State.QUESTION_OPEN)
-    requestPlayerAnswerSubmit(player1, 1, [0])
-    // requestAdminQuizSessionStateUpdate(token1.body.token, quiz1.body.quizId, session.body.sessionId, 'GO_TO_ANSWER')
-    changeState(session, State.ANSWER_SHOW)
+  test('In question 1 trying to access question 2', async() => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    requestPlayerAnswerSubmit(player1, 1, [0]);
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
     expect(requestAdminSessioQuestionResult(player1, 2).body).toStrictEqual({ error: 'Session is not up to question yet.' });
   });
 });

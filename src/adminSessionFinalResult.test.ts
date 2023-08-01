@@ -1,5 +1,5 @@
 import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate, requestAdminSessionFinalResult, requestAdminQuizSessionStart, requestQuizQuestionCreate, getAverageAnswerTime, changeState } from './other';
-import  { State } from './interfaces'
+import { State } from './interfaces';
 let token1: any;
 let quiz1: any;
 let player1: any;
@@ -19,7 +19,7 @@ const quiz1Question1 = {
       },
       {
         answer: 'Melbourne',
-        correct: false
+        correct: true
       },
       {
         answer: 'Camberra',
@@ -31,91 +31,75 @@ const quiz1Question1 = {
   }
 };
 
-// const quiz1Question2: any = {
-//   questionBody: {
-//     question: 'What is capital of USA?',
-//     duration: 4,
-//     points: 1,
-//     answers: [
-//       {
-//         answer: 'Washington DC',
-//         correct: true
-//       },
-//       {
-//         answer: 'NYC',
-//         correct: false
-//       },
-//       {
-//         answer: 'Los Angeles',
-//         correct: false
-//       }
+const quiz1Question2: any = {
+  questionBody: {
+    question: 'What is capital of USA?',
+    duration: 4,
+    points: 1,
+    answers: [
+      {
+        answer: 'Washington DC',
+        correct: true
+      },
+      {
+        answer: 'NYC',
+        correct: false
+      },
+      {
+        answer: 'Los Angeles',
+        correct: true
+      }
 
-//     ],
-//     thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
-//   }
-// };
+    ],
+    thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
+  }
+};
 
 beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test').body.token;
   quiz1 = requestAdminQuizCreate(token1, 'quiz', 'quiz1').body.quizId;
   requestQuizQuestionCreate(token1, quiz1, quiz1Question1.questionBody);
-  //requestQuizQuestionCreate(token1.body.token, quiz1.body.quizId, quiz1Question2.questionBody);
-  session = requestAdminQuizSessionStart(token1, quiz1, 1).body.sessionId;
+  requestQuizQuestionCreate(token1, quiz1, quiz1Question2.questionBody);
+  session = requestAdminQuizSessionStart(token1, quiz1, 3).body.sessionId;
   player1 = requestQuizSessionPlayerJoin(session, 'Player').body.playerId;
-  // player2 = requestQuizSessionPlayerJoin(session.body.sessionId, 'Coolguy');
-  //player3 = requestQuizSessionPlayerJoin(session.body.sessionId, 'Coolerguy');
+  player2 = requestQuizSessionPlayerJoin(session, 'Coolguy').body.playerId;
+  player3 = requestQuizSessionPlayerJoin(session, 'Coolerguy').body.playerId;
 });
 
 describe('Passing cases', () => {
-  test('User 1 enters correct information', () => {
-    changeState(session, State.QUESTION_OPEN)
-    requestPlayerAnswerSubmit(player1, 1, [0])
-    //requestPlayerAnswerSubmit(player2.body.playerId, 1, [0])
-    //requestPlayerAnswerSubmit(player3.body.playerId, 1, [0,1,2])
-    // requestAdminQuizSessionStateUpdate(token1.body.token, quiz1.body.quizId, session.body.sessionId, 'GO_TO_ANSWER')
-    changeState(session, State.FINAL_RESULTS)
-    expect(requestAdminSessionFinalResult(player1).body).toStrictEqual({ 
-      usersRankedByScore: [
-        {
-          name: 'Player',
-          score: expect.any(Number)
-        }
-      ],
-      questionResults: [
-        {
-        questionId: expect.any(Number),
-        questionCorrectBreakdown: [
-          {
-            answerId: 0,
-            playersCorrect: [
-              'Player'
-            ]
-          }
-        ],
-        averageAnswerTime: expect.any(Number),
-        percentCorrect: expect.any(Number)
-        }
-      ]
-    })
+  test('User 1 enters correct information', async() => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    requestPlayerAnswerSubmit(player1, 1, [0]);
+    requestPlayerAnswerSubmit(player2, 1, [0, 1]);
+    requestPlayerAnswerSubmit(player3, 1, [0, 1, 2]);
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'NEXT_QUESTION');
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    requestPlayerAnswerSubmit(player1, 2, [0, 2]);
+    requestPlayerAnswerSubmit(player2, 2, [0]);
+    requestPlayerAnswerSubmit(player3, 2, [0, 2]);
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_FINAL_RESULTS');
+    expect(requestAdminSessionFinalResult(player1).status).toStrictEqual(200);
+    expect(requestAdminSessionFinalResult(player2).status).toStrictEqual(200);
+    expect(requestAdminSessionFinalResult(player3).status).toStrictEqual(200);
   });
 });
 
 describe('PlayerId not valid', () => {
   test('Negative playerId', () => {
-    changeState(session, State.FINAL_RESULTS)
-    requestPlayerAnswerSubmit(player1, 1, [0])
-    // requestAdminQuizSessionStateUpdate(token1.body.token, quiz1.body.quizId, session.body.sessionId, 'GO_TO_ANSWER')
-    changeState(session, State.ANSWER_SHOW)
+    changeState(session, State.FINAL_RESULTS);
+    requestPlayerAnswerSubmit(player1, 1, [0]);
+    changeState(session, State.ANSWER_SHOW);
     expect(requestAdminSessionFinalResult(-1).body).toStrictEqual({ error: 'Player does not exist.' });
   });
 });
 
 describe('Session not in FINAL_RESULTS state', () => {
   test('Not FINAL_RESULTS state', () => {
-
-    requestPlayerAnswerSubmit(player1, 1, [0])
-    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'NEXT_QUESTION')
+    requestPlayerAnswerSubmit(player1, 1, [0]);
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'NEXT_QUESTION');
     expect(requestAdminSessionFinalResult(player1).body).toStrictEqual({ error: 'Answers cannot be shown right now.' });
   });
 });

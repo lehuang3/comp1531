@@ -3,7 +3,7 @@ import {
   save, read, tokenOwner, quizActiveCheck, quizValidOwner, activeSessions, quizHasQuestion, generateSessionId,
   quizSessionIdValidCheck, isActionApplicable, isSessionInLobby, nameExistinSession, generateRandomName, findPlayerSession,
   answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect, getQuestionResults, isSessionAtLastQuestion,
-  getSessionState,isSessionInFinal
+  getSessionState, isSessionInFinal
 } from './other';
 import HTTPError from 'http-errors';
 interface SessionIdReturn {
@@ -106,7 +106,6 @@ function questionCountdownHandler(sessionId: number) {
     }
   }
 }
-
 
 function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number, sessionId: number, action: string) {
   const data: Data = read();
@@ -273,25 +272,25 @@ function adminQuizSessionState(token: ErrorObject | string, quizId: number, sess
   }
 
   const session = data.sessions.find((session:any) => session.quizSessionId === sessionId);
-  
-  let sessionStatus = {
+
+  const sessionStatus = {
     state: session.state,
-		atQuestion: session.atQuestion,
-		players: session.players.map(player => player.playerName),
-		metadata: {
-				quizId: session.metadata.quizId,
-				name: session.metadata.name,
-				timeCreated: session.metadata.timeCreated,
-				timeLastEdited: session.metadata.timeLastEdited,
-				description: session.metadata.description,
-				numQuestions: session.metadata.numQuestions,
-				questions: session.metadata.questions,
-				duration: session.metadata.duration,
-				thumbnailUrl: session.metadata.thumbnailUrl
-			}
-  }
+    atQuestion: session.atQuestion,
+    players: session.players.map(player => player.playerName),
+    metadata: {
+      quizId: session.metadata.quizId,
+      name: session.metadata.name,
+      timeCreated: session.metadata.timeCreated,
+      timeLastEdited: session.metadata.timeLastEdited,
+      description: session.metadata.description,
+      numQuestions: session.metadata.numQuestions,
+      questions: session.metadata.questions,
+      duration: session.metadata.duration,
+      thumbnailUrl: session.metadata.thumbnailUrl
+    }
+  };
   // console.log(sessionStatus);
-  return sessionStatus
+  return sessionStatus;
 }
 
 function QuizSessionPlayerStatus(playerId: number) {
@@ -374,7 +373,7 @@ function playerAnswerSubmit(playerId: number, questionposition: number, answerId
           }
         }
       }
-      console.log(session.metadata.questions[questionposition - 1].attempts)
+      // console.log(session.metadata.questions[questionposition - 1].attempts)
       // find averageAnwerTime
       session.metadata.questions[questionposition - 1].averageAnswerTime = Math.round(getAverageAnswerTime(session, questionposition));
       // find percentCorrect
@@ -428,7 +427,7 @@ function adminSessionQuestionResult(playerId: number, questionposition: number) 
   if (sess === undefined) {
     throw HTTPError(400, 'Player does not exist.');
   } else if (questionposition > sess.metadata.numQuestions || questionposition < 1) {
-    throw HTTPError(400, 'Question does not exist.')
+    throw HTTPError(400, 'Question does not exist.');
   } else if (sess.state !== 'ANSWER_SHOW') {
     throw HTTPError(400, 'Answers cannot be shown right now.');
   } else if (sess.atQuestion < questionposition) {
@@ -452,32 +451,32 @@ function adminSessionFinalResult(playerId: number) {
   } else if (sess.state !== 'FINAL_RESULTS') {
     throw HTTPError(400, 'Answers cannot be shown right now.');
   }
-  const ranking: object[]= [];
+  const ranking: object[] = [];
   const questionResult = [];
   for (let i = 1; i <= sess.metadata.numQuestions; i++) {
-    questionResult.push(getQuestionResults(data, sess, i))
+    questionResult.push(getQuestionResults(data, sess, i));
   }
 
   // find the rankings
   // loop through all the questions
   for (let i = 1; i <= sess.metadata.numQuestions; i++) {
   // first need to find who actually gets points for the question, need to check for a question which answerids must be selected
-    
+
     // find which answerids must be selected and put it into an array
-    const answersNeeded = sess.metadata.questions[i - 1].answers.filter((answer) => answer.correct === true)
+    const answersNeeded = sess.metadata.questions[i - 1].answers.filter((answer) => answer.correct === true);
     const answersNeededIds = [];
     for (const answer of answersNeeded) {
-      answersNeededIds.push(answer.answerId)
+      answersNeededIds.push(answer.answerId);
     }
 
     // now find all players who selected everything in the answersNeededIds array
-    let correctPlayers = []
+    const correctPlayers = [];
     for (const attempt of sess.metadata.questions[i - 1].attempts) {
       // if the answers array of player === answersNeededIds array then push to correct players
       // JSON.stringify the sorted values to check for array equality
       if (JSON.stringify(attempt.answers.sort((a, b) => a - b)) === JSON.stringify(answersNeededIds.sort((a, b) => a - b))) {
-        //correctPlayers.push(attempt.playerName)
-        correctPlayers.push(attempt)
+        // correctPlayers.push(attempt.playerName)
+        correctPlayers.push(attempt);
         // console.log(correctPlayers)
       }
     }
@@ -485,13 +484,16 @@ function adminSessionFinalResult(playerId: number) {
     // console.log(correctPlayers)
     // if there are no correct players for this question move onto the next question
     if (correctPlayers.length === 0) {
-      continue
+      continue;
     }
     // get the attempts timetaken and sort the players based on fastest to slowest
-    correctPlayers.sort((a, b) => a.timeTaken - b.timeTaken)
+    correctPlayers.sort((a, b) => a.timeTaken - b.timeTaken);
+    console.log(i);
+    console.log(correctPlayers);
     // get the scaling factor and the score and add to the players points
-    for (const player of correctPlayers) {
-      sess.players.find((player) => player.playerId === player.playerId).playerScore += player.points * findScalingFactor(sess, player.timeTaken, i);
+    // console.log(correctPlayers)
+    for (const correctPlayer of correctPlayers) {
+      sess.players.find((player) => player.playerId === correctPlayer.playerId).playerScore += correctPlayer.points * findScalingFactor(correctPlayer.timeTaken, correctPlayers);
     }
     // console.log(sess.players)
   }
@@ -501,18 +503,16 @@ function adminSessionFinalResult(playerId: number) {
     const playerFinalResult = {
       name: player.playerName,
       score: player.playerScore
-    }
-    ranking.push(playerFinalResult)
+    };
+    ranking.push(playerFinalResult);
   }
 
-
-  let answer = {
+  const answer = {
     usersRankedByScore: ranking,
     questionResults: questionResult
-  }
-  // console.log(answer.questionResults[0].questionCorrectBreakdown)
-  // console.log(answer)
-  return answer
+  };
+  console.log(answer);
+  return answer;
 }
 
 function adminQuizSessionFinal(token:string | ErrorObject, quizId:number, sessionId:number) {
@@ -537,36 +537,36 @@ function adminQuizSessionFinal(token:string | ErrorObject, quizId:number, sessio
     throw HTTPError(400, 'Session is not valid');
   }
 
-  if(isSessionInFinal(data.sessions,sessionId) === false){
+  if (isSessionInFinal(data.sessions, sessionId) === false) {
     throw HTTPError(400, 'Session has not ended');
   }
 
-  const ranking: object[]= [];
+  const ranking: object[] = [];
   const questionResult = [];
   for (let i = 1; i <= sess.metadata.numQuestions; i++) {
-    questionResult.push(getQuestionResults(data, sess, i))
+    questionResult.push(getQuestionResults(data, sess, i));
   }
 
   // find the rankings
   // loop through all the questions
   for (let i = 1; i <= sess.metadata.numQuestions; i++) {
   // first need to find who actually gets points for the question, need to check for a question which answerids must be selected
-    
+
     // find which answerids must be selected and put it into an array
-    const answersNeeded = sess.metadata.questions[i - 1].answers.filter((answer) => answer.correct === true)
+    const answersNeeded = sess.metadata.questions[i - 1].answers.filter((answer) => answer.correct === true);
     const answersNeededIds = [];
     for (const answer of answersNeeded) {
-      answersNeededIds.push(answer.answerId)
+      answersNeededIds.push(answer.answerId);
     }
 
     // now find all players who selected everything in the answersNeededIds array
-    let correctPlayers = []
+    const correctPlayers = [];
     for (const attempt of sess.metadata.questions[i - 1].attempts) {
       // if the answers array of player === answersNeededIds array then push to correct players
       // JSON.stringify the sorted values to check for array equality
       if (JSON.stringify(attempt.answers.sort((a, b) => a - b)) === JSON.stringify(answersNeededIds.sort((a, b) => a - b))) {
-        //correctPlayers.push(attempt.playerName)
-        correctPlayers.push(attempt)
+        // correctPlayers.push(attempt.playerName)
+        correctPlayers.push(attempt);
         // console.log(correctPlayers)
       }
     }
@@ -574,13 +574,13 @@ function adminQuizSessionFinal(token:string | ErrorObject, quizId:number, sessio
     // console.log(correctPlayers)
     // if there are no correct players for this question move onto the next question
     if (correctPlayers.length === 0) {
-      continue
+      continue;
     }
     // get the attempts timetaken and sort the players based on fastest to slowest
-    correctPlayers.sort((a, b) => a.timeTaken - b.timeTaken)
+    correctPlayers.sort((a, b) => a.timeTaken - b.timeTaken);
     // get the scaling factor and the score and add to the players points
     for (const player of correctPlayers) {
-      sess.players.find((player) => player.playerId === player.playerId).playerScore += player.points * findScalingFactor(sess, player.timeTaken, i);
+      sess.players.find((player) => player.playerId === player.playerId).playerScore += player.points * findScalingFactor(player.timeTaken, correctPlayers);
     }
     // console.log(sess.players)
   }
@@ -590,19 +590,17 @@ function adminQuizSessionFinal(token:string | ErrorObject, quizId:number, sessio
     const playerFinalResult = {
       name: player.playerName,
       score: player.playerScore
-    }
-    ranking.push(playerFinalResult)
+    };
+    ranking.push(playerFinalResult);
   }
 
-
-  let answer = {
+  const answer = {
     usersRankedByScore: ranking,
     questionResults: questionResult
-  }
+  };
   // console.log(answer.questionResults[0].questionCorrectBreakdown)
   // console.log(answer)
-  return answer
-
+  return answer;
 }
 
 function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, sessionId:number) {
@@ -627,13 +625,13 @@ function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, ses
     throw HTTPError(400, 'Session is not valid');
   }
 
-  if(isSessionInFinal(data.sessions,sessionId) === false){
+  if (isSessionInFinal(data.sessions, sessionId) === false) {
     throw HTTPError(400, 'Session has not ended');
   }
 
-  return {}
+  return {};
 }
 export {
   adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
-  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState, adminSessionQuestionResult, adminSessionFinalResult,adminQuizSessionFinal,adminQuizSessionFinalCsv
+  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState, adminSessionQuestionResult, adminSessionFinalResult, adminQuizSessionFinal, adminQuizSessionFinalCsv
 };
