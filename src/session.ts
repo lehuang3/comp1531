@@ -625,13 +625,13 @@ function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, ses
     throw HTTPError(400, 'Session is not valid');
   }
 
-  if(isSessionInFinal(data.sessions,sessionId) === false){
+  if (isSessionInFinal(data.sessions, sessionId) === false) {
     throw HTTPError(400, 'Session has not ended');
   }
 
-  return {}
+  return {};
 }
 export {
   adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
-  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState, adminSessionQuestionResult, adminSessionFinalResult, adminQuizSessionFinal,adminQuizSessionFinalCsv
+  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState, adminSessionQuestionResult, adminSessionFinalResult, adminQuizSessionFinal, adminQuizSessionFinalCsv
 };
