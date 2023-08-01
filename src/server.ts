@@ -13,9 +13,9 @@ import {
   adminQuizTransfer, adminQuizRestore, adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDuplicate, adminQuizQuestionDelete, adminQuizQuestionUpdate,
   adminQuizTrashEmpty, adminQuizThumbnailUpdate
 } from './quiz';
-import {
+import { 
   adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
-  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState, adminSessionQuestionResult, adminSessionFinalResult, adminQuizSessionStateFinal
+  playerAnswerSubmit, playerQuestionInfo,adminQuizSessionState, adminSessionQuestionResult, adminSessionFinalResult,adminQuizSessionFinal,adminQuizSessionFinalCsv
 } from './session';
 import { clear } from './other';
 
@@ -130,7 +130,15 @@ app.get('/v1/admin/quiz/:quizId/session/:sessionId/results', (req: Request, res:
   const quizId = parseInt(req.params.quizId);
   const sessionId = parseInt(req.params.sessionId);
   const token = req.header('token');
-  const response = adminQuizSessionStateFinal(token, quizId, sessionId);
+  const response = adminQuizSessionFinal(token, quizId, sessionId);
+  res.json(response);
+});
+
+app.get('/v1/admin/quiz/:quizId/session/:sessionId/results/csv', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const sessionId = parseInt(req.params.sessionId);
+  const token = req.header('token');
+  const response = adminQuizSessionFinalCsv(token, quizId, sessionId);
   res.json(response);
 });
 
