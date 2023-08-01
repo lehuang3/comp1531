@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import { Data, Token, State, AnswerResult } from './interfaces';
 import {clearTimeouts} from './session'
 import request from 'sync-request';
@@ -156,6 +157,23 @@ function clear () {
   //   })
   // })
   save(store);
+
+ 
+  const currentDir = __dirname;
+  const folderPath = path.join(currentDir, '..', 'static');
+
+  fs.readdirSync(folderPath).forEach((file) => {
+    const filePath = path.join(folderPath, file);
+    const fileExtension = path.extname(file).toLowerCase();
+
+    if (fileExtension === '.jpg' || fileExtension === '.png') {
+      fs.unlinkSync(filePath);
+      console.log('Deleted:', filePath);
+    }
+  });
+   
+  
+
   return {
 
   };
