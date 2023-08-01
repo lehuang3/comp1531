@@ -1848,6 +1848,43 @@ function saveImg(imgUrl: string) {
   return fileName;
 }
 
+function requestAdminQuizSessionsView(token: string | ErrorObject, quizId: number) {
+  const res = request(
+    'GET',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/sessions`,
+    {
+      headers: {
+        token: token as string
+      }
+    }
+  );
+  console.log(JSON.parse(res.body.toString()))
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
+ * Given a quizId, returns a list of sessions
+ * of the corresponding quiz
+ *
+ * @param {number} - quizId
+ *
+ * @returns {array} - list of sessions of the quiz
+*/
+
+function getSessions(quizId: number) {
+  const data: Data = read();
+  const quizSessions = [];
+  for (const session of data.sessions) {
+    if (session.metadata.quizId === quizId) {
+      quizSessions.push(session);
+    }
+  }
+  return quizSessions;
+}
+
 export {
   clear, save, read, tokenOwner, isValidUser, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, isSameQuizName,
   quizValidOwner, requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminQuizDescriptionUpdate,
@@ -1859,5 +1896,6 @@ export {
   quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate, requestQuizSessionPlayerJoin, isSessionInLobby, nameExistinSession, generateRandomName,
   requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, findPlayerSession, answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect,
   changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo, requestAdminQuizSessionState, getQuestionResults,
-  requestAdminSessioQuestionResult, requestAdminSessionFinalResult, isSessionAtLastQuestion, getSessionState, saveImg, requestAdminQuizSessionFinal, isSessionInFinal, requestAdminQuizSessionFinalCsv
+  requestAdminSessioQuestionResult, requestAdminSessionFinalResult, isSessionAtLastQuestion, getSessionState, saveImg, requestAdminQuizSessionFinal,
+  isSessionInFinal, requestAdminQuizSessionFinalCsv, requestAdminQuizSessionsView, getSessions
 };
