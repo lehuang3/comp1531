@@ -374,7 +374,7 @@ function playerAnswerSubmit(playerId: number, questionposition: number, answerId
           }
         }
       }
-      console.log(session.metadata.questions[questionposition - 1].attempts)
+      // console.log(session.metadata.questions[questionposition - 1].attempts)
       // find averageAnwerTime
       session.metadata.questions[questionposition - 1].averageAnswerTime = Math.round(getAverageAnswerTime(session, questionposition));
       // find percentCorrect
@@ -601,6 +601,7 @@ function adminQuizSessionStateFinal(token:string | ErrorObject, quizId:number, s
   }
   // console.log(answer.questionResults[0].questionCorrectBreakdown)
   // console.log(answer)
+  console.log(answer)
   return answer
 
 }
