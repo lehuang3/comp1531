@@ -1,9 +1,9 @@
 import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestAdminSessionChatSend, requestQuizSessionPlayerJoin, requestAdminQuizSessionStart, requestQuizQuestionCreate } from './other';
 
-let token1: any;
-let quiz1: any;
-let player1: any;
-let session: any;
+let token1: string;
+let quiz1: number;
+let player1: number;
+let session: number;
 
 const quizQuestion = {
   questionBody: {

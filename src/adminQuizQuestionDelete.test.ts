@@ -1,8 +1,8 @@
 import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizQuestionDelete } from './other';
 
-let token1: any;
-let quiz1: any;
-let token1Quiz1Question1Id: any;
+let token1: string;
+let quiz1: number;
+let token1Quiz1Question1Id: number;
 
 const quiz1Question1 = {
   questionBody: {

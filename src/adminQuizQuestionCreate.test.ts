@@ -1,12 +1,12 @@
 import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate } from './other';
 let token1: string;
-let quiz: any;
+let quiz: number;
 let quizQuestion: any;
 
 beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
-  quiz = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion').body;
+  quiz = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion').body.quizId;
   quizQuestion = {
     questionBody: {
       question: 'What is capital of sydney?',
@@ -34,7 +34,7 @@ beforeEach(() => {
 
 test('Invalide quiz ID', () => {
   const quiz2 = {
-    quizId: quiz.quizId + 1,
+    quizId: quiz + 1,
   };
   const response = requestQuizQuestionCreate(token1, quiz2.quizId, quizQuestion.questionBody);
 
@@ -45,7 +45,7 @@ test('Invalide quiz ID', () => {
 test('Invalide User ID', () => {
   const token2 = requestAdminAuthRegister('hayden.hafezimasoomi@gmail.com', '1234abcd', 'hayden', 'Hafezi').body.token;
 
-  const response = requestQuizQuestionCreate(token2, quiz.quizId, quizQuestion.questionBody);
+  const response = requestQuizQuestionCreate(token2, quiz, quizQuestion.questionBody);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -53,7 +53,7 @@ test('Invalide User ID', () => {
 
 test('Invalid token struct', () => {
   const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
-  const response = requestQuizQuestionCreate(token4, quiz.quizId, quizQuestion.questionBody);
+  const response = requestQuizQuestionCreate(token4, quiz, quizQuestion.questionBody);
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(401);
 });
@@ -61,7 +61,7 @@ test('Invalid token struct', () => {
 test('Check for invalid session', () => {
   const token2 = (parseInt(token1) + 1).toString();
 
-  const response = requestQuizQuestionCreate(token2, quiz.quizId, quizQuestion.questionBody);
+  const response = requestQuizQuestionCreate(token2, quiz, quizQuestion.questionBody);
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(403);
 });
@@ -91,7 +91,7 @@ test('Invalid question length > 50', () => {
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
+  const response = requestQuizQuestionCreate(token1, quiz, quizQuestion2.questionBody);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -122,7 +122,7 @@ test('Invalid question length < 50', () => {
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
+  const response = requestQuizQuestionCreate(token1, quiz, quizQuestion2.questionBody);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -169,7 +169,7 @@ test('Answer > 6', () => {
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
+  const response = requestQuizQuestionCreate(token1, quiz, quizQuestion2.questionBody);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -191,7 +191,7 @@ test('Answer < 2', () => {
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
+  const response = requestQuizQuestionCreate(token1, quiz, quizQuestion2.questionBody);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -221,7 +221,7 @@ test('duration < 0', () => {
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
+  const response = requestQuizQuestionCreate(token1, quiz, quizQuestion2.questionBody);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -252,8 +252,8 @@ test('duration > 180', () => {
     }
   };
 
-  requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion.questionBody);
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
+  requestQuizQuestionCreate(token1, quiz, quizQuestion.questionBody);
+  const response = requestQuizQuestionCreate(token1, quiz, quizQuestion2.questionBody);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -284,7 +284,7 @@ test('Point < 1', () => {
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
+  const response = requestQuizQuestionCreate(token1, quiz, quizQuestion2.questionBody);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -315,7 +315,7 @@ test('Point > 10', () => {
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
+  const response = requestQuizQuestionCreate(token1, quiz, quizQuestion2.questionBody);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -346,7 +346,7 @@ test('Point > 10', () => {
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
+  const response = requestQuizQuestionCreate(token1, quiz, quizQuestion2.questionBody);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -377,7 +377,7 @@ test('answer length < 1', () => {
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
+  const response = requestQuizQuestionCreate(token1, quiz, quizQuestion2.questionBody);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -408,7 +408,7 @@ test('answer length > 30', () => {
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
+  const response = requestQuizQuestionCreate(token1, quiz, quizQuestion2.questionBody);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -439,7 +439,7 @@ test('Duplicate asnwer', () => {
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
+  const response = requestQuizQuestionCreate(token1, quiz, quizQuestion2.questionBody);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -470,14 +470,14 @@ test('No correct asnwer', () => {
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
+  const response = requestQuizQuestionCreate(token1, quiz, quizQuestion2.questionBody);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
 });
 
 test('Valid entry', () => {
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion.questionBody);
+  const response = requestQuizQuestionCreate(token1, quiz, quizQuestion.questionBody);
 
   expect(response.body).toStrictEqual({ questionId: expect.any(Number) });
   expect(response.status).toStrictEqual(200);
@@ -508,7 +508,7 @@ test('Bad Images', () => {
     }
   };
 
-  const response = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion5.questionBody);
+  const response = requestQuizQuestionCreate(token1, quiz, quizQuestion5.questionBody);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);

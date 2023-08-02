@@ -1,10 +1,10 @@
 import { requestClear, requestAdminAuthRegister, requestAdminAuthDetailsUpdate } from './other';
 
-let token1: any;
+let token1: string;
 describe('tests for adminAuthDetailsUpdate', () => {
   beforeEach(() => {
     requestClear();
-    token1 = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel');
+    token1 = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel').body.token;
   });
   test('Simple test pass', () => {
     const res = requestAdminAuthRegister('lain@gmail.com', 'Abcd123%', 'Pranav', 'Patel').body.token;

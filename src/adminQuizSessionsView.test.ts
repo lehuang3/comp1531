@@ -6,7 +6,7 @@ import {
 let token1: string;
 let quiz1: number;
 let autoStartNum: number;
-let session1: any;
+let session1: number;
 
 beforeEach(() => {
   requestClear();

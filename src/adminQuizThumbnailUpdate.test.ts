@@ -1,7 +1,7 @@
 import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestAdminQuizThumbnailUpdate, requestAdminAuthLogout } from './other';
 
-let token1: any;
-let quiz1: any;
+let token1: string;
+let quiz1: number;
 const imageUrl = {
   imgUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
 };
