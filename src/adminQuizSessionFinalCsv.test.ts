@@ -1,5 +1,5 @@
-import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate, requestAdminSessionFinalResult,requestAdminQuizSessionFinalCsv, requestAdminQuizSessionStart, requestQuizQuestionCreate, getAverageAnswerTime, changeState,requestAdminQuizSessionFinal } from './other';
-import  { State } from './interfaces'
+import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate, requestAdminSessionFinalResult, requestAdminQuizSessionFinalCsv, requestAdminQuizSessionStart, requestQuizQuestionCreate, getAverageAnswerTime, changeState, requestAdminQuizSessionFinal } from './other';
+import { State } from './interfaces';
 let token1: any;
 let quiz1: any;
 let player1: any;
@@ -96,12 +96,12 @@ beforeEach(() => {
 });
 
 test('Invalid token struct', () => {
-    const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
-    const response = requestAdminQuizSessionFinalCsv(token4, quiz1,session);
-    expect(response.body).toStrictEqual({ error: expect.any(String) });
-    expect(response.status).toStrictEqual(401);
+  const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
+  const response = requestAdminQuizSessionFinalCsv(token4, quiz1, session);
+  expect(response.body).toStrictEqual({ error: expect.any(String) });
+  expect(response.status).toStrictEqual(401);
 });
-  
+
 test('Check for invalid session', () => {
   const token2 = (parseInt(token1) + 1).toString();
   const response = requestAdminQuizSessionFinalCsv(token2, quiz1, session);
@@ -110,14 +110,14 @@ test('Check for invalid session', () => {
 });
 
 test('Not valid quiz', () => {
-  const response = requestAdminQuizSessionFinalCsv(token1, quiz1+1, session);
+  const response = requestAdminQuizSessionFinalCsv(token1, quiz1 + 1, session);
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
 });
 
 test('not a quiz that user owns', () => {
-	let token2 = requestAdminAuthRegister('Sinahafezimasoomi@gmail.com', 'Sydneyun2004!', 'Sina', 'Hafezi').body.token;
-  let quiz2 = requestAdminQuizCreate(token2, 'quizhello', 'quiz1number').body.quizId;
+  const token2 = requestAdminAuthRegister('Sinahafezimasoomi@gmail.com', 'Sydneyun2004!', 'Sina', 'Hafezi').body.token;
+  const quiz2 = requestAdminQuizCreate(token2, 'quizhello', 'quiz1number').body.quizId;
   const response = requestAdminQuizSessionFinalCsv(token1, quiz2, session);
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -130,11 +130,11 @@ test('session not in any quiz', () => {
 });
 
 test('Not FINAL_RESULTS state', async() => {
-	await new Promise((resolve) => setTimeout(resolve, 1200));
-	requestPlayerAnswerSubmit(player1, 1, [0])
-	requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'QUESTION_CLOSE')
-  requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_FINAL_RESULTS')
-	const response = requestAdminQuizSessionFinalCsv(token1, quiz1, session);
+  await new Promise((resolve) => setTimeout(resolve, 1200));
+  requestPlayerAnswerSubmit(player1, 1, [0]);
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'QUESTION_CLOSE');
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_FINAL_RESULTS');
+  const response = requestAdminQuizSessionFinalCsv(token1, quiz1, session);
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
 });

@@ -494,4 +494,3 @@ describe('Url is not an image', () => {
     expect(requestAdminQuizQuestionUpdate(token1, quiz1, token1Quiz1Question1Id, notImage.questionBody).body).toStrictEqual({ error: 'Url is not an image.' });
   });
 });
-

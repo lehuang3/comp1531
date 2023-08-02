@@ -1,10 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 import { Data, Token, State, AnswerResult } from './interfaces';
-import {clearTimeouts} from './session'
+import { clearTimeouts } from './session';
 import request from 'sync-request';
 import { port, url } from './config.json';
-import { ErrorObject, Session } from './interfaces';
+import { ErrorObject, Session, Attempt } from './interfaces';
 // import { Session } from 'inspector';
 // import arrayShuffle from 'array-shuffle';
 const shuffle = require('shuffle-array');
@@ -147,18 +147,9 @@ function clear () {
     sessions: [],
 
   };
-  // Deletes all the pictures but broke all the tests so left as comments for the time being
 
-  // const files = fs.readdirSync('./static');
-  // files.forEach((file) => {
-  //   const fileName = `/static/${file}`;
-  //   fs.unlink(fileName, (err) => {
-  //     if (err) throw err
-  //   })
-  // })
   save(store);
 
- 
   const currentDir = __dirname;
   const folderPath = path.join(currentDir, '..', 'static');
 
@@ -167,8 +158,12 @@ function clear () {
     const fileExtension = path.extname(file).toLowerCase();
 
     if (fileExtension === '.jpg' || fileExtension === '.png') {
-      fs.unlinkSync(filePath);
-      console.log('Deleted:', filePath);
+      try {
+        fs.unlinkSync(filePath);
+        console.log('Deleted:', filePath);
+      } catch (err) {
+        console.error('Error deleting file:', filePath, err);
+      }
     }
   });
 
@@ -1616,7 +1611,7 @@ function requestPlayerAnswerSubmit(playerId: number, questionposition: number, a
 function requestAdminSessioQuestionResult(playerId: number, questionposition: number) {
   const res = request(
     'GET',
-    SERVER_URL + `/v1/player/${playerId}/question/${questionposition}/results`,
+    SERVER_URL + `/v1/player/${playerId}/question/${questionposition}/results`
   );
   return {
     body: JSON.parse(res.body.toString()),
@@ -1627,15 +1622,13 @@ function requestAdminSessioQuestionResult(playerId: number, questionposition: nu
 function requestAdminSessionFinalResult(playerId: number) {
   const res = request(
     'GET',
-    SERVER_URL + `/v1/player/${playerId}/results`,
+    SERVER_URL + `/v1/player/${playerId}/results`
   );
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
   };
 }
-
-
 
 /**
  * Finds in data a session that has playerId passed in,
@@ -1676,9 +1669,8 @@ function answerIdsValidCheck(session: Session, questionposition: number, answerI
   return true;
 }
 
-function findScalingFactor(session: Session, timeTaken: number, questionposition: number) {
-  const sortedAttempts = session.metadata.questions[questionposition - 1].attempts.sort((a, b) => a.timeTaken - b.timeTaken);
-  return 1 / (sortedAttempts.indexOf(sortedAttempts.find(attempt => attempt.timeTaken === timeTaken)) + 1);
+function findScalingFactor(timeTaken: number, correctPlayers: Attempt[]) {
+  return 1 / (correctPlayers.indexOf(correctPlayers.find(attempt => attempt.timeTaken === timeTaken)) + 1);
 }
 
 function getAverageAnswerTime(session: Session, questionposition: number) {
@@ -1750,8 +1742,6 @@ function requestPlayerQuestionInfo(playerId: number, questionposition: number) {
   };
 }
 
-
-
 function getQuestionResults(data: Data, sess: Session, questionposition: number) {
   // any for time being
   let correctAnswerIds: number[] = [];
@@ -1767,20 +1757,20 @@ function getQuestionResults(data: Data, sess: Session, questionposition: number)
     }
   }
 
-  let answerObject: AnswerResult = {
+  const answerObject: AnswerResult = {
     answerId: null,
     playersCorrect: []
-  }
+  };
 
   // loop through all the possible answers in this question and look for the ones that are correct, then for that answer check who picked it and add to array players correct
   for (const answer of sess.metadata.questions[questionposition - 1].answers) {
     if (correctAnswerIds.includes(answer.answerId)) {
       answerObject.answerId = answer.answerId;
       answerObject.playersCorrect = [];
-      correctAnswerIds = correctAnswerIds.filter((value) => value !== answer.answerId)
+      correctAnswerIds = correctAnswerIds.filter((value) => value !== answer.answerId);
       for (const player of sess.metadata.questions[questionposition - 1].attempts) {
         if (player.answers.includes(answerObject.answerId) && !answerObject.playersCorrect.includes(player.playerName)) {
-          answerObject.playersCorrect.push(player.playerName)
+          answerObject.playersCorrect.push(player.playerName);
         }
       }
       correctPlayers.push(answerObject);
@@ -1799,7 +1789,7 @@ function getQuestionResults(data: Data, sess: Session, questionposition: number)
     questionCorrectBreakdown: correctPlayers,
     averageAnswerTime: getAverageAnswerTime(sess, questionposition),
     percentCorrect: getPercentCorrect(sess, questionposition)
-  }
+  };
 }
 
 function requestAdminQuizSessionFinal(token:string | ErrorObject, quizId:number, sessionId:number) {
@@ -1834,14 +1824,14 @@ function requestAdminQuizSessionFinalCsv(token:string | ErrorObject, quizId:numb
   };
 }
 
-function isSessionInFinal(sessionArray:any,sessionId:number){
+function isSessionInFinal(sessionArray:any, sessionId:number) {
   const session = sessionArray.find((session: { quizSessionId: number; }) => session.quizSessionId === sessionId);
   if (session.state === State.FINAL_RESULTS) {
-    return true
+    return true;
   }
   return false;
 }
-  
+
 function saveImg(imgUrl: string) {
   const res = request(
     'GET',
@@ -1850,12 +1840,49 @@ function saveImg(imgUrl: string) {
   let i = 0;
   let fileName = `static/${i}.jpg`;
   while (fs.existsSync(fileName)) {
-    i ++;
+    i++;
     fileName = `static/${i}.jpg`;
   }
 
-  fs.writeFileSync(fileName, res.getBody(), { flag: 'w' })
-  return fileName
+  fs.writeFileSync(fileName, res.getBody(), { flag: 'w' });
+  return fileName;
+}
+
+function requestAdminQuizSessionsView(token: string | ErrorObject, quizId: number) {
+  const res = request(
+    'GET',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/sessions`,
+    {
+      headers: {
+        token: token as string
+      }
+    }
+  );
+  console.log(JSON.parse(res.body.toString()))
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
+ * Given a quizId, returns a list of sessions
+ * of the corresponding quiz
+ *
+ * @param {number} - quizId
+ *
+ * @returns {array} - list of sessions of the quiz
+*/
+
+function getSessions(quizId: number) {
+  const data: Data = read();
+  const quizSessions = [];
+  for (const session of data.sessions) {
+    if (session.metadata.quizId === quizId) {
+      quizSessions.push(session);
+    }
+  }
+  return quizSessions;
 }
 
 export {
@@ -1868,6 +1895,7 @@ export {
   requestAdminAuthDetailsUpdate, requestAdminQuizSessionStart, quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId, requestAdminQuizSessionStateUpdate,
   quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate, requestQuizSessionPlayerJoin, isSessionInLobby, nameExistinSession, generateRandomName,
   requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, findPlayerSession, answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect,
-  changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo,requestAdminQuizSessionState, getQuestionResults,
-  requestAdminSessioQuestionResult, requestAdminSessionFinalResult, isSessionAtLastQuestion, getSessionState, saveImg, requestAdminQuizSessionFinal, isSessionInFinal,requestAdminQuizSessionFinalCsv
+  changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo, requestAdminQuizSessionState, getQuestionResults,
+  requestAdminSessioQuestionResult, requestAdminSessionFinalResult, isSessionAtLastQuestion, getSessionState, saveImg, requestAdminQuizSessionFinal,
+  isSessionInFinal, requestAdminQuizSessionFinalCsv, requestAdminQuizSessionsView, getSessions
 };

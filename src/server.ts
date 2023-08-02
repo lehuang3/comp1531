@@ -13,8 +13,10 @@ import {
   adminQuizTransfer, adminQuizRestore, adminQuizQuestionCreate, adminQuizQuestionMove, adminQuizQuestionDuplicate, adminQuizQuestionDelete, adminQuizQuestionUpdate,
   adminQuizTrashEmpty, adminQuizThumbnailUpdate
 } from './quiz';
-import { adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
-playerAnswerSubmit, playerQuestionInfo,adminQuizSessionState, adminSessionQuestionResult, adminSessionFinalResult,adminQuizSessionFinal,adminQuizSessionFinalCsv
+import {
+  adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
+  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState, adminSessionQuestionResult, adminSessionFinalResult, adminQuizSessionFinal, 
+  adminQuizSessionFinalCsv, adminQuizSessionsView
 } from './session';
 import { clear } from './other';
 
@@ -616,6 +618,13 @@ app.get('/v1/player/:playerId/question/:questionposition/results', (req: Request
 app.get('/v1/player/:playerId/results', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerId);
   const response = adminSessionFinalResult(playerId);
+  res.json(response);
+});
+
+app.get('/v1/admin/quiz/:quizId/sessions', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const token = req.headers.token as string;
+  const response = adminQuizSessionsView(token, quizId);
   res.json(response);
 });
 // ====================================================================

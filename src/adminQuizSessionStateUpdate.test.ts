@@ -16,7 +16,7 @@ beforeEach(() => {
   requestQuizQuestionCreate(token1, quiz1,
     {
       question: 'What is capital of sydney?',
-      duration: 2,
+      duration: 0.5,
       points: 5,
       answers: [
         {
@@ -177,7 +177,7 @@ describe('QUESTION_COUNTDOWN', () => {
 describe('QUESTION_OPEN', () => {
   beforeEach(async () => {
     requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
-    await new Promise((resolve) => setTimeout(resolve, 1200));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   });
   test('GO_TO_FINAL_RESULTS', () => {
     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_FINAL_RESULTS');
@@ -204,8 +204,8 @@ describe('QUESTION_OPEN', () => {
 describe('QUESTION_CLOSE', () => {
   beforeEach(async() => {
     requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-  })
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+  });
   test('GO_TO_FINAL_RESULTS', () => {
     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_FINAL_RESULTS');
     expect(response.body).toStrictEqual({});
