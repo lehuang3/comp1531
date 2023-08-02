@@ -149,7 +149,7 @@ function clear () {
   };
 
   save(store);
-
+/*
   const currentDir = __dirname;
   const folderPath = path.join(currentDir, '..', 'static');
 
@@ -166,7 +166,7 @@ function clear () {
       }
     }
   });
-
+*/
   return {
 
   };
@@ -1838,17 +1838,13 @@ function saveImg(imgUrl: string) {
     `${imgUrl}`
   );
   let i = 0;
-  let fileName;
-
-  const folderPath = path.join(__dirname, '..', 'static');
-
-  do {
-    fileName = path.join(folderPath, `${i}.jpg`);
+  let fileName = `static/${i}.jpg`;
+  while (fs.existsSync(fileName)) {
     i++;
-  } while (fs.existsSync(fileName));
+    fileName = `static/${i}.jpg`;
+  }
 
   fs.writeFileSync(fileName, res.getBody(), { flag: 'w' });
-
   return fileName;
 }
 
