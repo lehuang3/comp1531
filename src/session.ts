@@ -644,16 +644,15 @@ function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, ses
     listOfPlayers.push(player.playerName)
   }
   listOfPlayers.sort();
-  console.log(listOfPlayers)
 
-  const ranking: object[]= [];
+
+  let ranking: any[]= [];
 
   // find the rankings
   // loop through all the questions
   for (let i = 1; i <= session.metadata.numQuestions; i++) {
     // first need to find who actually gets points for the question, need to check for a question which answerids must be selected
-    console.log("numquestions")
-    console.log( session.metadata.numQuestions)
+    
       // find which answerids must be selected and put it into an array
       const answersNeeded = session.metadata.questions[i - 1].answers.filter((answer) => answer.correct === true)
       const answersNeededIds = [];
@@ -666,8 +665,7 @@ function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, ses
       for (let attempt of session.metadata.questions[i - 1].attempts) {
         correctPlayers.push(attempt)
       }
-       console.log(i)
-       console.log(correctPlayers)
+      
       // if there are no correct players for this question move onto the next question
       if (correctPlayers.length === 0) {
         continue
@@ -688,9 +686,6 @@ function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, ses
         ranking.push(playerResult)
 
       }
-      console.log("ranking")
-      console.log(1)
-      console.log(ranking)
     }
     // sort the players by score
     
@@ -699,12 +694,25 @@ function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, ses
     header.push(`question${i}score`, `question${i}rank`);
   }
 
+  for(let player of listOfPlayers){
+    let playerResult = []
+    playerResult.push(player)
+    for(let rank of ranking){
+      if(player === rank.name){
+        playerResult.push(rank.score)
+        playerResult.push(rank.rank)
+      }
+      
+    }
+    playersData.push(playerResult)
+  }
+  
   const csvFromArrayOfArrays = convertArrayToCSV(playersData, {
     header,
     separator: ','
   });
 
-  console.log(csvFromArrayOfArrays)
+ 
   let csvname = session.quizSessionId
   const filename = `./Csv/${csvname}.csv`;
 
@@ -715,7 +723,7 @@ function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, ses
       console.log('File created successfully!');
     }
   });
-  return {}
+  return {url:filename}
 }
 export {
   adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,

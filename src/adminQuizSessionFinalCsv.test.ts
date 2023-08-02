@@ -86,7 +86,7 @@ beforeEach(() => {
   token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test').body.token;
   quiz1 = requestAdminQuizCreate(token1, 'quiz', 'quiz1').body.quizId;
 
-  requestQuizQuestionCreate(token1, quiz1, quiz1Question2.questionBody);
+  requestQuizQuestionCreate(token1, quiz1, quiz1Question1.questionBody);
   requestQuizQuestionCreate(token1, quiz1, quiz1Question2.questionBody);
   requestQuizQuestionCreate(token1, quiz1, quiz1Question3.questionBody);
   session = requestAdminQuizSessionStart(token1, quiz1, 3).body.sessionId;
@@ -94,7 +94,7 @@ beforeEach(() => {
   player2 = requestQuizSessionPlayerJoin(session, 'Minh').body.playerId;
   player3 = requestQuizSessionPlayerJoin(session, 'Le').body.playerId;
 });
-/*
+
 test('Invalid token struct', () => {
     const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
     const response = requestAdminQuizSessionFinalCsv(token4, quiz1,session);
@@ -139,7 +139,7 @@ test('Not FINAL_RESULTS state', async() => {
   expect(response.status).toStrictEqual(400);
 });
 
-*/
+
 test('Quiz played', async() => {
 
   console.log("first quesiotn")
@@ -175,7 +175,7 @@ test('Quiz played', async() => {
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER')
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_FINAL_RESULTS')
   
-  expect(requestAdminQuizSessionFinalCsv(token1, quiz1, session).body).toStrictEqual({ 
+  expect(requestAdminQuizSessionFinalCsv(token1, quiz1, session).body).toStrictEqual({ url:expect.any(String)
      
   })
 },10000);
