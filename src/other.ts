@@ -1838,13 +1838,17 @@ function saveImg(imgUrl: string) {
     `${imgUrl}`
   );
   let i = 0;
-  let fileName = `static/${i}.jpg`;
-  while (fs.existsSync(fileName)) {
+  let fileName;
+
+  const folderPath = path.join(__dirname, '..', 'static');
+
+  do {
+    fileName = path.join(folderPath, `${i}.jpg`);
     i++;
-    fileName = `static/${i}.jpg`;
-  }
+  } while (fs.existsSync(fileName));
 
   fs.writeFileSync(fileName, res.getBody(), { flag: 'w' });
+
   return fileName;
 }
 
