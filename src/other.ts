@@ -149,12 +149,12 @@ function clear () {
   };
 
   save(store);
-/*
-  const currentDir = __dirname;
-  const folderPath = path.join(currentDir, '..', 'static');
 
-  fs.readdirSync(folderPath).forEach((file) => {
-    const filePath = path.join(folderPath, file);
+  const currentDir = __dirname;
+  const folderPathimg = path.join(currentDir, '..', 'static');
+
+  fs.readdirSync(folderPathimg).forEach((file) => {
+    const filePath = path.join(folderPathimg, file);
     const fileExtension = path.extname(file).toLowerCase();
 
     if (fileExtension === '.jpg' || fileExtension === '.png') {
@@ -166,7 +166,23 @@ function clear () {
       }
     }
   });
-*/
+
+  const folderPathCsv = path.join(currentDir, '..', 'Csv');
+
+  fs.readdirSync(folderPathCsv).forEach((file) => {
+    const filePath = path.join(folderPathCsv, file);
+    const fileExtension = path.extname(file).toLowerCase();
+
+    if (fileExtension === '.csv') {
+      try {
+        fs.unlinkSync(filePath);
+        console.log('Deleted:', filePath);
+      } catch (err) {
+        console.error('Error deleting file:', filePath, err);
+      }
+    }
+  });
+
   return {
 
   };
