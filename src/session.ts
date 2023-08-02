@@ -3,7 +3,7 @@ import {
   save, read, tokenOwner, quizActiveCheck, quizValidOwner, activeSessions, quizHasQuestion, generateSessionId,
   quizSessionIdValidCheck, isActionApplicable, isSessionInLobby, nameExistinSession, generateRandomName, findPlayerSession,
   answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect, getQuestionResults, isSessionAtLastQuestion,
-  getSessionState, isSessionInFinal
+  getSessionState, isSessionInFinal, getSessions
 } from './other';
 import HTTPError from 'http-errors';
 interface SessionIdReturn {
@@ -631,7 +631,29 @@ function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, ses
 
   return {};
 }
+
+function adminQuizSessionsView(token: string | ErrorObject, quizId: number) {
+  // const authUserId = tokenOwner(token);
+  // if (typeof authUserId !== 'number') {
+  //   if (authUserId.error === 'Invalid token structure') {
+  //     throw HTTPError(401, 'Invalid token structure');
+  //     // invalid session
+  //   } else {
+  //     throw HTTPError(403, 'Not a valid session');
+  //   }
+  // }
+  const quizSessions = getSessions(quizId);
+  let activeSessions = quizSessions.filter(session => session.state !== State.END).map(session => session.quizSessionId);
+  let inactiveSessions = quizSessions.filter(session => session.state === State.END).map(session => session.quizSessionId);
+  activeSessions = activeSessions.sort((a, b) => a - b);
+  inactiveSessions = inactiveSessions.sort((a, b) => a - b);
+  return {
+    activeSessions,
+    inactiveSessions,
+  };
+}
 export {
   adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
-  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState, adminSessionQuestionResult, adminSessionFinalResult, adminQuizSessionFinal, adminQuizSessionFinalCsv
+  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState, adminSessionQuestionResult, adminSessionFinalResult, adminQuizSessionFinal, 
+  adminQuizSessionFinalCsv, adminQuizSessionsView
 };
