@@ -390,7 +390,7 @@ function adminQuizRestore(token: ErrorObject | string, quizId: number) {
   }
 
   data.quizzes.push(data.trash.find((quiz) => quiz.quizId === quizId));
-  const newTrash: Quiz[] = data.trash.filter(quiz => quiz.quizId !== quizId).map(quiz => quiz);
+  const newTrash: Quiz[] = data.trash.filter(quiz => quiz.quizId !== quizId);
   data.trash = newTrash;
   save(data);
   return {

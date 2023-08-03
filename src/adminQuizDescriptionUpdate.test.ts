@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizDescriptionUpdate, requestAdminQuizCreate, v1requestAdminQuizDescriptionUpdate } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizDescriptionUpdate, requestAdminQuizCreate, v1requestAdminQuizDescriptionUpdate, requestAdminQuizRemove } from './other';
 let token1: string;
 let quiz1: number;
 
@@ -71,4 +71,11 @@ describe('Check for valid quiz', () => {
     expect(response.body).toStrictEqual({});
     expect(response.status).toStrictEqual(200);
   });
+});
+
+test('Quiz in trash', () => {
+  requestAdminQuizRemove(token1, quiz1)
+  const response = requestAdminQuizDescriptionUpdate(token1, quiz1, '');
+  expect(response.body).toStrictEqual({error: 'Quiz is in trash.'});
+  expect(response.status).toStrictEqual(400);
 });

@@ -89,6 +89,15 @@ describe('Passing cases', () => {
       percentCorrect: expect.any(Number)
     });
   });
+  test('No errors but no one answered correctly', async() => {
+    // const data = read()
+    // console.log(data.sessions[0].state)
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    requestPlayerAnswerSubmit(player1, 1, [0, 1]);
+    requestPlayerAnswerSubmit(player2, 1, [0, 1]);
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
+    expect(requestAdminSessioQuestionResult(player1, 1).status).toStrictEqual(200);
+  });
 });
 
 describe('PlayerId not valid', () => {

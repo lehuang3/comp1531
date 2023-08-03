@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizNameUpdate, requestAdminQuizCreate, v1requestAdminQuizNameUpdate } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizNameUpdate, requestAdminQuizCreate, v1requestAdminQuizNameUpdate, requestAdminQuizRemove } from './other';
 
 let token1: string;
 let quiz1: number;
@@ -85,5 +85,12 @@ describe('Invalid token', () => {
   test('Invalid token created from invalid email', () => {
     const invalidToken1 = requestAdminAuthRegister('', 'happy123', 'tommy', 'bommy').body.token;
     expect(requestAdminQuizNameUpdate(invalidToken1, quiz1, 'ghsakgjh').body).toStrictEqual({ error: 'Invalid token structure' });
+  });
+});
+
+describe('Quiz in trash', () => {
+  test('User 1 changes quiz name to valid quiz name', () => {
+    requestAdminQuizRemove(token1, quiz1)
+    expect(requestAdminQuizNameUpdate(token1, quiz1, 'quiz2').body).toStrictEqual({error: 'Quiz is in trash.' });
   });
 });

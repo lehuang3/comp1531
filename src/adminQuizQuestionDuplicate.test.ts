@@ -1,4 +1,4 @@
-import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizQuestionDuplicate } from './other';
+import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizQuestionDuplicate, requestAdminQuizRemove } from './other';
 let token1: string;
 let quiz: number;
 let quizQuestion;
@@ -82,4 +82,11 @@ test('Valid entry', () => {
   const response = requestAdminQuizQuestionDuplicate(token1, quiz, questionId);
   expect(response.body).toStrictEqual({ newQuestionId: expect.any(Number) });
   expect(response.status).toStrictEqual(200);
+});
+
+test('Quiz in trash', () => {
+  requestAdminQuizRemove(token1, quiz)
+  const response = requestAdminQuizQuestionDuplicate(token1, quiz, questionId);
+  expect(response.body).toStrictEqual({ error: 'Quiz is in trash.' });
+  expect(response.status).toStrictEqual(400);
 });

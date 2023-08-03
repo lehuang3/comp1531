@@ -142,7 +142,6 @@ test('Not FINAL_RESULTS state', async() => {
 
 test('Quiz played', async() => {
 
-  console.log("first quesiotn")
   await new Promise((resolve) => setTimeout(resolve, 100));
   requestPlayerAnswerSubmit(player3, 1, [2])
   
@@ -153,14 +152,12 @@ test('Quiz played', async() => {
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'NEXT_QUESTION');
 
-  console.log("secound quesiotn")
   await new Promise((resolve) => setTimeout(resolve, 100));
   requestPlayerAnswerSubmit(player1, 2, [0])
   
   requestPlayerAnswerSubmit(player2, 2, [1])
   
   requestPlayerAnswerSubmit(player3, 2, [2])
-  console.log("third quesiotn")
 
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'NEXT_QUESTION');
@@ -180,3 +177,39 @@ test('Quiz played', async() => {
   })
 },10000);
 
+test('Quiz played, no correct answers', async() => {
+
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  requestPlayerAnswerSubmit(player3, 1, [2, 1])
+  
+  requestPlayerAnswerSubmit(player2, 1, [2, 1])
+  
+  requestPlayerAnswerSubmit(player1, 1, [2, 1])
+
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'NEXT_QUESTION');
+
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  requestPlayerAnswerSubmit(player1, 2, [2, 1])
+  
+  requestPlayerAnswerSubmit(player2, 2, [2, 1])
+  
+  requestPlayerAnswerSubmit(player3, 2, [2, 1])
+
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'NEXT_QUESTION');
+
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  requestPlayerAnswerSubmit(player1, 3, [2, 1])
+  
+  requestPlayerAnswerSubmit(player3, 3, [0, 1])
+  
+  requestPlayerAnswerSubmit(player2, 3, [1, 2])
+
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER')
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_FINAL_RESULTS')
+  
+  expect(requestAdminQuizSessionFinalCsv(token1, quiz1, session).body).toStrictEqual({ url:expect.any(String)
+     
+  })
+},10000);
