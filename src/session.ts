@@ -9,6 +9,10 @@ import HTTPError from 'http-errors';
 interface SessionIdReturn {
   sessionId: number;
 }
+const { convertArrayToCSV } = require('convert-array-to-csv');
+const converter = require('convert-array-to-csv');
+const fs = require('fs');
+const path = require('path');
 
 let questionOpenStart: number;
 let timeoutIds: NodeJS.Timeout[] = [];
@@ -605,7 +609,7 @@ function adminQuizSessionFinal(token:string | ErrorObject, quizId:number, sessio
 
 function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, sessionId:number) {
   const data: Data = read();
-  const sess = data.sessions.find((session: { quizSessionId: number; }) => session.quizSessionId === sessionId);
+  const session = data.sessions.find((session: { quizSessionId: number; }) => session.quizSessionId === sessionId);
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
@@ -629,7 +633,98 @@ function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, ses
     throw HTTPError(400, 'Session has not ended');
   }
 
-  return {};
+
+  let header = ["Player"];
+  let playersData: any[] =[];
+
+  let listOfPlayers = []
+
+  for(let player of session.players){
+    listOfPlayers.push(player.playerName)
+  }
+  listOfPlayers.sort();
+
+
+  let ranking: any[]= [];
+
+  // find the rankings
+  // loop through all the questions
+  for (let i = 1; i <= session.metadata.numQuestions; i++) {
+    // first need to find who actually gets points for the question, need to check for a question which answerids must be selected
+    
+      // find which answerids must be selected and put it into an array
+      const answersNeeded = session.metadata.questions[i - 1].answers.filter((answer) => answer.correct === true)
+      const answersNeededIds = [];
+      for (const answer of answersNeeded) {
+        answersNeededIds.push(answer.answerId)
+      }
+  
+      
+      let correctPlayers = []
+      for (let attempt of session.metadata.questions[i - 1].attempts) {
+        correctPlayers.push(attempt)
+      }
+      
+      // if there are no correct players for this question move onto the next question
+      if (correctPlayers.length === 0) {
+        continue
+      }
+      // get the attempts timetaken and sort the players based on fastest to slowest
+      correctPlayers.sort((a, b) => a.timeTaken - b.timeTaken)
+      // get the scaling factor and the score and add to the players points
+      let rank = 1;
+      for (const player of correctPlayers) {
+        let scalingFactor = findScalingFactor(player.timeTaken, correctPlayers); 
+        let scoreForQuestion = player.points * scalingFactor;
+        let playerResult = {
+          name: player.playerName,
+          score: scoreForQuestion,
+          rank: rank
+        }
+        rank++;
+        ranking.push(playerResult)
+
+      }
+    }
+    // sort the players by score
+    
+
+  for (let i = 1; i <= session.metadata.numQuestions; i++) {
+    header.push(`question${i}score`, `question${i}rank`);
+  }
+
+  for(let player of listOfPlayers){
+    let playerResult = []
+    playerResult.push(player)
+    for(let rank of ranking){
+      if(player === rank.name){
+        playerResult.push(rank.score)
+        playerResult.push(rank.rank)
+      }
+      
+    }
+    playersData.push(playerResult)
+  }
+  
+  const csvFromArrayOfArrays = convertArrayToCSV(playersData, {
+    header,
+    separator: ','
+  });
+
+ 
+  let csvname = session.quizSessionId
+  const filename = `./Csv/${csvname}.csv`;
+
+  fs.writeFile(filename, csvFromArrayOfArrays, (err:any) => {
+    if (err) {
+      console.error('Error creating the file:', err);
+    } else {
+      console.log('File created successfully!');
+    }
+  });
+  return {url:filename}
+
+
 }
 
 function adminQuizSessionsView(token: string | ErrorObject, quizId: number) {
@@ -651,6 +746,7 @@ function adminQuizSessionsView(token: string | ErrorObject, quizId: number) {
     activeSessions,
     inactiveSessions,
   };
+
 }
 export {
   adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
