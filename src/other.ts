@@ -111,7 +111,12 @@ function clear () {
     const fileExtension = path.extname(file).toLowerCase();
 
     if (fileExtension === '.jpg' || fileExtension === '.png') {
-      fs.unlinkSync(filePath);
+      try {
+        fs.unlinkSync(filePath);
+        console.log('Deleted:', filePath);
+      } catch (err) {
+        console.error('Error deleting file:', filePath, err);
+      }
     }
   });
 
@@ -122,7 +127,12 @@ function clear () {
     const fileExtension = path.extname(file).toLowerCase();
 
     if (fileExtension === '.csv') {
-      fs.unlinkSync(filePath);
+      try {
+        fs.unlinkSync(filePath);
+        console.log('Deleted:', filePath);
+      } catch (err) {
+        console.error('Error deleting file:', filePath, err);
+      }
     }
   });
 

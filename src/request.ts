@@ -1,10 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import { Data, Token, State, AnswerResult } from './interfaces';
-import { clearTimeouts } from './session';
 import request from 'sync-request';
 import { port, url } from './config.json';
-import { ErrorObject, Session, Attempt } from './interfaces';
+import { ErrorObject } from './interfaces';
 // import { Session } from 'inspector';
 // import arrayShuffle from 'array-shuffle';
 const shuffle = require('shuffle-array');
