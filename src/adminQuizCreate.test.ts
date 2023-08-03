@@ -5,90 +5,166 @@ beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
 });
+describe('v2 routes', () => {
+  test('Empty name', () => {
+    const response = requestAdminQuizCreate(token1, '', 'descruiption');
 
-test('Empty name', () => {
-  const response = requestAdminQuizCreate(token1, '', 'descruiption');
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
-});
+  test('name < 3', () => {
+    const response = requestAdminQuizCreate(token1, 'fg', 'descruiption');
 
-test('name < 3', () => {
-  const response = requestAdminQuizCreate(token1, 'fg', 'descruiption');
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
-});
+  test('name > 30', () => {
+    const response = requestAdminQuizCreate(token1, 'WhisperingMoonlitMysteries1235649', 'descruiption');
 
-test('name > 30', () => {
-  const response = requestAdminQuizCreate(token1, 'WhisperingMoonlitMysteries1235649', 'descruiption');
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
-});
+  test('name only has !', () => {
+    const response = requestAdminQuizCreate(token1, '!', 'descruiption');
 
-test('name only has !', () => {
-  const response = requestAdminQuizCreate(token1, '!', 'descruiption');
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
-});
+  test('name only has space', () => {
+    const response = requestAdminQuizCreate(token1, ' ', 'descruiption');
 
-test('name only has space', () => {
-  const response = requestAdminQuizCreate(token1, ' ', 'descruiption');
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
-});
+  test('name with space', () => {
+    const response = requestAdminQuizCreate(token1, 'Hellow world', 'descruiption');
 
-test('name with space', () => {
-  const response = requestAdminQuizCreate(token1, 'Hellow world', 'descruiption');
+    expect(response.body).toStrictEqual({ quizId: expect.any(Number) });
+    expect(response.status).toStrictEqual(200);
+  });
 
-  expect(response.body).toStrictEqual({ quizId: expect.any(Number) });
-  expect(response.status).toStrictEqual(200);
-});
+  test('name in use', () => {
+    requestAdminQuizCreate(token1, 'quiz1', 'descruiption');
+    const response = requestAdminQuizCreate(token1, 'quiz1', 'descruiption');
 
-test('name in use', () => {
-  requestAdminQuizCreate(token1, 'quiz1', 'descruiption');
-  const response = requestAdminQuizCreate(token1, 'quiz1', 'descruiption');
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
-});
+  test('Invalid sessions', () => {
+    const token2 = (parseInt(token1) + 1).toString();
+    const response = requestAdminQuizCreate(token2, 'Hellow world', 'descruiption');
 
-test('Invalid sessions', () => {
-  const token2 = (parseInt(token1) + 1).toString();
-  const response = requestAdminQuizCreate(token2, 'Hellow world', 'descruiption');
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(403);
+  });
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(403);
-});
+  test('Invalid token struct', () => {
+    const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
+    const response = requestAdminQuizCreate(token4, 'Hellow world', 'descruiption');
 
-test('Invalid token struct', () => {
-  const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
-  const response = requestAdminQuizCreate(token4, 'Hellow world', 'descruiption');
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(401);
+  });
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(401);
-});
+  test('Description > 100', () => {
+    const response = requestAdminQuizCreate(token1, 'quiz1', 'EnigmaticUniverseSparklingWithInfinitePossibilities1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz');
 
-test('Description > 100', () => {
-  const response = requestAdminQuizCreate(token1, 'quiz1', 'EnigmaticUniverseSparklingWithInfinitePossibilities1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz');
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
-});
+  test('Valid entry', () => {
+    const response = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion');
 
-test('Valid entry', () => {
-  const response = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion');
+    expect(response.body).toStrictEqual({ quizId: expect.any(Number) });
+    expect(response.status).toStrictEqual(200);
+  });
+})
 
-  expect(response.body).toStrictEqual({ quizId: expect.any(Number) });
-  expect(response.status).toStrictEqual(200);
-});
+describe('v1 routes', () => {
+  test('Empty name', () => {
+    const response = v1requestAdminQuizCreate(token1, '', 'descruiption');
 
-test('Valid entry, v1 route', () => {
-  const response = v1requestAdminQuizCreate(token1, 'quiz1', 'Descritpion');
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
 
-  expect(response.body).toStrictEqual({ quizId: expect.any(Number) });
-  expect(response.status).toStrictEqual(200);
-});
+  test('name < 3', () => {
+    const response = v1requestAdminQuizCreate(token1, 'fg', 'descruiption');
+
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
+
+  test('name > 30', () => {
+    const response = v1requestAdminQuizCreate(token1, 'WhisperingMoonlitMysteries1235649', 'descruiption');
+
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
+
+  test('name only has !', () => {
+    const response = v1requestAdminQuizCreate(token1, '!', 'descruiption');
+
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
+
+  test('name only has space', () => {
+    const response = v1requestAdminQuizCreate(token1, ' ', 'descruiption');
+
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
+
+  test('name with space', () => {
+    const response = v1requestAdminQuizCreate(token1, 'Hellow world', 'descruiption');
+
+    expect(response.body).toStrictEqual({ quizId: expect.any(Number) });
+    expect(response.status).toStrictEqual(200);
+  });
+
+  test('name in use', () => {
+    requestAdminQuizCreate(token1, 'quiz1', 'descruiption');
+    const response = v1requestAdminQuizCreate(token1, 'quiz1', 'descruiption');
+
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
+
+  test('Invalid sessions', () => {
+    const token2 = (parseInt(token1) + 1).toString();
+    const response = v1requestAdminQuizCreate(token2, 'Hellow world', 'descruiption');
+
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(403);
+  });
+
+  test('Invalid token struct', () => {
+    const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
+    const response = v1requestAdminQuizCreate(token4, 'Hellow world', 'descruiption');
+
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(401);
+  });
+
+  test('Description > 100', () => {
+    const response = v1requestAdminQuizCreate(token1, 'quiz1', 'EnigmaticUniverseSparklingWithInfinitePossibilities1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz');
+
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
+
+  test('Valid entry', () => {
+    const response = v1requestAdminQuizCreate(token1, 'quiz1', 'Descritpion');
+
+    expect(response.body).toStrictEqual({ quizId: expect.any(Number) });
+    expect(response.status).toStrictEqual(200);
+  });
+})
