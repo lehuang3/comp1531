@@ -715,13 +715,7 @@ function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, ses
   let csvname = session.quizSessionId
   const filename = `./Csv/${csvname}.csv`;
 
-  fs.writeFile(filename, csvFromArrayOfArrays, (err:any) => {
-    if (err) {
-      console.error('Error creating the file:', err);
-    } else {
-      console.log('File created successfully!');
-    }
-  });
+  fs.writeFile(filename, csvFromArrayOfArrays, { flag: 'w' });
   return {url:filename}
 
 

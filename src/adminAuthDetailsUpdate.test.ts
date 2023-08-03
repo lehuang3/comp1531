@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminAuthDetailsUpdate, v1requestAdminAuthDetailsUpdate } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminAuthDetailsUpdate, v1requestAdminAuthDetailsUpdate } from './request';
 
 let token1: string;
 describe('tests for adminAuthDetailsUpdate', () => {

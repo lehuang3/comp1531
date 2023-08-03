@@ -1,4 +1,4 @@
-import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, v1requestGetAdminUserDetails } from './other';
+import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, v1requestGetAdminUserDetails } from './request';
 let token1: string;
 beforeEach(() => {
   requestClear();

@@ -1,5 +1,5 @@
 import { Console } from 'console';
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizSessionStart, requestQuizSessionPlayerJoin, requestAdminQuizSessionState } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizSessionStart, requestQuizSessionPlayerJoin, requestAdminQuizSessionState } from './request';
 import { string } from 'yaml/dist/schema/common/string';
 
 let token1: string;
@@ -69,4 +69,17 @@ test('Success', () => {
     }
   );
   expect(response.status).toStrictEqual(200);
+});
+
+test('Invalid token', () => {
+  const response = requestAdminQuizSessionState('-1', quiz1, sessionId);
+  expect(response.body).toStrictEqual({ error: 'Not a valid session' });
+  expect(response.status).toStrictEqual(403);
+});
+
+test('Invalid session', () => {
+  const invalidToken1 = requestAdminAuthRegister('', 'happy123', 'tommy', 'bommy').body.token;
+  const response = requestAdminQuizSessionState(invalidToken1, quiz1, sessionId);
+  expect(response.body).toStrictEqual({ error: 'Invalid token structure' });
+  expect(response.status).toStrictEqual(401);
 });

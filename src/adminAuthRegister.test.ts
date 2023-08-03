@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister } from './other';
+import { requestClear, requestAdminAuthRegister } from './request';
 
 describe('adminAuthRegister tests', () => {
   beforeEach(() => {

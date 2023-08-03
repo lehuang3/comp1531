@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminAuthPasswordUpdate, v1requestAdminAuthPasswordUpdate } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminAuthPasswordUpdate, v1requestAdminAuthPasswordUpdate } from './request';
 
 beforeEach(() => {
   requestClear();

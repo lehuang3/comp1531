@@ -1,4 +1,4 @@
-import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate, requestAdminSessioQuestionResult, requestAdminQuizSessionStart, requestQuizQuestionCreate } from './other';
+import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate, requestAdminSessioQuestionResult, requestAdminQuizSessionStart, requestQuizQuestionCreate } from './request';
 
 let token1: string;
 let quiz1: number;

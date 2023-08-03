@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminAuthLogout, v1requestAdminAuthLogout } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminAuthLogout, v1requestAdminAuthLogout } from './request';
 
 // Tests to make sure that adminAuthLogin is working correctly when it should and returning errors when it should
 

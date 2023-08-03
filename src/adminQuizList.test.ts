@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizList, v1requestAdminQuizList } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizList, v1requestAdminQuizList } from './request';
 let token1: string;
 
 beforeEach(() => {

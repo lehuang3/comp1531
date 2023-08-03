@@ -1,5 +1,5 @@
 import { Console } from 'console';
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizSessionStart, requestQuizSessionPlayerJoin } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizSessionStart, requestQuizSessionPlayerJoin } from './request';
 
 let token1: string;
 let quiz1: number;

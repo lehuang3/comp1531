@@ -1,6 +1,6 @@
 import { ErrorObject, Quiz } from './interfaces';
 import {
-  save, read, isValidUser, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong,
+  save, read, nameQuizIsValid, quizValidCheck, quizValidOwner, nameLengthIsValid, nameTaken, isDescriptionLong,
   tokenOwner, questionLengthValid, answerCountValid, newPositioNotSame, newPositionValidCheck, questionValidCheck, durationValid, QuizDurationValid, quizPointsValid,
   quizAnswerValid, quizAnswerDuplicateValid, quizAnswerCorrectValid, isQuizInTrash, getColour, isSameQuizName, saveImg
 } from './other';
@@ -76,9 +76,7 @@ function adminQuizCreate (token: ErrorObject | string, name: string, description
     }
   }
 
-  if (isValidUser(authUserId) === false) {
-    throw HTTPError(400, 'User id not valid');
-  } else if (nameQuizIsValid(name) === false) {
+  if (nameQuizIsValid(name) === false) {
     throw HTTPError(400, 'Quiz name is not valid');
   } else if (nameLengthIsValid(name) === false) {
     throw HTTPError(400, 'Quiz name length is not valid');
@@ -166,9 +164,7 @@ function adminQuizRemove (token: ErrorObject | string, quizId: number) {
     }
   }
 
-  if (isValidUser(authUserId) === false) {
-    throw HTTPError(400, 'User id not valid');
-  } else if (isQuizInTrash(quizId)) {
+  if (isQuizInTrash(quizId)) {
     throw HTTPError(400, 'Quiz is in trash.');
   } else if (quizValidCheck(quizId) === false) {
     throw HTTPError(400, 'quiz id not valid');

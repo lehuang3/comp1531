@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizRemove, requestAdminQuizRestore, v1requestAdminQuizRestore } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizRemove, requestAdminQuizRestore, v1requestAdminQuizRestore } from './request';
 
 let token1: string;
 let quiz1: number;

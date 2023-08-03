@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminAuthLogin } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminAuthLogin } from './request';
 
 describe('tests for adminAuthLogin', () => {
   beforeEach(() => {
