@@ -1,4 +1,4 @@
-import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin } from './other';
+import { requestClear, requestGetAdminUserDetails, requestAdminAuthRegister, requestAdminAuthLogin, v1requestGetAdminUserDetails } from './other';
 let token1: string;
 beforeEach(() => {
   requestClear();
@@ -153,4 +153,19 @@ describe('Check for successful and failed logins due to incorrect email', () => 
     });
     expect(response.status).toStrictEqual(200);
   });
+});
+
+test('Check for valid auth, v1 route', () => {
+  const response = v1requestGetAdminUserDetails(token1);
+
+  expect(response.body).toStrictEqual({
+    user: {
+      userId: expect.any(Number),
+      name: 'Minh Le',
+      email: 'Minh@gmail.com',
+      numSuccessfulLogins: 1,
+      numFailedPasswordsSinceLastLogin: 0
+    }
+  });
+  expect(response.status).toStrictEqual(200);
 });

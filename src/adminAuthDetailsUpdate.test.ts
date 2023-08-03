@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminAuthDetailsUpdate } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminAuthDetailsUpdate, v1requestAdminAuthDetailsUpdate } from './other';
 
 let token1: string;
 describe('tests for adminAuthDetailsUpdate', () => {
@@ -18,6 +18,14 @@ describe('tests for adminAuthDetailsUpdate', () => {
     const token2 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
     const userLogin = requestAdminAuthDetailsUpdate(token2, 'patel@gmail.com', 'Santa', 'Claus');
     expect(userLogin.body).toStrictEqual({ error: 'email is already used for another account' });
+    expect(userLogin.status).toStrictEqual(400);
+  });
+
+  test('email is invalid', () => {
+    // Invalid email
+    const token2 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
+    const userLogin = requestAdminAuthDetailsUpdate(token2, 'patel@@gmail.com', 'Santa', 'Claus');
+    expect(userLogin.body).toStrictEqual({ error: 'error: email is not valid' });
     expect(userLogin.status).toStrictEqual(400);
   });
 
@@ -51,3 +59,16 @@ describe('tests for adminAuthDetailsUpdate', () => {
     expect(response.status).toStrictEqual(403);
   });
 });
+
+describe('tests for v1adminAuthDetailsUpdate', () => {
+  beforeEach(() => {
+    requestClear();
+    token1 = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel').body.token;
+  });
+  test('Simple test pass', () => {
+    const res = requestAdminAuthRegister('lain@gmail.com', 'Abcd123%', 'Pranav', 'Patel').body.token;
+    const response = v1requestAdminAuthDetailsUpdate(res, 'santaclaus@gmail.com', 'Santa', 'Claus');
+    expect(response.body).toStrictEqual({});
+    expect(response.status).toStrictEqual(200);
+  });
+})

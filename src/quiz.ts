@@ -224,12 +224,12 @@ function adminQuizInfo (token: ErrorObject | string, quizId: number) {
       return quiz;
     }
   }
-  // added cause it will cause error in frontend, but may be causing issues.
-  for (const quiz of data.trash) {
-    if (quiz.quizId === quizId) {
-      return quiz;
-    }
-  }
+  // // added cause it will cause error in frontend, but may be causing issues.
+  // for (const quiz of data.trash) {
+  //   if (quiz.quizId === quizId) {
+  //     return quiz;
+  //   }
+  // }
 }
 
 /**
