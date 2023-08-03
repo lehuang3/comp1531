@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizRemove } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizRemove, v1requestAdminQuizRemove } from './other';
 
 let token1: string;
 
@@ -8,6 +8,16 @@ beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
   quiz = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion').body.quizId;
+});
+
+test('Invalide quiz ID', () => {
+  const quiz2 = {
+    quizId: quiz + 1,
+  };
+  const response = v1requestAdminQuizRemove(token1, quiz2.quizId);
+
+  expect(response.body).toStrictEqual({ error: expect.any(String) });
+  expect(response.status).toStrictEqual(400);
 });
 
 test('Invalide User ID', () => {

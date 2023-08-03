@@ -216,13 +216,7 @@ app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
       return res.status(401).json(response);
     } else if (response.error === 'Not a valid session') {
       return res.status(403).json(response);
-    } else if (response.error === 'Invalid token structure') {
-      return res.status(401).json(response);
-    } else if (response.error === 'User id not valid') {
-      return res.status(400).json(response);
-    } else if (response.error === 'quiz id not valid') {
-      return res.status(400).json(response);
-    } else if (response.error === 'Not owner of quiz') {
+    } else {
       return res.status(400).json(response);
     }
   }

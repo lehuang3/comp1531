@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizDescriptionUpdate, requestAdminQuizCreate } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizDescriptionUpdate, requestAdminQuizCreate, v1requestAdminQuizDescriptionUpdate } from './other';
 let token1: string;
 let quiz1: number;
 
@@ -6,6 +6,12 @@ beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
   quiz1 = requestAdminQuizCreate(token1, 'quiz', '').body.quizId;
+});
+
+test('Check for valid quiz - description with moderate length', () => {
+  const response = v1requestAdminQuizDescriptionUpdate(token1, quiz1, 'this quiz now has description');
+  expect(response.body).toStrictEqual({});
+  expect(response.status).toStrictEqual(200);
 });
 
 test('Check for invalid token structure', () => {
