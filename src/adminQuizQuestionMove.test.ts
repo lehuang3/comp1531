@@ -1,4 +1,4 @@
-import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizQuestionMove } from './other';
+import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizQuestionMove, requestAdminQuizRemove } from './other';
 
 let token1: string;
 let quiz: number;
@@ -168,4 +168,13 @@ test('Valid entry', () => {
 
   expect(response.body).toStrictEqual({ });
   expect(response.status).toStrictEqual(200);
+});
+
+test('Quiz in trash', () => {
+  const newPosition = 0;
+  requestAdminQuizRemove(token1, quiz)
+  const response = requestAdminQuizQuestionMove(quiz, questionId3, token1, newPosition);
+
+  expect(response.body).toStrictEqual({error: 'Quiz is in trash.' });
+  expect(response.status).toStrictEqual(400);
 });

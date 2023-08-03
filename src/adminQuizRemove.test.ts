@@ -59,3 +59,10 @@ test('Valid entry', () => {
   expect(response.body).toStrictEqual({});
   expect(response.status).toStrictEqual(200);
 });
+
+test('Quiz already in trash', () => {
+  requestAdminQuizRemove(token1, quiz);
+  const response = requestAdminQuizRemove(token1, quiz);
+  expect(response.body).toStrictEqual({ error: 'Quiz is in trash.' });
+  expect(response.status).toStrictEqual(400);
+});

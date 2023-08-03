@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizQuestionDelete } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizQuestionDelete, requestAdminQuizRemove } from './other';
 
 let token1: string;
 let quiz1: number;
@@ -27,6 +27,30 @@ const quiz1Question1 = {
   }
 };
 
+const quizQuestion2 = {
+  questionBody: {
+    question: 'What is capital of USA?',
+    duration: 5,
+    points: 5,
+    answers: [
+      {
+        answer: 'NYC',
+        correct: true
+      },
+      {
+        answer: 'Melbourne',
+        correct: false
+      },
+      {
+        answer: 'Camberra',
+        correct: false
+      }
+
+    ],
+    thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
+  }
+};
+
 beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test').body.token;
@@ -37,6 +61,10 @@ beforeEach(() => {
 describe('Passing cases', () => {
   test('User 1 enters correct information', () => {
     expect(requestAdminQuizQuestionDelete(token1, quiz1, token1Quiz1Question1Id).body).toStrictEqual({ });
+  });
+  test('User 1 enters correct information', () => {
+    const token1Quiz1Question2Id = requestQuizQuestionCreate(token1, quiz1, quiz1Question1.questionBody).body.questionId;
+    expect(requestAdminQuizQuestionDelete(token1, quiz1, token1Quiz1Question2Id).body).toStrictEqual({ });
   });
 });
 
@@ -75,3 +103,11 @@ describe('Invalid token', () => {
     expect(requestAdminQuizQuestionDelete(invalidToken, quiz1, token1Quiz1Question1Id).body).toStrictEqual({ error: 'Invalid token structure' });
   });
 });
+
+describe('Quiz in trash', () => {
+  test('Quiz is already in trash', () => {
+    requestAdminQuizRemove(token1, quiz1)
+    expect(requestAdminQuizQuestionDelete(token1, quiz1, token1Quiz1Question1Id).body).toStrictEqual({ error: 'Quiz is in trash.'});
+  });
+});
+

@@ -2177,7 +2177,6 @@ function requestAdminQuizSessionsView(token: string | ErrorObject, quizId: numbe
       }
     }
   );
-  console.log(JSON.parse(res.body.toString()))
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,

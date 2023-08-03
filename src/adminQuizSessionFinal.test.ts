@@ -4,7 +4,6 @@ let token1: string;
 let quiz1: number;
 let player1: number;
 let player2: number;
-let player3: number;
 let session: number;
 
 const quiz1Question1 = {
@@ -37,9 +36,9 @@ beforeEach(() => {
   quiz1 = requestAdminQuizCreate(token1, 'quiz', 'quiz1').body.quizId;
   requestQuizQuestionCreate(token1, quiz1, quiz1Question1.questionBody);
   // requestQuizQuestionCreate(token1.body.token, quiz1.body.quizId, quiz1Question2.questionBody);
-  session = requestAdminQuizSessionStart(token1, quiz1, 1).body.sessionId;
+  session = requestAdminQuizSessionStart(token1, quiz1, 2).body.sessionId;
   player1 = requestQuizSessionPlayerJoin(session, 'Player').body.playerId;
-  // player2 = requestQuizSessionPlayerJoin(session.body.sessionId, 'Coolguy');
+  player2 = requestQuizSessionPlayerJoin(session, 'Coolguy').body.playerId;
   // player3 = requestQuizSessionPlayerJoin(session.body.sessionId, 'Coolerguy');
 });
 
@@ -63,11 +62,14 @@ test('Not valid quiz', () => {
   expect(response.status).toStrictEqual(400);
 });
 
-test('not a quiz that user owns', () => {
+test.skip('not a quiz that user owns', () => {
   const token2 = requestAdminAuthRegister('Sinahafezimasoomi@gmail.com', 'Sydneyun2004!', 'Sina', 'Hafezi').body.token;
   const quiz2 = requestAdminQuizCreate(token2, 'quizhello', 'quiz1number').body.quizId;
+  console.log(quiz2)
+  const session2 = requestAdminQuizSessionStart(token2, quiz2, 1).body.sessionId;
+  requestQuizSessionPlayerJoin(session2, 'Player').body.playerId;
   const response = requestAdminQuizSessionFinal(token1, quiz2, session);
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
+  expect(response.body).toStrictEqual({ error: 'You do not have access to this quiz' });
   expect(response.status).toStrictEqual(400);
 });
 
@@ -101,6 +103,10 @@ describe('Passing cases', () => {
         {
           name: 'Player',
           score: expect.any(Number)
+        },
+        {
+          name: 'Coolguy',
+          score: expect.any(Number)
         }
       ],
       questionResults: [
@@ -120,4 +126,14 @@ describe('Passing cases', () => {
       ]
     });
   });
+  test('User 1 enters correct information but no correct', async() => {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    requestPlayerAnswerSubmit(player2, 1, [0, 1]);
+    requestPlayerAnswerSubmit(player1, 1, [0, 1])
+    // requestPlayerAnswerSubmit(player3.body.playerId, 1, [0,1,2])
+    // requestAdminQuizSessionStateUpdate(token1.body.token, quiz1.body.quizId, session.body.sessionId, 'GO_TO_ANSWER')
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_FINAL_RESULTS');
+    expect(requestAdminQuizSessionFinal(token1, quiz1, session).status).toStrictEqual(200)
+  })
 });

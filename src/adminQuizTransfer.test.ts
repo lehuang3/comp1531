@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizTransfer, requestAdminQuizList } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizRemove } from './other';
 let token1: string;
 let token2: string;
 let quiz1: number;
@@ -90,4 +90,18 @@ test('test success: Minh => Le then Le => Minh', () => {
     quizId: quiz1,
     name: expect.any(String),
   }]);
+});
+
+test('Quiz in trash', () => {
+  requestAdminQuizRemove(token1, quiz1)
+  const response = requestAdminQuizTransfer(token1, quiz1, 'Le@gmail.com');
+  expect(response.body).toStrictEqual({error: 'Quiz is in trash.'});
+  expect(response.status).toStrictEqual(400);
+});
+
+test('Quiz has same name exists', () => {
+  requestAdminQuizCreate(token2, 'quiz', '').body.quizId;
+  let response = requestAdminQuizTransfer(token1, quiz1, 'Le@gmail.com');
+  expect(response.body).toStrictEqual({error: "Quiz to be transfered has the same name as one of target user's quizzes"});
+  expect(response.status).toStrictEqual(400);
 });

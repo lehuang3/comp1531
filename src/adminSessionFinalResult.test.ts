@@ -85,6 +85,23 @@ describe('Passing cases', () => {
     expect(requestAdminSessionFinalResult(player2).status).toStrictEqual(200);
     expect(requestAdminSessionFinalResult(player3).status).toStrictEqual(200);
   });
+  test('User 1 enters correct information but no correct', async() => {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    requestPlayerAnswerSubmit(player1, 1, [1, 2]);
+    requestPlayerAnswerSubmit(player2, 1, [1, 2]);
+    requestPlayerAnswerSubmit(player3, 1, [1, 2]);
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'NEXT_QUESTION');
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    requestPlayerAnswerSubmit(player1, 2, [1, 2]);
+    requestPlayerAnswerSubmit(player2, 2, [1, 2]);
+    requestPlayerAnswerSubmit(player3, 2, [1, 2]);
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_FINAL_RESULTS');
+    expect(requestAdminSessionFinalResult(player1).status).toStrictEqual(200);
+    expect(requestAdminSessionFinalResult(player2).status).toStrictEqual(200);
+    expect(requestAdminSessionFinalResult(player3).status).toStrictEqual(200);
+  });
 });
 
 describe('PlayerId not valid', () => {
