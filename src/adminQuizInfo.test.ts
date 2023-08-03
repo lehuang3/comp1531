@@ -1,7 +1,7 @@
 import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizInfo } from './other';
 
-let token1: any;
-let quiz1: any;
+let token1: string;
+let quiz1: number;
 
 beforeEach(() => {
   requestClear();

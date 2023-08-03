@@ -1,11 +1,11 @@
 import { requestClear, requestAdminAuthRegister, requestAdminQuizRemove, requestAdminQuizCreate, requestAdminQuizTrash } from './other';
 let token1: string;
-let quiz1: any;
+let quiz1: number;
 
 beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
-  quiz1 = requestAdminQuizCreate(token1, 'quiz', '').body;
+  quiz1 = requestAdminQuizCreate(token1, 'quiz', '').body.quizId;
 });
 
 test('Check for invalid token structure', () => {
@@ -28,12 +28,12 @@ test('Check for invalid session', () => {
 });
 
 test('1 quiz in trash', () => {
-  requestAdminQuizRemove(token1, quiz1.quizId);
+  requestAdminQuizRemove(token1, quiz1);
   const response = requestAdminQuizTrash(token1);
   expect(response.body).toStrictEqual({
     quizzes: [
       {
-        quizId: quiz1.quizId,
+        quizId: quiz1,
         name: 'quiz',
       }
     ]
@@ -43,7 +43,7 @@ test('1 quiz in trash', () => {
 
 test('1 quiz in trash but wrong user', () => {
   const token2 = requestAdminAuthRegister('Le@gmail.com', '1234abcd', 'Le', 'Huang').body.token;
-  requestAdminQuizRemove(token1, quiz1.quizId);
+  requestAdminQuizRemove(token1, quiz1);
   const response = requestAdminQuizTrash(token2);
   expect(response.body).toStrictEqual({
     quizzes: []
@@ -60,18 +60,18 @@ test('empty trash', () => {
 });
 
 test('2 quizzes in trash', () => {
-  const quiz2 = requestAdminQuizCreate(token1, 'another quiz', '').body;
-  requestAdminQuizRemove(token1, quiz1.quizId);
-  requestAdminQuizRemove(token1, quiz2.quizId);
+  const quiz2 = requestAdminQuizCreate(token1, 'another quiz', '').body.quizId;
+  requestAdminQuizRemove(token1, quiz1);
+  requestAdminQuizRemove(token1, quiz2);
   const response = requestAdminQuizTrash(token1);
   expect(response.body).toStrictEqual({
     quizzes: [
       {
-        quizId: quiz1.quizId,
+        quizId: quiz1,
         name: 'quiz',
       },
       {
-        quizId: quiz2.quizId,
+        quizId: quiz2,
         name: 'another quiz',
       }
     ]
@@ -81,14 +81,14 @@ test('2 quizzes in trash', () => {
 
 test('2 quizzes in trash, user owns 1 of them', () => {
   const token2 = requestAdminAuthRegister('Le@gmail.com', '1234abcd', 'Le', 'Huang').body.token;
-  const quiz2 = requestAdminQuizCreate(token2, 'another quiz', '').body;
-  requestAdminQuizRemove(token1, quiz1.quizId);
-  requestAdminQuizRemove(token2, quiz2.quizId);
+  const quiz2 = requestAdminQuizCreate(token2, 'another quiz', '').body.quizId;
+  requestAdminQuizRemove(token1, quiz1);
+  requestAdminQuizRemove(token2, quiz2);
   const response = requestAdminQuizTrash(token1);
   expect(response.body).toStrictEqual({
     quizzes: [
       {
-        quizId: quiz1.quizId,
+        quizId: quiz1,
         name: 'quiz',
       }
     ]

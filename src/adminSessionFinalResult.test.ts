@@ -1,11 +1,11 @@
-import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate, requestAdminSessionFinalResult, requestAdminQuizSessionStart, requestQuizQuestionCreate, getAverageAnswerTime } from './other';
-import { State } from './interfaces';
-let token1: any;
-let quiz1: any;
-let player1: any;
-let player2: any;
-let player3: any;
-let session: any;
+import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate, requestAdminSessionFinalResult, requestAdminQuizSessionStart, requestQuizQuestionCreate } from './other';
+
+let token1: string;
+let quiz1: number;
+let player1: number;
+let player2: number;
+let player3: number;
+let session: number;
 
 const quiz1Question1 = {
   questionBody: {
@@ -31,7 +31,7 @@ const quiz1Question1 = {
   }
 };
 
-const quiz1Question2: any = {
+const quiz1Question2 = {
   questionBody: {
     question: 'What is capital of USA?',
     duration: 4,

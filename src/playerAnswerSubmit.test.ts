@@ -5,8 +5,8 @@ import {
 let token1: string;
 let quiz1: number;
 let autoStartNum: number;
-let session1: any;
-let player1: any;
+let session1: number;
+let player1: number;
 beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;

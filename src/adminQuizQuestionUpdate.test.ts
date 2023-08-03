@@ -1,10 +1,10 @@
 import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizInfo, requestAdminQuizQuestionUpdate, requestQuizQuestionCreate } from './other';
 
-let token1: any;
-let quiz1: any;
-let token1Quiz1Question1Id: any;
+let token1: string;
+let quiz1: number;
+let token1Quiz1Question1Id: number;
 
-const quiz1Question1: any = {
+const quiz1Question1 = {
   questionBody: {
     question: 'What is capital of USA?',
     duration: 4,
@@ -28,7 +28,7 @@ const quiz1Question1: any = {
   }
 };
 
-const quiz1Question2: any = {
+const quiz1Question2 = {
   questionBody: {
     question: 'What is capital of NSW?',
     duration: 5,

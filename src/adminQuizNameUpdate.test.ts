@@ -1,9 +1,9 @@
 import { requestClear, requestAdminAuthRegister, requestAdminQuizNameUpdate, requestAdminQuizCreate } from './other';
 
-let token1: any;
-let quiz1: any;
-let token2: any;
-let quiz2: any;
+let token1: string;
+let quiz1: number;
+let token2: string;
+let quiz2: number;
 
 beforeEach(() => {
   requestClear();

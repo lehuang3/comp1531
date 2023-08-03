@@ -1,16 +1,16 @@
 import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizQuestionMove } from './other';
 
 let token1: string;
-let quiz: any;
-let quizQuestion: any;
-let quizQuestion2: any;
-let quizQuestion3: any;
-let questionId3: any;
+let quiz: number;
+let quizQuestion;
+let quizQuestion2;
+let quizQuestion3;
+let questionId3: number;
 
 beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
-  quiz = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion').body;
+  quiz = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion').body.quizId;
   quizQuestion = {
     questionBody: {
       question: 'What is capital of sydney?',
@@ -83,15 +83,15 @@ beforeEach(() => {
     }
   };
 
-  requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion.questionBody);
-  requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion2.questionBody);
-  questionId3 = requestQuizQuestionCreate(token1, quiz.quizId, quizQuestion3.questionBody).body;
+  requestQuizQuestionCreate(token1, quiz, quizQuestion.questionBody);
+  requestQuizQuestionCreate(token1, quiz, quizQuestion2.questionBody);
+  questionId3 = requestQuizQuestionCreate(token1, quiz, quizQuestion3.questionBody).body.questionId;
 });
 
 test('Invalid token struct', () => {
   const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
   const newPosition = 0;
-  const response = requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token4, newPosition);
+  const response = requestAdminQuizQuestionMove(quiz, questionId3, token4, newPosition);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(401);
@@ -101,7 +101,7 @@ test('Check for invalid session', () => {
   const token2 = (parseInt(token1) + 1).toString();
 
   const newPosition = 0;
-  const response = requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token2, newPosition);
+  const response = requestAdminQuizQuestionMove(quiz, questionId3, token2, newPosition);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(403);
@@ -110,7 +110,7 @@ test('Check for invalid session', () => {
 test('Invalide User ID ie not owner', () => {
   const token2 = requestAdminAuthRegister('hayden.hafezimasoomi@gmail.com', '1234abcd', 'hayden', 'Hafezi').body.token;
   const newPosition = 0;
-  const response = requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token2, newPosition);
+  const response = requestAdminQuizQuestionMove(quiz, questionId3, token2, newPosition);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -118,10 +118,10 @@ test('Invalide User ID ie not owner', () => {
 
 test('Invalide quiz ID', () => {
   const quiz2 = {
-    quizId: quiz.quizId + 1,
+    quizId: quiz + 1,
   };
   const newPosition = 0;
-  const response = requestAdminQuizQuestionMove(quiz2.quizId, questionId3.questionId, token1, newPosition);
+  const response = requestAdminQuizQuestionMove(quiz2.quizId, questionId3, token1, newPosition);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -129,10 +129,10 @@ test('Invalide quiz ID', () => {
 
 test('Invalide question ID', () => {
   const questionId4 = {
-    questionId: questionId3.questionId + 1,
+    questionId: questionId3 + 1,
   };
   const newPosition = 0;
-  const response = requestAdminQuizQuestionMove(quiz.quizId, questionId4.questionId, token1, newPosition);
+  const response = requestAdminQuizQuestionMove(quiz, questionId4.questionId, token1, newPosition);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -140,7 +140,7 @@ test('Invalide question ID', () => {
 
 test('position > n-1', () => {
   const newPosition = 3;
-  const response = requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token1, newPosition);
+  const response = requestAdminQuizQuestionMove(quiz, questionId3, token1, newPosition);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -148,7 +148,7 @@ test('position > n-1', () => {
 
 test('Position < 0', () => {
   const newPosition = -1;
-  const response = requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token1, newPosition);
+  const response = requestAdminQuizQuestionMove(quiz, questionId3, token1, newPosition);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -156,7 +156,7 @@ test('Position < 0', () => {
 
 test('Same Position as before', () => {
   const newPosition = 2;
-  const response = requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token1, newPosition);
+  const response = requestAdminQuizQuestionMove(quiz, questionId3, token1, newPosition);
 
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
@@ -164,7 +164,7 @@ test('Same Position as before', () => {
 
 test('Valid entry', () => {
   const newPosition = 0;
-  const response = requestAdminQuizQuestionMove(quiz.quizId, questionId3.questionId, token1, newPosition);
+  const response = requestAdminQuizQuestionMove(quiz, questionId3, token1, newPosition);
 
   expect(response.body).toStrictEqual({ });
   expect(response.status).toStrictEqual(200);
