@@ -1,10 +1,12 @@
-import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate, requestAdminSessionFinalResult, requestAdminQuizSessionStart, requestQuizQuestionCreate, getAverageAnswerTime, requestAdminQuizSessionFinal } from './other';
+import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate, requestAdminAuthLogin, requestAdminQuizSessionStart, requestQuizQuestionCreate, requestAdminQuizSessionFinal } from './request';
 
 let token1: string;
 let quiz1: number;
 let player1: number;
 let player2: number;
 let session: number;
+let token2: string;
+let quiz2: number;
 
 const quiz1Question1 = {
   questionBody: {
@@ -33,7 +35,9 @@ const quiz1Question1 = {
 beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test').body.token;
+  token2 = requestAdminAuthRegister('gshjfhs@email.com', '123fsfag123A', 'hello', 'test').body.token;
   quiz1 = requestAdminQuizCreate(token1, 'quiz', 'quiz1').body.quizId;
+  quiz2 = requestAdminQuizCreate(token2, 'quiz', 'quiz2').body.quizId
   requestQuizQuestionCreate(token1, quiz1, quiz1Question1.questionBody);
   // requestQuizQuestionCreate(token1.body.token, quiz1.body.quizId, quiz1Question2.questionBody);
   session = requestAdminQuizSessionStart(token1, quiz1, 2).body.sessionId;
@@ -62,13 +66,8 @@ test('Not valid quiz', () => {
   expect(response.status).toStrictEqual(400);
 });
 
-test.skip('not a quiz that user owns', () => {
-  const token2 = requestAdminAuthRegister('Sinahafezimasoomi@gmail.com', 'Sydneyun2004!', 'Sina', 'Hafezi').body.token;
-  const quiz2 = requestAdminQuizCreate(token2, 'quizhello', 'quiz1number').body.quizId;
-  console.log(quiz2)
-  const session2 = requestAdminQuizSessionStart(token2, quiz2, 1).body.sessionId;
-  requestQuizSessionPlayerJoin(session2, 'Player').body.playerId;
-  const response = requestAdminQuizSessionFinal(token1, quiz2, session);
+test('not a quiz that user owns', () => {
+  const response = requestAdminQuizSessionFinal(token2, quiz1, session);
   expect(response.body).toStrictEqual({ error: 'You do not have access to this quiz' });
   expect(response.status).toStrictEqual(400);
 });

@@ -1,7 +1,7 @@
 import {
   requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizSessionStart,
   requestAdminQuizSessionStateUpdate, requestQuizSessionPlayerJoin, requestPlayerQuestionInfo
-} from './other';
+} from './request';
 import { QuizQuestion, State } from './interfaces';
 
 

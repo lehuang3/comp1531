@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminAuthLogin } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminAuthLogin } from './request';
 
 // Test if the clear function is clearing the data values i.e. if we call adminAuthLogin then clear, we should be able to login again as a different user.
 describe('Testing clear is resetting database', () => {

@@ -1,7 +1,7 @@
 import {
   requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizSessionStart,
   requestAdminQuizSessionStateUpdate, requestAdminQuizSessionsView
-} from './other';
+} from './request';
 
 let token1: string;
 let quiz1: number;
