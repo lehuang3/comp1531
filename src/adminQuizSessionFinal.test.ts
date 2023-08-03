@@ -1,5 +1,5 @@
-import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate, requestAdminSessionFinalResult, requestAdminQuizSessionStart, requestQuizQuestionCreate, getAverageAnswerTime, changeState, requestAdminQuizSessionFinal } from './other';
-import { State } from './interfaces';
+import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate, requestAdminSessionFinalResult, requestAdminQuizSessionStart, requestQuizQuestionCreate, getAverageAnswerTime, requestAdminQuizSessionFinal } from './other';
+
 let token1: string;
 let quiz1: number;
 let player1: number;
@@ -78,7 +78,7 @@ test('session not in any quiz', () => {
 });
 
 test('Not FINAL_RESULTS state', async() => {
-  await new Promise((resolve) => setTimeout(resolve, 1200));
+  await new Promise((resolve) => setTimeout(resolve, 100));
   requestPlayerAnswerSubmit(player1, 1, [0]);
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'QUESTION_CLOSE');
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_FINAL_RESULTS');
@@ -88,13 +88,14 @@ test('Not FINAL_RESULTS state', async() => {
 });
 
 describe('Passing cases', () => {
-  test('User 1 enters correct information', () => {
-    changeState(session, State.QUESTION_OPEN);
+  test('User 1 enters correct information', async() => {
+    await new Promise((resolve) => setTimeout(resolve, 100));
     requestPlayerAnswerSubmit(player1, 1, [0]);
     // requestPlayerAnswerSubmit(player2.body.playerId, 1, [0])
     // requestPlayerAnswerSubmit(player3.body.playerId, 1, [0,1,2])
     // requestAdminQuizSessionStateUpdate(token1.body.token, quiz1.body.quizId, session.body.sessionId, 'GO_TO_ANSWER')
-    changeState(session, State.FINAL_RESULTS);
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_FINAL_RESULTS');
     expect(requestAdminQuizSessionFinal(token1, quiz1, session).body).toStrictEqual({
       usersRankedByScore: [
         {

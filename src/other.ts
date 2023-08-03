@@ -151,13 +151,29 @@ function clear () {
   save(store);
 
   const currentDir = __dirname;
-  const folderPath = path.join(currentDir, '..', 'static');
+  const folderPathimg = path.join(currentDir, '..', 'static');
 
-  fs.readdirSync(folderPath).forEach((file) => {
-    const filePath = path.join(folderPath, file);
+  fs.readdirSync(folderPathimg).forEach((file) => {
+    const filePath = path.join(folderPathimg, file);
     const fileExtension = path.extname(file).toLowerCase();
 
     if (fileExtension === '.jpg' || fileExtension === '.png') {
+      try {
+        fs.unlinkSync(filePath);
+        console.log('Deleted:', filePath);
+      } catch (err) {
+        console.error('Error deleting file:', filePath, err);
+      }
+    }
+  });
+
+  const folderPathCsv = path.join(currentDir, '..', 'Csv');
+
+  fs.readdirSync(folderPathCsv).forEach((file) => {
+    const filePath = path.join(folderPathCsv, file);
+    const fileExtension = path.extname(file).toLowerCase();
+
+    if (fileExtension === '.csv') {
       try {
         fs.unlinkSync(filePath);
         console.log('Deleted:', filePath);
@@ -1676,24 +1692,24 @@ function findScalingFactor(timeTaken: number, correctPlayers: Attempt[]) {
 function getAverageAnswerTime(session: Session, questionposition: number) {
   const noPlayers = session.metadata.questions[questionposition - 1].attempts.length;
   const totalTimeTaken = session.metadata.questions[questionposition - 1].attempts.reduce((sum, attempt) => sum + attempt.timeTaken, 0);
-  return totalTimeTaken / noPlayers;
+  return  Math.round(totalTimeTaken / noPlayers);
 }
 
 function getPercentCorrect(session: Session, questionposition: number) {
   const noPlayers = session.metadata.questions[questionposition - 1].attempts.length;
   const noCorrectPlayers = session.metadata.questions[questionposition - 1].attempts.filter(attempt => attempt.points !== 0).length;
-  return noCorrectPlayers / noPlayers * 100;
+  return  Math.round(noCorrectPlayers / noPlayers * 100);
 }
 
-function changeState(sessionId: number, state: State) {
-  const data: Data = read();
-  for (const session of data.sessions) {
-    if (session.quizSessionId === sessionId) {
-      session.state = state;
-    }
-  }
-  save(data);
-}
+// function changeState(sessionId: number, state: State) {
+//   const data: Data = read();
+//   for (const session of data.sessions) {
+//     if (session.quizSessionId === sessionId) {
+//       session.state = state;
+//     }
+//   }
+//   save(data);
+// }
 
 function isSessionAtLastQuestion(sessionId: number) {
   const data: Data = read();
@@ -1895,7 +1911,7 @@ export {
   requestAdminAuthDetailsUpdate, requestAdminQuizSessionStart, quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId, requestAdminQuizSessionStateUpdate,
   quizSessionIdValidCheck, isActionApplicable, requestAdminQuizThumbnailUpdate, requestQuizSessionPlayerJoin, isSessionInLobby, nameExistinSession, generateRandomName,
   requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, findPlayerSession, answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect,
-  changeState, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo, requestAdminQuizSessionState, getQuestionResults,
+  requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo, requestAdminQuizSessionState, getQuestionResults,
   requestAdminSessioQuestionResult, requestAdminSessionFinalResult, isSessionAtLastQuestion, getSessionState, saveImg, requestAdminQuizSessionFinal,
   isSessionInFinal, requestAdminQuizSessionFinalCsv, requestAdminQuizSessionsView, getSessions
 };
