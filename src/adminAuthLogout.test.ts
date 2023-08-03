@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminAuthLogout } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminAuthLogin, requestAdminAuthLogout, v1requestAdminAuthLogout } from './other';
 
 // Tests to make sure that adminAuthLogin is working correctly when it should and returning errors when it should
 
@@ -27,4 +27,11 @@ test('Testing token is not a valid structure', () => {
   const userLogin = requestAdminAuthLogout(response.body.token);
   expect(userLogin.body).toStrictEqual({ error: 'Invalid token structure' });
   expect(userLogin.status).toStrictEqual(401);
+});
+
+test('Simple test pass, v1 route', () => {
+  const res = requestAdminAuthRegister('patel@gmail.com', 'Abcd123%', 'Pranav', 'Patel');
+  const response = v1requestAdminAuthLogout(res.body.token);
+  expect(response.body).toStrictEqual({});
+  expect(response.status).toStrictEqual(200);
 });

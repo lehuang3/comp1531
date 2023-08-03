@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminAuthPasswordUpdate } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminAuthPasswordUpdate, v1requestAdminAuthPasswordUpdate } from './other';
 
 beforeEach(() => {
   requestClear();
@@ -60,4 +60,11 @@ test('Testing token is for logged in session', () => {
   const userLogin = requestAdminAuthPasswordUpdate(response.body.token, 'Abcd173%', 'ADsd&1929');
   expect(userLogin.body).toStrictEqual({ error: 'Not a valid session' });
   expect(userLogin.status).toStrictEqual(403);
+});
+
+test('Simple test pass, v1 route', () => {
+  const res = requestAdminAuthRegister('lain@gmail.com', 'Abcd123%', 'Pranav', 'Patel');
+  const response = v1requestAdminAuthPasswordUpdate(res.body.token, 'Abcd123%', 'ADsd&1929');
+  expect(response.body).toStrictEqual({});
+  expect(response.status).toStrictEqual(200);
 });
