@@ -1,4 +1,4 @@
-import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate, requestAdminSessionFinalResult, requestAdminQuizSessionStart, requestQuizQuestionCreate, getAverageAnswerTime, changeState } from './other';
+import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate, requestAdminSessionFinalResult, requestAdminQuizSessionStart, requestQuizQuestionCreate, getAverageAnswerTime } from './other';
 import { State } from './interfaces';
 let token1: any;
 let quiz1: any;
@@ -89,9 +89,6 @@ describe('Passing cases', () => {
 
 describe('PlayerId not valid', () => {
   test('Negative playerId', () => {
-    changeState(session, State.FINAL_RESULTS);
-    requestPlayerAnswerSubmit(player1, 1, [0]);
-    changeState(session, State.ANSWER_SHOW);
     expect(requestAdminSessionFinalResult(-1).body).toStrictEqual({ error: 'Player does not exist.' });
   });
 });

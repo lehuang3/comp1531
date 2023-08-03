@@ -1,4 +1,4 @@
-import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate, requestAdminSessionFinalResult, requestAdminQuizSessionFinalCsv, requestAdminQuizSessionStart, requestQuizQuestionCreate, getAverageAnswerTime, changeState, requestAdminQuizSessionFinal } from './other';
+import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate, requestAdminSessionFinalResult, requestAdminQuizSessionFinalCsv, requestAdminQuizSessionStart, requestQuizQuestionCreate, getAverageAnswerTime, requestAdminQuizSessionFinal } from './other';
 import { State } from './interfaces';
 let token1: any;
 let quiz1: any;
@@ -130,7 +130,7 @@ test('session not in any quiz', () => {
 });
 
 test('Not FINAL_RESULTS state', async() => {
-  await new Promise((resolve) => setTimeout(resolve, 1200));
+  await new Promise((resolve) => setTimeout(resolve, 100));
   requestPlayerAnswerSubmit(player1, 1, [0]);
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'QUESTION_CLOSE');
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_FINAL_RESULTS');
@@ -143,7 +143,7 @@ test('Not FINAL_RESULTS state', async() => {
 test('Quiz played', async() => {
 
   console.log("first quesiotn")
-  await new Promise((resolve) => setTimeout(resolve, 1200));
+  await new Promise((resolve) => setTimeout(resolve, 100));
   requestPlayerAnswerSubmit(player3, 1, [2])
   
   requestPlayerAnswerSubmit(player2, 1, [1])
@@ -154,7 +154,7 @@ test('Quiz played', async() => {
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'NEXT_QUESTION');
 
   console.log("secound quesiotn")
-  await new Promise((resolve) => setTimeout(resolve, 1200));
+  await new Promise((resolve) => setTimeout(resolve, 100));
   requestPlayerAnswerSubmit(player1, 2, [0])
   
   requestPlayerAnswerSubmit(player2, 2, [1])
@@ -165,7 +165,7 @@ test('Quiz played', async() => {
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'NEXT_QUESTION');
 
-  await new Promise((resolve) => setTimeout(resolve, 1100));
+  await new Promise((resolve) => setTimeout(resolve, 100));
   requestPlayerAnswerSubmit(player1, 3, [2])
   
   requestPlayerAnswerSubmit(player3, 3, [0])

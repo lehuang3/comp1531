@@ -3,7 +3,7 @@ import {
   save, read, tokenOwner, quizActiveCheck, quizValidOwner, activeSessions, quizHasQuestion, generateSessionId,
   quizSessionIdValidCheck, isActionApplicable, isSessionInLobby, nameExistinSession, generateRandomName, findPlayerSession,
   answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect, getQuestionResults, isSessionAtLastQuestion,
-  getSessionState, isSessionInFinal, getSessions, requestQuizSessionPlayerJoin, changeState
+  getSessionState, isSessionInFinal, getSessions
 } from './other';
 import HTTPError from 'http-errors';
 interface SessionIdReturn {
@@ -379,10 +379,10 @@ function playerAnswerSubmit(playerId: number, questionposition: number, answerId
       }
       // console.log(session.metadata.questions[questionposition - 1].attempts)
       // find averageAnwerTime
-      session.metadata.questions[questionposition - 1].averageAnswerTime = Math.round(getAverageAnswerTime(session, questionposition));
+      session.metadata.questions[questionposition - 1].averageAnswerTime = getAverageAnswerTime(session, questionposition);
       // find percentCorrect
       // if a player is correct, their point is not 0
-      session.metadata.questions[questionposition - 1].percentCorrect = Math.round(getPercentCorrect(session, questionposition));
+      session.metadata.questions[questionposition - 1].percentCorrect = getPercentCorrect(session, questionposition);
       // console.log(session.metadata.questions[questionposition - 1].attempts);
     }
     save(data);
@@ -395,14 +395,14 @@ function playerQuestionInfo(playerId: number, questionposition: number) {
   if (playerSession === undefined) {
     throw HTTPError(400, 'Player does not exist');
   }
+  if (playerSession.state === State.END || playerSession.state === State.LOBBY) {
+    throw HTTPError(400, 'Session is in LOBBY or END state');
+  }
   if (questionposition <= 0 || questionposition > playerSession.metadata.questions.length) {
     throw HTTPError(400, 'Question is not valid for this session');
   }
   if (playerSession.atQuestion !== questionposition) {
     throw HTTPError(400, 'Session is not currently on this question');
-  }
-  if (playerSession.state === State.END || playerSession.state === State.LOBBY) {
-    throw HTTPError(400, 'Session is in LOBBY or END state');
   }
   const question = playerSession.metadata.questions[questionposition - 1];
   return {
