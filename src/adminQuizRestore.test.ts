@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizRemove, requestAdminQuizRestore } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizRemove, requestAdminQuizRestore, v1requestAdminQuizRestore } from './other';
 
 let token1: string;
 let quiz1: number;
@@ -8,6 +8,10 @@ beforeEach(() => {
   token1 = requestAdminAuthRegister('123@email.com', '123adjakjfhgaA', 'david', 'test').body.token;
   quiz1 = requestAdminQuizCreate(token1, 'quizhello', 'quiz1number').body.quizId;
   requestAdminQuizRemove(token1, quiz1);
+});
+
+test('Correct params', () => {
+  expect(v1requestAdminQuizRestore(token1, quiz1).body).toStrictEqual({ });
 });
 
 describe('Passing cases', () => {

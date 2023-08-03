@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizRemove, requestAdminQuizCreate, requestAdminQuizTrash } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizRemove, requestAdminQuizCreate, requestAdminQuizTrash, v1requestAdminQuizTrash } from './other';
 let token1: string;
 let quiz1: number;
 
@@ -6,6 +6,20 @@ beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
   quiz1 = requestAdminQuizCreate(token1, 'quiz', '').body.quizId;
+});
+
+test('1 quiz in trash', () => {
+  requestAdminQuizRemove(token1, quiz1);
+  const response = v1requestAdminQuizTrash(token1);
+  expect(response.body).toStrictEqual({
+    quizzes: [
+      {
+        quizId: quiz1,
+        name: 'quiz',
+      }
+    ]
+  });
+  expect(response.status).toStrictEqual(200);
 });
 
 test('Check for invalid token structure', () => {

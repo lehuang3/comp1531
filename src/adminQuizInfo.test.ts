@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizInfo } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizInfo, v1requestAdminQuizInfo } from './other';
 
 let token1: string;
 let quiz1: number;
@@ -7,6 +7,16 @@ beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('123@email.com', '123adjakjfhgaA', 'david', 'test').body.token;
   quiz1 = requestAdminQuizCreate(token1, 'quizhello', 'quiz1number').body.quizId;
+});
+
+test('Test 1 correct inputs', () => {
+  expect(v1requestAdminQuizInfo(token1, quiz1).body).toMatchObject({
+    quizId: expect.any(Number),
+    name: 'quizhello',
+    timeCreated: expect.any(Number),
+    timeLastEdited: expect.any(Number),
+    description: 'quiz1number'
+  });
 });
 
 describe('Valid inputs, test pass', () => {

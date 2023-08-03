@@ -603,6 +603,32 @@ function requestAdminQuizDescriptionUpdate(token: ErrorObject | string, quizId: 
 }
 
 /**
+ * v1 version of requestAdminQuizDescriptionUpdate
+ *
+ * @param {string | ErrorObject} token
+ * @param {string} quizId quiz id
+ * @param {string} description quiz description
+ *
+ * @returns {{object}} - response in javascript
+*/
+function v1requestAdminQuizDescriptionUpdate(token: ErrorObject | string, quizId: number, description: string) {
+  const res = request(
+    'PUT',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/description`,
+    {
+      json: {
+        token,
+        description,
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
  * Sends a 'put' request to the corresponding server route to
  * update the user password.
  *
@@ -716,6 +742,30 @@ function requestAdminQuizInfo(token: ErrorObject | string, quizId: number) {
 }
 
 /**
+ * v1 version of requestAdminQuizInfo
+ *
+ * @param {string | ErrorObject} token - token/sessionId
+ * @param {number} quizId quiz Id
+ *
+ * @returns {{object}} - response in javascript
+ */
+function v1requestAdminQuizInfo(token: ErrorObject | string, quizId: number) {
+  const res = request(
+    'GET',
+    SERVER_URL + `/v1/admin/quiz/${quizId}`,
+    {
+      qs: {
+        token: token as string,
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
  * Sends a 'put' request to update the name of the current quiz
  *
  * @param {string | ErrorObject} token - token/sessionId
@@ -744,6 +794,32 @@ function requestAdminQuizNameUpdate(token: ErrorObject | string, quizId: number,
 }
 
 /**
+ * v1 version of adminQuizNameUpdate
+ *
+ * @param {string | ErrorObject} token - token/sessionId
+ * @param {number} quizId quiz Id
+ * @param {string} name quiz name
+ *
+ * @returns {{object}} - response in javascript
+*/
+function v1requestAdminQuizNameUpdate(token: ErrorObject | string, quizId: number, name: string) {
+  const res = request(
+    'PUT',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/name`,
+    {
+      json: {
+        token,
+        name
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
  * Send a 'delete' request to the corresponding server route to remove
  * an existing quiz
  *
@@ -758,6 +834,30 @@ function requestAdminQuizRemove(token: ErrorObject | string, quizId: number) {
     SERVER_URL + `/v2/admin/quiz/${quizId}`,
     {
       headers: {
+        token: token as string
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
+ * v1 version of requestAdminQuizRemove
+ *
+ * @param {string | ErrorObject} token - token/sessionId
+ * @param {number} quizId - quiz Id
+ *
+ * @returns {{object}} - response in javascript
+*/
+function v1requestAdminQuizRemove(token: ErrorObject | string, quizId: number) {
+  const res = request(
+    'DELETE',
+    SERVER_URL + `/v1/admin/quiz/${quizId}`,
+    {
+      qs: {
         token: token as string
       }
     }
@@ -809,6 +909,29 @@ function requestAdminQuizTrash(token: ErrorObject | string) {
       },
       qs: {
 
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
+ * v1 version of requestAdminQuizTrash
+ *
+ * @param {string | ErrorObject} token - token
+ *
+ * @returns {{object}} - response in javascript
+*/
+function v1requestAdminQuizTrash(token: ErrorObject | string) {
+  const res = request(
+    'GET',
+    SERVER_URL + '/v1/admin/quiz/trash',
+    {
+      qs: {
+        token
       }
     }
   );
@@ -871,6 +994,31 @@ function requestAdminQuizRestore(token: ErrorObject | string, quizId: number) {
     status: res.statusCode,
   };
 }
+
+/**
+ * v1 version of requestAdminQuizRestore
+ *
+ * @param {string | ErrorObject} token - token/sessionId
+ * @param {number} quizId - Quiz Id
+ *
+ * @returns {{object}} - response in javascript
+*/
+function v1requestAdminQuizRestore(token: ErrorObject | string, quizId: number) {
+  const res = request(
+    'POST',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/restore`,
+    {
+      json: {
+        token
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
 /**
  * Send a 'PUT' request to the corresponding server route to move
  * an existing quiz question
@@ -2068,6 +2216,7 @@ export {
   requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, findPlayerSession, answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect,
   requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo, requestAdminQuizSessionState, getQuestionResults,
   requestAdminSessioQuestionResult, requestAdminSessionFinalResult, isSessionAtLastQuestion, getSessionState, saveImg, requestAdminQuizSessionFinal,
+  v1requestAdminQuizRemove, v1requestAdminQuizInfo, v1requestAdminQuizNameUpdate, v1requestAdminQuizDescriptionUpdate, v1requestAdminQuizTrash, v1requestAdminQuizRestore,
   isSessionInFinal, requestAdminQuizSessionFinalCsv, requestAdminQuizSessionsView, getSessions, v1requestAdminAuthDetailsUpdate, v1requestAdminAuthLogout, v1requestAdminAuthPasswordUpdate,
   v1requestAdminQuizCreate, v1requestAdminQuizList, v1requestGetAdminUserDetails
 };

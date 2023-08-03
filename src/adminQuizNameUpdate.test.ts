@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizNameUpdate, requestAdminQuizCreate } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizNameUpdate, requestAdminQuizCreate, v1requestAdminQuizNameUpdate } from './other';
 
 let token1: string;
 let quiz1: number;
@@ -11,6 +11,10 @@ beforeEach(() => {
   quiz1 = requestAdminQuizCreate(token1, 'quiz', 'quiz1').body.quizId;
   token2 = requestAdminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test').body.token;
   quiz2 = requestAdminQuizCreate(token2, 'quiz', 'quiz1').body.quizId;
+});
+
+test('User 1 changes quiz name to valid quiz name', () => {
+  expect(v1requestAdminQuizNameUpdate(token1, quiz1, 'quiz2').body).toStrictEqual({ });
 });
 
 describe('Passing cases', () => {
