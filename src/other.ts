@@ -34,6 +34,161 @@ function requestClear() {
 }
 
 /**
+ * Send a 'post' which logs out the provided tokens user session
+ *
+ * @param {ErrorObject | string} token - token/sessionId
+ *
+ * @returns {{}} - none
+*/
+function v1requestAdminAuthLogout(token: ErrorObject | string) {
+  const res = request(
+    'POST',
+    SERVER_URL + '/v1/admin/auth/logout',
+    {
+      json: {
+        token
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
+ * Send a 'get' request to the corresponding server route for user details,
+ * returning the response in the form of a javascript object
+ * @param {{string | ErrorObject}}
+ *
+ * @returns {{object}} - response in javascript
+*/
+function v1requestGetAdminUserDetails(token: ErrorObject | string) {
+  const res = request(
+    'GET',
+    SERVER_URL + '/v1/admin/user/details',
+    {
+      qs: {
+        token,
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
+ * Send a 'put' request to the corresponding server route to
+ * update user details
+ *
+ * @param {string | ErrorObject} token - token
+ * @param {string} - user email
+ * @param {string} - user first name
+ * @param {string} - user last name
+ *
+ * @returns {{object}} - response in javascript
+*/
+function v1requestAdminAuthDetailsUpdate(token: ErrorObject | string, email: string, nameFirst: string, nameLast: string) {
+  const res = request(
+    'PUT',
+    SERVER_URL + '/v1/admin/user/details',
+    {
+      json: {
+        token,
+        email,
+        nameFirst,
+        nameLast
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
+ * Sends a 'put' request to the corresponding server route to
+ * update the user password.
+ *
+ * @param {string | ErrorObject} token - token/sessionId
+ * @param {string} oldPassword old password
+ * @param {string} newPassword new password
+ *
+ * @returns {{object}} - response in javascript
+*/
+function v1requestAdminAuthPasswordUpdate(token: ErrorObject | string, oldPassword: string, newPassword: string) {
+  const res = request(
+    'PUT',
+    SERVER_URL + '/v1/admin/user/password',
+    {
+      json: {
+        token,
+        oldPassword,
+        newPassword
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
+ * Send a 'GET' request to the corresponding server route to show the list of user quizzes
+ *
+ * @param {string | ErrorObject} token - token/sessionId
+ *
+ * @returns {{object}} - response in javascript
+*/
+function v1requestAdminQuizList(token: ErrorObject | string) {
+  const res = request(
+    'GET',
+    SERVER_URL + '/v1/admin/quiz/list',
+    {
+      qs: {
+        token,
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
+ * Send a 'post' request to the corresponding server route to create
+ * a quiz
+ *
+ * @param {string | ErrorObject} token - token/sessionId
+ * @param {string} name quiz name
+ * @param {string} description description of quiz
+ *
+ * @returns {{object}} - response in javascript
+*/
+function v1requestAdminQuizCreate(token: ErrorObject | string, name: string, description: string) {
+  const res = request(
+    'POST',
+    SERVER_URL + '/v1/admin/quiz',
+    {
+      json: {
+        token,
+        name,
+        description
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
  * Send a 'get' request to the corresponding server route for user details,
  * returning the response in the form of a javascript object
  * @param {{string | ErrorObject}}
@@ -1913,5 +2068,6 @@ export {
   requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, findPlayerSession, answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect,
   requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo, requestAdminQuizSessionState, getQuestionResults,
   requestAdminSessioQuestionResult, requestAdminSessionFinalResult, isSessionAtLastQuestion, getSessionState, saveImg, requestAdminQuizSessionFinal,
-  isSessionInFinal, requestAdminQuizSessionFinalCsv, requestAdminQuizSessionsView, getSessions
+  isSessionInFinal, requestAdminQuizSessionFinalCsv, requestAdminQuizSessionsView, getSessions, v1requestAdminAuthDetailsUpdate, v1requestAdminAuthLogout, v1requestAdminAuthPasswordUpdate,
+  v1requestAdminQuizCreate, v1requestAdminQuizList, v1requestGetAdminUserDetails
 };

@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, v1requestAdminQuizCreate } from './other';
 let token1: string;
 
 beforeEach(() => {
@@ -81,6 +81,13 @@ test('Description > 100', () => {
 
 test('Valid entry', () => {
   const response = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion');
+
+  expect(response.body).toStrictEqual({ quizId: expect.any(Number) });
+  expect(response.status).toStrictEqual(200);
+});
+
+test('Valid entry, v1 route', () => {
+  const response = v1requestAdminQuizCreate(token1, 'quiz1', 'Descritpion');
 
   expect(response.body).toStrictEqual({ quizId: expect.any(Number) });
   expect(response.status).toStrictEqual(200);

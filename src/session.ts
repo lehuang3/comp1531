@@ -742,9 +742,11 @@ function adminQuizSessionsView(token: string | ErrorObject, quizId: number) {
   let inactiveSessions = quizSessions.filter(session => session.state === State.END).map(session => session.quizSessionId);
   activeSessions = activeSessions.sort((a, b) => a - b);
   inactiveSessions = inactiveSessions.sort((a, b) => a - b);
+  console.log(activeSessions)
+  console.log(inactiveSessions)
   return {
-    activeSessions,
-    inactiveSessions,
+    activeSessions: activeSessions,
+    inactiveSessions: inactiveSessions,
   };
 
 }

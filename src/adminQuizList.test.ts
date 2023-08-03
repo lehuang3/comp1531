@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizList } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizList, v1requestAdminQuizList } from './other';
 let token1: string;
 
 beforeEach(() => {
@@ -25,6 +25,23 @@ test('Invalid token struct', () => {
 test('Valid entry', () => {
   requestAdminQuizCreate(token1, 'quiz2', 'Descritpion');
   const response = requestAdminQuizList(token1);
+  expect(response.body).toStrictEqual({
+    quizzes: [
+      {
+        quizId: expect.any(Number),
+        name: expect.any(String)
+      },
+      {
+        quizId: expect.any(Number),
+        name: expect.any(String)
+      }
+    ]
+  });
+});
+
+test('Valid entry, v1 route', () => {
+  requestAdminQuizCreate(token1, 'quiz2', 'Descritpion');
+  const response = v1requestAdminQuizList(token1);
   expect(response.body).toStrictEqual({
     quizzes: [
       {
