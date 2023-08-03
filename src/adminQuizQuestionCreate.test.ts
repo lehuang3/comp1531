@@ -1,35 +1,34 @@
 import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate } from './other';
 let token1: string;
 let quiz: number;
-let quizQuestion: any;
+const quizQuestion = {
+  questionBody: {
+    question: 'What is capital of sydney?',
+    duration: 5,
+    points: 5,
+    answers: [
+      {
+        answer: 'sydney',
+        correct: true
+      },
+      {
+        answer: 'Melbourne',
+        correct: false
+      },
+      {
+        answer: 'Camberra',
+        correct: false
+      }
+
+    ],
+    thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
+  }
+};
 
 beforeEach(() => {
   requestClear();
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
   quiz = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion').body.quizId;
-  quizQuestion = {
-    questionBody: {
-      question: 'What is capital of sydney?',
-      duration: 5,
-      points: 5,
-      answers: [
-        {
-          answer: 'sydney',
-          correct: true
-        },
-        {
-          answer: 'Melbourne',
-          correct: false
-        },
-        {
-          answer: 'Camberra',
-          correct: false
-        }
-
-      ],
-      thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
-    }
-  };
 });
 
 test('Invalide quiz ID', () => {
