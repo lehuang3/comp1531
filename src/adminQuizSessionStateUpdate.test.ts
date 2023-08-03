@@ -1,8 +1,8 @@
 import {
   requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizSessionStart,
-  requestAdminQuizSessionStateUpdate, requestQuizSessionPlayerJoin, changeState
+  requestAdminQuizSessionStateUpdate
 } from './other';
-import { State } from './interfaces';
+import { clearTimeouts } from './session';
 
 let token1: string;
 let quiz1: number;
@@ -177,7 +177,7 @@ describe('QUESTION_COUNTDOWN', () => {
 describe('QUESTION_OPEN', () => {
   beforeEach(async () => {
     requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 100));
   });
   test('GO_TO_FINAL_RESULTS', () => {
     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_FINAL_RESULTS');
@@ -204,7 +204,7 @@ describe('QUESTION_OPEN', () => {
 describe('QUESTION_CLOSE', () => {
   beforeEach(async() => {
     requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 600));
   });
   test('GO_TO_FINAL_RESULTS', () => {
     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_FINAL_RESULTS');
@@ -229,9 +229,10 @@ describe('QUESTION_CLOSE', () => {
 });
 
 describe('FINAL_RESULTS', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
-    requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_ANSWER');
     requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_FINAL_RESULTS');
   });
   test('GO_TO_FINAL_RESULTS', () => {
@@ -257,9 +258,10 @@ describe('FINAL_RESULTS', () => {
 });
 
 describe('ANSWER_SHOW', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
-    requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_ANSWER');
   });
   test('GO_TO_FINAL_RESULTS', () => {
     const response = requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_FINAL_RESULTS');

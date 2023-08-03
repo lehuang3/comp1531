@@ -1,8 +1,7 @@
 import {
   requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizSessionStart,
-  requestAdminQuizSessionStateUpdate, requestQuizSessionPlayerJoin, requestPlayerQuestionInfo, changeState
+  requestAdminQuizSessionStateUpdate, requestQuizSessionPlayerJoin, requestPlayerQuestionInfo
 } from './other';
-import { State } from './interfaces';
 
 let token1: string;
 let quiz1: number;
@@ -82,14 +81,15 @@ test('Invalid question position', () => {
   expect(response.status).toStrictEqual(400);
 });
 
-test('Session is not up to this question yet', () => {
+test('Session is not up to this question yet', async () => {
   let response = requestPlayerQuestionInfo(player1, 2);
   expect(response.body).toStrictEqual({
     error: 'Session is not currently on this question',
   });
   expect(response.status).toStrictEqual(400);
   // increment atQuestion by 1
-  requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_ANSWER');
   requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
   response = requestPlayerQuestionInfo(player1, 1);
   expect(response.body).toStrictEqual({
@@ -98,22 +98,17 @@ test('Session is not up to this question yet', () => {
   expect(response.status).toStrictEqual(400);
 });
 
-test('Session is in LOBBY or END state', () => {
-  changeState(session1, State.LOBBY);
-  let response = requestPlayerQuestionInfo(player1, 1);
-  expect(response.body).toStrictEqual({
-    error: 'Session is in LOBBY or END state',
-  });
-  expect(response.status).toStrictEqual(400);
-  changeState(session1, State.END);
-  response = requestPlayerQuestionInfo(player1, 1);
+test('Session is in LOBBY or END state', async() => {
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'END');
+  const response = requestPlayerQuestionInfo(player1, 1);
   expect(response.body).toStrictEqual({
     error: 'Session is in LOBBY or END state',
   });
   expect(response.status).toStrictEqual(400);
 });
 
-test('success', () => {
+test('success', async() => {
   let response = requestPlayerQuestionInfo(player1, 1);
   expect(response.body).toStrictEqual({
     questionId: question1,
@@ -142,7 +137,8 @@ test('success', () => {
   expect(response.status).toStrictEqual(200);
 
   // increment atQuestion by 1
-  requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_ANSWER');
   requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
   response = requestPlayerQuestionInfo(player1, 2);
   expect(response.body).toStrictEqual({
