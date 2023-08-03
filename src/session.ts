@@ -3,7 +3,7 @@ import {
   save, read, tokenOwner, quizActiveCheck, quizValidOwner, activeSessions, quizHasQuestion, generateSessionId,
   quizSessionIdValidCheck, isActionApplicable, isSessionInLobby, nameExistinSession, generateRandomName, findPlayerSession,
   answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, getPercentCorrect, getQuestionResults, isSessionAtLastQuestion,
-  getSessionState, isSessionInFinal, getSessions
+  getSessionState, isSessionInFinal, getSessions, requestQuizSessionPlayerJoin, changeState
 } from './other';
 import HTTPError from 'http-errors';
 interface SessionIdReturn {
@@ -101,7 +101,7 @@ function questionCountdownHandler(sessionId: number) {
           session.state = State.QUESTION_CLOSE;
           save(data);
         }, session.metadata.questions[session.atQuestion - 1].duration * 1000));
-      }, 1000));
+      }, 100));
       save(data);
     }
   }

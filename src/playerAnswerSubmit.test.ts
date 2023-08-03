@@ -14,7 +14,7 @@ beforeEach(() => {
   requestQuizQuestionCreate(token1, quiz1,
     {
       question: 'What is capital of sydney?',
-      duration: 2,
+      duration: 0.5,
       points: 5,
       answers: [
         {
@@ -81,7 +81,7 @@ describe('Session not in QUESTION_OPEN state', () => {
   });
 
   test('Not in QUESTION_OPEN state - QUESTION_CLOSE', async () => {
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await new Promise((resolve) => setTimeout(resolve, 600));
     const response = requestPlayerAnswerSubmit(player1, 1, [0]);
     expect(response.body).toStrictEqual({
       error: 'Question is not open',
@@ -89,8 +89,9 @@ describe('Session not in QUESTION_OPEN state', () => {
     expect(response.status).toStrictEqual(400);
   });
 
-  test('Not in QUESTION_OPEN state - ANSWER_SHOW', () => {
-    requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
+  test('Not in QUESTION_OPEN state - ANSWER_SHOW', async () => {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_ANSWER');
     const response = requestPlayerAnswerSubmit(player1, 1, [0]);
     expect(response.body).toStrictEqual({
       error: 'Question is not open',
@@ -99,6 +100,7 @@ describe('Session not in QUESTION_OPEN state', () => {
   });
 
   test('Not in QUESTION_OPEN state - END', async () => {
+    await new Promise((resolve) => setTimeout(resolve, 100));
     requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'END');
     const response = requestPlayerAnswerSubmit(player1, 1, [0]);
     expect(response.body).toStrictEqual({
@@ -109,7 +111,7 @@ describe('Session not in QUESTION_OPEN state', () => {
 });
 
 test('Session is not up to this question yet', async () => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 100));
   const response = requestPlayerAnswerSubmit(player1, 2, [0]);
   expect(response.body).toStrictEqual({
     error: 'Session is not up to this question yet',
@@ -118,9 +120,10 @@ test('Session is not up to this question yet', async () => {
 });
 
 test('Invalid answerId', async() => {
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_ANSWER');
   requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
-  requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 100));
   const response = requestPlayerAnswerSubmit(player1, 2, [2]);
   expect(response.body).toStrictEqual({
     error: 'At least 1 answer is invalid',
@@ -129,7 +132,7 @@ test('Invalid answerId', async() => {
 });
 
 test('Duplicate answerId', async () => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 100));
   const response = requestPlayerAnswerSubmit(player1, 1, [0, 0]);
   expect(response.body).toStrictEqual({
     error: 'Answer(s) has duplicate(s)',
@@ -138,7 +141,7 @@ test('Duplicate answerId', async () => {
 });
 
 test('No answerId', async() => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 100));
   const response = requestPlayerAnswerSubmit(player1, 1, []);
   expect(response.body).toStrictEqual({
     error: 'No answer submitted',
@@ -150,7 +153,7 @@ test.each([
   [1, [0]], // correct
   [1, [0, 1]] // incorrect
 ])(' Success question 1', async(question, answers) => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 100));
   const response = requestPlayerAnswerSubmit(player1, question, answers);
   expect(response.body).toStrictEqual({});
   expect(response.status).toStrictEqual(200);
@@ -160,16 +163,17 @@ test.each([
   [2, [1]], // incorrect
   [2, [0, 1]], // correct
 ])(' Success question 2', async(question, answers) => {
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'GO_TO_ANSWER');
   requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
-  requestAdminQuizSessionStateUpdate(token1, quiz1, session1, 'NEXT_QUESTION');
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 100));
   const response = requestPlayerAnswerSubmit(player1, question, answers);
   expect(response.body).toStrictEqual({});
   expect(response.status).toStrictEqual(200);
 });
 
 test('right answer -> wrong answer', async() => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 100));
   requestPlayerAnswerSubmit(player1, 1, [0]);
   const response = requestPlayerAnswerSubmit(player1, 1, [0, 1]);
   expect(response.body).toStrictEqual({});

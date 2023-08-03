@@ -69,13 +69,13 @@ beforeEach(() => {
 
 describe('Passing cases', () => {
   test('User 1 enters correct information', async() => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 100));
     requestPlayerAnswerSubmit(player1, 1, [0]);
     requestPlayerAnswerSubmit(player2, 1, [0, 1]);
     requestPlayerAnswerSubmit(player3, 1, [0, 1, 2]);
     requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
     requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'NEXT_QUESTION');
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 100));
     requestPlayerAnswerSubmit(player1, 2, [0, 2]);
     requestPlayerAnswerSubmit(player2, 2, [0]);
     requestPlayerAnswerSubmit(player3, 2, [0, 2]);
