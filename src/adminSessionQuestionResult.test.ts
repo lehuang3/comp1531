@@ -89,7 +89,7 @@ describe('Passing cases', () => {
       percentCorrect: expect.any(Number)
     });
   });
-  test.only('No errors but no one answered correctly', async() => {
+  test('No errors but no one answered correctly', async() => {
     // const data = read()
     // console.log(data.sessions[0].state)
     await new Promise((resolve) => setTimeout(resolve, 100));

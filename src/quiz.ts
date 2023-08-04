@@ -963,7 +963,7 @@ function adminQuizTransfer(token: string | ErrorObject, quizId: number, userEmai
   } else if (users.filter(user => user.email === userEmail)[0].authUserId === authUserId) {
     if(version === 1){
       return {
-        error: 'Target user does not exist',
+        error: 'Target user is also original user',
       };
     } else {
     throw HTTPError(400, 'Target user is also original user');
@@ -971,7 +971,7 @@ function adminQuizTransfer(token: string | ErrorObject, quizId: number, userEmai
   } else if (isSameQuizName(userEmail, quizId)) {
     if(version === 1){
       return {
-        error: 'Target user does not exist',
+        error: "Quiz to be transfered has the same name as one of target user's quizzes",
       };
     } else {
     throw HTTPError(400, "Quiz to be transfered has the same name as one of target user's quizzes");
@@ -1148,7 +1148,7 @@ function adminQuizQuestionDelete(token: ErrorObject | string, quizId: number, qu
   } else if (!quizValidOwner(authUserId, quizId)) {
     if (version === 1) {
       return {
-        error: 'You do not have access to this quiz',
+        error: 'You do not have access to this quiz.',
       };
     } else {
     throw HTTPError(400, 'You do not have access to this quiz.');
@@ -1414,7 +1414,6 @@ function adminQuizTrashEmpty(token: string | ErrorObject, quizIdArr: number[],ve
   }
 
   quizIdArr.map((quizIdToRemove) => {
-    // user.userQuizzes = user.userQuizzes.filter(userQuizId => userQuizId !== quizId)
     data.trash = data.trash.filter(quiz => quiz.quizId !== quizIdToRemove);
     data.quizzes = data.quizzes.filter(quiz => quiz.quizId !== quizIdToRemove);
     for (const user of data.users) {
