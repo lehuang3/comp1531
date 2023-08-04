@@ -497,7 +497,10 @@ function adminSessionFinalResult(playerId: number) {
     // get the scaling factor and the score and add to the players points
     // console.log(correctPlayers)
     for (const correctPlayer of correctPlayers) {
-      sess.players.find((player) => player.playerId === correctPlayer.playerId).playerScore += correctPlayer.points * findScalingFactor(correctPlayer.timeTaken, correctPlayers);
+      const points = (correctPlayer.points * findScalingFactor(correctPlayer.timeTaken, correctPlayers))
+      console.log('this is' + findScalingFactor(correctPlayer.timeTaken, correctPlayers))
+      const addedScore = Math.round(points * 10) / 10
+      sess.players.find((player) => player.playerId === correctPlayer.playerId).playerScore += addedScore;
     }
     // console.log(sess.players)
   }
@@ -584,7 +587,9 @@ function adminQuizSessionFinal(token:string | ErrorObject, quizId:number, sessio
     correctPlayers.sort((a, b) => a.timeTaken - b.timeTaken);
     // get the scaling factor and the score and add to the players points
     for (const player of correctPlayers) {
-      sess.players.find((player) => player.playerId === player.playerId).playerScore += player.points * findScalingFactor(player.timeTaken, correctPlayers);
+      const points = (player.points * findScalingFactor(player.timeTaken, correctPlayers))
+      const addedScore = Math.round(points * 10) / 10
+      sess.players.find((player) => player.playerId === player.playerId).playerScore += addedScore;
     }
     // console.log(sess.players)
   }

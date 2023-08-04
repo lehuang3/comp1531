@@ -77,7 +77,9 @@ describe('Passing cases', () => {
     requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'NEXT_QUESTION');
     await new Promise((resolve) => setTimeout(resolve, 100));
     requestPlayerAnswerSubmit(player1, 2, [0, 2]);
-    requestPlayerAnswerSubmit(player2, 2, [0]);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    requestPlayerAnswerSubmit(player2, 2, [0, 2]);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     requestPlayerAnswerSubmit(player3, 2, [0, 2]);
     requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
     requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_FINAL_RESULTS');
