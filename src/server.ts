@@ -309,7 +309,7 @@ app.put('/v1/admin/quiz/:quizId/question/:questionId/move', (req: Request, res: 
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionId);
   const { token, newPosition } = req.body;
-  const response = adminQuizQuestionMove(quizId, questionId, token, newPosition);
+  const response = adminQuizQuestionMove(quizId, questionId, token, newPosition,1);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
       return res.status(401).json(response);
@@ -327,7 +327,7 @@ app.put('/v2/admin/quiz/:quizId/question/:questionId/move', (req: Request, res: 
   const questionId = parseInt(req.params.questionId);
   const token = req.header('token');
   const { newPosition } = req.body;
-  const response = adminQuizQuestionMove(quizId, questionId, token, newPosition);
+  const response = adminQuizQuestionMove(quizId, questionId, token, newPosition,2);
   res.json(response);
 });
 
@@ -335,7 +335,7 @@ app.delete('/v1/admin/quiz/:quizId/question/:questionId', (req: Request, res: Re
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionId);
   const token = req.query.token as string;
-  const response = adminQuizQuestionDelete(token, quizId, questionId);
+  const response = adminQuizQuestionDelete(token, quizId, questionId,1);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
       return res.status(401).json(response);
@@ -352,7 +352,7 @@ app.post('/v1/admin/quiz/:quizId/question/:questionId/duplicate', (req: Request,
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionId);
   const { token } = req.body;
-  const response = adminQuizQuestionDuplicate(quizId, questionId, token);
+  const response = adminQuizQuestionDuplicate(quizId, questionId, token,1);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
       return res.status(401).json(response);
@@ -369,7 +369,7 @@ app.post('/v2/admin/quiz/:quizId/question/:questionId/duplicate', (req: Request,
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionId);
   const token = req.header('token');
-  const response = adminQuizQuestionDuplicate(quizId, questionId, token);
+  const response = adminQuizQuestionDuplicate(quizId, questionId, token,2);
   res.json(response);
 });
 
@@ -377,7 +377,7 @@ app.put('/v1/admin/quiz/:quizId/question/:questionId', (req: Request, res: Respo
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionId);
   const { token, questionBody } = req.body;
-  const response = adminQuizQuestionUpdate(token, quizId, questionId, questionBody);
+  const response = adminQuizQuestionUpdate(token, quizId, questionId, questionBody,1);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
       return res.status(401).json(response);
@@ -525,7 +525,7 @@ app.put('/v2/admin/quiz/:quizId/question/:questionId', (req: Request, res: Respo
   const questionId = parseInt(req.params.questionId);
   const token = req.header('token');
   const questionBody = req.body.questionBody;
-  const response = adminQuizQuestionUpdate(token, quizId, questionId, questionBody);
+  const response = adminQuizQuestionUpdate(token, quizId, questionId, questionBody,2);
   res.json(response);
 });
 
@@ -533,7 +533,7 @@ app.delete('/v2/admin/quiz/:quizId/question/:questionId', (req: Request, res: Re
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionId);
   const token = req.header('token');
-  const response = adminQuizQuestionDelete(token, quizId, questionId);
+  const response = adminQuizQuestionDelete(token, quizId, questionId, 2);
   res.json(response);
 });
 

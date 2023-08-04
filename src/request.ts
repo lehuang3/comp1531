@@ -834,6 +834,35 @@ function requestAdminQuizQuestionMove(quizId: number, questionId: number, token:
 }
 
 /**
+ * Send a 'PUT' request to the corresponding server route to move
+ * an existing quiz question
+ *
+ * @param {number} quizId - token/sessionId
+ * @param {number} questionId - token/sessionId
+ * @param {string | ErrorObject} token - token/sessionId
+ * @param {number} newPosition - new position of quiz question
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminQuizQuestionMoveV1(quizId: number, questionId: number, token: ErrorObject | string, newPosition: number) {
+  const res = request(
+    'PUT',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}/move`,
+    {
+      json: {
+        token,
+        newPosition
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+
+/**
  * Send a 'PUT' request to the corresponding server route to duplicate
  * an existing quiz question
  *
@@ -850,6 +879,32 @@ function requestAdminQuizQuestionDuplicate(token: ErrorObject | string, quizId: 
     {
       headers: {
         token: token as string
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+/**
+ * Send a 'PUT' request to the corresponding server route to duplicate
+ * an existing quiz question
+ *
+ * @param {number} quizId - token/sessionId
+ * @param {number} questionId - token/sessionId
+ * @param {string | ErrorObject} token - token/sessionId
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminQuizQuestionDuplicateV1(token: ErrorObject | string, quizId: number, questionId: number) {
+  const res = request(
+    'POST',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}/duplicate`,
+    {
+      json: {
+        token,
       }
     }
   );
@@ -886,6 +941,33 @@ function requestAdminQuizQuestionDelete(token: ErrorObject | string, quizId: num
   };
 }
 
+/**
+ * Send a 'DELETE' request to the corresponding server route for user details,
+ * returning the response in the form of a javascript object
+ *
+ * @param {string | ErrorObject} token - token
+ * @param {number} quizId - quiz Id
+ * @param {number} questionId - question Id
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminQuizQuestionDeleteV1(token: ErrorObject | string, quizId: number, questionId: number) {
+  const res = request(
+    'DELETE',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}`,
+    {
+      qs: {
+        token
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+
 
 /**
  * Send a 'put' request to the corresponding server route to
@@ -916,6 +998,36 @@ function requestAdminQuizQuestionUpdate(token: ErrorObject | string, quizId: num
     status: res.statusCode,
   };
 }
+
+/**
+ * Send a 'put' request to the corresponding server route to
+ * question update
+ *
+ * @param {string | ErrorObject} token - token
+ * @param {number} quizId - quiz Id
+ * @param {number} questionId - question Id
+ * @param {object} questionBody - question object
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminQuizQuestionUpdateV1(token: ErrorObject | string, quizId: number, questionId: number, questionBody: any) {
+  const res = request(
+    'PUT',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/question/${questionId}`,
+    {
+      json: {
+        token,
+        questionBody
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+
 
 /**
  * Send a 'delete' request to the corresponding server route to
@@ -1315,5 +1427,5 @@ export {
   requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo, requestAdminQuizSessionState, requestAdminSessioQuestionResult, 
   requestAdminSessionFinalResult, requestAdminQuizSessionFinal, v1requestAdminQuizRemove, v1requestAdminQuizInfo, v1requestAdminQuizNameUpdate, v1requestAdminQuizDescriptionUpdate, v1requestAdminQuizTrash, 
   v1requestAdminQuizRestore, requestAdminQuizSessionFinalCsv, requestAdminQuizSessionsView, v1requestAdminAuthDetailsUpdate, v1requestAdminAuthLogout, v1requestAdminAuthPasswordUpdate,
-  v1requestAdminQuizCreate, v1requestAdminQuizList, v1requestGetAdminUserDetails, requestAdminQuizSessionStateUpdate,requestAdminQuizTrashEmptyV1,requestAdminQuizTransferV1, requestQuizQuestionCreateV1
+  v1requestAdminQuizCreate, v1requestAdminQuizList, v1requestGetAdminUserDetails, requestAdminQuizSessionStateUpdate,requestAdminQuizTrashEmptyV1,requestAdminQuizTransferV1, requestQuizQuestionCreateV1,requestAdminQuizQuestionUpdateV1,requestAdminQuizQuestionDeleteV1,requestAdminQuizQuestionDuplicateV1,requestAdminQuizQuestionMoveV1
 }

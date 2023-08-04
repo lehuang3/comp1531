@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizQuestionDelete, requestAdminQuizRemove } from './request';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizQuestionDelete, requestAdminQuizRemove,requestAdminQuizQuestionDeleteV1 } from './request';
 
 let token1: string;
 let quiz1: number;
@@ -110,4 +110,35 @@ describe('Quiz in trash', () => {
     expect(requestAdminQuizQuestionDelete(token1, quiz1, token1Quiz1Question1Id).body).toStrictEqual({ error: 'Quiz is in trash.'});
   });
 });
+
+//V1 ROUTES
+
+describe('Passing cases', () => {
+  test('User 1 enters correct information', () => {
+    expect(requestAdminQuizQuestionDeleteV1(token1, quiz1, token1Quiz1Question1Id).body).toStrictEqual({ });
+  });
+});
+
+describe('Invalid quizId', () => {
+  test('Negative quizId', () => {
+    expect(requestAdminQuizQuestionDeleteV1(token1, -1, token1Quiz1Question1Id).body).toStrictEqual({ error: 'Quiz does not exist.' });
+  });
+});
+
+describe('Invalid session', () => {
+  test('Invalid token', () => {
+    const brokenToken = '-1';
+
+    expect(requestAdminQuizQuestionDeleteV1(brokenToken, quiz1, token1Quiz1Question1Id).body).toStrictEqual({ error: 'Not a valid session' });
+  });
+});
+
+describe('Invalid token', () => {
+  test('Invalid token created from invalid email', () => {
+    const invalidToken = requestAdminAuthRegister('', 'happy123', 'tommy', 'bommy');
+    expect(requestAdminQuizQuestionDeleteV1(invalidToken.body.token, quiz1, token1Quiz1Question1Id).body).toStrictEqual({ error: 'Invalid token structure' });
+  });
+});
+
+
 
