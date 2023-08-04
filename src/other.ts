@@ -751,6 +751,14 @@ function isActionApplicable(sessionId: number, action: string): any {
   return true;
 }
 
+/**
+ * Given a sessionId and a session array check if the session is in LOBBY state
+ *
+ * @param {Array} sessions sessions
+ * @param {number} sessionId session
+ *
+ * @returns {boolean} - true or false
+*/
 function isSessionInLobby(sessions: any, sessionId:number) {
   const session = sessions.find((session:any) => session.quizSessionId === sessionId);
   if (session.state === State.LOBBY) {
@@ -760,6 +768,15 @@ function isSessionInLobby(sessions: any, sessionId:number) {
   return false;
 }
 
+/**
+ * Given a sessionId,name and a session array checks if the name exits in that particular session
+ *
+ * @param {Array} sessions sessions
+ * @param {number} sessionId session
+ * @param {string} name session
+ *
+ * @returns {boolean} - true or false
+*/
 function nameExistinSession(sessions: any, name:string, sessionId:number) {
   const session = sessions.find((session:any) => session.quizSessionId === sessionId);
   const foundPlayer = session.players.find((player:any) => player.playerName === name);
@@ -770,6 +787,12 @@ function nameExistinSession(sessions: any, name:string, sessionId:number) {
   return false;
 }
 
+/**
+ * When called generate a random name for the player if not given
+ *
+ *
+ * @returns {string} - name
+*/
 function generateRandomName() {
   const letters = shuffle(
     ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
@@ -827,22 +850,53 @@ function answerIdsValidCheck(session: Session, questionposition: number, answerI
   return true;
 }
 
+/**
+ * When given the timetaken and correctplayer array it find the scaling factor for a particular player
+ *
+ * @param {number} - timetaken
+ * @param {Attempt[]} - correctplayers array
+ *
+ * @returns {Number} - Scaling factor
+*/
 function findScalingFactor(timeTaken: number, correctPlayers: Attempt[]) {
   return 1 / (correctPlayers.indexOf(correctPlayers.find(attempt => attempt.timeTaken === timeTaken)) + 1);
 }
 
+/**
+ * When given the session and question position it will find the avergae answertime
+ *
+ * @param {Session} - session
+ * @param {number} - Question position
+ *
+ * @returns {Number} - average time
+*/
 function getAverageAnswerTime(session: Session, questionposition: number) {
   const noPlayers = session.metadata.questions[questionposition - 1].attempts.length;
   const totalTimeTaken = session.metadata.questions[questionposition - 1].attempts.reduce((sum, attempt) => sum + attempt.timeTaken, 0);
   return Math.round(totalTimeTaken / noPlayers);
 }
 
+/**
+ * When given the session and question position it will find the percent that got correct
+ *
+ * @param {Session} - session
+ * @param {number} - Question position
+ *
+ * @returns {Number} - percentage correct
+*/
 function getPercentCorrect(session: Session, questionposition: number) {
   const noPlayers = session.metadata.questions[questionposition - 1].attempts.length;
   const noCorrectPlayers = session.metadata.questions[questionposition - 1].attempts.filter(attempt => attempt.points !== 0).length;
   return Math.round(noCorrectPlayers / noPlayers * 100);
 }
 
+/**
+ * When given the sessionId it will return true or false if the session is at last question
+ *
+ * @param {number} - sessionId
+ *
+ * @returns {boolean} - true/false
+*/
 function isSessionAtLastQuestion(sessionId: number) {
   const data: Data = read();
   for (const session of data.sessions) {
@@ -856,6 +910,13 @@ function isSessionAtLastQuestion(sessionId: number) {
   return false;
 }
 
+/**
+ * When given the sessionId it will return the state of the session
+ *
+ * @param {number} - sessionId
+ *
+ * @returns {string} - state
+*/
 function getSessionState(sessionId: number) {
   const data: Data = read();
   for (const session of data.sessions) {
@@ -865,6 +926,15 @@ function getSessionState(sessionId: number) {
   }
 }
 
+/**
+ * When the following pararms it will calacute the results for a question
+ *
+ * @param {Data} - data
+ * @param {Array} - session
+ * @param {number} - question position
+ *
+ * @returns {object} - question result
+*/
 function getQuestionResults(data: Data, sess: Session, questionposition: number) {
   let correctAnswerIds: number[] = [];
   const correctPlayers: AnswerResult[] = [];
@@ -907,6 +977,14 @@ function getQuestionResults(data: Data, sess: Session, questionposition: number)
   };
 }
 
+/**
+ * Given a sessionId and a session array check if the session is in FINAL state
+ *
+ * @param {Array} sessions sessions
+ * @param {number} sessionId session
+ *
+ * @returns {boolean} - true or false
+*/
 function isSessionInFinal(sessionArray:any, sessionId:number) {
   const session = sessionArray.find((session: { quizSessionId: number; }) => session.quizSessionId === sessionId);
   if (session.state === State.FINAL_RESULTS) {
@@ -915,6 +993,14 @@ function isSessionInFinal(sessionArray:any, sessionId:number) {
   return false;
 }
 
+/**
+ * When given a img url it will save it locally
+ *
+ * @param {string} image-url
+
+ *
+ * @returns {string} - file name
+*/
 function saveImg(imgUrl: string) {
   const res = request(
     'GET',

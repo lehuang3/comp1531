@@ -210,6 +210,16 @@ function requestGetAdminUserDetails(token: ErrorObject | string) {
   };
 }
 
+/**
+ * Sends a 'get' request to the corresponding server route to
+ * update the user password.
+ *
+ * @param {string | ErrorObject} token - token/sessionId
+ * @param {number} quizid quiz Id
+ * @param {Number} sessionId session Id
+ *
+ * @returns {{object}} - response in javascript
+*/
 function requestAdminQuizSessionFinal(token:string | ErrorObject, quizId:number, sessionId:number) {
   const res = request(
     'GET',
@@ -226,6 +236,16 @@ function requestAdminQuizSessionFinal(token:string | ErrorObject, quizId:number,
   };
 }
 
+/**
+ * Sends a 'get' request to the corresponding server route to
+ * update the user password.
+ *
+ * @param {string | ErrorObject} token - token/sessionId
+ * @param {number} quizid quiz Id
+ * @param {Number} sessionId session Id
+ *
+ * @returns {{object}} - response in javascript
+*/
 function requestAdminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, sessionId:number) {
   const res = request(
     'GET',
@@ -1339,6 +1359,15 @@ function requestPlayerAnswerSubmit(playerId: number, questionposition: number, a
   };
 }
 
+
+/**
+ * Send a 'get' request to the corresponding server route for question results
+ *
+ * @param {number} - playerId
+ * @param {number} - questionposition
+ *
+ * @returns {{object}} - response in javascript
+*/
 function requestAdminSessioQuestionResult(playerId: number, questionposition: number) {
   const res = request(
     'GET',
@@ -1350,6 +1379,14 @@ function requestAdminSessioQuestionResult(playerId: number, questionposition: nu
   };
 }
 
+/**
+ * Send a 'get' request to the corresponding server route for finalresults
+ *
+ * @param {number} - playerId
+
+ *
+ * @returns {{object}} - response in javascript
+*/
 function requestAdminSessionFinalResult(playerId: number) {
   const res = request(
     'GET',
@@ -1379,13 +1416,20 @@ function requestPlayerQuestionInfo(playerId: number, questionposition: number) {
       }
     }
   );
-  // console.log(JSON.parse(res.body.toString()));
   return {
     body: JSON.parse(res.body.toString()),
     status: res.statusCode,
   };
 }
 
+/**
+ * Send a 'get' request to the corresponding server route to view sessions
+ *
+ * @param {string | ErrorObject} - Toen
+ * @param {number} - quiz
+ *
+ * @returns {{object}} - response in javascript
+*/
 function requestAdminQuizSessionsView(token: string | ErrorObject, quizId: number) {
   const res = request(
     'GET',
