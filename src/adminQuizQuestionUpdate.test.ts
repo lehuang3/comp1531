@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizInfo, requestAdminQuizQuestionUpdate, requestQuizQuestionCreate } from './request';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizInfo, requestAdminQuizQuestionUpdate, requestQuizQuestionCreate, requestAdminQuizQuestionUpdateV1 } from './request';
 
 let token1: string;
 let quiz1: number;
@@ -494,3 +494,30 @@ describe('Url is not an image', () => {
     expect(requestAdminQuizQuestionUpdate(token1, quiz1, token1Quiz1Question1Id, notImage.questionBody).body).toStrictEqual({ error: 'Url is not an image.' });
   });
 });
+
+//V1 Routes
+test('Invalid token struct', () => {
+  const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
+  const response = requestAdminQuizQuestionUpdateV1(token4, -1, token1Quiz1Question1Id, quiz1Question2.questionBody);
+  expect(response.body).toStrictEqual({ error: expect.any(String) });
+  expect(response.status).toStrictEqual(401);
+});
+
+test('Check for invalid session', () => {
+  const token2 = (parseInt(token1) + 1).toString();
+
+  const response = requestAdminQuizQuestionUpdateV1(token2, quiz1, token1Quiz1Question1Id, quiz1Question2.questionBody)
+  expect(response.body).toStrictEqual({ error: expect.any(String) });
+  expect(response.status).toStrictEqual(403);
+});
+
+
+test('User 1 enters correct information', () => {
+  expect(requestAdminQuizQuestionUpdateV1(token1, quiz1, token1Quiz1Question1Id, quiz1Question2.questionBody).body).toStrictEqual({ });
+});
+
+
+test('Negative quizId', () => {
+  expect(requestAdminQuizQuestionUpdateV1(token1, -1, token1Quiz1Question1Id, quiz1Question2.questionBody).body).toStrictEqual({ error: 'Quiz does not exist.' });
+});
+

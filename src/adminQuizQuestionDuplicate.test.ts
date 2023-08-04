@@ -1,4 +1,4 @@
-import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizQuestionDuplicate, requestAdminQuizRemove } from './request';
+import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizQuestionDuplicate, requestAdminQuizRemove,requestAdminQuizQuestionDuplicateV1 } from './request';
 let token1: string;
 let quiz: number;
 let quizQuestion;
@@ -90,3 +90,34 @@ test('Quiz in trash', () => {
   expect(response.body).toStrictEqual({ error: 'Quiz is in trash.' });
   expect(response.status).toStrictEqual(400);
 });
+
+//V1 ROUTES
+test('Invalid token struct', () => {
+  const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
+  const response = requestAdminQuizQuestionDuplicateV1(token4, quiz, questionId);
+  expect(response.body).toStrictEqual({ error: expect.any(String) });
+  expect(response.status).toStrictEqual(401);
+});
+
+test('Check for invalid session', () => {
+  const token2 = (parseInt(token1) + 1).toString();
+
+  const response = requestAdminQuizQuestionDuplicateV1(token2, quiz, questionId);
+  expect(response.body).toStrictEqual({ error: expect.any(String) });
+  expect(response.status).toStrictEqual(403);
+});
+
+test('Invalide User ID ie not owner', () => {
+  const token2 = requestAdminAuthRegister('hayden.hafezimasoomi@gmail.com', '1234abcd', 'hayden', 'Hafezi').body.token;
+  const response = requestAdminQuizQuestionDuplicateV1(token2, quiz, questionId);
+
+  expect(response.body).toStrictEqual({ error: expect.any(String) });
+  expect(response.status).toStrictEqual(400);
+});
+
+test('Valid entry', () => {
+  const response = requestAdminQuizQuestionDuplicateV1(token1, quiz, questionId);
+  expect(response.body).toStrictEqual({ newQuestionId: expect.any(Number) });
+  expect(response.status).toStrictEqual(200);
+});
+
