@@ -1414,7 +1414,7 @@ function adminQuizTrashEmpty(token: string | ErrorObject, quizIdArr: number[],ve
   }
 
   quizIdArr.map((quizIdToRemove) => {
-    // user.userQuizzes = user.userQuizzes.filter(userQuizId => userQuizId !== quizId)
+
     data.trash = data.trash.filter(quiz => quiz.quizId !== quizIdToRemove);
     /* istanbul ignore next */
     data.quizzes = data.quizzes.filter(quiz => quiz.quizId !== quizIdToRemove);
