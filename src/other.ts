@@ -689,11 +689,6 @@ function isActionApplicable(sessionId: number, action: string): any {
               applicable: true,
               nextState: 'END'
             };
-          } else if (action === 'NEXT_QUESTION') {
-            return {
-              applicable: true,
-              nextState: 'ANSWER_SHOW'
-            };
           } else {
             return {
               applicable: false,
