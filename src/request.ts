@@ -1063,7 +1063,7 @@ function requestAdminQuizTrashEmpty(token: ErrorObject | string, quizIds: string
  *
  * @returns {{object}} - response in javascript
 */
-function requestAdminQuizTrashEmptyV1(token: ErrorObject | string, quizIdArr: number[]) {
+function requestAdminQuizTrashEmptyV1(token: ErrorObject | string, quizIdArr: string) {
   const res = request(
     'DELETE',
     SERVER_URL + '/v1/admin/quiz/trash/empty',
