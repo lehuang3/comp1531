@@ -8,7 +8,7 @@ beforeEach(() => {
   token1 = requestAdminAuthRegister('123@email.com', '123adjakjfhgaA', 'david', 'test').body.token;
   quiz1 = requestAdminQuizCreate(token1, 'quizhello', 'quiz1number').body.quizId;
 });
-
+// v1
 test('Test 1 correct inputs', () => {
   expect(v1requestAdminQuizInfo(token1, quiz1).body).toMatchObject({
     quizId: expect.any(Number),
@@ -19,6 +19,28 @@ test('Test 1 correct inputs', () => {
   });
 });
 
+describe('Invalid session', () => {
+  test('Test 1 invalid authUserId', () => {
+    const tokenInvalid = '-1';
+
+    expect(v1requestAdminQuizInfo(tokenInvalid, quiz1).body).toStrictEqual({ error: 'Not a valid session' });
+  });
+});
+
+describe('Invalid token', () => {
+  test('Invalid token created from invalid email', () => {
+    const invalidToken1 = requestAdminAuthRegister('', 'happy123', 'tommy', 'bommy').body.token;
+    expect(v1requestAdminQuizInfo(invalidToken1, quiz1).body).toStrictEqual({ error: 'Invalid token structure' });
+  });
+});
+
+describe('Invalid quizId', () => {
+  test('Test 1 invalid quizId', () => {
+    expect(v1requestAdminQuizInfo(token1, -1).body).toStrictEqual({ error: 'Quiz does not exist' });
+  });
+});
+
+// v2
 describe('Valid inputs, test pass', () => {
   test('Test 1 correct inputs', () => {
     expect(requestAdminQuizInfo(token1, quiz1).body).toMatchObject({
@@ -41,7 +63,7 @@ describe('Invalid session', () => {
 
 describe('Invalid quizId', () => {
   test('Test 1 invalid quizId', () => {
-    expect(requestAdminQuizInfo(token1, -1).body).toStrictEqual({ error: 'Quiz does not exist.' });
+    expect(requestAdminQuizInfo(token1, -1).body).toStrictEqual({ error: 'Quiz does not exist' });
   });
 });
 

@@ -60,7 +60,7 @@ function tokenOwner(token: string | ErrorObject) {
   const data: Data = read();
   if (!isTokenValid(token)) {
     return {
-      error: 'Invalid token structure'
+      error: 'Invalid token structure',
     };
   }
   if (!isSessionValid(token)) {

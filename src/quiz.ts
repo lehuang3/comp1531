@@ -18,18 +18,31 @@ const PORT: number = parseInt(process.env.PORT || config.port);
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
  * @param {string} token - Token
+ * @param {number} version 
  *
  * @returns {array object} - List of quizze
 */
-function adminQuizList (token: ErrorObject | string) {
+function adminQuizList (token: ErrorObject | string, version: number) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
+      if (version === 1) {
+        return {
+          error: 'Invalid token structure',
+        };
+      } else {
+        throw HTTPError(401, 'Invalid token structure');
+      }
       // invalid session
     } else {
-      throw HTTPError(403, 'Not a valid session');
+      if (version === 1) {
+        return {
+          error: 'Not a valid session',
+        };
+      } else {
+        throw HTTPError(403, 'Not a valid session');
+      }
     }
   }
 
@@ -61,29 +74,66 @@ function adminQuizList (token: ErrorObject | string) {
  * @param {string} token - Token
  * @param {integer} name - Name of quiz
  * @param {string} description - Description of quiz
+ * @param {number} version
  *
  * @returns {quizID: number} - Quiz's identification number
 */
-function adminQuizCreate (token: ErrorObject | string, name: string, description: string) {
+function adminQuizCreate (token: ErrorObject | string, name: string, description: string, version: number) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
+      if (version === 1) {
+        return {
+          error: 'Invalid token structure',
+        };
+      } else {
+        throw HTTPError(401, 'Invalid token structure');
+      }
       // invalid session
     } else {
-      throw HTTPError(403, 'Not a valid session');
+      if (version === 1) {
+        return {
+          error: 'Not a valid session',
+        };
+      } else {
+        throw HTTPError(403, 'Not a valid session');
+      }
     }
   }
 
   if (nameQuizIsValid(name) === false) {
-    throw HTTPError(400, 'Quiz name is not valid');
+    if (version === 1) {
+      return {
+        error: 'Quiz name is not valid',
+      };
+    } else {
+      throw HTTPError(400, 'Quiz name is not valid');
+    }
   } else if (nameLengthIsValid(name) === false) {
-    throw HTTPError(400, 'Quiz name length is not valid');
+    if (version === 1) {
+      return {
+        error: 'Quiz name length is not valid',
+      };
+    } else {
+      throw HTTPError(400, 'Quiz name length is not valid');
+    }
   } else if (nameTaken(authUserId, name) === true) {
-    throw HTTPError(400, 'uiz name is taken');
+    if (version === 1) {
+      return {
+        error: 'uiz name is taken',
+      };
+    } else {
+      throw HTTPError(400, 'uiz name is taken');
+    }
   } else if (isDescriptionLong(description) === true) {
-    throw HTTPError(400, 'Quiz description is not valid');
+    if (version === 1) {
+      return {
+        error: 'Quiz description is not valid',
+      };
+    } else {
+      throw HTTPError(400, 'Quiz description is not valid');
+    }
   } else {
     const quizLength = data.quizzes.length;
     let quizId = 0;
@@ -149,27 +199,58 @@ function adminQuizCreate (token: ErrorObject | string, name: string, description
  *
  * @param {integer} token - Token
  * @param {integer} quizId - Quiz's identification number
+ * @param {number} version
  *
  * @returns {{}} - Empty object
 */
-function adminQuizRemove (token: ErrorObject | string, quizId: number) {
+function adminQuizRemove (token: ErrorObject | string, quizId: number, version: number) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
+      if (version === 1) {
+        return {
+          error: 'Invalid token structure',
+        };
+      } else {
+        throw HTTPError(401, 'Invalid token structure');
+      }
       // invalid session
     } else {
-      throw HTTPError(403, 'Not a valid session');
+      if (version === 1) {
+        return {
+          error: 'Not a valid session',
+        };
+      } else {
+        throw HTTPError(403, 'Not a valid session');
+      }
     }
   }
 
   if (isQuizInTrash(quizId)) {
-    throw HTTPError(400, 'Quiz is in trash.');
+    if (version === 1) {
+      return {
+        error: 'Quiz is in trash.',
+      };
+    } else {
+      throw HTTPError(400, 'Quiz is in trash.');
+    }
   } else if (quizValidCheck(quizId) === false) {
-    throw HTTPError(400, 'quiz id not valid');
+    if (version === 1) {
+      return {
+        error: 'quiz id not valid',
+      };
+    } else {
+      throw HTTPError(400, 'quiz id not valid');
+    }
   } else if (quizValidOwner(authUserId, quizId) === false) {
-    throw HTTPError(400, 'Not owner of quiz');
+    if (version === 1) {
+      return {
+        error: 'Not owner of quiz',
+      };
+    } else {
+      throw HTTPError(400, 'Not owner of quiz');
+    }
   } else {
     const quizIndex = data.quizzes.findIndex((quiz) => quiz.quizId === quizId);
     const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
@@ -188,6 +269,7 @@ function adminQuizRemove (token: ErrorObject | string, quizId: number) {
   *
   * @param {string} token - Token
   * @param {number} quizId - Quiz's identification number
+  * @param {number} version
   *
   * @returns {
   *   {
@@ -199,21 +281,46 @@ function adminQuizRemove (token: ErrorObject | string, quizId: number) {
   *   }
   * }
 */
-function adminQuizInfo (token: ErrorObject | string, quizId: number) {
+function adminQuizInfo (token: ErrorObject | string, quizId: number, version: number) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
+      if (version === 1) {
+        return {
+          error: 'Invalid token structure',
+        };
+      } else {
+        throw HTTPError(401, 'Invalid token structure');
+      }
+      // invalid session
     } else {
-      throw HTTPError(403, 'Not a valid session');
+      if (version === 1) {
+        return {
+          error: 'Not a valid session',
+        };
+      } else {
+        throw HTTPError(403, 'Not a valid session');
+      }
     }
   }
 
   if (!quizValidCheck(quizId)) {
-    throw HTTPError(400, 'Quiz does not exist.');
+    if (version === 1) {
+      return {
+        error: 'Quiz does not exist',
+      };
+    } else {
+      throw HTTPError(400, 'Quiz does not exist');
+    }
   } else if (!quizValidOwner(authUserId, quizId)) {
-    throw HTTPError(400, 'You do not have access to this quiz.');
+    if (version === 1) {
+      return {
+        error: 'You do not have access to this quiz.',
+      };
+    } else {
+      throw HTTPError(400, 'You do not have access to this quiz.');
+    }
   }
   for (const quiz of data.quizzes) {
     if (quiz.quizId === quizId) {
@@ -234,32 +341,82 @@ function adminQuizInfo (token: ErrorObject | string, quizId: number) {
   * @param {string} token - Token
   * @param {number} quizId - Quiz's identification number
   * @param {string} name - Name of quiz
+  * @param {number} version
   *
   * @returns {{}} - Empty object.
 */
-function adminQuizNameUpdate (token: ErrorObject | string, quizId: number, name: string) {
+function adminQuizNameUpdate (token: ErrorObject | string, quizId: number, name: string, version: number) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
+      if (version === 1) {
+        return {
+          error: 'Invalid token structure',
+        };
+      } else {
+        throw HTTPError(401, 'Invalid token structure');
+      }
+      // invalid session
     } else {
-      throw HTTPError(403, 'Not a valid session');
+      if (version === 1) {
+        return {
+          error: 'Not a valid session',
+        };
+      } else {
+        throw HTTPError(403, 'Not a valid session');
+      }
     }
   }
 
   if (!nameLengthIsValid(name)) {
-    throw HTTPError(400, 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.');
+    if (version === 1) {
+      return {
+        error: 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.'
+      };
+    } else {
+      throw HTTPError(400, 'Quiz name must be greater or equal to 3 chartacters and less than or equal to 30.');
+    }
   } else if (!nameQuizIsValid(name)) {
-    throw HTTPError(400, 'Quiz name cannot have special characters.');
+    if (version === 1) {
+      return {
+        error: 'Quiz name cannot have special characters.',
+      };
+    } else {
+      throw HTTPError(400, 'Quiz name cannot have special characters.');
+    }
   } else if (nameTaken(authUserId, name)) {
-    throw HTTPError(400, 'Quiz name already exists.');
+    if (version === 1) {
+      return {
+        error: 'Quiz name already exists.',
+      };
+    } else {
+      throw HTTPError(400, 'Quiz name already exists.');
+    }
   } else if (!quizValidCheck(quizId)) {
-    throw HTTPError(400, 'Quiz does not exist.');
+    if (version === 1) {
+      return {
+        error: 'Quiz does not exist.',
+      };
+    } else {
+      throw HTTPError(400, 'Quiz does not exist.');
+    }
   } else if (isQuizInTrash(quizId)) {
-    throw HTTPError(400, 'Quiz is in trash.');
+    if (version === 1) {
+      return {
+        error: 'Quiz is in trash.',
+      };
+    } else {
+      throw HTTPError(400, 'Quiz is in trash.');
+    }
   } else if (!quizValidOwner(authUserId, quizId)) {
-    throw HTTPError(400, 'You do not have access to this quiz.');
+    if (version === 1) {
+      return {
+        error: 'You do not have access to this quiz.',
+      };
+    } else {
+      throw HTTPError(400, 'You do not have access to this quiz.');
+    }
   }
   for (const quiz of data.quizzes) {
     if (quiz.quizId === quizId) {
@@ -278,34 +435,71 @@ function adminQuizNameUpdate (token: ErrorObject | string, quizId: number, name:
   * @param {string} token - Token
   * @param {number} quizId - Quiz's identification number
   * @param {string} description - Quiz's description
+  * @param {number} version
   *
   * @returns {{}} - Empty object.
 */
-function adminQuizDescriptionUpdate (token: ErrorObject | string, quizId: number, description: string) {
+function adminQuizDescriptionUpdate (token: ErrorObject | string, quizId: number, description: string, version: number) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
+      if (version === 1) {
+        return {
+          error: 'Invalid token structure',
+        };
+      } else {
+        throw HTTPError(401, 'Invalid token structure');
+      }
       // invalid session
     } else {
-      throw HTTPError(403, 'Not a valid session');
+      if (version === 1) {
+        return {
+          error: 'Not a valid session',
+        };
+      } else {
+        throw HTTPError(403, 'Not a valid session');
+      }
     }
   }
   // check quizId
   if (!quizValidCheck(quizId)) {
-    throw HTTPError(400, 'Not a valid quiz');
+    if (version === 1) {
+      return {
+        error: 'Not a valid quiz',
+      };
+    } else {
+      throw HTTPError(400, 'Not a valid quiz');
+    }
   }
   if (isQuizInTrash(quizId)) {
-    throw HTTPError(400, 'Quiz is in trash.');
+    if (version === 1) {
+      return {
+        error: 'Quiz is in trash.',
+      };
+    } else {
+      throw HTTPError(400, 'Quiz is in trash.');
+    }
   }
   // check ownership of quiz
   if (!quizValidOwner(authUserId, quizId)) {
-    throw HTTPError(400, 'This quiz is owned by another user');
+    if (version === 1) {
+      return {
+        error: 'This quiz is owned by another user',
+      };
+    } else {
+      throw HTTPError(400, 'This quiz is owned by another user');
+    }
   }
   // check description's length
   if (isDescriptionLong(description)) {
-    throw HTTPError(400, 'Description is too long');
+    if (version === 1) {
+      return {
+        error: 'Description is too long',
+      };
+    } else {
+      throw HTTPError(400, 'Description is too long');
+    }
   }
   // change description
   for (const quiz of data.quizzes) {
@@ -325,20 +519,32 @@ function adminQuizDescriptionUpdate (token: ErrorObject | string, quizId: number
  * Given a token find and view all quizzes in trash which the tokon/user owns
  *
  * @param {string | ErrorObject} token token object which contains authUserId and sessionId
+ * @param {number} version
  *
  * @returns {{}} empty object on success and error msg on fail
  */
-function adminQuizTrash(token: string | ErrorObject) {
+function adminQuizTrash(token: string | ErrorObject, version: number) {
   const quizzes: { quizId: number; name: string; }[] = [];
   const data: Data = read();
   const authUserId = tokenOwner(token);
-  // console.log(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
+      if (version === 1) {
+        return {
+          error: 'Invalid token structure',
+        };
+      } else {
+        throw HTTPError(401, 'Invalid token structure');
+      }
       // invalid session
     } else {
-      throw HTTPError(403, 'Not a valid session');
+      if (version === 1) {
+        return {
+          error: 'Not a valid session',
+        };
+      } else {
+        throw HTTPError(403, 'Not a valid session');
+      }
     }
   }
   // filter from data.trash an array of quizzes in trash that only the user has access to
@@ -363,26 +569,58 @@ function adminQuizTrash(token: string | ErrorObject) {
  *
  * @param {string | ErrorObject} token token object which contains authUserId and sessionId
  * @param {number} quizId quiz Id
+ * @param {number} version
  *
  * @returns {{}} empty object on sucess and error msg on fail
  */
-function adminQuizRestore(token: ErrorObject | string, quizId: number) {
+function adminQuizRestore(token: ErrorObject | string, quizId: number, version: number) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
+      if (version === 1) {
+        return {
+          error: 'Invalid token structure',
+        };
+      } else {
+        throw HTTPError(401, 'Invalid token structure');
+      }
+      // invalid session
     } else {
-      throw HTTPError(403, 'Not a valid session');
+      if (version === 1) {
+        return {
+          error: 'Not a valid session',
+        };
+      } else {
+        throw HTTPError(403, 'Not a valid session');
+      }
     }
   }
 
   if (!quizValidCheck(quizId)) {
-    throw HTTPError(400, 'Not a valid quiz');
+    if (version === 1) {
+      return {
+        error: 'Not a valid quiz',
+      };
+    } else {
+      throw HTTPError(400, 'Not a valid quiz');
+    }
   } else if (!isQuizInTrash(quizId)) {
-    throw HTTPError(400, 'Quiz not in trash.');
+    if (version === 1) {
+      return {
+        error: 'Quiz not in trash.',
+      };
+    } else {
+      throw HTTPError(400, 'Quiz not in trash.');
+    }
   } else if (!quizValidOwner(authUserId, quizId)) {
-    throw HTTPError(400, 'You do not have access to this quiz.');
+    if (version === 1) {
+      return {
+        error: 'You do not have access to this quiz.',
+      };
+    } else {
+      throw HTTPError(400, 'You do not have access to this quiz.');
+    }
   }
 
   data.quizzes.push(data.trash.find((quiz) => quiz.quizId === quizId));

@@ -203,18 +203,31 @@ function adminAuthLogin (email: string, password: string): AdminAuthLoginReturn 
   * Given an admin user's token, return details about the user
   *
   * @param {string} token - User's identification
+  * @param {number} version
   *
   * @returns {user: {userId: number, name: string, email: string, numSuccessfulLogins: number,numFailedPasswordsSinceLastLogin: number,}} - User object
 */
-function adminUserDetails (token: ErrorObject | string): AdminUserDetailsReturn | ErrorObject {
+function adminUserDetails (token: ErrorObject | string, version: number): AdminUserDetailsReturn | ErrorObject {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
+      if (version === 1) {
+        return {
+          error: 'Invalid token structure',
+        };
+      } else {
+        throw HTTPError(401, 'Invalid token structure');
+      }
       // invalid session
     } else {
-      throw HTTPError(403, 'Not a valid session');
+      if (version === 1) {
+        return {
+          error: 'Not a valid session',
+        };
+      } else {
+        throw HTTPError(403, 'Not a valid session');
+      }
     }
   }
   // loop through users array
@@ -240,23 +253,42 @@ function adminUserDetails (token: ErrorObject | string): AdminUserDetailsReturn 
  * @param {string | ErrorObject} token token object which contains authUserId and sessionId
  * @param {string} oldPassword old password
  * @param {string} newPassword new password
+ * @param {number} version
  *
  * @returns {{}} returns empty object on sucess and error msg on fail
  */
-function adminAuthPasswordUpdate (token: ErrorObject | string, oldPassword: string, newPassword: string) {
+function adminAuthPasswordUpdate (token: ErrorObject | string, oldPassword: string, newPassword: string, version: number) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
+      if (version === 1) {
+        return {
+          error: 'Invalid token structure',
+        };
+      } else {
+        throw HTTPError(401, 'Invalid token structure');
+      }
       // invalid session
     } else {
-      throw HTTPError(403, 'Not a valid session');
+      if (version === 1) {
+        return {
+          error: 'Not a valid session',
+        };
+      } else {
+        throw HTTPError(403, 'Not a valid session');
+      }
     }
   }
 
   if (!checkValidPassword(newPassword)) {
-    throw HTTPError(400, 'New password is invalid');
+    if (version === 1) {
+      return {
+        error: 'New password is invalid',
+      };
+    } else {
+      throw HTTPError(400, 'New password is invalid');
+    }
   }
   const user = data.users.find((userID) => userID.authUserId === authUserId);
   if (crypto.createHash('sha256').update(oldPassword).digest('hex') !== user.password) {
@@ -276,18 +308,30 @@ function adminAuthPasswordUpdate (token: ErrorObject | string, oldPassword: stri
  * Log out of session
  *
  * @param {string | ErrorObject} token token object which contains authUserId and sessionId
- *
+ * @param { number } version
  * @returns {{}} empty object on success and error msg on fail
  */
-function adminAuthLogout (token: ErrorObject | string) {
+function adminAuthLogout (token: ErrorObject | string, version: number) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
+      if (version === 1) {
+        return {
+          error: 'Invalid token structure',
+        };
+      } else {
+        throw HTTPError(401, 'Invalid token structure');
+      }
       // invalid session
     } else {
-      throw HTTPError(403, 'Not a valid session');
+      if (version === 1) {
+        return {
+          error: 'Not a valid session',
+        };
+      } else {
+        throw HTTPError(403, 'Not a valid session');
+      }
     }
   }
   // removes token from active tokens array
@@ -305,45 +349,94 @@ function adminAuthLogout (token: ErrorObject | string) {
  * @param {string} email user email
  * @param {string} nameFirst username first name
  * @param {string} nameLast user lastname
+ * @param {number} version
  *
  * @returns {}
 */
 
-function adminAuthDetailsUpdate(token: string | ErrorObject, email: string, nameFirst: string, nameLast:string) {
+function adminAuthDetailsUpdate(token: string | ErrorObject, email: string, nameFirst: string, nameLast:string, version: number) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
+      if (version === 1) {
+        return {
+          error: 'Invalid token structure',
+        };
+      } else if (version === 2) {
+        throw HTTPError(401, 'Invalid token structure');
+      }
       // invalid session
     } else {
-      throw HTTPError(403, 'Not a valid session');
+      if (version === 1) {
+        return {
+          error: 'Not a valid session',
+        }
+      } else if (version === 2) {
+        throw HTTPError(403, 'Not a valid session');
+      }
     }
   }
 
   // check valid email
   for (const user of data.users) {
     if (user.email === email && user.authUserId !== authUserId) {
-      throw HTTPError(400, 'email is already used for another account');
+      if (version === 1) {
+        return {
+          error: 'email is already used for another account',
+        };
+      } else {
+        throw HTTPError(400, 'email is already used for another account');
+      }
     }
   }
 
   if (!checkValidString(nameFirst)) {
-    throw HTTPError(400, 'First name is invalid');
+    if (version === 1) {
+      return {
+        error: 'First name is invalid',
+      };
+    } else {
+      throw HTTPError(400, 'First name is invalid');
+    } 
   }
   if (!checkValidString(nameLast)) {
-    throw HTTPError(400, 'Last name is invalid');
+    if (version === 1) {
+      return {
+        error: 'Last name is invalid',
+      };
+    } else {
+      throw HTTPError(400, 'Last name is invalid');
+    }
   }
   // check valid first name
   if ((nameFirst.length < 2) || (nameFirst.length > 20)) {
-    throw HTTPError(400, 'error: first name has an invalid length');
+    if (version === 1) {
+      return {
+        error: 'error: first name has an invalid length',
+      };
+    } else {
+      throw HTTPError(400, 'error: first name has an invalid length');
+    }
   }
   // check valid last name
   if ((nameLast.length < 2) || (nameLast.length > 20)) {
-    throw HTTPError(400, 'error: last name has an invalid length');
+    if (version === 1) {
+      return {
+        error: 'error: last name has an invalid length',
+      };
+    } else {
+      throw HTTPError(400, 'error: last name has an invalid length');
+    }
   }
   if (!validator.isEmail(email)) {
-    throw HTTPError(400, 'error: email is not valid');
+    if (version === 1) {
+      return {
+        error: 'error: email is not valid',
+      };
+    } else {
+      throw HTTPError(400, 'error: email is not valid');
+    }
   }
 
   const user = data.users.find((userID) => userID.authUserId === authUserId);

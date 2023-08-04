@@ -8,6 +8,7 @@ beforeEach(() => {
   quiz1 = requestAdminQuizCreate(token1, 'quiz', '').body.quizId;
 });
 
+// v1
 test('1 quiz in trash', () => {
   requestAdminQuizRemove(token1, quiz1);
   const response = v1requestAdminQuizTrash(token1);
@@ -22,6 +23,26 @@ test('1 quiz in trash', () => {
   expect(response.status).toStrictEqual(200);
 });
 
+test('Check for invalid token structure', () => {
+  const token2 = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body.token;
+  const response = v1requestAdminQuizTrash(token2);
+  expect(response.body).toStrictEqual({
+    error: 'Invalid token structure',
+  });
+  expect(response.status).toStrictEqual(401);
+});
+
+test('Check for invalid session', () => {
+  const token2 = (parseInt(token1) + 1).toString();
+
+  const response = v1requestAdminQuizTrash(token2);
+  expect(response.body).toStrictEqual({
+    error: 'Not a valid session'
+  });
+  expect(response.status).toStrictEqual(403);
+});
+
+// v2
 test('Check for invalid token structure', () => {
   const token2 = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body.token;
   const response = requestAdminQuizTrash(token2);
