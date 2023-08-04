@@ -438,7 +438,6 @@ function requestQuizQuestionCreateV1(token: ErrorObject | string, quizId: number
   };
 }
 
-
 /**
  * Send a 'post' request to the corresponding server route to create
  * a quiz
@@ -749,8 +748,6 @@ function requestAdminQuizTransferV1(token: ErrorObject | string, quizId: number,
   };
 }
 
-
-
 /**
  * Send a 'POST' request to the corresponding server route to restore
  * an existing quiz
@@ -858,7 +855,6 @@ function requestAdminQuizQuestionMoveV1(quizId: number, questionId: number, toke
   };
 }
 
-
 /**
  * Send a 'PUT' request to the corresponding server route to duplicate
  * an existing quiz question
@@ -911,7 +907,6 @@ function requestAdminQuizQuestionDuplicateV1(token: ErrorObject | string, quizId
   };
 }
 
-
 /**
  * Send a 'DELETE' request to the corresponding server route for user details,
  * returning the response in the form of a javascript object
@@ -963,8 +958,6 @@ function requestAdminQuizQuestionDeleteV1(token: ErrorObject | string, quizId: n
     status: res.statusCode,
   };
 }
-
-
 
 /**
  * Send a 'put' request to the corresponding server route to
@@ -1023,8 +1016,6 @@ function requestAdminQuizQuestionUpdateV1(token: ErrorObject | string, quizId: n
     status: res.statusCode,
   };
 }
-
-
 
 /**
  * Send a 'delete' request to the corresponding server route to
@@ -1419,5 +1410,5 @@ export {
   requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo, requestAdminQuizSessionState, requestAdminSessioQuestionResult,
   requestAdminSessionFinalResult, requestAdminQuizSessionFinal, v1requestAdminQuizRemove, v1requestAdminQuizInfo, v1requestAdminQuizNameUpdate, v1requestAdminQuizDescriptionUpdate, v1requestAdminQuizTrash,
   v1requestAdminQuizRestore, requestAdminQuizSessionFinalCsv, requestAdminQuizSessionsView, v1requestAdminAuthDetailsUpdate, v1requestAdminAuthLogout, v1requestAdminAuthPasswordUpdate,
-  v1requestAdminQuizCreate, v1requestAdminQuizList, v1requestGetAdminUserDetails, requestAdminQuizSessionStateUpdate,requestAdminQuizTrashEmptyV1,requestAdminQuizTransferV1, requestQuizQuestionCreateV1,requestAdminQuizQuestionUpdateV1,requestAdminQuizQuestionDeleteV1,requestAdminQuizQuestionDuplicateV1,requestAdminQuizQuestionMoveV1
-}
+  v1requestAdminQuizCreate, v1requestAdminQuizList, v1requestGetAdminUserDetails, requestAdminQuizSessionStateUpdate, requestAdminQuizTrashEmptyV1, requestAdminQuizTransferV1, requestQuizQuestionCreateV1, requestAdminQuizQuestionUpdateV1, requestAdminQuizQuestionDeleteV1, requestAdminQuizQuestionDuplicateV1, requestAdminQuizQuestionMoveV1
+};

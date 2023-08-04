@@ -30,7 +30,6 @@ function adminQuizSessionStart(token: ErrorObject | string, quizId: number, auto
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
       throw HTTPError(401, 'Invalid token structure');
-      // invalid session
     } else {
       throw HTTPError(403, 'Not a valid session');
     }
@@ -98,7 +97,6 @@ function questionCountdownHandler(sessionId: number) {
     if (session.quizSessionId === sessionId) {
       timeoutIds.push(setTimeout(() => {
         session.state = State.QUESTION_OPEN;
-        // console.log('question open')
         save(data);
         questionOpenStart = Math.floor(Date.now() / 1000);
         timeoutIds.push(setTimeout(() => {
@@ -117,7 +115,6 @@ function adminQuizSessionStateUpdate(token: ErrorObject | string, quizId: number
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
       throw HTTPError(401, 'Invalid token structure');
-      // invalid session
     } else {
       throw HTTPError(403, 'Not a valid session');
     }
@@ -170,11 +167,9 @@ function adminSessionChatView(playerId: number) {
     throw HTTPError(400, 'Player does not exist.');
   }
   const chatLogs: object[] = [];
-  // console.log(sess)
   for (const message of sess.messages) {
     chatLogs.push(message);
   }
-  // console.log(chatLogs)
   return {
     messages: chatLogs
   };
@@ -226,7 +221,6 @@ function QuizSessionPlayerJoin(sessionId:number, name:string) {
 
   for (const session of data.sessions) {
     for (const player of session.players) {
-      // console.log(player.playerId)
       if (player.playerId > maxplayerId) {
         maxplayerId = player.playerId;
       }
@@ -248,7 +242,6 @@ function QuizSessionPlayerJoin(sessionId:number, name:string) {
     save(data);
     questionCountdownHandler(session.quizSessionId);
   }
-  // console.log(session)
   save(data);
 
   return { playerId: maxplayerId };
@@ -260,7 +253,6 @@ function adminQuizSessionState(token: ErrorObject | string, quizId: number, sess
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
       throw HTTPError(401, 'Invalid token structure');
-      // invalid session
     } else {
       throw HTTPError(403, 'Not a valid session');
     }
@@ -293,7 +285,6 @@ function adminQuizSessionState(token: ErrorObject | string, quizId: number, sess
       thumbnailUrl: session.metadata.thumbnailUrl
     }
   };
-  // console.log(sessionStatus);
   return sessionStatus;
 }
 
@@ -343,7 +334,6 @@ function playerAnswerSubmit(playerId: number, questionposition: number, answerId
       const timeTaken = Math.floor(Date.now() / 1000) - questionOpenStart;
       let points = session.metadata.questions[questionposition - 1].points;
       const correctAnswers = session.metadata.questions[questionposition - 1].answers.filter(answer => answer.correct === true);
-
       // if correctAnswers and answerIds have different numbers of values => wrong
       if (correctAnswers.length !== answerIds.length) {
         points = 0;
@@ -377,13 +367,11 @@ function playerAnswerSubmit(playerId: number, questionposition: number, answerId
           }
         }
       }
-      // console.log(session.metadata.questions[questionposition - 1].attempts)
       // find averageAnwerTime
       session.metadata.questions[questionposition - 1].averageAnswerTime = getAverageAnswerTime(session, questionposition);
       // find percentCorrect
       // if a player is correct, their point is not 0
       session.metadata.questions[questionposition - 1].percentCorrect = getPercentCorrect(session, questionposition);
-      // console.log(session.metadata.questions[questionposition - 1].attempts);
     }
     save(data);
   }
@@ -437,8 +425,6 @@ function adminSessionQuestionResult(playerId: number, questionposition: number) 
   } else if (sess.atQuestion < questionposition) {
     throw HTTPError(400, 'Session is not up to question yet.');
   }
-  // any for time being
-  // console.log(sess.metadata.questions[0].attempts)
   return getQuestionResults(data, sess, questionposition);
 }
 
@@ -449,7 +435,6 @@ function adminSessionFinalResult(playerId: number) {
       return session;
     }
   });
-  // console.log(sess.players)
   if (sess === undefined) {
     throw HTTPError(400, 'Player does not exist.');
   } else if (sess.state !== 'FINAL_RESULTS') {
@@ -479,30 +464,21 @@ function adminSessionFinalResult(playerId: number) {
       // if the answers array of player === answersNeededIds array then push to correct players
       // JSON.stringify the sorted values to check for array equality
       if (JSON.stringify(attempt.answers.sort((a, b) => a - b)) === JSON.stringify(answersNeededIds.sort((a, b) => a - b))) {
-        // correctPlayers.push(attempt.playerName)
         correctPlayers.push(attempt);
-        // console.log(correctPlayers)
       }
     }
-    // console.log(i)
-    // console.log(correctPlayers)
     // if there are no correct players for this question move onto the next question
     if (correctPlayers.length === 0) {
       continue;
     }
     // get the attempts timetaken and sort the players based on fastest to slowest
     correctPlayers.sort((a, b) => a.timeTaken - b.timeTaken);
-    console.log(i);
-    console.log(correctPlayers);
     // get the scaling factor and the score and add to the players points
-    // console.log(correctPlayers)
     for (const correctPlayer of correctPlayers) {
       const points = (correctPlayer.points * findScalingFactor(correctPlayer.timeTaken, correctPlayers));
-      console.log('this is' + findScalingFactor(correctPlayer.timeTaken, correctPlayers));
       const addedScore = Math.round(points * 10) / 10;
       sess.players.find((player) => player.playerId === correctPlayer.playerId).playerScore += addedScore;
     }
-    // console.log(sess.players)
   }
   // sort the players by score
   sess.players.sort((a, b) => b.playerScore - a.playerScore);
@@ -514,12 +490,10 @@ function adminSessionFinalResult(playerId: number) {
     ranking.push(playerFinalResult);
   }
 
-  const answer = {
+  return {
     usersRankedByScore: ranking,
     questionResults: questionResult
   };
-  console.log(answer);
-  return answer;
 }
 
 function adminQuizSessionFinal(token:string | ErrorObject, quizId:number, sessionId:number) {
@@ -529,7 +503,6 @@ function adminQuizSessionFinal(token:string | ErrorObject, quizId:number, sessio
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
       throw HTTPError(401, 'Invalid token structure');
-      // invalid session
     } else {
       throw HTTPError(403, 'Not a valid session');
     }
@@ -572,13 +545,9 @@ function adminQuizSessionFinal(token:string | ErrorObject, quizId:number, sessio
       // if the answers array of player === answersNeededIds array then push to correct players
       // JSON.stringify the sorted values to check for array equality
       if (JSON.stringify(attempt.answers.sort((a, b) => a - b)) === JSON.stringify(answersNeededIds.sort((a, b) => a - b))) {
-        // correctPlayers.push(attempt.playerName)
         correctPlayers.push(attempt);
-        // console.log(correctPlayers)
       }
     }
-    // console.log(i)
-    // console.log(correctPlayers)
     // if there are no correct players for this question move onto the next question
     if (correctPlayers.length === 0) {
       continue;
@@ -591,7 +560,6 @@ function adminQuizSessionFinal(token:string | ErrorObject, quizId:number, sessio
       const addedScore = Math.round(points * 10) / 10;
       sess.players.find((player) => player.playerId === player.playerId).playerScore += addedScore;
     }
-    // console.log(sess.players)
   }
   // sort the players by score
   sess.players.sort((a, b) => b.playerScore - a.playerScore);
@@ -603,13 +571,10 @@ function adminQuizSessionFinal(token:string | ErrorObject, quizId:number, sessio
     ranking.push(playerFinalResult);
   }
 
-  const answer = {
+  return {
     usersRankedByScore: ranking,
     questionResults: questionResult
   };
-  // console.log(answer.questionResults[0].questionCorrectBreakdown)
-  // console.log(answer)
-  return answer;
 }
 
 function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, sessionId:number) {
@@ -619,7 +584,6 @@ function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, ses
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
       throw HTTPError(401, 'Invalid token structure');
-      // invalid session
     } else {
       throw HTTPError(403, 'Not a valid session');
     }
@@ -715,31 +679,20 @@ function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, ses
 
   fs.writeFile(filename, csvFromArrayOfArrays, (err:any) => {
     if (err) {
-      console.error('Error creating the file:', err);
+
     } else {
-      console.log('File created successfully!');
+
     }
   });
   return { url: filename };
 }
 
 function adminQuizSessionsView(token: string | ErrorObject, quizId: number) {
-  // const authUserId = tokenOwner(token);
-  // if (typeof authUserId !== 'number') {
-  //   if (authUserId.error === 'Invalid token structure') {
-  //     throw HTTPError(401, 'Invalid token structure');
-  //     // invalid session
-  //   } else {
-  //     throw HTTPError(403, 'Not a valid session');
-  //   }
-  // }
   const quizSessions = getSessions(quizId);
   let activeSessions = quizSessions.filter(session => session.state !== State.END).map(session => session.quizSessionId);
   let inactiveSessions = quizSessions.filter(session => session.state === State.END).map(session => session.quizSessionId);
   activeSessions = activeSessions.sort((a, b) => a - b);
   inactiveSessions = inactiveSessions.sort((a, b) => a - b);
-  console.log(activeSessions);
-  console.log(inactiveSessions);
   return {
     activeSessions: activeSessions,
     inactiveSessions: inactiveSessions,

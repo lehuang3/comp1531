@@ -1,4 +1,4 @@
-import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizQuestionMove, requestAdminQuizRemove,requestAdminQuizQuestionMoveV1 } from './request';
+import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizQuestionMove, requestAdminQuizRemove, requestAdminQuizQuestionMoveV1 } from './request';
 
 let token1: string;
 let quiz: number;
@@ -88,129 +88,189 @@ beforeEach(() => {
   questionId3 = requestQuizQuestionCreate(token1, quiz, quizQuestion3.questionBody).body.questionId;
 });
 
-test('Invalid token struct', () => {
-  const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
-  const newPosition = 0;
-  const response = requestAdminQuizQuestionMove(quiz, questionId3, token4, newPosition);
+describe('v2 routes', () => {
+  test('Invalid token struct', () => {
+    const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
+    const newPosition = 0;
+    const response = requestAdminQuizQuestionMove(quiz, questionId3, token4, newPosition);
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(401);
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(401);
+  });
+
+  test('Check for invalid session', () => {
+    const token2 = (parseInt(token1) + 1).toString();
+
+    const newPosition = 0;
+    const response = requestAdminQuizQuestionMove(quiz, questionId3, token2, newPosition);
+
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(403);
+  });
+
+  test('Invalide User ID ie not owner', () => {
+    const token2 = requestAdminAuthRegister('hayden.hafezimasoomi@gmail.com', '1234abcd', 'hayden', 'Hafezi').body.token;
+    const newPosition = 0;
+    const response = requestAdminQuizQuestionMove(quiz, questionId3, token2, newPosition);
+
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
+
+  test('Invalide quiz ID', () => {
+    const quiz2 = {
+      quizId: quiz + 1,
+    };
+    const newPosition = 0;
+    const response = requestAdminQuizQuestionMove(quiz2.quizId, questionId3, token1, newPosition);
+
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
+
+  test('Invalide question ID', () => {
+    const questionId4 = {
+      questionId: questionId3 + 1,
+    };
+    const newPosition = 0;
+    const response = requestAdminQuizQuestionMove(quiz, questionId4.questionId, token1, newPosition);
+
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
+
+  test('position > n-1', () => {
+    const newPosition = 3;
+    const response = requestAdminQuizQuestionMove(quiz, questionId3, token1, newPosition);
+
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
+
+  test('Position < 0', () => {
+    const newPosition = -1;
+    const response = requestAdminQuizQuestionMove(quiz, questionId3, token1, newPosition);
+
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
+
+  test('Same Position as before', () => {
+    const newPosition = 2;
+    const response = requestAdminQuizQuestionMove(quiz, questionId3, token1, newPosition);
+
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
+
+  test('Valid entry', () => {
+    const newPosition = 0;
+    const response = requestAdminQuizQuestionMove(quiz, questionId3, token1, newPosition);
+
+    expect(response.body).toStrictEqual({ });
+    expect(response.status).toStrictEqual(200);
+  });
+
+  test('Quiz in trash', () => {
+    const newPosition = 0;
+    requestAdminQuizRemove(token1, quiz);
+    const response = requestAdminQuizQuestionMove(quiz, questionId3, token1, newPosition);
+
+    expect(response.body).toStrictEqual({ error: 'Quiz is in trash.' });
+    expect(response.status).toStrictEqual(400);
+  });
 });
 
-test('Check for invalid session', () => {
-  const token2 = (parseInt(token1) + 1).toString();
+// V1 ROUTES
+describe('v1 routes', () => {
+  test('Invalid token struct', () => {
+    const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
+    const newPosition = 0;
+    const response = requestAdminQuizQuestionMoveV1(quiz, questionId3, token4, newPosition);
 
-  const newPosition = 0;
-  const response = requestAdminQuizQuestionMove(quiz, questionId3, token2, newPosition);
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(401);
+  });
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(403);
-});
+  test('Check for invalid session', () => {
+    const token2 = (parseInt(token1) + 1).toString();
 
-test('Invalide User ID ie not owner', () => {
-  const token2 = requestAdminAuthRegister('hayden.hafezimasoomi@gmail.com', '1234abcd', 'hayden', 'Hafezi').body.token;
-  const newPosition = 0;
-  const response = requestAdminQuizQuestionMove(quiz, questionId3, token2, newPosition);
+    const newPosition = 0;
+    const response = requestAdminQuizQuestionMoveV1(quiz, questionId3, token2, newPosition);
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
-});
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(403);
+  });
 
-test('Invalide quiz ID', () => {
-  const quiz2 = {
-    quizId: quiz + 1,
-  };
-  const newPosition = 0;
-  const response = requestAdminQuizQuestionMove(quiz2.quizId, questionId3, token1, newPosition);
+  test('Invalide User ID ie not owner', () => {
+    const token2 = requestAdminAuthRegister('hayden.hafezimasoomi@gmail.com', '1234abcd', 'hayden', 'Hafezi').body.token;
+    const newPosition = 0;
+    const response = requestAdminQuizQuestionMoveV1(quiz, questionId3, token2, newPosition);
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
-});
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
 
-test('Invalide question ID', () => {
-  const questionId4 = {
-    questionId: questionId3 + 1,
-  };
-  const newPosition = 0;
-  const response = requestAdminQuizQuestionMove(quiz, questionId4.questionId, token1, newPosition);
+  test('Invalide quiz ID', () => {
+    const quiz2 = {
+      quizId: quiz + 1,
+    };
+    const newPosition = 0;
+    const response = requestAdminQuizQuestionMoveV1(quiz2.quizId, questionId3, token1, newPosition);
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
-});
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
 
-test('position > n-1', () => {
-  const newPosition = 3;
-  const response = requestAdminQuizQuestionMove(quiz, questionId3, token1, newPosition);
+  test('Invalide question ID', () => {
+    const questionId4 = {
+      questionId: questionId3 + 1,
+    };
+    const newPosition = 0;
+    const response = requestAdminQuizQuestionMoveV1(quiz, questionId4.questionId, token1, newPosition);
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
-});
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
 
-test('Position < 0', () => {
-  const newPosition = -1;
-  const response = requestAdminQuizQuestionMove(quiz, questionId3, token1, newPosition);
+  test('position > n-1', () => {
+    const newPosition = 3;
+    const response = requestAdminQuizQuestionMoveV1(quiz, questionId3, token1, newPosition);
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
-});
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
 
-test('Same Position as before', () => {
-  const newPosition = 2;
-  const response = requestAdminQuizQuestionMove(quiz, questionId3, token1, newPosition);
+  test('Position < 0', () => {
+    const newPosition = -1;
+    const response = requestAdminQuizQuestionMoveV1(quiz, questionId3, token1, newPosition);
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
-});
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
 
-test('Valid entry', () => {
-  const newPosition = 0;
-  const response = requestAdminQuizQuestionMove(quiz, questionId3, token1, newPosition);
+  test('Same Position as before', () => {
+    const newPosition = 2;
+    const response = requestAdminQuizQuestionMoveV1(quiz, questionId3, token1, newPosition);
 
-  expect(response.body).toStrictEqual({ });
-  expect(response.status).toStrictEqual(200);
-});
+    expect(response.body).toStrictEqual({ error: expect.any(String) });
+    expect(response.status).toStrictEqual(400);
+  });
 
-test('Quiz in trash', () => {
-  const newPosition = 0;
-  requestAdminQuizRemove(token1, quiz);
-  const response = requestAdminQuizQuestionMove(quiz, questionId3, token1, newPosition);
+  test('Valid entry', () => {
+    const newPosition = 0;
+    const response = requestAdminQuizQuestionMoveV1(quiz, questionId3, token1, newPosition);
 
-  expect(response.body).toStrictEqual({ error: 'Quiz is in trash.' });
-  expect(response.status).toStrictEqual(400);
-});
+    expect(response.body).toStrictEqual({ });
+    expect(response.status).toStrictEqual(200);
+  });
 
-//V1 ROUTES
-test('Same Position as before', () => {
-  const newPosition = 2;
-  const response = requestAdminQuizQuestionMoveV1(quiz, questionId3, token1, newPosition);
+  test('Quiz in trash', () => {
+    const newPosition = 0;
+    requestAdminQuizRemove(token1, quiz);
+    const response = requestAdminQuizQuestionMoveV1(quiz, questionId3, token1, newPosition);
 
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(400);
-});
-
-test('Valid entry', () => {
-  const newPosition = 0;
-  const response = requestAdminQuizQuestionMoveV1(quiz, questionId3, token1, newPosition);
-
-  expect(response.body).toStrictEqual({ });
-  expect(response.status).toStrictEqual(200);
-});
-
-test('Invalid token struct', () => {
-  const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
-  const newPosition = 0;
-  const response = requestAdminQuizQuestionMoveV1(quiz, questionId3, token4, newPosition);
-
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(401);
-});
-
-test('Check for invalid session', () => {
-  const token2 = (parseInt(token1) + 1).toString();
-
-  const newPosition = 0;
-  const response = requestAdminQuizQuestionMoveV1(quiz, questionId3, token2, newPosition);
-
-  expect(response.body).toStrictEqual({ error: expect.any(String) });
-  expect(response.status).toStrictEqual(403);
+    expect(response.body).toStrictEqual({ error: 'Quiz is in trash.' });
+    expect(response.status).toStrictEqual(400);
+  });
 });
