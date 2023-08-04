@@ -13,10 +13,30 @@ beforeEach(() => {
   quiz2 = requestAdminQuizCreate(token2, 'quiz', 'quiz1').body.quizId;
 });
 
+// v1
 test('User 1 changes quiz name to valid quiz name', () => {
   expect(v1requestAdminQuizNameUpdate(token1, quiz1, 'quiz2').body).toStrictEqual({ });
 });
+test('User 1 tries to change user 2 quiz name', () => {
+  expect(v1requestAdminQuizNameUpdate(token1, quiz2, 'quiz2').body).toStrictEqual({ error: 'You do not have access to this quiz.' });
+});
 
+describe('Invalid session', () => {
+  test('Test 1 invalid user', () => {
+    const brokenToken = '-1';
+
+    expect(v1requestAdminQuizNameUpdate(brokenToken, quiz1, 'broken quiz').body).toStrictEqual({ error: 'Not a valid session' });
+  });
+});
+
+describe('Invalid token', () => {
+  test('Invalid token created from invalid email', () => {
+    const invalidToken1 = requestAdminAuthRegister('', 'happy123', 'tommy', 'bommy').body.token;
+    expect(v1requestAdminQuizNameUpdate(invalidToken1, quiz1, 'ghsakgjh').body).toStrictEqual({ error: 'Invalid token structure' });
+  });
+});
+
+// v2
 describe('Passing cases', () => {
   test('User 1 changes quiz name to valid quiz name', () => {
     expect(requestAdminQuizNameUpdate(token1, quiz1, 'quiz2').body).toStrictEqual({ });

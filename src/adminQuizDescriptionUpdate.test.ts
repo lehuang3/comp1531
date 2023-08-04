@@ -8,12 +8,42 @@ beforeEach(() => {
   quiz1 = requestAdminQuizCreate(token1, 'quiz', '').body.quizId;
 });
 
+// v1
 test('Check for valid quiz - description with moderate length', () => {
   const response = v1requestAdminQuizDescriptionUpdate(token1, quiz1, 'this quiz now has description');
   expect(response.body).toStrictEqual({});
   expect(response.status).toStrictEqual(200);
 });
 
+test('Check for invalid token structure', () => {
+  // console.log(token1);
+  const token2 = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body.token;
+  const response = v1requestAdminQuizDescriptionUpdate(token2, quiz1, '');
+  expect(response.body).toStrictEqual({
+    error: 'Invalid token structure',
+  });
+  expect(response.status).toStrictEqual(401);
+});
+
+test('Check for invalid session', () => {
+  const token2 = (parseInt(token1) + 1).toString();
+
+  const response = v1requestAdminQuizDescriptionUpdate(token2, quiz1, '');
+  expect(response.body).toStrictEqual({
+    error: 'Not a valid session'
+  });
+  expect(response.status).toStrictEqual(403);
+});
+
+test('Check for length of description', () => {
+  const response = v1requestAdminQuizDescriptionUpdate(token1, quiz1, '012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789');
+  expect(response.body).toStrictEqual({
+    error: 'Description is too long'
+  });
+  expect(response.status).toStrictEqual(400);
+});
+
+// v2
 test('Check for invalid token structure', () => {
   // console.log(token1);
   const token2 = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body.token;

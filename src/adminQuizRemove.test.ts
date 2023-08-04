@@ -9,17 +9,38 @@ beforeEach(() => {
   token1 = requestAdminAuthRegister('Minh@gmail.com', '1234abcd', 'Minh', 'Le').body.token;
   quiz = requestAdminQuizCreate(token1, 'quiz1', 'Descritpion').body.quizId;
 });
-
+// v1
 test('Invalide quiz ID', () => {
   const quiz2 = {
     quizId: quiz + 1,
   };
   const response = v1requestAdminQuizRemove(token1, quiz2.quizId);
-
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
 });
 
+test('Invalid token struct', () => {
+  const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
+  const response = v1requestAdminQuizRemove(token4, quiz);
+  expect(response.body).toStrictEqual({ error: expect.any(String) });
+  expect(response.status).toStrictEqual(401);
+});
+
+test('Check for invalid session', () => {
+  const token2 = (parseInt(token1) + 1).toString();
+
+  const response = v1requestAdminQuizRemove(token2, quiz);
+  expect(response.body).toStrictEqual({ error: expect.any(String) });
+  expect(response.status).toStrictEqual(403);
+});
+
+test('Valid entry', () => {
+  const response = v1requestAdminQuizRemove(token1, quiz);
+  expect(response.body).toStrictEqual({});
+  expect(response.status).toStrictEqual(200);
+});
+
+// v2
 test('Invalide User ID', () => {
   const token2 = requestAdminAuthRegister('hayden.hafezimasoomi@gmail.com', '1234abcd', 'hayden', 'Hafezi').body.token;
 

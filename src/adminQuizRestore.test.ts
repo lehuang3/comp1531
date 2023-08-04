@@ -10,10 +10,33 @@ beforeEach(() => {
   requestAdminQuizRemove(token1, quiz1);
 });
 
+// v1
 test('Correct params', () => {
   expect(v1requestAdminQuizRestore(token1, quiz1).body).toStrictEqual({ });
 });
 
+describe('QuizId is not valid', () => {
+  test('negative quizId', () => {
+    expect(v1requestAdminQuizRestore(token1, -1).body).toStrictEqual({ error: 'Not a valid quiz' });
+  });
+});
+
+describe('Invalid token', () => {
+  test('Invalid token created from invalid email', () => {
+    const invalidToken1 = requestAdminAuthRegister('', 'happy123', 'tommy', 'bommy').body.token;
+    expect(v1requestAdminQuizRestore(invalidToken1, quiz1).body).toStrictEqual({ error: 'Invalid token structure' });
+  });
+});
+
+describe('Invalid session', () => {
+  test('Test 1 invalid authUserId', () => {
+    const tokenInvalid = '-1';
+
+    expect(v1requestAdminQuizRestore(tokenInvalid, quiz1).body).toStrictEqual({ error: 'Not a valid session' });
+  });
+});
+
+// v2
 describe('Passing cases', () => {
   test('Correct params', () => {
     expect(requestAdminQuizRestore(token1, quiz1).body).toStrictEqual({ });
