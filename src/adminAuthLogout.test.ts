@@ -28,7 +28,7 @@ describe('v2 route', () => {
     expect(userLogin.body).toStrictEqual({ error: 'Invalid token structure' });
     expect(userLogin.status).toStrictEqual(401);
   });
-})
+});
 
 describe('v1 route', () => {
   test('Simple test pass, v1 route', () => {
@@ -53,4 +53,4 @@ describe('v1 route', () => {
     expect(userLogin.body).toStrictEqual({ error: 'Invalid token structure' });
     expect(userLogin.status).toStrictEqual(401);
   });
-})
+});

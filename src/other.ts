@@ -10,8 +10,6 @@ import { ErrorObject, Session, Attempt } from './interfaces';
 const shuffle = require('shuffle-array');
 const SERVER_URL = `${url}:${port}`;
 
-
-
 /**
  * Check if a token passed in has a valid
  * structure, and return a boolean value accordingly.
@@ -316,7 +314,6 @@ function nameTaken (authUserId: number, name: string): boolean {
   return false;
 }
 
-
 /**
  * Given a quiz question, check if the quiz question length is valid
  *
@@ -487,7 +484,6 @@ function isQuizInTrash(quizId: number): boolean {
   return false;
 }
 
-
 /**
  * Given a quiz question, check if the quiz question has at least 1 correct asnwer
  *
@@ -548,7 +544,6 @@ function newPositioNotSame(data: any, quizId: number, questionId: number, newPos
   return false;
 }
 
-
 /**
  * Gnerates random colour
  *
@@ -559,7 +554,6 @@ function getColour() {
   const randomColorIndex = Math.floor(Math.random() * colors.length);
   return colors[randomColorIndex];
 }
-
 
 function isSameQuizName(userEmail: string, quizId: number): boolean {
   const data: Data = read();
@@ -578,7 +572,6 @@ function isSameQuizName(userEmail: string, quizId: number): boolean {
   }
   return false;
 }
-
 
 /**
  * Given a quizId, returns true or false depending on
@@ -628,7 +621,6 @@ function generateSessionId(): number {
   }
   return sessionId;
 }
-
 
 /**
  * Checks whether sessionId is related to the quizId
@@ -817,7 +809,6 @@ function generateRandomName() {
   return name;
 }
 
-
 /**
  * Finds in data a session that has playerId passed in,
  * returns undefined otherwise
@@ -864,13 +855,13 @@ function findScalingFactor(timeTaken: number, correctPlayers: Attempt[]) {
 function getAverageAnswerTime(session: Session, questionposition: number) {
   const noPlayers = session.metadata.questions[questionposition - 1].attempts.length;
   const totalTimeTaken = session.metadata.questions[questionposition - 1].attempts.reduce((sum, attempt) => sum + attempt.timeTaken, 0);
-  return  Math.round(totalTimeTaken / noPlayers);
+  return Math.round(totalTimeTaken / noPlayers);
 }
 
 function getPercentCorrect(session: Session, questionposition: number) {
   const noPlayers = session.metadata.questions[questionposition - 1].attempts.length;
   const noCorrectPlayers = session.metadata.questions[questionposition - 1].attempts.filter(attempt => attempt.points !== 0).length;
-  return  Math.round(noCorrectPlayers / noPlayers * 100);
+  return Math.round(noCorrectPlayers / noPlayers * 100);
 }
 
 // function changeState(sessionId: number, state: State) {
@@ -904,7 +895,6 @@ function getSessionState(sessionId: number) {
     }
   }
 }
-
 
 function getQuestionResults(data: Data, sess: Session, questionposition: number) {
   // any for time being
@@ -956,8 +946,6 @@ function getQuestionResults(data: Data, sess: Session, questionposition: number)
   };
 }
 
-
-
 function isSessionInFinal(sessionArray:any, sessionId:number) {
   const session = sessionArray.find((session: { quizSessionId: number; }) => session.quizSessionId === sessionId);
   if (session.state === State.FINAL_RESULTS) {
@@ -982,7 +970,6 @@ function saveImg(imgUrl: string) {
   return fileName;
 }
 
-
 /**
  * Given a quizId, returns a list of sessions
  * of the corresponding quiz
@@ -1005,8 +992,8 @@ function getSessions(quizId: number) {
 
 export {
   clear, save, read, tokenOwner, nameQuizIsValid, quizValidCheck, nameLengthIsValid, nameTaken, isDescriptionLong, isSameQuizName,
-  quizValidOwner,  questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid,
-  quizAnswerCorrectValid, isQuizInTrash,  questionValidCheck, newPositioNotSame, newPositionValidCheck,  getColour,  quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId, 
-  quizSessionIdValidCheck, isActionApplicable,  isSessionInLobby, nameExistinSession, generateRandomName, findPlayerSession, answerIdsValidCheck, findScalingFactor, getAverageAnswerTime, 
-  getPercentCorrect, getQuestionResults, isSessionAtLastQuestion, getSessionState, saveImg, isSessionInFinal,  getSessions, 
+  quizValidOwner, questionLengthValid, answerCountValid, durationValid, QuizDurationValid, quizPointsValid, quizAnswerValid, quizAnswerDuplicateValid,
+  quizAnswerCorrectValid, isQuizInTrash, questionValidCheck, newPositioNotSame, newPositionValidCheck, getColour, quizActiveCheck, quizHasQuestion, activeSessions, generateSessionId,
+  quizSessionIdValidCheck, isActionApplicable, isSessionInLobby, nameExistinSession, generateRandomName, findPlayerSession, answerIdsValidCheck, findScalingFactor, getAverageAnswerTime,
+  getPercentCorrect, getQuestionResults, isSessionAtLastQuestion, getSessionState, saveImg, isSessionInFinal, getSessions,
 };

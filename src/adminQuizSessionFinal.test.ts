@@ -37,7 +37,7 @@ beforeEach(() => {
   token1 = requestAdminAuthRegister('123@email.com', '123dfsjkfsA', 'david', 'test').body.token;
   token2 = requestAdminAuthRegister('gshjfhs@email.com', '123fsfag123A', 'hello', 'test').body.token;
   quiz1 = requestAdminQuizCreate(token1, 'quiz', 'quiz1').body.quizId;
-  quiz2 = requestAdminQuizCreate(token2, 'quiz', 'quiz2').body.quizId
+  quiz2 = requestAdminQuizCreate(token2, 'quiz', 'quiz2').body.quizId;
   requestQuizQuestionCreate(token1, quiz1, quiz1Question1.questionBody);
   // requestQuizQuestionCreate(token1.body.token, quiz1.body.quizId, quiz1Question2.questionBody);
   session = requestAdminQuizSessionStart(token1, quiz1, 2).body.sessionId;
@@ -128,11 +128,11 @@ describe('Passing cases', () => {
   test('User 1 enters correct information but no correct', async() => {
     await new Promise((resolve) => setTimeout(resolve, 100));
     requestPlayerAnswerSubmit(player2, 1, [0, 1]);
-    requestPlayerAnswerSubmit(player1, 1, [0, 1])
+    requestPlayerAnswerSubmit(player1, 1, [0, 1]);
     // requestPlayerAnswerSubmit(player3.body.playerId, 1, [0,1,2])
     // requestAdminQuizSessionStateUpdate(token1.body.token, quiz1.body.quizId, session.body.sessionId, 'GO_TO_ANSWER')
     requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
     requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_FINAL_RESULTS');
-    expect(requestAdminQuizSessionFinal(token1, quiz1, session).status).toStrictEqual(200)
-  })
+    expect(requestAdminQuizSessionFinal(token1, quiz1, session).status).toStrictEqual(200);
+  });
 });

@@ -1,4 +1,4 @@
-import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate, requestAdminQuizSessionFinalCsv, requestAdminQuizSessionStart, requestQuizQuestionCreate,  } from './request';
+import { requestAdminQuizCreate, requestAdminAuthRegister, requestClear, requestQuizSessionPlayerJoin, requestPlayerAnswerSubmit, requestAdminQuizSessionStateUpdate, requestAdminQuizSessionFinalCsv, requestAdminQuizSessionStart, requestQuizQuestionCreate } from './request';
 
 let token1: string;
 let quiz1: number;
@@ -32,53 +32,52 @@ const quiz1Question1 = {
 };
 
 const quiz1Question2 = {
-    questionBody: {
-      question: 'What is capital of USA?',
-      duration: 5,
-      points: 5,
-      answers: [
-        {
-          answer: 'New York',
-          correct: false
-        },
-        {
-          answer: 'Dc',
-          correct: true
-        },
-        {
-          answer: 'Camberra',
-          correct: false
-        }
-  
-      ],
-      thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
-    }
-  };
+  questionBody: {
+    question: 'What is capital of USA?',
+    duration: 5,
+    points: 5,
+    answers: [
+      {
+        answer: 'New York',
+        correct: false
+      },
+      {
+        answer: 'Dc',
+        correct: true
+      },
+      {
+        answer: 'Camberra',
+        correct: false
+      }
 
-  const quiz1Question3 = {
-    questionBody: {
-      question: 'What is capital of Japan?',
-      duration: 5,
-      points: 5,
-      answers: [
-        {
-          answer: 'Okinawa',
-          correct: false
-        },
-        {
-          answer: 'DC',
-          correct: false
-        },
-        {
-          answer: 'Tokoyo',
-          correct: true
-        }
-  
-      ],
-      thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
-    }
-  };
+    ],
+    thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
+  }
+};
 
+const quiz1Question3 = {
+  questionBody: {
+    question: 'What is capital of Japan?',
+    duration: 5,
+    points: 5,
+    answers: [
+      {
+        answer: 'Okinawa',
+        correct: false
+      },
+      {
+        answer: 'DC',
+        correct: false
+      },
+      {
+        answer: 'Tokoyo',
+        correct: true
+      }
+
+    ],
+    thumbnailUrl: 'https://code.org/images/fill-480x360/tutorials/hoc2022/mee_estate.jpg'
+  }
+};
 
 beforeEach(() => {
   jest.setTimeout(60000);
@@ -139,77 +138,70 @@ test('Not FINAL_RESULTS state', async() => {
   expect(response.status).toStrictEqual(400);
 });
 
-
 test('Quiz played', async() => {
-
   await new Promise((resolve) => setTimeout(resolve, 100));
-  requestPlayerAnswerSubmit(player3, 1, [2])
-  
-  requestPlayerAnswerSubmit(player2, 1, [1])
-  
-  requestPlayerAnswerSubmit(player1, 1, [0])
+  requestPlayerAnswerSubmit(player3, 1, [2]);
+
+  requestPlayerAnswerSubmit(player2, 1, [1]);
+
+  requestPlayerAnswerSubmit(player1, 1, [0]);
 
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'NEXT_QUESTION');
 
   await new Promise((resolve) => setTimeout(resolve, 100));
-  requestPlayerAnswerSubmit(player1, 2, [0])
-  
-  requestPlayerAnswerSubmit(player2, 2, [1])
-  
-  requestPlayerAnswerSubmit(player3, 2, [2])
+  requestPlayerAnswerSubmit(player1, 2, [0]);
+
+  requestPlayerAnswerSubmit(player2, 2, [1]);
+
+  requestPlayerAnswerSubmit(player3, 2, [2]);
 
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'NEXT_QUESTION');
 
   await new Promise((resolve) => setTimeout(resolve, 100));
-  requestPlayerAnswerSubmit(player1, 3, [2])
-  
-  requestPlayerAnswerSubmit(player3, 3, [0])
-  
-  requestPlayerAnswerSubmit(player2,3, [1])
+  requestPlayerAnswerSubmit(player1, 3, [2]);
 
-  requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER')
-  requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_FINAL_RESULTS')
-  
-  expect(requestAdminQuizSessionFinalCsv(token1, quiz1, session).body).toStrictEqual({ url:expect.any(String)
-     
-  })
-},10000);
+  requestPlayerAnswerSubmit(player3, 3, [0]);
+
+  requestPlayerAnswerSubmit(player2, 3, [1]);
+
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_FINAL_RESULTS');
+
+  expect(requestAdminQuizSessionFinalCsv(token1, quiz1, session).body).toStrictEqual({ url: expect.any(String) });
+}, 10000);
 
 test('Quiz played, no correct answers', async() => {
-
   await new Promise((resolve) => setTimeout(resolve, 100));
-  requestPlayerAnswerSubmit(player3, 1, [2, 1])
-  
-  requestPlayerAnswerSubmit(player2, 1, [2, 1])
-  
-  requestPlayerAnswerSubmit(player1, 1, [2, 1])
+  requestPlayerAnswerSubmit(player3, 1, [2, 1]);
+
+  requestPlayerAnswerSubmit(player2, 1, [2, 1]);
+
+  requestPlayerAnswerSubmit(player1, 1, [2, 1]);
 
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'NEXT_QUESTION');
 
   await new Promise((resolve) => setTimeout(resolve, 100));
-  requestPlayerAnswerSubmit(player1, 2, [2, 1])
-  
-  requestPlayerAnswerSubmit(player2, 2, [2, 1])
-  
-  requestPlayerAnswerSubmit(player3, 2, [2, 1])
+  requestPlayerAnswerSubmit(player1, 2, [2, 1]);
+
+  requestPlayerAnswerSubmit(player2, 2, [2, 1]);
+
+  requestPlayerAnswerSubmit(player3, 2, [2, 1]);
 
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
   requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'NEXT_QUESTION');
 
   await new Promise((resolve) => setTimeout(resolve, 100));
-  requestPlayerAnswerSubmit(player1, 3, [2, 1])
-  
-  requestPlayerAnswerSubmit(player3, 3, [0, 1])
-  
-  requestPlayerAnswerSubmit(player2, 3, [1, 2])
+  requestPlayerAnswerSubmit(player1, 3, [2, 1]);
 
-  requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER')
-  requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_FINAL_RESULTS')
-  
-  expect(requestAdminQuizSessionFinalCsv(token1, quiz1, session).body).toStrictEqual({ url:expect.any(String)
-     
-  })
-},10000);
+  requestPlayerAnswerSubmit(player3, 3, [0, 1]);
+
+  requestPlayerAnswerSubmit(player2, 3, [1, 2]);
+
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_ANSWER');
+  requestAdminQuizSessionStateUpdate(token1, quiz1, session, 'GO_TO_FINAL_RESULTS');
+
+  expect(requestAdminQuizSessionFinalCsv(token1, quiz1, session).body).toStrictEqual({ url: expect.any(String) });
+}, 10000);
