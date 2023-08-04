@@ -641,40 +641,120 @@ function adminQuizRestore(token: ErrorObject | string, quizId: number, version: 
  *
  * @returns {questionID: number} - Quiz Question Id
 */
-function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, questionBody: any) {
+function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, questionBody: any, version:number) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
+      if (version === 1) {
+        return {
+          error: 'Invalid token structure',
+        };
+      } else {
+        throw HTTPError(401, 'Invalid token structure');
+      }
       // invalid session
     } else {
-      throw HTTPError(403, 'Not a valid session');
+      if (version === 1) {
+        return {
+          error: 'Not a valid session',
+        };
+      } else {
+        throw HTTPError(403, 'Not a valid session');
+      }
     }
   }
 
   if (quizValidCheck(quizId) === false) {
+    if (version === 1) {
+      return {
+        error: 'Not a valid quiz',
+      };
+    } else {
     throw HTTPError(400, 'quiz id not valid');
+    }
   } else if (quizValidOwner(authUserId, quizId) === false) {
-    throw HTTPError(400, 'ot owner of quiz');
+    if (version === 1) {
+      return {
+        error: 'not owner of quiz',
+      };
+    } else {
+    throw HTTPError(400, 'not owner of quiz');
+    }
   } else if (questionLengthValid(questionBody) === false) {
+    if (version === 1) {
+      return {
+        error: 'Question length is not validz',
+      };
+    } else {
     throw HTTPError(400, 'Question length is not valid');
+    }
   } else if (answerCountValid(questionBody) === false) {
+    if (version === 1) {
+      return {
+        error: 'There must 2 asnwer and no greater than 6',
+      };
+    } else {
     throw HTTPError(400, 'There must 2 asnwer and no greater than 6');
+    }
   } else if (durationValid(questionBody) === false) {
+    if (version === 1) {
+      return {
+        error: 'There must 2 asnwer and no greater than 6',
+      };
+    } else {
     throw HTTPError(400, 'Duration must be a positive number');
+    }
   } else if (QuizDurationValid(data, questionBody, quizId) === false) {
+    if (version === 1) {
+      return {
+        error: 'Duration excesseds 3 minutes',
+      };
+    } else {
     throw HTTPError(400, 'Duration excesseds 3 minutes');
+  }
   } else if (quizPointsValid(questionBody) === false) {
+    if (version === 1) {
+      return {
+        error: 'Points must not be less than 1 or greater than 10',
+      };
+    } else {
     throw HTTPError(400, 'Points must not be less than 1 or greater than 10');
+  }
   } else if (quizAnswerValid(questionBody) === false) {
+    if (version === 1) {
+      return {
+        error: '1 or more of your asnwer is less than 1 or greater 30 characters',
+      };
+    } else {
     throw HTTPError(400, '1 or more of your asnwer is less than 1 or greater 30 characters');
+  }
   } else if (quizAnswerDuplicateValid(questionBody) === false) {
+    if (version === 1) {
+      return {
+        error: 'There are duplicate answers',
+      };
+    } else {
     throw HTTPError(400, 'There are duplicate answers');
-  } else if (quizAnswerCorrectValid(questionBody) === false) {
+    }
+  }
+   else if (quizAnswerCorrectValid(questionBody) === false) {
+    if (version === 1) {
+      return {
+        error: 'There are no correct asnwers',
+      };
+    } else {
     throw HTTPError(400, 'There are no correct asnwers');
+    }
   } else if (isImageUrl(questionBody.thumbnailUrl) === false) {
+    if (version === 1) {
+      return {
+        error: 'Image not valid',
+      };
+    } else {
     throw HTTPError(400, 'Image not valid');
+    }
+
   } else {
     const fileName = saveImg(questionBody.thumbnailUrl);
     const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
@@ -727,30 +807,77 @@ function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, qu
  *
  * @returns {quizID: number} - Quiz's identification number
 */
-function adminQuizQuestionMove (quizId:number, questionId:number, token: ErrorObject | string, newPosition:number) {
+function adminQuizQuestionMove (quizId:number, questionId:number, token: ErrorObject | string, newPosition:number,version:number) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
+      if (version === 1) {
+        return {
+          error: 'Invalid token structure',
+        };
+      } else {
+        throw HTTPError(401, 'Invalid token structure');
+      }
       // invalid session
     } else {
-      throw HTTPError(403, 'Not a valid session');
+      if (version === 1) {
+        return {
+          error: 'Not a valid session',
+        };
+      } else {
+        throw HTTPError(403, 'Not a valid session');
+      }
     }
   }
-
   if (quizValidCheck(quizId) === false) {
+    if (version === 1) {
+      return {
+        error: 'quiz id not valid'
+      };
+    } else {
     throw HTTPError(400, 'quiz id not valid');
+    }
   } else if (isQuizInTrash(quizId)) {
+    if (version === 1) {
+      return {
+        error: 'Quiz is in trash.',
+      };
+    } else {
     throw HTTPError(400, 'Quiz is in trash.');
+  }
   } else if (quizValidOwner(authUserId, quizId) === false) {
+    if (version === 1) {
+        return {
+          error: 'Not owner of quiz',
+        };
+      } else {
     throw HTTPError(400, 'Not owner of quiz');
+  }
   } else if (questionValidCheck(data, quizId, questionId) === false) {
+    if (version === 1) {
+      return {
+        error: 'Question not found',
+      };
+    } else {
     throw HTTPError(400, 'Question not found');
+  }
   } else if (newPositionValidCheck(data, quizId, newPosition) === false) {
+    if (version === 1) {
+      return {
+        error: 'Invalid new position',
+      };
+    } else {
     throw HTTPError(400, 'Invalid new position');
+  }
   } else if (newPositioNotSame(data, quizId, questionId, newPosition) === false) {
+    if (version === 1) {
+      return {
+        error: 'New Position cannot be the same as original',
+      };
+    } else {
     throw HTTPError(400, 'New Position cannot be the same as original');
+  }
   } else {
     const quiz = data.quizzes.find((quiz: { quizId: number; }) => quiz.quizId === quizId);
     const originalPosition = quiz.questions.findIndex((question: { questionId: number; }) => question.questionId === questionId);
@@ -776,30 +903,79 @@ function adminQuizQuestionMove (quizId:number, questionId:number, token: ErrorOb
  *
  * @returns {} - empty object
 */
-function adminQuizTransfer(token: string | ErrorObject, quizId: number, userEmail: string) {
+function adminQuizTransfer(token: string | ErrorObject, quizId: number, userEmail: string,version:number) {
   const data: Data = read();
   const users = [...data.users];
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
+      if (version === 1) {
+        return {
+          error: 'Invalid token structure',
+        };
+      } else {
+        throw HTTPError(401, 'Invalid token structure');
+      }
       // invalid session
     } else {
-      throw HTTPError(403, 'Not a valid session');
+      if (version === 1) {
+        return {
+          error: 'Not a valid session',
+        };
+      } else {
+        throw HTTPError(403, 'Not a valid session');
+      }
     }
   }
+
   if (!quizValidCheck(quizId)) {
+    if(version === 1){
+      return {
+        error: 'Quiz does not exist.',
+      };
+    } else {
     throw HTTPError(400, 'Quiz does not exist.');
+    }
   } else if (isQuizInTrash(quizId)) {
+    if(version === 1){
+      return {
+        error: 'Quiz is in trash.',
+      };
+    } else {
     throw HTTPError(400, 'Quiz is in trash.');
+    }
   } else if (!quizValidOwner(authUserId, quizId)) {
+    if(version === 1){
+      return {
+        error: 'You do not have access to this quiz.',
+      };
+    } else {
     throw HTTPError(400, 'You do not have access to this quiz.');
+    }
   } else if (users.filter(user => user.email === userEmail).length === 0) {
+    if(version === 1){
+      return {
+        error: 'Target user does not exist',
+      };
+    } else {
     throw HTTPError(400, 'Target user does not exist');
+    }
   } else if (users.filter(user => user.email === userEmail)[0].authUserId === authUserId) {
+    if(version === 1){
+      return {
+        error: 'Target user does not exist',
+      };
+    } else {
     throw HTTPError(400, 'Target user is also original user');
+    }
   } else if (isSameQuizName(userEmail, quizId)) {
+    if(version === 1){
+      return {
+        error: 'Target user does not exist',
+      };
+    } else {
     throw HTTPError(400, "Quiz to be transfered has the same name as one of target user's quizzes");
+    }
   }
   // Quiz is not removed from quizzes array, but is rather removed from userQuizzes of the
   // original user, and added to userQuizzes of target user.
@@ -827,26 +1003,62 @@ function adminQuizTransfer(token: string | ErrorObject, quizId: number, userEmai
  *
  * @returns {questionID: number} - Quiz question identification number
 */
-function adminQuizQuestionDuplicate (quizId:number, questionId:number, token: ErrorObject | string) {
+function adminQuizQuestionDuplicate (quizId:number, questionId:number, token: ErrorObject | string,version:number) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
+      if (version === 1) {
+        return {
+          error: 'Invalid token structure',
+        };
+      } else {
+        throw HTTPError(401, 'Invalid token structure');
+      }
       // invalid session
     } else {
-      throw HTTPError(403, 'Not a valid session');
+      if (version === 1) {
+        return {
+          error: 'Not a valid session',
+        };
+      } else {
+        throw HTTPError(403, 'Not a valid session');
+      }
     }
   }
 
   if (quizValidCheck(quizId) === false) {
+    if (version === 1) {
+      return {
+        error: 'Quiz does not exits',
+      };
+    } else {
     throw HTTPError(400, 'Quiz does not exits');
+    }
   } else if (isQuizInTrash(quizId)) {
+    if (version === 1) {
+      return {
+        error: 'Quiz is in trash.',
+      };
+    } else {
     throw HTTPError(400, 'Quiz is in trash.');
+    }
   } else if (quizValidOwner(authUserId, quizId) === false) {
+    if (version === 1) {
+      return {
+        error: 'Quiz Id is not valid',
+      };
+    } else {
     throw HTTPError(400, 'Quiz Id is not valid');
+    }
   } else if (questionValidCheck(data, quizId, questionId) === false) {
+    if (version === 1) {
+      return {
+        error: 'Question not found',
+      };
+    } else {
     throw HTTPError(400, 'Question not found');
+    }
   } else {
     const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
     const question = quiz.questions.find(question => question.questionId === questionId);
@@ -893,24 +1105,62 @@ function adminQuizQuestionDuplicate (quizId:number, questionId:number, token: Er
  *
  * @returns {{}} empty object on sucess error msg on fail
  */
-function adminQuizQuestionDelete(token: ErrorObject | string, quizId: number, questionId: number) {
+function adminQuizQuestionDelete(token: ErrorObject | string, quizId: number, questionId: number,version:number) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
+      if (version === 1) {
+        return {
+          error: 'Invalid token structure',
+        };
+      } else {
+        throw HTTPError(401, 'Invalid token structure');
+      }
+      // invalid session
     } else {
-      throw HTTPError(403, 'Not a valid session');
+      if (version === 1) {
+        return {
+          error: 'Not a valid session',
+        };
+      } else {
+        throw HTTPError(403, 'Not a valid session');
+      }
     }
   }
+
   if (!quizValidCheck(quizId)) {
+    if (version === 1) {
+      return {
+        error: 'Quiz does not exist.',
+      };
+    } else {
     throw HTTPError(400, 'Quiz does not exist.');
+  }
   } else if (isQuizInTrash(quizId)) {
+    if (version === 1) {
+      return {
+        error: 'Quiz is in trash.',
+      };
+    } else {
     throw HTTPError(400, 'Quiz is in trash.');
+  }
   } else if (!quizValidOwner(authUserId, quizId)) {
+    if (version === 1) {
+      return {
+        error: 'You do not have access to this quiz',
+      };
+    } else {
     throw HTTPError(400, 'You do not have access to this quiz.');
+  }
   } else if (!questionValidCheck(data, quizId, questionId)) {
+    if (version === 1) {
+      return {
+        error: 'Question does not exist.',
+      };
+    } else {
     throw HTTPError(400, 'Question does not exist.');
+  }
   }
   // find the quiz in data.quizzes by matching quizId to data.quizzes.quizId, find the quiz question in data.quizzes.quiz.question, splice out the question.
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
@@ -938,44 +1188,141 @@ function adminQuizQuestionDelete(token: ErrorObject | string, quizId: number, qu
  *
  * @returns {{}} return empty object on sucess and error msg on fail
  */
-function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, questionId: number, questionBody: any) {
+function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, questionId: number, questionBody: any,version:number) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
+      if (version === 1) {
+        return {
+          error: 'Invalid token structure',
+        };
+      } else {
+        throw HTTPError(401, 'Invalid token structure');
+      }
+      // invalid session
     } else {
-      throw HTTPError(403, 'Not a valid session');
+      if (version === 1) {
+        return {
+          error: 'Not a valid session',
+        };
+      } else {
+        throw HTTPError(403, 'Not a valid session');
+      }
     }
   }
   if (!quizValidCheck(quizId)) {
+    if (version === 1) {
+      return {
+        error: 'Quiz does not exist.',
+      };
+    } else {
     throw HTTPError(400, 'Quiz does not exist.');
+    }
   } else if (!quizValidOwner(authUserId, quizId)) {
+    if (version === 1) {
+      return {
+        error: 'You do not have access to this quiz.',
+      };
+    } else {
     throw HTTPError(400, 'You do not have access to this quiz.');
+    }
   } else if (!questionValidCheck(data, quizId, questionId)) {
+    if (version === 1) {
+      return {
+        error: 'This question does not exist.',
+      };
+    } else {
     throw HTTPError(400, 'This question does not exist.');
+    }
   } else if (!questionLengthValid(questionBody)) {
+    if (version === 1) {
+      return {
+        error: 'Question must be greater than 4 characters and less than 51 characters.',
+      };
+    } else {
     throw HTTPError(400, 'Question must be greater than 4 characters and less than 51 characters.');
+    }
   } else if (!answerCountValid(questionBody)) {
+    if (version === 1) {
+      return {
+        error: 'Must have more than one answer and less than 7 answers.',
+      };
+    } else {
     throw HTTPError(400, 'Must have more than one answer and less than 7 answers.');
+    }
   } else if (!durationValid(questionBody)) {
+    if (version === 1) {
+      return {
+        error: 'Time allowed must be a postive number.',
+      };
+    } else {
     throw HTTPError(400, 'Time allowed must be a postive number.');
+    }
   } else if (!QuizDurationValid(data, questionBody, quizId)) {
+    if (version === 1) {
+      return {
+        error: 'Quiz duration longer than 3 minutes.',
+      };
+    } else {
     throw HTTPError(400, 'Quiz duration longer than 3 minutes.');
+    }
   } else if (!quizPointsValid(questionBody)) {
+    if (version === 1) {
+      return {
+        error: 'Question must award at least one point and no more than 10 points.',
+      };
+    } else {
     throw HTTPError(400, 'Question must award at least one point and no more than 10 points.');
+    }
   } else if (!quizAnswerValid(questionBody)) {
+    if (version === 1) {
+      return {
+        error: 'Answer must be greater than 0 characters and less than 31 characters long.',
+      };
+    } else {
     throw HTTPError(400, 'Answer must be greater than 0 characters and less than 31 characters long.');
+    }
   } else if (!quizAnswerDuplicateValid(questionBody)) {
+    if (version === 1) {
+      return {
+        error: 'Cannot have same answers for one question.',
+      };
+    } else {
     throw HTTPError(400, 'Cannot have same answers for one question.');
+    }
   } else if (!quizAnswerCorrectValid(questionBody)) {
+    if (version === 1) {
+      return {
+        error: 'There are no correct answers.',
+      };
+    } else {
     throw HTTPError(400, 'There are no correct answers.');
+    }
   } else if (questionBody.thumbnailUrl.length === 0) {
+    if (version === 1) {
+      return {
+        error: 'Missing thumbnail URL.',
+      };
+    } else {
     throw HTTPError(400, 'Missing thumbnail URL.');
+    }
   } else if (!isUrl(questionBody.thumbnailUrl)) {
+    if (version === 1) {
+      return {
+        error: 'Not a valid url.',
+      };
+    } else {
     throw HTTPError(400, 'Not a valid url.');
+    }
   } else if (!isImageUrl(questionBody.thumbnailUrl)) {
+    if (version === 1) {
+      return {
+        error: 'Url is not an image.',
+      };
+    } else {
     throw HTTPError(400, 'Url is not an image.');
+    }
   }
   const fileName = saveImg(questionBody.thumbnailUrl);
   // find the quiz in data.quizzes by matching quizId to data.quizzes.quizId, find the quiz question in data.quizzes.quiz.question, splice out the question.
@@ -1012,32 +1359,57 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
  *
  * @returns {} - empty object
 */
-function adminQuizTrashEmpty(token: string | ErrorObject, quizIdArr: number[]) {
+function adminQuizTrashEmpty(token: string | ErrorObject, quizIdArr: number[],version:number) {
   const data: Data = read();
   const authUserId = tokenOwner(token);
   if (typeof authUserId !== 'number') {
     if (authUserId.error === 'Invalid token structure') {
-      throw HTTPError(401, 'Invalid token structure');
+      if (version === 1) {
+        return {
+          error: 'Invalid token structure',
+        };
+      } else {
+        throw HTTPError(401, 'Invalid token structure');
+      }
       // invalid session
     } else {
-      throw HTTPError(403, 'Not a valid session');
+      if (version === 1) {
+        return {
+          error: 'Not a valid session',
+        };
+      } else {
+        throw HTTPError(403, 'Not a valid session');
+      }
     }
-  }
-  // if no quizzes are chosen to be removed, return with 200 status code with
-  // no modifications of trash
-  if (quizIdArr.length === 0) {
-    return {};
   }
 
   for (const quizId of quizIdArr) {
     if (!quizValidCheck(quizId)) {
-      throw HTTPError(400, 'One or more of the quizzes is not a valid quiz');
+      if(version === 1){
+        return {
+          error: 'One or more of the quizzes is not a valid quiz',
+        };
+      } else{
+        throw HTTPError(400, 'One or more of the quizzes is not a valid quiz');
+      } 
     }
     if (!quizValidOwner(authUserId, quizId)) {
+      if(version === 1){
+        return {
+          error: 'One or more of the quizzes refers to a quiz that this current user does not own',
+        };
+      } else{
       throw HTTPError(400, 'One or more of the quizzes refers to a quiz that this current user does not own');
+      }
     }
     if (!isQuizInTrash(quizId)) {
+      if(version === 1){
+        return {
+          error: 'One or more of the quizzes is not currently in the trash',
+        };
+      } else{
       throw HTTPError(400, 'One or more of the quizzes is not currently in the trash');
+      }
     }
   }
 
