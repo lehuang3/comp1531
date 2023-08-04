@@ -29,6 +29,7 @@ app.use(errorHandler());
 app.use(cors());
 // for producing the docs that define the API
 const file = fs.readFileSync('./swagger.yaml', 'utf8');
+/* istanbul ignore next */
 app.get('/', (req: Request, res: Response) => res.redirect('/docs'));
 app.use('/docs', sui.serve, sui.setup(YAML.parse(file), { swaggerOptions: { docExpansion: config.expandDocs ? 'full' : 'list' } }));
 

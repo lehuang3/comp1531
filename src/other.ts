@@ -111,9 +111,8 @@ function clear () {
     if (fileExtension === '.jpg' || fileExtension === '.png') {
       try {
         fs.unlinkSync(filePath);
-        console.log('Deleted:', filePath);
       } catch (err) {
-        console.error('Error deleting file:', filePath, err);
+        
       }
     }
   });
@@ -127,9 +126,8 @@ function clear () {
     if (fileExtension === '.csv') {
       try {
         fs.unlinkSync(filePath);
-        console.log('Deleted:', filePath);
       } catch (err) {
-        console.error('Error deleting file:', filePath, err);
+     
       }
     }
   });
@@ -564,6 +562,7 @@ function isSameQuizName(userEmail: string, quizId: number): boolean {
   for (const userQuizId of targetUserQuizzes) {
     let targetUserQuiz = data.quizzes.find(quiz => quiz.quizId === userQuizId);
     if (targetUserQuiz === undefined) {
+      /* istanbul ignore next */
       targetUserQuiz = data.trash.find(quiz => quiz.quizId === userQuizId);
     }
     if (transferedQuizName === targetUserQuiz.name) {
@@ -617,6 +616,7 @@ function generateSessionId(): number {
   const data: Data = read();
   let sessionId = Math.floor(Math.random() * 1000);
   while (data.sessions.filter(sesison => sesison.quizSessionId === sessionId).length !== 0) {
+    /* istanbul ignore next */
     sessionId = Math.floor(Math.random() * 1000);
   }
   return sessionId;

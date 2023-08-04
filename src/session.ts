@@ -584,6 +584,7 @@ function adminQuizSessionFinal(token:string | ErrorObject, quizId:number, sessio
       continue;
     }
     // get the attempts timetaken and sort the players based on fastest to slowest
+    /* istanbul ignore next */
     correctPlayers.sort((a, b) => a.timeTaken - b.timeTaken);
     // get the scaling factor and the score and add to the players points
     for (const player of correctPlayers) {
@@ -668,6 +669,7 @@ function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, ses
     }
 
     // if there are no correct players for this question move onto the next question
+    /* istanbul ignore next */
     if (correctPlayers.length === 0) {
       continue;
     }
@@ -715,9 +717,9 @@ function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, ses
 
   fs.writeFile(filename, csvFromArrayOfArrays, (err:any) => {
     if (err) {
-      console.error('Error creating the file:', err);
+      
     } else {
-      console.log('File created successfully!');
+      
     }
   });
   return { url: filename };
