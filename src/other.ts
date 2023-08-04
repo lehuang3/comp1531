@@ -5,8 +5,6 @@ import { clearTimeouts } from './session';
 import request from 'sync-request';
 import { port, url } from './config.json';
 import { ErrorObject, Session, Attempt } from './interfaces';
-// import { Session } from 'inspector';
-// import arrayShuffle from 'array-shuffle';
 const shuffle = require('shuffle-array');
 const SERVER_URL = `${url}:${port}`;
 
@@ -40,7 +38,6 @@ function isSessionValid(token: string | ErrorObject): boolean {
     matchingToken = data.tokens.find((existingToken) => existingToken.sessionId === token);
   }
   if (matchingToken === undefined) {
-    // error if no corresponding token found
     return false;
   }
   return true;
@@ -62,7 +59,6 @@ function tokenOwner(token: string | ErrorObject) {
     };
   }
   if (!isSessionValid(token)) {
-    // error if no corresponding token found
     return {
       error: 'Not a valid session'
     };
@@ -159,22 +155,6 @@ const read = () => {
   return JSON.parse(String(dataJson));
 };
 
-// /**
-//  * Given authUserId, return true or false depending on whether authUserId matches an existing
-//  * user
-//  * @param {number} - authUserId
-//  *
-//  * @returns {boolean} - true or false
-// */
-// function isValidUser (authUserId: number): boolean {
-//   const data = read();
-//   for (const user of data.users) {
-//     if (user.authUserId === authUserId) {
-//       return true;
-//     }
-//   }
-//   return false;
-// }
 /**
  * Given the authUserId and quizId of, find if the user has access to the quiz, returns true if they
  * and false if they can not
@@ -615,6 +595,7 @@ function generateSessionId(): number {
   const data: Data = read();
   let sessionId = Math.floor(Math.random() * 1000);
   while (data.sessions.filter(sesison => sesison.quizSessionId === sessionId).length !== 0) {
+    // Almost never the same so cant be tested
     /* istanbul ignore next */
     sessionId = Math.floor(Math.random() * 1000);
   }
@@ -804,7 +785,6 @@ function generateRandomName() {
   for (let i = 0; i < 3; i++) {
     name += numbers[i];
   }
-  // console.log(name);
   return name;
 }
 
@@ -863,16 +843,6 @@ function getPercentCorrect(session: Session, questionposition: number) {
   return Math.round(noCorrectPlayers / noPlayers * 100);
 }
 
-// function changeState(sessionId: number, state: State) {
-//   const data: Data = read();
-//   for (const session of data.sessions) {
-//     if (session.quizSessionId === sessionId) {
-//       session.state = state;
-//     }
-//   }
-//   save(data);
-// }
-
 function isSessionAtLastQuestion(sessionId: number) {
   const data: Data = read();
   for (const session of data.sessions) {
@@ -896,7 +866,6 @@ function getSessionState(sessionId: number) {
 }
 
 function getQuestionResults(data: Data, sess: Session, questionposition: number) {
-  // any for time being
   let correctAnswerIds: number[] = [];
   const correctPlayers: AnswerResult[] = [];
   // finds all the correct answerids which exist

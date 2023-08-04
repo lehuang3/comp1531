@@ -80,7 +80,6 @@ describe('v1 routes', () => {
 // v2
 describe('v2 routes', () => {
   test('Check for invalid token structure', () => {
-    // console.log(token1);
     const token2 = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body.token;
     const response = requestAdminQuizDescriptionUpdate(token2, quiz1, '');
     expect(response.body).toStrictEqual({

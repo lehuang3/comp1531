@@ -8,8 +8,6 @@ import { Data, Answer } from './interfaces';
 import HTTPError from 'http-errors';
 const isUrl = require('is-url');
 const isImageUrl = require('is-image-url');
-import fs, { existsSync } from 'fs';
-import request from 'sync-request';
 import config from './config.json';
 
 const PORT: number = parseInt(process.env.PORT || config.port);
@@ -34,7 +32,6 @@ function adminQuizList (token: ErrorObject | string, version: number) {
       } else {
         throw HTTPError(401, 'Invalid token structure');
       }
-      // invalid session
     } else {
       if (version === 1) {
         return {
@@ -90,7 +87,6 @@ function adminQuizCreate (token: ErrorObject | string, name: string, description
       } else {
         throw HTTPError(401, 'Invalid token structure');
       }
-      // invalid session
     } else {
       if (version === 1) {
         return {
@@ -215,7 +211,6 @@ function adminQuizRemove (token: ErrorObject | string, quizId: number, version: 
       } else {
         throw HTTPError(401, 'Invalid token structure');
       }
-      // invalid session
     } else {
       if (version === 1) {
         return {
@@ -293,7 +288,6 @@ function adminQuizInfo (token: ErrorObject | string, quizId: number, version: nu
       } else {
         throw HTTPError(401, 'Invalid token structure');
       }
-      // invalid session
     } else {
       if (version === 1) {
         return {
@@ -327,12 +321,6 @@ function adminQuizInfo (token: ErrorObject | string, quizId: number, version: nu
       return quiz;
     }
   }
-  // // added cause it will cause error in frontend, but may be causing issues.
-  // for (const quiz of data.trash) {
-  //   if (quiz.quizId === quizId) {
-  //     return quiz;
-  //   }
-  // }
 }
 
 /**
@@ -357,7 +345,6 @@ function adminQuizNameUpdate (token: ErrorObject | string, quizId: number, name:
       } else {
         throw HTTPError(401, 'Invalid token structure');
       }
-      // invalid session
     } else {
       if (version === 1) {
         return {
@@ -451,7 +438,6 @@ function adminQuizDescriptionUpdate (token: ErrorObject | string, quizId: number
       } else {
         throw HTTPError(401, 'Invalid token structure');
       }
-      // invalid session
     } else {
       if (version === 1) {
         return {
@@ -536,7 +522,6 @@ function adminQuizTrash(token: string | ErrorObject, version: number) {
       } else {
         throw HTTPError(401, 'Invalid token structure');
       }
-      // invalid session
     } else {
       if (version === 1) {
         return {
@@ -653,7 +638,6 @@ function adminQuizQuestionCreate (token: ErrorObject | string, quizId:number, qu
       } else {
         throw HTTPError(401, 'Invalid token structure');
       }
-      // invalid session
     } else {
       if (version === 1) {
         return {
@@ -817,7 +801,6 @@ function adminQuizQuestionMove (quizId:number, questionId:number, token: ErrorOb
       } else {
         throw HTTPError(401, 'Invalid token structure');
       }
-      // invalid session
     } else {
       if (version === 1) {
         return {
@@ -1013,7 +996,6 @@ function adminQuizQuestionDuplicate (quizId:number, questionId:number, token: Er
       } else {
         throw HTTPError(401, 'Invalid token structure');
       }
-      // invalid session
     } else {
       if (version === 1) {
         return {
@@ -1088,7 +1070,6 @@ function adminQuizQuestionDuplicate (quizId:number, questionId:number, token: Er
     quiz.duration += question.duration;
     quiz.timeLastEdited = Math.floor(Date.now() / 1000);
     quiz.numQuestions++;
-    // console.log(data.quizzes[0]);
     save(data);
     return { newQuestionId: newQuestionId };
   }
@@ -1115,7 +1096,6 @@ function adminQuizQuestionDelete(token: ErrorObject | string, quizId: number, qu
       } else {
         throw HTTPError(401, 'Invalid token structure');
       }
-      // invalid session
     } else {
       if (version === 1) {
         return {
@@ -1198,7 +1178,6 @@ function adminQuizQuestionUpdate(token: ErrorObject | string, quizId: number, qu
       } else {
         throw HTTPError(401, 'Invalid token structure');
       }
-      // invalid session
     } else {
       if (version === 1) {
         return {
@@ -1369,7 +1348,6 @@ function adminQuizTrashEmpty(token: string | ErrorObject, quizIdArr: number[], v
       } else {
         throw HTTPError(401, 'Invalid token structure');
       }
-      // invalid session
     } else {
       if (version === 1) {
         return {
@@ -1447,11 +1425,7 @@ function adminQuizThumbnailUpdate(token: string| ErrorObject, quizId: number, im
   // save to static folder the url as an image
   const fileName = saveImg(imgUrl);
   const quiz = data.quizzes.find((quiz) => quiz.quizId === quizId);
-  // console.log(quiz);
-
   quiz.thumbnailUrl = `http://localhost:${PORT}/${fileName}`;
-  // console.log(quiz.thumbnailUrl)
-  // console.log(quiz);
   save(data);
   return {
 
