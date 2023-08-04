@@ -931,13 +931,7 @@ function getQuestionResults(data: Data, sess: Session, questionposition: number)
     }
   }
 
-  // const answer = {
-  //   questionId: sess.metadata.questions[questionposition - 1].questionId,
-  //   questionCorrectBreakdown: correctPlayers,
-  //   averageAnswerTime: getAverageAnswerTime(sess, questionposition),
-  //   percentCorrect: getPercentCorrect(sess, questionposition)
-  // }
-  // console.log(answer)
+
   return {
     questionId: sess.metadata.questions[questionposition - 1].questionId,
     questionCorrectBreakdown: correctPlayers,

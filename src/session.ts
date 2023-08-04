@@ -484,25 +484,18 @@ function adminSessionFinalResult(playerId: number) {
         // console.log(correctPlayers)
       }
     }
-    // console.log(i)
-    // console.log(correctPlayers)
     // if there are no correct players for this question move onto the next question
     if (correctPlayers.length === 0) {
       continue;
     }
     // get the attempts timetaken and sort the players based on fastest to slowest
     correctPlayers.sort((a, b) => a.timeTaken - b.timeTaken);
-    console.log(i);
-    console.log(correctPlayers);
     // get the scaling factor and the score and add to the players points
-    // console.log(correctPlayers)
     for (const correctPlayer of correctPlayers) {
       const points = (correctPlayer.points * findScalingFactor(correctPlayer.timeTaken, correctPlayers));
-      console.log('this is' + findScalingFactor(correctPlayer.timeTaken, correctPlayers));
       const addedScore = Math.round(points * 10) / 10;
       sess.players.find((player) => player.playerId === correctPlayer.playerId).playerScore += addedScore;
     }
-    // console.log(sess.players)
   }
   // sort the players by score
   sess.players.sort((a, b) => b.playerScore - a.playerScore);
@@ -518,7 +511,6 @@ function adminSessionFinalResult(playerId: number) {
     usersRankedByScore: ranking,
     questionResults: questionResult
   };
-  console.log(answer);
   return answer;
 }
 
@@ -738,8 +730,6 @@ function adminQuizSessionsView(token: string | ErrorObject, quizId: number) {
   let inactiveSessions = quizSessions.filter(session => session.state === State.END).map(session => session.quizSessionId);
   activeSessions = activeSessions.sort((a, b) => a - b);
   inactiveSessions = inactiveSessions.sort((a, b) => a - b);
-  console.log(activeSessions);
-  console.log(inactiveSessions);
   return {
     activeSessions: activeSessions,
     inactiveSessions: inactiveSessions,
