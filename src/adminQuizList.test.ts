@@ -39,7 +39,7 @@ describe('v2 routes', () => {
       ]
     });
   });
-})
+});
 
 describe('v1 routes', () => {
   test('Not current sessions', () => {
@@ -73,4 +73,4 @@ describe('v1 routes', () => {
       ]
     });
   });
-})
+});

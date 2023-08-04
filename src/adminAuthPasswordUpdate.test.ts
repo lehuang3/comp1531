@@ -62,7 +62,7 @@ describe('v2 routes', () => {
     expect(userLogin.body).toStrictEqual({ error: 'Not a valid session' });
     expect(userLogin.status).toStrictEqual(403);
   });
-})
+});
 
 describe('v1 routes', () => {
   test('Simple test pass', () => {
@@ -122,4 +122,4 @@ describe('v1 routes', () => {
     expect(userLogin.body).toStrictEqual({ error: 'Not a valid session' });
     expect(userLogin.status).toStrictEqual(403);
   });
-})
+});

@@ -210,7 +210,6 @@ function requestGetAdminUserDetails(token: ErrorObject | string) {
   };
 }
 
-
 function requestAdminQuizSessionFinal(token:string | ErrorObject, quizId:number, sessionId:number) {
   const res = request(
     'GET',
@@ -242,7 +241,6 @@ function requestAdminQuizSessionFinalCsv(token:string | ErrorObject, quizId:numb
     status: res.statusCode,
   };
 }
-
 
 /**
  * Send a 'post' request to the corresponding server route to register
@@ -546,7 +544,6 @@ function requestAdminQuizNameUpdate(token: ErrorObject | string, quizId: number,
     status: res.statusCode,
   };
 }
-
 
 /**
  * v1 version of adminQuizNameUpdate
@@ -1186,7 +1183,6 @@ function requestAdminSessionChatSend(playerId: number, message: string) {
   };
 }
 
-
 /**
  * Send a 'POST' request to the corresponding server route to
  * create a new session (instance) for a quiz
@@ -1294,7 +1290,6 @@ function requestAdminQuizSessionState(token:string | ErrorObject, quizId:number,
   };
 }
 
-
 /**
  * Send a 'put' request to the corresponding server route to
  * create a new session (instance) for a quiz
@@ -1325,7 +1320,6 @@ function requestAdminQuizSessionStateUpdate(token: string | ErrorObject, quizId:
     status: res.statusCode,
   };
 }
-
 
 /**
  * Send a 'put' request to the corresponding server route to
@@ -1376,7 +1370,6 @@ function requestAdminSessionFinalResult(playerId: number) {
   };
 }
 
-
 /**
  * Send a 'get' request to the corresponding server route to
  * fetch details of a question for given player
@@ -1402,7 +1395,6 @@ function requestPlayerQuestionInfo(playerId: number, questionposition: number) {
   };
 }
 
-
 function requestAdminQuizSessionsView(token: string | ErrorObject, quizId: number) {
   const res = request(
     'GET',
@@ -1424,8 +1416,8 @@ export {
   requestAdminQuizCreate, requestAdminQuizNameUpdate, requestAdminQuizRemove, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizInfo, requestAdminQuizTrash, requestAdminQuizRestore,
   requestQuizQuestionCreate, requestAdminQuizQuestionMove, requestAdminQuizQuestionDuplicate, requestAdminQuizQuestionDelete, requestAdminQuizQuestionUpdate, requestAdminQuizTrashEmpty,
   requestAdminAuthPasswordUpdate, requestAdminAuthLogout, requestAdminAuthDetailsUpdate, requestAdminQuizSessionStart, requestAdminQuizThumbnailUpdate, requestQuizSessionPlayerJoin,
-  requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo, requestAdminQuizSessionState, requestAdminSessioQuestionResult, 
-  requestAdminSessionFinalResult, requestAdminQuizSessionFinal, v1requestAdminQuizRemove, v1requestAdminQuizInfo, v1requestAdminQuizNameUpdate, v1requestAdminQuizDescriptionUpdate, v1requestAdminQuizTrash, 
+  requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo, requestAdminQuizSessionState, requestAdminSessioQuestionResult,
+  requestAdminSessionFinalResult, requestAdminQuizSessionFinal, v1requestAdminQuizRemove, v1requestAdminQuizInfo, v1requestAdminQuizNameUpdate, v1requestAdminQuizDescriptionUpdate, v1requestAdminQuizTrash,
   v1requestAdminQuizRestore, requestAdminQuizSessionFinalCsv, requestAdminQuizSessionsView, v1requestAdminAuthDetailsUpdate, v1requestAdminAuthLogout, v1requestAdminAuthPasswordUpdate,
   v1requestAdminQuizCreate, v1requestAdminQuizList, v1requestGetAdminUserDetails, requestAdminQuizSessionStateUpdate,requestAdminQuizTrashEmptyV1,requestAdminQuizTransferV1, requestQuizQuestionCreateV1,requestAdminQuizQuestionUpdateV1,requestAdminQuizQuestionDeleteV1,requestAdminQuizQuestionDuplicateV1,requestAdminQuizQuestionMoveV1
 }

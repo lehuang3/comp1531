@@ -154,7 +154,7 @@ describe('v2 route', () => {
       expect(response.status).toStrictEqual(200);
     });
   });
-})
+});
 
 describe('v1 route', () => {
   test('Check for valid auth, v1 route', () => {
@@ -190,4 +190,4 @@ describe('v1 route', () => {
     });
     expect(response.status).toStrictEqual(403);
   });
-})
+});

@@ -18,7 +18,7 @@ const PORT: number = parseInt(process.env.PORT || config.port);
  * Provide a list of all quizzes that are owned by the currently logged in user.
  *
  * @param {string} token - Token
- * @param {number} version 
+ * @param {number} version
  *
  * @returns {array object} - List of quizze
 */
@@ -1384,7 +1384,7 @@ function adminQuizTrashEmpty(token: string | ErrorObject, quizIdArr: number[],ve
   }
   // if no quizzes are chosen to be removed, return with 200 status code with
   // no modifications of trash
-  if (quizIdArr === undefined) {
+  if (quizIdArr.length === 0) {
     return {};
   }
 

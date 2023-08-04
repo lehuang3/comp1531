@@ -172,10 +172,10 @@ test('Valid entry', () => {
 
 test('Quiz in trash', () => {
   const newPosition = 0;
-  requestAdminQuizRemove(token1, quiz)
+  requestAdminQuizRemove(token1, quiz);
   const response = requestAdminQuizQuestionMove(quiz, questionId3, token1, newPosition);
 
-  expect(response.body).toStrictEqual({error: 'Quiz is in trash.' });
+  expect(response.body).toStrictEqual({ error: 'Quiz is in trash.' });
   expect(response.status).toStrictEqual(400);
 });
 

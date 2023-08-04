@@ -497,9 +497,9 @@ function adminSessionFinalResult(playerId: number) {
     // get the scaling factor and the score and add to the players points
     // console.log(correctPlayers)
     for (const correctPlayer of correctPlayers) {
-      const points = (correctPlayer.points * findScalingFactor(correctPlayer.timeTaken, correctPlayers))
-      console.log('this is' + findScalingFactor(correctPlayer.timeTaken, correctPlayers))
-      const addedScore = Math.round(points * 10) / 10
+      const points = (correctPlayer.points * findScalingFactor(correctPlayer.timeTaken, correctPlayers));
+      console.log('this is' + findScalingFactor(correctPlayer.timeTaken, correctPlayers));
+      const addedScore = Math.round(points * 10) / 10;
       sess.players.find((player) => player.playerId === correctPlayer.playerId).playerScore += addedScore;
     }
     // console.log(sess.players)
@@ -587,8 +587,8 @@ function adminQuizSessionFinal(token:string | ErrorObject, quizId:number, sessio
     correctPlayers.sort((a, b) => a.timeTaken - b.timeTaken);
     // get the scaling factor and the score and add to the players points
     for (const player of correctPlayers) {
-      const points = (player.points * findScalingFactor(player.timeTaken, correctPlayers))
-      const addedScore = Math.round(points * 10) / 10
+      const points = (player.points * findScalingFactor(player.timeTaken, correctPlayers));
+      const addedScore = Math.round(points * 10) / 10;
       sess.players.find((player) => player.playerId === player.playerId).playerScore += addedScore;
     }
     // console.log(sess.players)
@@ -638,86 +638,79 @@ function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, ses
     throw HTTPError(400, 'Session has not ended');
   }
 
+  const header = ['Player'];
+  const playersData: any[] = [];
 
-  let header = ["Player"];
-  let playersData: any[] =[];
+  const listOfPlayers = [];
 
-  let listOfPlayers = []
-
-  for(let player of session.players){
-    listOfPlayers.push(player.playerName)
+  for (const player of session.players) {
+    listOfPlayers.push(player.playerName);
   }
   listOfPlayers.sort();
 
-
-  let ranking: any[]= [];
+  const ranking: any[] = [];
 
   // find the rankings
   // loop through all the questions
   for (let i = 1; i <= session.metadata.numQuestions; i++) {
     // first need to find who actually gets points for the question, need to check for a question which answerids must be selected
-    
-      // find which answerids must be selected and put it into an array
-      const answersNeeded = session.metadata.questions[i - 1].answers.filter((answer) => answer.correct === true)
-      const answersNeededIds = [];
-      for (const answer of answersNeeded) {
-        answersNeededIds.push(answer.answerId)
-      }
-  
-      
-      let correctPlayers = []
-      for (let attempt of session.metadata.questions[i - 1].attempts) {
-        correctPlayers.push(attempt)
-      }
-      
-      // if there are no correct players for this question move onto the next question
-      if (correctPlayers.length === 0) {
-        continue
-      }
-      // get the attempts timetaken and sort the players based on fastest to slowest
-      correctPlayers.sort((a, b) => a.timeTaken - b.timeTaken)
-      // get the scaling factor and the score and add to the players points
-      let rank = 1;
-      for (const player of correctPlayers) {
-        let scalingFactor = findScalingFactor(player.timeTaken, correctPlayers); 
-        let scoreForQuestion = player.points * scalingFactor;
-        let playerResult = {
-          name: player.playerName,
-          score: scoreForQuestion,
-          rank: rank
-        }
-        rank++;
-        ranking.push(playerResult)
 
-      }
+    // find which answerids must be selected and put it into an array
+    const answersNeeded = session.metadata.questions[i - 1].answers.filter((answer) => answer.correct === true);
+    const answersNeededIds = [];
+    for (const answer of answersNeeded) {
+      answersNeededIds.push(answer.answerId);
     }
-    // sort the players by score
-    
+
+    const correctPlayers = [];
+    for (const attempt of session.metadata.questions[i - 1].attempts) {
+      correctPlayers.push(attempt);
+    }
+
+    // if there are no correct players for this question move onto the next question
+    if (correctPlayers.length === 0) {
+      continue;
+    }
+    // get the attempts timetaken and sort the players based on fastest to slowest
+    correctPlayers.sort((a, b) => a.timeTaken - b.timeTaken);
+    // get the scaling factor and the score and add to the players points
+    let rank = 1;
+    for (const player of correctPlayers) {
+      const scalingFactor = findScalingFactor(player.timeTaken, correctPlayers);
+      const scoreForQuestion = player.points * scalingFactor;
+      const playerResult = {
+        name: player.playerName,
+        score: scoreForQuestion,
+        rank: rank
+      };
+      rank++;
+      ranking.push(playerResult);
+    }
+  }
+  // sort the players by score
 
   for (let i = 1; i <= session.metadata.numQuestions; i++) {
     header.push(`question${i}score`, `question${i}rank`);
   }
 
-  for(let player of listOfPlayers){
-    let playerResult = []
-    playerResult.push(player)
-    for(let rank of ranking){
-      if(player === rank.name){
-        playerResult.push(rank.score)
-        playerResult.push(rank.rank)
+  for (const player of listOfPlayers) {
+    const playerResult = [];
+    playerResult.push(player);
+    for (const rank of ranking) {
+      if (player === rank.name) {
+        playerResult.push(rank.score);
+        playerResult.push(rank.rank);
       }
-      
     }
-    playersData.push(playerResult)
+    playersData.push(playerResult);
   }
-  
+
   const csvFromArrayOfArrays = convertArrayToCSV(playersData, {
     header,
     separator: ','
   });
 
- 
-  let csvname = session.quizSessionId
+  const csvname = session.quizSessionId;
   const filename = `./Csv/${csvname}.csv`;
 
   fs.writeFile(filename, csvFromArrayOfArrays, (err:any) => {
@@ -727,9 +720,7 @@ function adminQuizSessionFinalCsv(token:string | ErrorObject, quizId:number, ses
       console.log('File created successfully!');
     }
   });
-  return {url:filename}
-
-
+  return { url: filename };
 }
 
 function adminQuizSessionsView(token: string | ErrorObject, quizId: number) {
@@ -747,16 +738,15 @@ function adminQuizSessionsView(token: string | ErrorObject, quizId: number) {
   let inactiveSessions = quizSessions.filter(session => session.state === State.END).map(session => session.quizSessionId);
   activeSessions = activeSessions.sort((a, b) => a - b);
   inactiveSessions = inactiveSessions.sort((a, b) => a - b);
-  console.log(activeSessions)
-  console.log(inactiveSessions)
+  console.log(activeSessions);
+  console.log(inactiveSessions);
   return {
     activeSessions: activeSessions,
     inactiveSessions: inactiveSessions,
   };
-
 }
 export {
   adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
-  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState, adminSessionQuestionResult, adminSessionFinalResult, adminQuizSessionFinal, 
+  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState, adminSessionQuestionResult, adminSessionFinalResult, adminQuizSessionFinal,
   adminQuizSessionFinalCsv, adminQuizSessionsView
 };
