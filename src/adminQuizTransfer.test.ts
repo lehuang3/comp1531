@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizTransfer, requestAdminQuizList } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizTransfer, requestAdminQuizList,requestAdminQuizTransferV1 } from './other';
 let token1: string;
 let token2: string;
 let quiz1: number;
@@ -90,4 +90,17 @@ test('test success: Minh => Le then Le => Minh', () => {
     quizId: quiz1,
     name: expect.any(String),
   }]);
+});
+
+test('test success: Minh => Le', () => {
+  const response = requestAdminQuizTransferV1(token1, quiz1, 'Le@gmail.com');
+  expect(response.body).toStrictEqual({});
+  expect(response.status).toStrictEqual(200);
+  const leQuizzes = requestAdminQuizList(token2).body;
+  const minhQuizzes = requestAdminQuizList(token1).body;
+  expect(leQuizzes.quizzes).toStrictEqual([{
+    quizId: quiz1,
+    name: expect.any(String),
+  }]);
+  expect(minhQuizzes.quizzes).toStrictEqual([]);
 });

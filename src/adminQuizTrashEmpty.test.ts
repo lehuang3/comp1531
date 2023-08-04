@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizTrashEmpty, requestAdminQuizRemove, requestAdminQuizTrash } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizTrashEmpty, requestAdminQuizRemove, requestAdminQuizTrash, requestAdminQuizTrashEmptyV1 } from './other';
 let token1: string;
 
 let quiz1: number;
@@ -140,3 +140,16 @@ test('trash has 2 quizzes, remove 2 quiz', () => {
     quizzes: []
   });
 });
+
+test('trash has 1 quiz, remove 1 quiz', () => {
+  requestAdminQuizRemove(token1, quiz1);
+  const response = requestAdminQuizTrashEmptyV1(token1, [quiz1]);
+  expect(response.body).toStrictEqual({});
+  expect(response.status).toStrictEqual(200);
+
+  const trash = requestAdminQuizTrash(token1).body;
+  expect(trash).toStrictEqual({
+    quizzes: []
+  });
+});
+

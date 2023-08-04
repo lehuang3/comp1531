@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizQuestionDelete } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizQuestionDelete,requestAdminQuizQuestionDeleteV1 } from './other';
 
 let token1: string;
 let quiz1: number;
@@ -75,3 +75,10 @@ describe('Invalid token', () => {
     expect(requestAdminQuizQuestionDelete(invalidToken, quiz1, token1Quiz1Question1Id).body).toStrictEqual({ error: 'Invalid token structure' });
   });
 });
+
+describe('Passing cases', () => {
+  test('User 1 enters correct information', () => {
+    expect(requestAdminQuizQuestionDeleteV1(token1, quiz1, token1Quiz1Question1Id).body).toStrictEqual({ });
+  });
+});
+

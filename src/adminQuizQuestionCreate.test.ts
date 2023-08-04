@@ -1,4 +1,4 @@
-import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate } from './other';
+import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate,requestQuizQuestionCreateV1 } from './other';
 let token1: string;
 let quiz: number;
 const quizQuestion = {
@@ -477,6 +477,13 @@ test('No correct asnwer', () => {
 
 test('Valid entry', () => {
   const response = requestQuizQuestionCreate(token1, quiz, quizQuestion.questionBody);
+
+  expect(response.body).toStrictEqual({ questionId: expect.any(Number) });
+  expect(response.status).toStrictEqual(200);
+});
+
+test('Valid entry', () => {
+  const response = requestQuizQuestionCreateV1(token1, quiz, quizQuestion.questionBody);
 
   expect(response.body).toStrictEqual({ questionId: expect.any(Number) });
   expect(response.status).toStrictEqual(200);

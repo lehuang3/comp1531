@@ -1,4 +1,4 @@
-import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizQuestionMove } from './other';
+import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizQuestionMove,requestAdminQuizQuestionMoveV1 } from './other';
 
 let token1: string;
 let quiz: number;
@@ -165,6 +165,14 @@ test('Same Position as before', () => {
 test('Valid entry', () => {
   const newPosition = 0;
   const response = requestAdminQuizQuestionMove(quiz, questionId3, token1, newPosition);
+
+  expect(response.body).toStrictEqual({ });
+  expect(response.status).toStrictEqual(200);
+});
+
+test('Valid entry', () => {
+  const newPosition = 0;
+  const response = requestAdminQuizQuestionMoveV1(quiz, questionId3, token1, newPosition);
 
   expect(response.body).toStrictEqual({ });
   expect(response.status).toStrictEqual(200);

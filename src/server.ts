@@ -413,7 +413,11 @@ app.put('/v1/admin/quiz/:quizId/question/:questionId', (req: Request, res: Respo
 });
 
 app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
-  const quizIdArr = JSON.parse(req.query.quizIds as string);
+  let quizIdArr = req.query.quizIdArr as any[]
+  if (quizIdArr !== undefined) {
+    quizIdArr = quizIdArr.map(quizId => parseInt(quizId));
+  }
+  console.log(quizIdArr)
   const token = req.query.token as string;
   const response = adminQuizTrashEmpty(token, quizIdArr);
   if ('error' in response) {

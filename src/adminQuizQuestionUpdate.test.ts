@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizInfo, requestAdminQuizQuestionUpdate, requestQuizQuestionCreate } from './other';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizInfo, requestAdminQuizQuestionUpdate, requestQuizQuestionCreate,requestAdminQuizQuestionUpdateV1 } from './other';
 
 let token1: string;
 let quiz1: number;
@@ -492,5 +492,11 @@ describe('Url is not an image', () => {
       }
     };
     expect(requestAdminQuizQuestionUpdate(token1, quiz1, token1Quiz1Question1Id, notImage.questionBody).body).toStrictEqual({ error: 'Url is not an image.' });
+  });
+});
+
+describe('Passing cases', () => {
+  test('User 1 enters correct information', () => {
+    expect(requestAdminQuizQuestionUpdateV1(token1, quiz1, token1Quiz1Question1Id, quiz1Question2.questionBody).body).toStrictEqual({ });
   });
 });
