@@ -393,7 +393,7 @@ app.put('/v1/admin/quiz/:quizId/question/:questionId', (req: Request, res: Respo
 app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   const quizIdArr = JSON.parse(req.query.quizIds as string);
   const token = req.query.token as string;
-  const response = adminQuizTrashEmpty(token, quizIdArr,1);
+  const response = adminQuizTrashEmpty(token, quizIdArr, 1);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
       return res.status(401).json(response);

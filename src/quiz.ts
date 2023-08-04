@@ -1382,11 +1382,6 @@ function adminQuizTrashEmpty(token: string | ErrorObject, quizIdArr: number[],ve
       }
     }
   }
-  // if no quizzes are chosen to be removed, return with 200 status code with
-  // no modifications of trash
-  if (quizIdArr.length === 0) {
-    return {};
-  }
 
   for (const quizId of quizIdArr) {
     if (!quizValidCheck(quizId)) {
