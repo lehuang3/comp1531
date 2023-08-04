@@ -117,4 +117,4 @@ describe('tests for v1adminAuthDetailsUpdate', () => {
     });
     expect(response.status).toStrictEqual(403);
   });
-})
+});

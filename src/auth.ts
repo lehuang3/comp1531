@@ -371,7 +371,7 @@ function adminAuthDetailsUpdate(token: string | ErrorObject, email: string, name
       if (version === 1) {
         return {
           error: 'Not a valid session',
-        }
+        };
       } else if (version === 2) {
         throw HTTPError(403, 'Not a valid session');
       }
@@ -398,7 +398,7 @@ function adminAuthDetailsUpdate(token: string | ErrorObject, email: string, name
       };
     } else {
       throw HTTPError(400, 'First name is invalid');
-    } 
+    }
   }
   if (!checkValidString(nameLast)) {
     if (version === 1) {

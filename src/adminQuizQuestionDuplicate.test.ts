@@ -85,7 +85,7 @@ test('Valid entry', () => {
 });
 
 test('Quiz in trash', () => {
-  requestAdminQuizRemove(token1, quiz)
+  requestAdminQuizRemove(token1, quiz);
   const response = requestAdminQuizQuestionDuplicate(token1, quiz, questionId);
   expect(response.body).toStrictEqual({ error: 'Quiz is in trash.' });
   expect(response.status).toStrictEqual(400);

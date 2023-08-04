@@ -15,7 +15,7 @@ import {
 } from './quiz';
 import {
   adminQuizSessionStart, adminQuizSessionStateUpdate, QuizSessionPlayerJoin, QuizSessionPlayerStatus, adminSessionChatSend, adminSessionChatView,
-  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState, adminSessionQuestionResult, adminSessionFinalResult, adminQuizSessionFinal, 
+  playerAnswerSubmit, playerQuestionInfo, adminQuizSessionState, adminSessionQuestionResult, adminSessionFinalResult, adminQuizSessionFinal,
   adminQuizSessionFinalCsv, adminQuizSessionsView
 } from './session';
 import { clear } from './other';
@@ -491,7 +491,6 @@ app.get('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
   }
   res.json(response);
 });
-
 
 app.get('/v2/admin/quiz/:quizId', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);

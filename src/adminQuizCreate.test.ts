@@ -85,7 +85,7 @@ describe('v2 routes', () => {
     expect(response.body).toStrictEqual({ quizId: expect.any(Number) });
     expect(response.status).toStrictEqual(200);
   });
-})
+});
 
 describe('v1 routes', () => {
   test('Empty name', () => {
@@ -167,4 +167,4 @@ describe('v1 routes', () => {
     expect(response.body).toStrictEqual({ quizId: expect.any(Number) });
     expect(response.status).toStrictEqual(200);
   });
-})
+});

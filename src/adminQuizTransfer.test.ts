@@ -93,15 +93,15 @@ test('test success: Minh => Le then Le => Minh', () => {
 });
 
 test('Quiz in trash', () => {
-  requestAdminQuizRemove(token1, quiz1)
+  requestAdminQuizRemove(token1, quiz1);
   const response = requestAdminQuizTransfer(token1, quiz1, 'Le@gmail.com');
-  expect(response.body).toStrictEqual({error: 'Quiz is in trash.'});
+  expect(response.body).toStrictEqual({ error: 'Quiz is in trash.' });
   expect(response.status).toStrictEqual(400);
 });
 
 test('Quiz has same name exists', () => {
   requestAdminQuizCreate(token2, 'quiz', '').body.quizId;
-  let response = requestAdminQuizTransfer(token1, quiz1, 'Le@gmail.com');
-  expect(response.body).toStrictEqual({error: "Quiz to be transfered has the same name as one of target user's quizzes"});
+  const response = requestAdminQuizTransfer(token1, quiz1, 'Le@gmail.com');
+  expect(response.body).toStrictEqual({ error: "Quiz to be transfered has the same name as one of target user's quizzes" });
   expect(response.status).toStrictEqual(400);
 });

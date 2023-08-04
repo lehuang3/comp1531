@@ -4,7 +4,6 @@ import {
 } from './request';
 import { QuizQuestion, State } from './interfaces';
 
-
 let token1: string;
 let quiz1: number;
 let autoStartNum: number;

@@ -106,8 +106,7 @@ describe('Invalid token', () => {
 
 describe('Quiz in trash', () => {
   test('Quiz is already in trash', () => {
-    requestAdminQuizRemove(token1, quiz1)
-    expect(requestAdminQuizQuestionDelete(token1, quiz1, token1Quiz1Question1Id).body).toStrictEqual({ error: 'Quiz is in trash.'});
+    requestAdminQuizRemove(token1, quiz1);
+    expect(requestAdminQuizQuestionDelete(token1, quiz1, token1Quiz1Question1Id).body).toStrictEqual({ error: 'Quiz is in trash.' });
   });
 });
-
