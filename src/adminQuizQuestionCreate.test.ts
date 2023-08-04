@@ -1,4 +1,4 @@
-import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate } from './request';
+import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate,requestQuizQuestionCreateV1 } from './request';
 let token1: string;
 let quiz: number;
 const quizQuestion = {
@@ -512,3 +512,37 @@ test('Bad Images', () => {
   expect(response.body).toStrictEqual({ error: expect.any(String) });
   expect(response.status).toStrictEqual(400);
 });
+
+//V1 ROUTES
+test('Invalide quiz ID', () => {
+  const quiz2 = {
+    quizId: quiz + 1,
+  };
+  const response = requestQuizQuestionCreateV1(token1, quiz2.quizId, quizQuestion.questionBody);
+
+  expect(response.body).toStrictEqual({ error: expect.any(String) });
+  expect(response.status).toStrictEqual(400);
+});
+
+test('Invalid token struct', () => {
+  const token4 = requestAdminAuthRegister('jeffbezoz@gmail.com', '', 'Minh', 'Le').body.token;
+  const response = requestQuizQuestionCreateV1(token4, quiz, quizQuestion.questionBody);
+  expect(response.body).toStrictEqual({ error: expect.any(String) });
+  expect(response.status).toStrictEqual(401);
+});
+
+test('Check for invalid session', () => {
+  const token2 = (parseInt(token1) + 1).toString();
+
+  const response = requestQuizQuestionCreateV1(token2, quiz, quizQuestion.questionBody);
+  expect(response.body).toStrictEqual({ error: expect.any(String) });
+  expect(response.status).toStrictEqual(403);
+});
+
+test('Valid entry V1', () => {
+  const response = requestQuizQuestionCreateV1(token1, quiz, quizQuestion.questionBody);
+
+  expect(response.body).toStrictEqual({ questionId: expect.any(Number) });
+  expect(response.status).toStrictEqual(200);
+});
+

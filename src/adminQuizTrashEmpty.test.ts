@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizTrashEmpty, requestAdminQuizRemove, requestAdminQuizTrash } from './request';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizTrashEmpty, requestAdminQuizRemove, requestAdminQuizTrash,requestAdminQuizTrashEmptyV1 } from './request';
 let token1: string;
 
 let quiz1: number;
@@ -139,4 +139,42 @@ test('trash has 2 quizzes, remove 2 quiz', () => {
   expect(trash).toStrictEqual({
     quizzes: []
   });
+});
+
+// V1 ROUTES
+
+test('Check for invalid token structure', () => {
+  const invalidToken = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body;
+  const response = requestAdminQuizTrashEmptyV1(invalidToken, [quiz1]);
+  expect(response.body).toStrictEqual({
+    error: 'Invalid token structure',
+  });
+  expect(response.status).toStrictEqual(401);
+});
+
+test('Check for invalid session', () => {
+  const wrongToken = (parseInt(token1) + 1).toString();
+
+  // right structure, but there's no token like this in the tokens array
+  const response = requestAdminQuizTrashEmptyV1(wrongToken, [quiz1]);
+  expect(response.body).toStrictEqual({
+    error: 'Not a valid session'
+  });
+  expect(response.status).toStrictEqual(403);
+});
+
+test('1 x quiz in the trash, quizId is invalid', () => {
+  requestAdminQuizRemove(token1, quiz1);
+  const response = requestAdminQuizTrashEmptyV1(token1, [quiz1 + 1]);
+  expect(response.body).toStrictEqual({
+    error: 'One or more of the quizzes is not a valid quiz'
+  });
+  expect(response.status).toStrictEqual(400);
+});
+
+
+test('trash is empty', () => {
+  const response = requestAdminQuizTrashEmptyV1(token1, []);
+  expect(response.body).toStrictEqual({});
+  expect(response.status).toStrictEqual(200);
 });

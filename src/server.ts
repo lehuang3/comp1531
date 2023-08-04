@@ -140,7 +140,7 @@ app.get('/v1/admin/quiz/:quizId/session/:sessionId/results/csv', (req: Request, 
 app.post('/v1/admin/quiz/:quizId/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { token, questionBody } = req.body;
-  const response = adminQuizQuestionCreate(token, quizId, questionBody);
+  const response = adminQuizQuestionCreate(token, quizId, questionBody,1);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
       return res.status(401).json(response);
@@ -157,7 +157,7 @@ app.post('/v2/admin/quiz/:quizId/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const token = req.header('token');
   const { questionBody } = req.body;
-  const response = adminQuizQuestionCreate(token, quizId, questionBody);
+  const response = adminQuizQuestionCreate(token, quizId, questionBody,2);
   res.json(response);
 });
 
@@ -268,7 +268,7 @@ app.put('/v1/admin/quiz/:quizId/name', (req: Request, res: Response) => {
 app.post('/v1/admin/quiz/:quizId/transfer', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { token, userEmail } = req.body;
-  const response = adminQuizTransfer(token, quizId, userEmail);
+  const response = adminQuizTransfer(token, quizId, userEmail,1);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
       return res.status(401).json(response);
@@ -285,7 +285,7 @@ app.post('/v2/admin/quiz/:quizId/transfer', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const token = req.headers.token as string;
   const { userEmail } = req.body;
-  const response = adminQuizTransfer(token, quizId, userEmail);
+  const response = adminQuizTransfer(token, quizId, userEmail,2);
   res.json(response);
 });
 
@@ -391,9 +391,13 @@ app.put('/v1/admin/quiz/:quizId/question/:questionId', (req: Request, res: Respo
 });
 
 app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
-  const quizIdArr = JSON.parse(req.query.quizIds as string);
+  let quizIdArr = req.query.quizIdArr as any[];
+  // if the array passed in is empty (no quizzes were chosen)
+  if (quizIdArr !== undefined) {
+    quizIdArr = quizIdArr.map(quizId => parseInt(quizId));
+  }
   const token = req.query.token as string;
-  const response = adminQuizTrashEmpty(token, quizIdArr);
+  const response = adminQuizTrashEmpty(token, quizIdArr,1);
   if ('error' in response) {
     if (response.error === 'Invalid token structure') {
       return res.status(401).json(response);
@@ -406,10 +410,11 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   res.json(response);
 });
 
+
 app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
   const quizIdArr = JSON.parse(req.query.quizIds as string);
   const token = req.headers.token as string;
-  const response = adminQuizTrashEmpty(token, quizIdArr);
+  const response = adminQuizTrashEmpty(token, quizIdArr, 2);
   res.json(response);
 });
 

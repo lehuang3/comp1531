@@ -414,6 +414,34 @@ function requestQuizQuestionCreate(token: ErrorObject | string, quizId: number, 
 }
 
 /**
+ * Send a 'put' request to the corresponding server route to create
+ * a quiz question
+ *
+ * @param {string | ErrorObject} token - token/sessionId
+ * @param {number} quizId quiz Id
+ * @param {QuizQuestion} quizQuestion question object
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestQuizQuestionCreateV1(token: ErrorObject | string, quizId: number, questionBody: any) {
+  const res = request(
+    'POST',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/question`,
+    {
+      json: {
+        token,
+        questionBody
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+
+/**
  * Send a 'post' request to the corresponding server route to create
  * a quiz
  *
@@ -698,6 +726,35 @@ function requestAdminQuizTransfer(token: ErrorObject | string, quizId: number, u
 }
 
 /**
+ * Send a 'post' request to the corresponding server route to
+ * transfer a quiz from 1 user to another
+ *
+ * @param {string | ErrorObject} token - token
+ * @param {number} quizId - quiz Id
+ * @param {string | ErrorObject} token - token
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminQuizTransferV1(token: ErrorObject | string, quizId: number, userEmail: string) {
+  const res = request(
+    'POST',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/transfer`,
+    {
+      json: {
+        token,
+        userEmail
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
+
+
+
+/**
  * Send a 'POST' request to the corresponding server route to restore
  * an existing quiz
  *
@@ -888,6 +945,31 @@ function requestAdminQuizTrashEmpty(token: ErrorObject | string, quizIds: string
   };
 }
 
+/**
+ * Send a 'delete' request to the corresponding server route to
+ * delete quiz/quizzes from the trash
+ *
+ * @param {string | ErrorObject} token - token
+ * @param {number[]} quizIdArr - quizIds array
+ *
+ * @returns {{object}} - response in javascript
+*/
+function requestAdminQuizTrashEmptyV1(token: ErrorObject | string, quizIdArr: number[]) {
+  const res = request(
+    'DELETE',
+    SERVER_URL + '/v1/admin/quiz/trash/empty',
+    {
+      qs: {
+        token,
+        quizIdArr
+      }
+    }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    status: res.statusCode,
+  };
+}
 
 /**
  * Send a 'post' which logs out the provided tokens user session
@@ -1233,5 +1315,5 @@ export {
   requestQuizSessionPlayerStatus, requestPlayerAnswerSubmit, requestAdminSessionChatView, requestAdminSessionChatSend, requestPlayerQuestionInfo, requestAdminQuizSessionState, requestAdminSessioQuestionResult, 
   requestAdminSessionFinalResult, requestAdminQuizSessionFinal, v1requestAdminQuizRemove, v1requestAdminQuizInfo, v1requestAdminQuizNameUpdate, v1requestAdminQuizDescriptionUpdate, v1requestAdminQuizTrash, 
   v1requestAdminQuizRestore, requestAdminQuizSessionFinalCsv, requestAdminQuizSessionsView, v1requestAdminAuthDetailsUpdate, v1requestAdminAuthLogout, v1requestAdminAuthPasswordUpdate,
-  v1requestAdminQuizCreate, v1requestAdminQuizList, v1requestGetAdminUserDetails, requestAdminQuizSessionStateUpdate,
+  v1requestAdminQuizCreate, v1requestAdminQuizList, v1requestGetAdminUserDetails, requestAdminQuizSessionStateUpdate,requestAdminQuizTrashEmptyV1,requestAdminQuizTransferV1, requestQuizQuestionCreateV1
 }

@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizRemove } from './request';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizRemove,requestAdminQuizTransferV1 } from './request';
 let token1: string;
 let token2: string;
 let quiz1: number;
@@ -105,3 +105,46 @@ test('Quiz has same name exists', () => {
   expect(response.body).toStrictEqual({error: "Quiz to be transfered has the same name as one of target user's quizzes"});
   expect(response.status).toStrictEqual(400);
 });
+
+//V1 ROUTES
+
+test('Check for invalid token structure', () => {
+  // console.log(token1);
+  const invalidToken = requestAdminAuthRegister('Minh@gmail.com', '', 'Minh', 'Le').body;
+  const response = requestAdminQuizTransferV1(invalidToken, quiz1, 'Le@gmail.com');
+  expect(response.body).toStrictEqual({
+    error: 'Invalid token structure',
+  });
+  expect(response.status).toStrictEqual(401);
+});
+
+test('Check for invalid session', () => {
+  const wrongToken = (parseInt(token1) + 2).toString();
+
+  // right structure, but there's no token like this in the tokens array
+  const response = requestAdminQuizTransferV1(wrongToken, quiz1, 'Le@gmail.com');
+  expect(response.body).toStrictEqual({
+    error: 'Not a valid session'
+  });
+  expect(response.status).toStrictEqual(403);
+});
+
+test('No permission to view quiz', () => {
+  const response = requestAdminQuizTransferV1(token2, quiz1, 'Le@gmail.com');
+  expect(response.body).toStrictEqual({ error: 'You do not have access to this quiz.' });
+  expect(response.status).toStrictEqual(400);
+});
+
+test('test success: Minh => Le', () => {
+  const response = requestAdminQuizTransferV1(token1, quiz1, 'Le@gmail.com');
+  expect(response.body).toStrictEqual({});
+  expect(response.status).toStrictEqual(200);
+  const leQuizzes = requestAdminQuizList(token2).body;
+  const minhQuizzes = requestAdminQuizList(token1).body;
+  expect(leQuizzes.quizzes).toStrictEqual([{
+    quizId: quiz1,
+    name: expect.any(String),
+  }]);
+  expect(minhQuizzes.quizzes).toStrictEqual([]);
+});
+
