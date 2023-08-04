@@ -379,10 +379,6 @@ const notImage = {
   }
 };
 
-
-
-
-
 describe('v2 routes', () => {
   describe('Passing cases', () => {
     test('User 1 enters correct information', () => {
@@ -421,65 +417,54 @@ describe('v2 routes', () => {
 
   describe('Too many/little answers', () => {
     test('Too many answers', () => {
-      
       expect(requestAdminQuizQuestionUpdate(token1, quiz1, token1Quiz1Question1Id, aLotOfAnswers.questionBody).body).toStrictEqual({ error: 'Must have more than one answer and less than 7 answers.' });
     });
     test('Too little answers', () => {
-      
       expect(requestAdminQuizQuestionUpdate(token1, quiz1, token1Quiz1Question1Id, notEnoughAnswers.questionBody).body).toStrictEqual({ error: 'Must have more than one answer and less than 7 answers.' });
     });
   });
 
   describe('Invalid timer', () => {
     test('Negative time', () => {
-      
       expect(requestAdminQuizQuestionUpdate(token1, quiz1, token1Quiz1Question1Id, invalidTime1.questionBody).body).toStrictEqual({ error: 'Time allowed must be a postive number.' });
     });
     test('Zero time', () => {
-      
       expect(requestAdminQuizQuestionUpdate(token1, quiz1, token1Quiz1Question1Id, invalidTime2.questionBody).body).toStrictEqual({ error: 'Time allowed must be a postive number.' });
     });
   });
 
   describe('Quiz total duration > 3minutes', () => {
     test('New quiz time too long', () => {
-      
       expect(requestAdminQuizQuestionUpdate(token1, quiz1, token1Quiz1Question1Id, timeTooLong.questionBody).body).toStrictEqual({ error: 'Quiz duration longer than 3 minutes.' });
     });
   });
 
   describe('Question awards too little/much points', () => {
     test('Quiz awards too much points', () => {
-      
       expect(requestAdminQuizQuestionUpdate(token1, quiz1, token1Quiz1Question1Id, points.questionBody).body).toStrictEqual({ error: 'Question must award at least one point and no more than 10 points.' });
     });
     test('Quiz awards too little points', () => {
-      
       expect(requestAdminQuizQuestionUpdate(token1, quiz1, token1Quiz1Question1Id, point.questionBody).body).toStrictEqual({ error: 'Question must award at least one point and no more than 10 points.' });
     });
   });
 
   describe('Answer too long/short', () => {
     test('Long answer', () => {
-      
       expect(requestAdminQuizQuestionUpdate(token1, quiz1, token1Quiz1Question1Id, longAnswer.questionBody).body).toStrictEqual({ error: 'Answer must be greater than 0 characters and less than 31 characters long.' });
     });
     test('Short answer', () => {
-      
       expect(requestAdminQuizQuestionUpdate(token1, quiz1, token1Quiz1Question1Id, shortAnswer.questionBody).body).toStrictEqual({ error: 'Answer must be greater than 0 characters and less than 31 characters long.' });
     });
   });
 
   describe('Two or more answers in question are the same', () => {
     test('Two same answers', () => {
-      
       expect(requestAdminQuizQuestionUpdate(token1, quiz1, token1Quiz1Question1Id, sameAnswer.questionBody).body).toStrictEqual({ error: 'Cannot have same answers for one question.' });
     });
   });
 
   describe('No correct answers', () => {
     test('No answers', () => {
-      
       expect(requestAdminQuizQuestionUpdate(token1, quiz1, token1Quiz1Question1Id, noAnswer.questionBody).body).toStrictEqual({ error: 'There are no correct answers.' });
     });
   });
@@ -511,27 +496,22 @@ describe('v2 routes', () => {
 
   describe('No url input', () => {
     test('No url', () => {
-      
       expect(requestAdminQuizQuestionUpdate(token1, quiz1, token1Quiz1Question1Id, noUrl.questionBody).body).toStrictEqual({ error: 'Missing thumbnail URL.' });
     });
   });
 
   describe('Url does not exist', () => {
     test('Invalid Url', () => {
-      
       expect(requestAdminQuizQuestionUpdate(token1, quiz1, token1Quiz1Question1Id, fakeUrl.questionBody).body).toStrictEqual({ error: 'Not a valid url.' });
     });
   });
 
   describe('Url is not an image', () => {
     test('Not image', () => {
-      
       expect(requestAdminQuizQuestionUpdate(token1, quiz1, token1Quiz1Question1Id, notImage.questionBody).body).toStrictEqual({ error: 'Url is not an image.' });
     });
   });
-})
-
-
+});
 
 describe('v1 routes', () => {
   describe('Passing cases', () => {
@@ -539,13 +519,13 @@ describe('v1 routes', () => {
       expect(requestAdminQuizQuestionUpdateV1(token1, quiz1, token1Quiz1Question1Id, quiz1Question2.questionBody).body).toStrictEqual({ });
     });
   });
-  
+
   describe('Invalid quizId', () => {
     test('Negative quizId', () => {
       expect(requestAdminQuizQuestionUpdateV1(token1, -1, token1Quiz1Question1Id, quiz1Question2.questionBody).body).toStrictEqual({ error: 'Quiz does not exist.' });
     });
   });
-  
+
   describe('Quiz not owned', () => {
     test('User 1 tries to update User 2 quiz questions', () => {
       const token2 = requestAdminAuthRegister('1234@email.com', '123dfsjkfsA', 'jack', 'test').body.token;
@@ -553,13 +533,13 @@ describe('v1 routes', () => {
       expect(requestAdminQuizQuestionUpdateV1(token1, quiz2, token1Quiz1Question1Id, quiz1Question2.questionBody).body).toStrictEqual({ error: 'You do not have access to this quiz.' });
     });
   });
-  
+
   describe('Invalid questionId', () => {
     test('Negative questionId', () => {
       expect(requestAdminQuizQuestionUpdateV1(token1, quiz1, -1, quiz1Question2.questionBody).body).toStrictEqual({ error: 'This question does not exist.' });
     });
   });
-  
+
   describe('Question too short/long', () => {
     test('Question too long', () => {
       expect(requestAdminQuizQuestionUpdateV1(token1, quiz1, token1Quiz1Question1Id, longQuestion.questionBody).body).toStrictEqual({ error: 'Question must be greater than 4 characters and less than 51 characters.' });
@@ -568,87 +548,76 @@ describe('v1 routes', () => {
       expect(requestAdminQuizQuestionUpdateV1(token1, quiz1, token1Quiz1Question1Id, shortQuestion.questionBody).body).toStrictEqual({ error: 'Question must be greater than 4 characters and less than 51 characters.' });
     });
   });
-  
+
   describe('Too many/little answers', () => {
     test('Too many answers', () => {
-      
       expect(requestAdminQuizQuestionUpdateV1(token1, quiz1, token1Quiz1Question1Id, aLotOfAnswers.questionBody).body).toStrictEqual({ error: 'Must have more than one answer and less than 7 answers.' });
     });
     test('Too little answers', () => {
-      
       expect(requestAdminQuizQuestionUpdateV1(token1, quiz1, token1Quiz1Question1Id, notEnoughAnswers.questionBody).body).toStrictEqual({ error: 'Must have more than one answer and less than 7 answers.' });
     });
   });
-  
+
   describe('Invalid timer', () => {
     test('Negative time', () => {
-      
       expect(requestAdminQuizQuestionUpdateV1(token1, quiz1, token1Quiz1Question1Id, invalidTime1.questionBody).body).toStrictEqual({ error: 'Time allowed must be a postive number.' });
     });
     test('Zero time', () => {
-      
       expect(requestAdminQuizQuestionUpdateV1(token1, quiz1, token1Quiz1Question1Id, invalidTime2.questionBody).body).toStrictEqual({ error: 'Time allowed must be a postive number.' });
     });
   });
-  
+
   describe('Quiz total duration > 3minutes', () => {
     test('New quiz time too long', () => {
-      
       expect(requestAdminQuizQuestionUpdateV1(token1, quiz1, token1Quiz1Question1Id, timeTooLong.questionBody).body).toStrictEqual({ error: 'Quiz duration longer than 3 minutes.' });
     });
   });
-  
+
   describe('Question awards too little/much points', () => {
     test('Quiz awards too much points', () => {
-      
       expect(requestAdminQuizQuestionUpdateV1(token1, quiz1, token1Quiz1Question1Id, points.questionBody).body).toStrictEqual({ error: 'Question must award at least one point and no more than 10 points.' });
     });
     test('Quiz awards too little points', () => {
-      
       expect(requestAdminQuizQuestionUpdateV1(token1, quiz1, token1Quiz1Question1Id, point.questionBody).body).toStrictEqual({ error: 'Question must award at least one point and no more than 10 points.' });
     });
   });
-  
+
   describe('Answer too long/short', () => {
     test('Long answer', () => {
-      
       expect(requestAdminQuizQuestionUpdateV1(token1, quiz1, token1Quiz1Question1Id, longAnswer.questionBody).body).toStrictEqual({ error: 'Answer must be greater than 0 characters and less than 31 characters long.' });
     });
     test('Short answer', () => {
-      
       expect(requestAdminQuizQuestionUpdateV1(token1, quiz1, token1Quiz1Question1Id, shortAnswer.questionBody).body).toStrictEqual({ error: 'Answer must be greater than 0 characters and less than 31 characters long.' });
     });
   });
-  
+
   describe('Two or more answers in question are the same', () => {
     test('Two same answers', () => {
-      
       expect(requestAdminQuizQuestionUpdateV1(token1, quiz1, token1Quiz1Question1Id, sameAnswer.questionBody).body).toStrictEqual({ error: 'Cannot have same answers for one question.' });
     });
   });
-  
+
   describe('No correct answers', () => {
     test('No answers', () => {
-      
       expect(requestAdminQuizQuestionUpdateV1(token1, quiz1, token1Quiz1Question1Id, noAnswer.questionBody).body).toStrictEqual({ error: 'There are no correct answers.' });
     });
   });
-  
+
   describe('Invalid session', () => {
     test('Invalid token', () => {
       const brokenToken = '-1';
-  
+
       expect(requestAdminQuizQuestionUpdateV1(brokenToken, quiz1, token1Quiz1Question1Id, quiz1Question2.questionBody).body).toStrictEqual({ error: 'Not a valid session' });
     });
   });
-  
+
   describe('Invalid token', () => {
     test('Invalid token created from invalid email', () => {
       const invalidToken = requestAdminAuthRegister('', 'happy123', 'tommy', 'bommy').body.token;
       expect(requestAdminQuizQuestionUpdateV1(invalidToken, quiz1, token1Quiz1Question1Id, quiz1Question2.questionBody).body).toStrictEqual({ error: 'Invalid token structure' });
     });
   });
-  
+
   describe('Time test', () => {
     test('Time edited changes with correct param', async () => {
       const timeInitial = requestAdminQuizInfo(token1, quiz1).body.timeLastEdited;
@@ -658,25 +627,22 @@ describe('v1 routes', () => {
       expect(timeEnd - timeInitial).toBeGreaterThanOrEqual(0);
     });
   });
-  
+
   describe('No url input', () => {
     test('No url', () => {
-      
       expect(requestAdminQuizQuestionUpdateV1(token1, quiz1, token1Quiz1Question1Id, noUrl.questionBody).body).toStrictEqual({ error: 'Missing thumbnail URL.' });
     });
   });
-  
+
   describe('Url does not exist', () => {
     test('Invalid Url', () => {
-      
       expect(requestAdminQuizQuestionUpdateV1(token1, quiz1, token1Quiz1Question1Id, fakeUrl.questionBody).body).toStrictEqual({ error: 'Not a valid url.' });
     });
   });
-  
+
   describe('Url is not an image', () => {
     test('Not image', () => {
-      
       expect(requestAdminQuizQuestionUpdateV1(token1, quiz1, token1Quiz1Question1Id, notImage.questionBody).body).toStrictEqual({ error: 'Url is not an image.' });
     });
   });
-})
+});

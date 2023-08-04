@@ -1,4 +1,4 @@
-import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizQuestionDuplicate, requestAdminQuizRemove,requestAdminQuizQuestionDuplicateV1 } from './request';
+import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizQuestionDuplicate, requestAdminQuizRemove, requestAdminQuizQuestionDuplicateV1 } from './request';
 let token1: string;
 let quiz: number;
 let quizQuestion;
@@ -91,7 +91,7 @@ describe('v2 routes', () => {
     expect(response.body).toStrictEqual({ error: 'Quiz is in trash.' });
     expect(response.status).toStrictEqual(400);
   });
-})
+});
 
 describe('v1 routes', () => {
   test('Invalid token struct', () => {
@@ -149,4 +149,4 @@ describe('v1 routes', () => {
     expect(response.body).toStrictEqual({ error: 'Quiz is in trash.' });
     expect(response.status).toStrictEqual(400);
   });
-})
+});

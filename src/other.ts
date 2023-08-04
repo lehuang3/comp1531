@@ -126,7 +126,6 @@ function clear () {
     if (fileExtension === '.csv') {
       try {
         fs.unlinkSync(filePath);
-
       } catch (err) {
 
       }
@@ -930,7 +929,6 @@ function getQuestionResults(data: Data, sess: Session, questionposition: number)
       correctPlayers.push(answerObject);
     }
   }
-
 
   return {
     questionId: sess.metadata.questions[questionposition - 1].questionId,

@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizTrashEmpty, requestAdminQuizRemove, requestAdminQuizTrash,requestAdminQuizTrashEmptyV1 } from './request';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizTrashEmpty, requestAdminQuizRemove, requestAdminQuizTrash, requestAdminQuizTrashEmptyV1 } from './request';
 let token1: string;
 
 let quiz1: number;
@@ -141,7 +141,7 @@ describe('v2 routes', () => {
       quizzes: []
     });
   });
-})
+});
 
 // V1 ROUTES
 describe('v1 routes', () => {
@@ -276,4 +276,4 @@ describe('v1 routes', () => {
       quizzes: []
     });
   });
-})
+});

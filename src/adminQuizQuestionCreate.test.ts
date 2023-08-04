@@ -1,4 +1,4 @@
-import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate,requestQuizQuestionCreateV1 } from './request';
+import { requestClear, requestQuizQuestionCreate, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreateV1 } from './request';
 let token1: string;
 let quiz: number;
 const quizQuestion = {
@@ -513,8 +513,7 @@ describe('v2 routes', () => {
     expect(response.body).toStrictEqual({ error: expect.any(String) });
     expect(response.status).toStrictEqual(400);
   });
-})
-
+});
 
 describe('v1 routes', () => {
   test('Invalide quiz ID', () => {
@@ -998,4 +997,4 @@ describe('v1 routes', () => {
     expect(response.body).toStrictEqual({ error: expect.any(String) });
     expect(response.status).toStrictEqual(400);
   });
-})
+});

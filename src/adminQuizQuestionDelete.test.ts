@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizQuestionDelete, requestAdminQuizRemove,requestAdminQuizQuestionDeleteV1 } from './request';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestQuizQuestionCreate, requestAdminQuizQuestionDelete, requestAdminQuizRemove, requestAdminQuizQuestionDeleteV1 } from './request';
 
 let token1: string;
 let quiz1: number;
@@ -111,9 +111,9 @@ describe('v2 routes', () => {
       expect(requestAdminQuizQuestionDelete(token1, quiz1, token1Quiz1Question1Id).body).toStrictEqual({ error: 'Quiz is in trash.' });
     });
   });
-})
+});
 
-//V1 ROUTES
+// V1 ROUTES
 describe('v1 routes', () => {
   describe('Passing cases', () => {
     test('User 1 enters correct information', () => {
@@ -167,6 +167,4 @@ describe('v1 routes', () => {
       expect(requestAdminQuizQuestionDeleteV1(token1, quiz1, token1Quiz1Question1Id).body).toStrictEqual({ error: 'Quiz is in trash.' });
     });
   });
-})
-
-
+});

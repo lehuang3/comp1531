@@ -1,4 +1,4 @@
-import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizRemove,requestAdminQuizTransferV1 } from './request';
+import { requestClear, requestAdminAuthRegister, requestAdminQuizCreate, requestAdminQuizTransfer, requestAdminQuizList, requestAdminQuizRemove, requestAdminQuizTransferV1 } from './request';
 let token1: string;
 let token2: string;
 let quiz1: number;
@@ -105,9 +105,9 @@ describe('v2 routes', () => {
     expect(response.body).toStrictEqual({ error: "Quiz to be transfered has the same name as one of target user's quizzes" });
     expect(response.status).toStrictEqual(400);
   });
-})
+});
 
-//V1 ROUTES
+// V1 ROUTES
 
 describe('v1 routes', () => {
   test('Check for invalid token structure', () => {
@@ -205,4 +205,4 @@ describe('v1 routes', () => {
     expect(response.body).toStrictEqual({ error: "Quiz to be transfered has the same name as one of target user's quizzes" });
     expect(response.status).toStrictEqual(400);
   });
-})
+});
