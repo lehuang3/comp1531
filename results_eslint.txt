@@ -1,0 +1,166 @@
+
+src/adminAuthDetailsUpdate.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminAuthLogin.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminAuthLogout.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminAuthPasswordUpdate.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminAuthRegister.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizCreate.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizDescriptionUpdate.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizInfo.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizList.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizNameUpdate.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizQuestionCreate.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizQuestionDelete.test.ts
+  30:7  error  'quizQuestion2' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/adminQuizQuestionDuplicate.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizQuestionMove.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizQuestionUpdate.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizRemove.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizRestore.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizSessionFinal.test.ts
+   1:167  error  'requestAdminAuthLogin' is defined but never used  @typescript-eslint/no-unused-vars
+  40:3    error  'quiz2' is assigned a value but never used         @typescript-eslint/no-unused-vars
+
+src/adminQuizSessionFinalCsv.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizSessionPlayerJoin.test.ts
+  1:10  error  'Console' is defined but never used     @typescript-eslint/no-unused-vars
+  8:5   error  'sessionId2' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/adminQuizSessionPlayerStatus.test.ts
+   1:10  error  'Console' is defined but never used             @typescript-eslint/no-unused-vars
+  41:3   error  'playerId' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  42:3   error  'playerId2' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  59:1   error  Unexpected tab character                        no-tabs
+  59:1   error  Mixed spaces and tabs                           no-mixed-spaces-and-tabs
+
+src/adminQuizSessionStart.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizSessionStateUpdate.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizSessionStatus.test.ts
+  1:10  error  'Console' is defined but never used     @typescript-eslint/no-unused-vars
+  3:10  error  'string' is defined but never used      @typescript-eslint/no-unused-vars
+  9:5   error  'sessionId2' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/adminQuizSessionsView.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizThumbnailUpdate.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizTransfer.test.ts
+  103:5  error  Expected an assignment or function call and instead saw an expression  no-unused-expressions
+  203:5  error  Expected an assignment or function call and instead saw an expression  no-unused-expressions
+
+src/adminQuizTrash.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminQuizTrashEmpty.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminSessionChatSend.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminSessionChatView.test.ts
+  44:9  error  'player2' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/adminSessionFinalResult.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminSessionQuestionResult.test.ts
+  0:0  passing  No linting issues  success
+
+src/adminUserDetails.test.ts
+  0:0  passing  No linting issues  success
+
+src/auth.ts
+  0:0  passing  No linting issues  success
+
+src/clear.test.ts
+  0:0  passing  No linting issues  success
+
+src/dataStore.ts
+  0:0  passing  No linting issues  success
+
+src/echo.test.ts
+  0:0  passing  No linting issues  success
+
+src/echo.ts
+  0:0  passing  No linting issues  success
+
+src/interfaces.ts
+  0:0  passing  No linting issues  success
+
+src/other.ts
+  9:7  error  'SERVER_URL' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+src/playerAnswerSubmit.test.ts
+  0:0  passing  No linting issues  success
+
+src/playerQuestionInfo.test.ts
+  5:24  error  'State' is defined but never used  @typescript-eslint/no-unused-vars
+
+src/quiz.ts
+  0:0  passing  No linting issues  success
+
+src/request.ts
+     6:7  error  'shuffle' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  1362:1  error  More than 1 blank line not allowed            no-multiple-empty-lines
+
+src/server.ts
+  0:0  passing  No linting issues  success
+
+src/session.ts
+    1:44  error  'AnswerResult' is defined but never used                                            @typescript-eslint/no-unused-vars
+    1:58  error  'Answer' is defined but never used                                                  @typescript-eslint/no-unused-vars
+   13:7   error  'converter' is assigned a value but never used                                      @typescript-eslint/no-unused-vars
+   15:7   error  'path' is assigned a value but never used                                           @typescript-eslint/no-unused-vars
+   18:17  error  'NodeJS' is not defined                                                             no-undef
+  161:45  error  Array.prototype.find() expects a value to be returned at the end of arrow function  array-callback-return
+  180:45  error  Array.prototype.find() expects a value to be returned at the end of arrow function  array-callback-return
+  191:45  error  Array.prototype.find() expects a value to be returned at the end of arrow function  array-callback-return
+  414:45  error  Array.prototype.find() expects a value to be returned at the end of arrow function  array-callback-return
+  433:45  error  Array.prototype.find() expects a value to be returned at the end of arrow function  array-callback-return
+  561:37  error  Comparing to itself is potentially pointless                                        no-self-compare
+  681:14  error  Empty block statement                                                               no-empty
+  683:12  error  Empty block statement                                                               no-empty
+
+✖ 33 problems (33 errors, 0 warnings)
+  1 error, 0 warnings potentially fixable with the `--fix` option.
