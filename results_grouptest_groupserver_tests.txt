@@ -4,49 +4,49 @@
 
   Invalid testPattern **/?(*.)+(test).ts supplied. Running all tests instead.
   Invalid testPattern **/?(*.)+(test).ts supplied. Running all tests instead.
-PASS src/adminQuizRestore.test.ts (5.866 s)
-PASS src/playerAnswerSubmit.test.ts (8.651 s)
-PASS src/adminQuizSessionFinalCsv.test.ts (6.172 s)
-PASS src/adminSessionFinalResult.test.ts (5.343 s)
+PASS src/adminQuizRestore.test.ts (5.966 s)
+PASS src/playerAnswerSubmit.test.ts (8.667 s)
+PASS src/adminQuizSessionFinalCsv.test.ts (6.136 s)
+PASS src/adminSessionFinalResult.test.ts (5.324 s)
+PASS src/adminAuthDetailsUpdate.test.ts
 PASS src/adminSessionQuestionResult.test.ts
 PASS src/adminQuizSessionFinal.test.ts
 PASS src/adminQuizSessionStart.test.ts
-PASS src/adminQuizQuestionUpdate.test.ts (11.506 s)
 PASS src/adminQuizDescriptionUpdate.test.ts
-PASS src/adminAuthDetailsUpdate.test.ts
-PASS src/adminAuthRegister.test.ts
-PASS src/playerQuestionInfo.test.ts
-PASS src/adminQuizNameUpdate.test.ts (8.173 s)
-PASS src/adminQuizInfo.test.ts
-PASS src/adminQuizSessionStateUpdate.test.ts
+PASS src/adminQuizQuestionUpdate.test.ts (11.76 s)
 PASS src/adminQuizSessionStatus.test.ts
-PASS src/adminAuthPasswordUpdate.test.ts
-PASS src/adminQuizThumbnailUpdate.test.ts
-PASS src/adminQuizSessionPlayerJoin.test.ts
-PASS src/adminQuizTransfer.test.ts (5.455 s)
-PASS src/adminSessionChatSend.test.ts
+PASS src/adminQuizNameUpdate.test.ts (7.657 s)
+PASS src/playerQuestionInfo.test.ts
+PASS src/adminQuizInfo.test.ts
+PASS src/adminAuthRegister.test.ts
 PASS src/adminQuizCreate.test.ts
-PASS src/adminQuizQuestionDuplicate.test.ts
-PASS src/adminQuizSessionsView.test.ts
-PASS src/adminQuizTrash.test.ts
-PASS src/adminQuizTrashEmpty.test.ts (5.813 s)
+PASS src/adminQuizSessionStateUpdate.test.ts
+PASS src/adminQuizThumbnailUpdate.test.ts
+PASS src/adminQuizTransfer.test.ts (5.908 s)
+PASS src/adminAuthPasswordUpdate.test.ts
+PASS src/adminQuizSessionPlayerJoin.test.ts
 PASS src/adminQuizRemove.test.ts
-PASS src/adminQuizQuestionMove.test.ts (8.841 s)
-PASS src/adminQuizQuestionCreate.test.ts (7.306 s)
+PASS src/adminQuizTrash.test.ts
+PASS src/adminSessionChatSend.test.ts
+PASS src/adminQuizQuestionMove.test.ts (9.878 s)
 PASS src/adminQuizList.test.ts
-PASS src/adminSessionChatView.test.ts
+PASS src/adminQuizTrashEmpty.test.ts (7.085 s)
+PASS src/adminQuizQuestionDuplicate.test.ts (5.237 s)
+PASS src/adminQuizSessionsView.test.ts
+PASS src/adminQuizQuestionCreate.test.ts (9.219 s)
 PASS src/adminQuizSessionPlayerStatus.test.ts
+PASS src/adminSessionChatView.test.ts
+PASS src/adminAuthLogout.test.ts
 PASS src/adminAuthLogin.test.ts
 PASS src/adminUserDetails.test.ts
-PASS src/adminAuthLogout.test.ts
-PASS src/adminQuizQuestionDelete.test.ts (6.357 s)
+PASS src/adminQuizQuestionDelete.test.ts (5.96 s)
 PASS src/echo.test.ts
 PASS src/clear.test.ts
 
 Test Suites: 38 passed, 38 total
 Tests:       485 passed, 485 total
 Snapshots:   0 total
-Time:        153.634 s
+Time:        160.573 s
 Ran all test suites.
 
 > posttest
